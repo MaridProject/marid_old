@@ -21,14 +21,13 @@
 package org.marid.app.web;
 
 import io.undertow.servlet.spec.HttpServletRequestImpl;
-import org.marid.app.annotation.PrototypeScoped;
+import org.marid.applib.annotation.PrototypeScoped;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.engine.decision.AlwaysUseSessionProfileStorageDecision;
 import org.pac4j.core.exception.HttpAction;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -43,11 +42,9 @@ public class AuthFilter extends HttpFilter {
 
   private final Config config;
   private final DefaultSecurityLogic<Void, J2EContext> securityLogic;
-  private final Logger logger;
 
-  public AuthFilter(Config config, Logger logger) {
+  public AuthFilter(Config config) {
     this.config = config;
-    this.logger = logger;
     this.securityLogic = new DefaultSecurityLogic<>() {
       @Override
       protected HttpAction unauthorized(J2EContext context, List<Client> currentClients) {
@@ -59,8 +56,6 @@ public class AuthFilter extends HttpFilter {
 
   @Override
   public void doFilter(HttpServletRequest q, HttpServletResponse r, FilterChain c) {
-    logger.debug("Request: {}?{}", q.getRequestURI(), q.getQueryString());
-
     final var request = (HttpServletRequestImpl) q;
     final var exchange = request.getExchange();
     final var securityContext = exchange.getSecurityContext();

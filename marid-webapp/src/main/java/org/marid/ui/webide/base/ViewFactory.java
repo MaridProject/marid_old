@@ -22,47 +22,51 @@ package org.marid.ui.webide.base;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
+import com.vaadin.shared.Registration;
 import org.marid.applib.spring.ContextUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.lang.ref.Cleaner;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Optional;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 
 import static org.marid.applib.spring.ContextUtils.closeListener;
 
 @Component
-public class ViewFactory implements ViewProvider {
+public class ViewFactory implements ViewProvider, ViewChangeListener, AutoCloseable {
 
-  private final Cleaner refCleaner;
-  private final HashMap<String, WeakReference<View>> views = new HashMap<>();
-  private final HashMap<ApplicationContext, HashSet<GenericApplicationContext>> contexts = new HashMap<>();
+  private final Navigator navigator;
+  private final Registration viewChangeListenerRegistration;
+  private final ConcurrentHashMap<String, GenericApplicationContext> views;
+  private final ConcurrentHashMap<ApplicationContext, ConcurrentLinkedQueue<GenericApplicationContext>> contexts;
+  private final WeakHashMap<ViewChangeEvent, String> events = new WeakHashMap<>();
 
-  public ViewFactory(Cleaner refCleaner) {
-    this.refCleaner = refCleaner;
+  public ViewFactory(Navigator navigator) {
+    this.navigator = navigator;
+    this.views = new ConcurrentHashMap<>();
+    this.contexts = new ConcurrentHashMap<>();
+    this.viewChangeListenerRegistration = navigator.addViewChangeListener(this);
+
+    navigator.addProvider(this);
   }
 
   @Override
   public String getViewName(String viewAndParameters) {
-    final WeakReference<View> viewRef = views.get(viewAndParameters);
-    return viewRef == null ? null : (viewRef.get() == null ? null : viewAndParameters);
+    return views.containsKey(viewAndParameters) ? viewAndParameters : null;
   }
 
   @Override
   public View getView(String viewName) {
-    final WeakReference<View> viewRef = views.get(viewName);
-    return viewRef == null ? null : viewRef.get();
-  }
-
-  @Autowired
-  private void initNavigator(Navigator navigator) {
-    navigator.addProvider(this);
+    return Optional.ofNullable(views.get(viewName))
+        .filter(c -> c.containsBean(viewName))
+        .map(c -> c.getBean(viewName, View.class))
+        .orElse(null);
   }
 
   public <V extends View> void show(String path, Class<V> view, Supplier<V> factory, GenericApplicationContext parent) {
@@ -73,20 +77,42 @@ public class ViewFactory implements ViewProvider {
       c.refresh();
       c.start();
     });
-    contexts.computeIfAbsent(parent, k -> new HashSet<>()).add(ctx);
-    final var instance = ctx.getBean(path, view);
-    views.put(path, new WeakReference<>(instance));
-    refCleaner.register(instance.getViewComponent(), () -> {
-      if (!contexts.containsKey(ctx)) {
-        ctx.close();
-      }
-    });
+    contexts.computeIfAbsent(parent, k -> new ConcurrentLinkedQueue<>()).add(ctx);
+    views.put(path, ctx);
     ctx.addApplicationListener(closeListener(ctx, event -> {
       views.remove(path);
-      contexts.computeIfPresent(parent, (k, old) -> {
-        old.remove(ctx);
-        return old.isEmpty() ? null : old;
-      });
+      contexts.computeIfPresent(parent, (k, old) -> old.remove(ctx) && old.isEmpty() ? null : old);
     }));
+  }
+
+  @Override
+  public boolean beforeViewChange(ViewChangeEvent event) {
+    final var cur = event.getNavigator().getState();
+    if (cur != null && views.containsKey(cur)) {
+      synchronized (events) {
+        events.put(event, cur);
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public void afterViewChange(ViewChangeEvent event) {
+    final String cur;
+    synchronized (events) {
+      cur = events.remove(event);
+    }
+    if (cur != null) {
+      final var context = views.get(cur);
+      if (!contexts.containsKey(context)) {
+        context.close();
+      }
+    }
+  }
+
+  @Override
+  public void close() {
+    navigator.removeProvider(this);
+    viewChangeListenerRegistration.remove();
   }
 }
