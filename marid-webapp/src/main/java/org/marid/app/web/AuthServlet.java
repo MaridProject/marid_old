@@ -53,7 +53,7 @@ public class AuthServlet extends HttpServlet {
     final var client = path.substring(1);
 
     final SecurityGrantedAccessAdapter<Void, J2EContext> granted = (ctx, profiles, params) -> {
-      securityContext.authenticationComplete(new MaridAccount(profiles), "PAC4J_ACCOUNT", false);
+      securityContext.authenticationComplete(new MaridAccount(profiles), "MARID", false);
       r.sendRedirect("/app");
       return null;
     };
