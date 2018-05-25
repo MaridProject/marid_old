@@ -41,8 +41,9 @@ public class MainMenuBar extends MenuBar implements Inits {
   @Init(1)
   public void logout(Strs strs) {
     sessionItem.addItem(strs.s("logout"), VaadinIcons.EXIT, item -> {
-      getSession().close();
-      getUI().getPage().setLocation("/logout");
+      final var ui = getUI();
+      ui.getSession().close();
+      ui.getPage().setLocation("/app/logout");
     });
   }
 

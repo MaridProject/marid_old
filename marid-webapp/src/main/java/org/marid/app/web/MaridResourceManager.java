@@ -35,7 +35,7 @@ public class MaridResourceManager extends ClassPathResourceManager {
 
   @Override
   public Resource getResource(String path) throws IOException {
-    if (path.startsWith("/public/")) {
+    if (path.startsWith("/public/") || path.startsWith("/VAADIN/")) {
       return super.getResource(path);
     } else {
       return null;

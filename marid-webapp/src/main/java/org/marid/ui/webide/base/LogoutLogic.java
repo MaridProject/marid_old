@@ -18,30 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.web;
+package org.marid.ui.webide.base;
 
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
+import com.vaadin.server.VaadinServletRequest;
+import com.vaadin.server.VaadinServletResponse;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultLogoutLogic;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 @Component
-public class LogoutServlet extends HttpServlet {
+public class LogoutLogic {
 
   private final Config config;
-  private final DefaultLogoutLogic<Void, J2EContext> logic;
+  private final DefaultLogoutLogic<Void, J2EContext> logic = new DefaultLogoutLogic<>();
 
-  public LogoutServlet(Config config) {
+  public LogoutLogic(Config config) {
     this.config = config;
-    this.logic = new DefaultLogoutLogic<>();
   }
 
-  @Override
-  protected void doGet(HttpServletRequest q, HttpServletResponse r) {
-    logic.perform(new J2EContext(q, r), config, (code, c) -> null, "/public/unauthorized.html", null, null, true, false);
+  public Runnable logoutTask() {
+    final var request = (VaadinServletRequest) VaadinRequest.getCurrent();
+    final var response = (VaadinServletResponse) VaadinResponse.getCurrent();
+    final var context = new J2EContext(request.getHttpServletRequest(), response.getHttpServletResponse());
+    return () -> logic.perform(context, config, (code, ctx) -> null, "/", null, true, false, false);
   }
 }

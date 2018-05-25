@@ -20,6 +20,7 @@
  */
 package org.marid.app.web;
 
+import com.vaadin.server.DeploymentConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinServletService;
@@ -29,12 +30,12 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletException;
 
 @Component
-public class MainServlet extends VaadinServlet {
+public class MaridServlet extends VaadinServlet {
 
   private final GenericApplicationContext context;
   private final MainServletBootstrapListener bootstrapListener;
 
-  public MainServlet(GenericApplicationContext context, MainServletBootstrapListener bootstrapListener) {
+  public MaridServlet(GenericApplicationContext context, MainServletBootstrapListener bootstrapListener) {
     this.context = context;
     this.bootstrapListener = bootstrapListener;
   }
@@ -43,6 +44,13 @@ public class MainServlet extends VaadinServlet {
   protected VaadinServletService createServletService() throws ServletException, ServiceException {
     final var service = super.createServletService();
     service.addSessionInitListener(event -> event.getSession().addBootstrapListener(bootstrapListener));
+    return service;
+  }
+
+  @Override
+  protected MaridServletService createServletService(DeploymentConfiguration configuration) throws ServiceException {
+    final var service = new MaridServletService(this, configuration);
+    service.init();
     return service;
   }
 

@@ -23,7 +23,6 @@ package org.marid.ui.webide.base;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Viewport;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.PushStateNavigation;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServletService;
 import com.vaadin.server.VaadinSession;
@@ -32,14 +31,13 @@ import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import org.marid.app.web.MainServlet;
+import org.marid.app.web.MaridServlet;
 import org.marid.applib.spring.ContextUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
-@PushStateNavigation
 @Push(value = PushMode.AUTOMATIC, transport = Transport.LONG_POLLING)
 @Viewport("width=device-width, initial-scale=1")
 @Component
@@ -95,7 +93,7 @@ public class MainUI extends UI {
 
   private GenericApplicationContext getContext() {
     final var service = (VaadinServletService) getSession().getService();
-    final var servlet = (MainServlet) service.getServlet();
+    final var servlet = (MaridServlet) service.getServlet();
     return servlet.getContext();
   }
 }

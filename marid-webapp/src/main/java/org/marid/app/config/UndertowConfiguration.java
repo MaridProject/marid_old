@@ -25,20 +25,20 @@ import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.security.api.AuthenticationMode;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.session.SslSessionConfig;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.ServletInfo;
 import org.marid.app.props.UndertowProperties;
+import org.marid.app.web.MaridAuthenticationMechanism;
 import org.marid.app.web.MaridResourceManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
-import javax.servlet.DispatcherType;
 import javax.servlet.ServletException;
 
 @Component
@@ -46,21 +46,23 @@ public class UndertowConfiguration {
 
   @Bean
   public DeploymentInfo deploymentInfo(MaridResourceManager maridResourceManager,
-                                       ServletInfo[] servlets,
-                                       FilterInfo[] filters) {
+                                       MaridAuthenticationMechanism authenticationMechanism,
+                                       ServletInfo[] servlets) {
     final var info = new DeploymentInfo();
     info.setDeploymentName("marid");
     info.setClassLoader(Thread.currentThread().getContextClassLoader());
     info.setDefaultEncoding("UTF-8");
     info.setDisableCachingForSecuredPages(true);
+    info.setInvalidateSessionOnLogout(true);
     info.setAuthenticationMode(AuthenticationMode.PRO_ACTIVE);
     info.setContextPath("/");
     info.setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()));
     info.setResourceManager(maridResourceManager);
     info.addServlets(servlets);
-    info.addFilters(filters);
-    info.addFilterUrlMapping("authFilter", "/app/*", DispatcherType.REQUEST);
     info.addWelcomePage("/app");
+
+    authenticationMechanism.initialize(info);
+
     return info;
   }
 
@@ -76,7 +78,7 @@ public class UndertowConfiguration {
 
   @Bean
   public HttpHandler rootHandler(HttpHandler servletHandler) {
-    return exchange -> {
+    return new CanonicalPathHandler(exchange -> {
       switch (exchange.getRelativePath()) {
         case "/":
           new RedirectHandler("/app").handleRequest(exchange);
@@ -85,7 +87,7 @@ public class UndertowConfiguration {
           servletHandler.handleRequest(exchange);
           break;
       }
-    };
+    });
   }
 
   @Bean(initMethod = "start", destroyMethod = "stop")
@@ -93,6 +95,7 @@ public class UndertowConfiguration {
     return Undertow.builder()
         .setServerOption(UndertowOptions.ENABLE_HTTP2, true)
         .setServerOption(UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH, true)
+        .setServerOption(UndertowOptions.SSL_USER_CIPHER_SUITES_ORDER, true)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())
