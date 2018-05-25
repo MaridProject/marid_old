@@ -1,0 +1,7 @@
+@import "addons";
+@import "marid";
+
+.marid {
+  @include addons;
+  @include marid;
+}
