@@ -32,6 +32,7 @@ import io.undertow.util.Headers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
+import org.pac4j.core.engine.decision.AlwaysUseSessionProfileStorageDecision;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,12 +42,14 @@ import java.io.UncheckedIOException;
 import java.util.List;
 
 @Component
-public class MaridAuthenticationMechanism extends DefaultSecurityLogic<Boolean, J2EContext> implements AuthenticationMechanism {
+public class MaridAuthenticationMechanism implements AuthenticationMechanism {
 
   private final Config config;
+  private final DefaultSecurityLogic<Boolean, J2EContext> logic = new DefaultSecurityLogic<>();
 
   public MaridAuthenticationMechanism(Config config) {
     this.config = config;
+    logic.setProfileStorageDecision(new AlwaysUseSessionProfileStorageDecision());
   }
 
   @Override
@@ -59,7 +62,7 @@ public class MaridAuthenticationMechanism extends DefaultSecurityLogic<Boolean, 
           getResponse().setStatus(code);
         }
       };
-      final var result = perform(context, config, (ctx, profiles, params) -> {
+      final var result = logic.perform(context, config, (ctx, profiles, params) -> {
         securityContext.authenticationComplete(new MaridAccount(profiles), "MARID", false);
         return true;
       }, (code, ctx) -> false, null, "user", null, false);
