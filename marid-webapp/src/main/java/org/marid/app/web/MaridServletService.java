@@ -25,8 +25,6 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultLogoutLogic;
 
-import javax.servlet.ServletException;
-
 public class MaridServletService extends VaadinServletService {
 
   public MaridServletService(MaridServlet servlet, DeploymentConfiguration configuration) throws ServiceException {
@@ -54,13 +52,6 @@ public class MaridServletService extends VaadinServletService {
 
           final var logic = new DefaultLogoutLogic<Void, J2EContext>();
           logic.perform(context, config, (code, ctx) -> null, "/app", null, true, false, false);
-
-          /*
-          try {
-            r.logout();
-          } catch (ServletException x) {
-            throw new ServiceException(x);
-          }*/
 
           return;
         }
