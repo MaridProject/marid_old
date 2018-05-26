@@ -26,12 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import org.marid.cellar.ExecutionContext;
 import org.marid.expression.generic.CallExpression;
 import org.marid.expression.xml.XmlExpression;
-import org.marid.function.ToImmutableList;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 import static org.marid.expression.generic.CallExpression.invokable;
@@ -58,7 +58,7 @@ public class CallExpr extends Expr implements CallExpression {
     super(element);
     target = XmlExpression.target(element, Expr::of, ClassExpr::new, RefExpr::new);
     method = XmlExpression.method(element);
-    args = XmlExpression.args(element, Expr::of, StringExpr::new, new ToImmutableList<>());
+    args = XmlExpression.args(element, Expr::of, StringExpr::new, Collectors.toUnmodifiableList());
   }
 
   @Override

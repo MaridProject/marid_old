@@ -21,12 +21,13 @@
 package org.marid.applib.spring.init;
 
 import org.marid.cache.MaridClassValue;
-import org.marid.function.ToImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -50,7 +51,7 @@ class InitUtils {
             .takeWhile(i -> scanner.hasNextLine())
             .mapToObj(i -> Map.entry(scanner.nextLine(), i))
             .filter(e -> !e.getKey().isEmpty())
-            .collect(new ToImmutableMap<>());
+            .collect(Collectors.toUnmodifiableMap(Entry::getKey, Entry::getValue));
       }
     }
   });

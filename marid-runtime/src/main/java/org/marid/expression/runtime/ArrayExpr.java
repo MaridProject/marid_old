@@ -26,11 +26,11 @@ import org.jetbrains.annotations.Nullable;
 import org.marid.cellar.ExecutionContext;
 import org.marid.expression.generic.ArrayExpression;
 import org.marid.expression.xml.XmlExpression;
-import org.marid.function.ToImmutableList;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ArrayExpr extends Expr implements ArrayExpression {
 
@@ -43,7 +43,7 @@ public final class ArrayExpr extends Expr implements ArrayExpression {
 
   ArrayExpr(@NotNull Element element) {
     super(element);
-    elements = XmlExpression.arrayElems(element, Expr::of, new ToImmutableList<>());
+    elements = XmlExpression.arrayElems(element, Expr::of, Collectors.toUnmodifiableList());
   }
 
   @NotNull

@@ -26,19 +26,19 @@ import org.jetbrains.annotations.Nullable;
 import org.marid.cellar.ExecutionContext;
 import org.marid.expression.generic.Expression;
 import org.marid.expression.xml.XmlExpression;
-import org.marid.function.ToImmutableList;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Expr implements Expression {
 
   private final List<Expr> initializers;
 
   public Expr(@NotNull Element element) {
-    initializers = XmlExpression.initializers(element, Expr::of, new ToImmutableList<>());
+    initializers = XmlExpression.initializers(element, Expr::of, Collectors.toUnmodifiableList());
   }
 
   public Expr() {
