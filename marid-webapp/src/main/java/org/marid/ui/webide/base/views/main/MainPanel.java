@@ -20,6 +20,7 @@
  */
 package org.marid.ui.webide.base.views.main;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.VerticalLayout;
 import org.marid.applib.l10n.Strs;
 import org.marid.ui.webide.base.MainTabs;
@@ -37,6 +38,6 @@ public class MainPanel extends VerticalLayout {
 
   @Autowired
   private void initTab(MainTabs tabs, Strs strs) {
-    tabs.addTab(this, strs.s("projects"));
+    tabs.addTab(this, strs.s("projects"), VaadinIcons.PACKAGE);
   }
 }
