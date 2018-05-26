@@ -22,13 +22,11 @@ package org.marid.processors;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,9 +51,10 @@ public class PreserveMethodOrderProcessor extends AbstractProcessor {
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    final HashSet<Element> passed = new HashSet<>();
     for (final var annotation : annotations) {
       for (final var element : roundEnv.getElementsAnnotatedWith(annotation)) {
-        if (element instanceof TypeElement) {
+        if (element instanceof TypeElement && passed.add(element)) {
           final var type = (TypeElement) element;
           switch (type.getKind()) {
             case ANNOTATION_TYPE:

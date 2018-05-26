@@ -18,15 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base;
+package org.marid.ui.webide.base.model;
 
-import com.vaadin.ui.TabSheet;
-import org.springframework.stereotype.Component;
+public class ProjectInfo {
 
-@Component
-public class MainTabs extends TabSheet {
+  private transient String name;
 
-  public MainTabs() {
-    setSizeFull();
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

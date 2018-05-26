@@ -26,14 +26,14 @@ import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.misc.StringUtils;
-import org.marid.ui.webide.base.views.main.MainViewModel.Project;
+import org.marid.ui.webide.base.views.main.MainViewManager.Project;
 
 import java.util.Locale;
 
 @SpringComponent
 public class MainView extends Grid<Project> implements Inits {
 
-  public MainView(MainViewModel model) {
+  public MainView(MainViewManager model) {
     super(model.getDataProvider());
     setSizeFull();
   }

@@ -22,19 +22,21 @@ package org.marid.ui.webide.base.views.main;
 
 import com.vaadin.data.provider.ListDataProvider;
 import org.marid.ui.webide.base.dao.ProjectsDao;
+import org.marid.ui.webide.base.model.ProjectInfo;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collection;
 
 @Component
-public class MainViewModel {
+public class MainViewManager {
 
   private final ProjectsDao dao;
   private final ArrayList<Project> projects = new ArrayList<>();
   private final ListDataProvider<Project> dataProvider = new ListDataProvider<>(projects);
 
-  public MainViewModel(ProjectsDao dao) {
+  public MainViewManager(ProjectsDao dao) {
     this.dao = dao;
   }
 
@@ -43,6 +45,16 @@ public class MainViewModel {
     projects.clear();
     dao.getProjectNames().stream().map(Project::new).forEach(projects::add);
     dataProvider.refreshAll();
+  }
+
+  public void remove(Collection<Project> projects) {
+    projects.forEach(p -> dao.removeProject(p.name));
+    refresh();
+  }
+
+  public void add(ProjectInfo info) {
+    dao.saveOrModify(info);
+    refresh();
   }
 
   public ListDataProvider<Project> getDataProvider() {

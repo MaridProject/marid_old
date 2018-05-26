@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 public class MainPanel extends VerticalLayout {
 
   public MainPanel(MainToolbar toolbar, MainView view) {
+    setSizeFull();
     addComponent(toolbar);
     addComponentsAndExpand(view);
   }
