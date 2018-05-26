@@ -21,14 +21,13 @@
 package org.marid.applib.spring.init;
 
 import org.marid.cache.MaridClassValue;
+import org.marid.function.ToImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -39,24 +38,20 @@ class InitUtils {
   static final MaridClassValue<Map<String, Integer>> METHOD_ORDERS = new MaridClassValue<>(c -> () -> {
     final var name = c.getSimpleName() + "_MethodOrder.properties";
 
-    try (final InputStream inputStream = c.getResourceAsStream(name)) {
+    try (final var inputStream = c.getResourceAsStream(name)) {
 
       if (inputStream == null) {
         LOGGER.warn("Unable to find {}", name);
-        return Collections.emptyMap();
+        return Map.of();
       }
 
-      final HashMap<String, Integer> map = new HashMap<>();
       try (final Scanner scanner = new Scanner(inputStream, UTF_8)) {
-        for (int i = 0; scanner.hasNextLine(); i++) {
-          final var line = scanner.nextLine();
-          if (line.isEmpty()) {
-            continue;
-          }
-          map.put(line.trim(), i);
-        }
+        return IntStream.range(0, Integer.MAX_VALUE)
+            .takeWhile(i -> scanner.hasNextLine())
+            .mapToObj(i -> Map.entry(scanner.nextLine(), i))
+            .filter(e -> !e.getKey().isEmpty())
+            .collect(new ToImmutableMap<>());
       }
-      return map;
     }
   });
 }
