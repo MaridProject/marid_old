@@ -25,21 +25,26 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.MethodParameter;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Stream;
+
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toCollection;
 
 public interface Inits {
 
   @Autowired
   default void initialize(GenericApplicationContext context) throws ReflectiveOperationException {
     final var beanFactory = context.getDefaultListableBeanFactory();
+    final Map<String, Integer> orderMap = InitUtils.METHOD_ORDERS.get(getClass());
     final var methods = Stream.of(getClass().getMethods())
         .filter(m -> !Modifier.isStatic(m.getModifiers()))
         .filter(m -> m.canAccess(this))
         .filter(m -> m.isAnnotationPresent(Init.class))
-        .sorted(this::compare)
-        .toArray(Method[]::new);
+        .collect(toCollection(() -> new TreeSet<>(comparing(m -> orderMap.getOrDefault(m.getName(), 0)))));
+
     for (final var method : methods) {
       final var args = new Object[method.getParameterCount()];
       for (int i = 0; i < args.length; i++) {
@@ -49,13 +54,5 @@ public interface Inits {
       }
       method.invoke(this, args);
     }
-  }
-
-  private int compare(Method m1, Method m2) {
-    final var i1 = m1.getAnnotation(Init.class);
-    final var i2 = m2.getAnnotation(Init.class);
-
-    final int c1 = Integer.compare(i1.group(), i2.group());
-    return c1 == 0 ? Integer.compare(i1.value(), i2.value()) : c1;
   }
 }

@@ -27,8 +27,4 @@ import java.lang.annotation.*;
 @Inherited
 @InitAutowire
 public @interface Init {
-
-  int value();
-
-  int group() default 0;
 }

@@ -18,36 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base;
+package org.marid.ui.webide.base.views.main;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
-import org.springframework.stereotype.Component;
 
-@Component
-public class MainMenuBar extends MenuBar implements Inits {
+@SpringComponent
+public class MainToolbar extends HorizontalLayout implements Inits {
 
-  private final MenuItem sessionItem;
+  private final MainViewModel model;
+  private final MainView view;
 
-  public MainMenuBar(Strs strs) {
-    sessionItem = addItem(strs.s("session"), VaadinIcons.USER, null);
-    setWidth(100, Unit.PERCENTAGE);
-    setHeight(-1, Unit.PIXELS);
+  public MainToolbar(MainViewModel model, MainView view) {
+    this.model = model;
+    this.view = view;
   }
 
   @Init
-  public void logout(Strs strs) {
-    sessionItem.addItem(strs.s("logout"), VaadinIcons.EXIT, item -> {
-      final var ui = getUI();
-      ui.getSession().close();
-      ui.getPage().setLocation("/app/logout");
-    });
+  public void initAdd(Strs strs) {
+    final var button = new Button(VaadinIcons.FOLDER_ADD);
+    button.setDescription(strs.s("addProject"));
+
+    addComponent(button);
   }
 
-  public MenuItem getSessionItem() {
-    return sessionItem;
+  @Init
+  public void initRemove(Strs strs) {
+    final var button = new Button(VaadinIcons.FOLDER_REMOVE);
+    button.setDescription(strs.s("removeProject"));
+
+    addComponent(button);
   }
 }

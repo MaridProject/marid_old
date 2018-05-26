@@ -21,27 +21,24 @@
 package org.marid.ui.webide.base.views.main;
 
 import com.vaadin.ui.Grid;
+import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
-import org.marid.applib.view.StaticView;
-import org.marid.applib.view.ViewName;
 import org.marid.misc.StringUtils;
 import org.marid.ui.webide.base.views.main.MainViewModel.Project;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
-@ViewName("")
-@Component
-public class MainView extends Grid<Project> implements StaticView, Inits {
+@SpringComponent
+public class MainView extends Grid<Project> implements Inits {
 
   public MainView(MainViewModel model) {
     super(model.getDataProvider());
     setSizeFull();
   }
 
-  @Init(1)
+  @Init
   public void initNameColumn(Strs strs) {
     addColumn(Project::getName)
         .setCaption(strs.s("name"))
@@ -49,7 +46,7 @@ public class MainView extends Grid<Project> implements StaticView, Inits {
         .setExpandRatio(4);
   }
 
-  @Init(2)
+  @Init
   public void initSizeColumn(Strs strs, Locale locale) {
     addColumn(project -> StringUtils.sizeBinary(locale, project.getSize(), 2))
         .setCaption(strs.s("size"))

@@ -18,16 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.view;
+package org.marid.ui.webide.base.views.main;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.vaadin.ui.VerticalLayout;
+import org.marid.applib.l10n.Strs;
+import org.marid.ui.webide.base.MainTabs;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ViewName {
+@Component
+public class MainPanel extends VerticalLayout {
 
-  String value();
+  public MainPanel(MainToolbar toolbar, MainView view) {
+    addComponent(toolbar);
+    addComponentsAndExpand(view);
+  }
+
+  @Autowired
+  private void initTab(MainTabs tabs, Strs strs) {
+    tabs.addTab(this, strs.s("projects"));
+  }
 }

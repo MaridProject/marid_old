@@ -18,10 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.view;
+package org.marid.ui.webide.base;
 
-import com.vaadin.navigator.View;
+import com.vaadin.ui.TabSheet;
+import org.springframework.stereotype.Component;
 
-public interface StaticView extends View {
-
+@Component
+public class MainTabs extends TabSheet {
 }

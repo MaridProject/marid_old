@@ -23,17 +23,15 @@ package org.marid.ui.webide.base;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Viewport;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServletService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import org.marid.app.web.MaridServlet;
 import org.marid.applib.spring.ContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.GenericApplicationContext;
@@ -46,18 +44,15 @@ import org.springframework.stereotype.Component;
 @ComponentScan
 public class MainUI extends UI {
 
-  private final VerticalLayout layout = new VerticalLayout();
-  private final Panel panel = new Panel();
-
-  public MainUI() {
-    setContent(layout);
-    setNavigator(new Navigator(this, panel));
-  }
-
   @Override
   protected void init(VaadinRequest request) {
     getPage().setTitle("Menu");
     setSizeFull();
+  }
+
+  @Autowired
+  private void init(MainTabs tabs) {
+    setContent(tabs);
   }
 
   @Override
@@ -76,15 +71,6 @@ public class MainUI extends UI {
 
     child.refresh();
     child.start();
-
-    layout.addComponent(child.getBean(MainMenuBar.class));
-    layout.addComponentsAndExpand(panel);
-  }
-
-  @Bean("navigator")
-  @Override
-  public Navigator getNavigator() {
-    return super.getNavigator();
   }
 
   @Bean("vaadinSession")

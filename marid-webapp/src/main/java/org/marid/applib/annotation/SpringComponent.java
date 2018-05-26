@@ -18,20 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.view;
+package org.marid.applib.annotation;
 
-public final class Action {
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.stereotype.Component;
 
-  public final String label;
-  public final Runnable action;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-  public Action(String label, Runnable action) {
-    this.label = label;
-    this.action = action;
-  }
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+public @interface SpringComponent {
 
-  @Override
-  public String toString() {
-    return label;
-  }
+  @AliasFor(annotation = Component.class, attribute = "value")
+  String value() default "";
 }

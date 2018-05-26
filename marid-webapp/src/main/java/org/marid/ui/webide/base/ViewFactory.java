@@ -20,99 +20,82 @@
  */
 package org.marid.ui.webide.base;
 
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.navigator.ViewProvider;
-import com.vaadin.shared.Registration;
+import com.vaadin.ui.TabSheet.CloseHandler;
+import com.vaadin.ui.TabSheet.Tab;
+import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.spring.ContextUtils;
+import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static org.marid.applib.spring.ContextUtils.closeListener;
+@SpringComponent
+public class ViewFactory {
 
-@Component
-public class ViewFactory implements ViewProvider, ViewChangeListener, AutoCloseable {
+  private final MainTabs tabs;
+  private final Logger logger;
+  private final HashMap<ApplicationContext, LinkedList<GenericApplicationContext>> contexts = new HashMap<>();
+  private final LinkedList<CloseHandler> closeListeners = new LinkedList<>();
 
-  private final Navigator navigator;
-  private final Registration viewChangeListenerRegistration;
-  private final ConcurrentHashMap<String, GenericApplicationContext> views;
-  private final ConcurrentHashMap<ApplicationContext, ConcurrentLinkedQueue<GenericApplicationContext>> contexts;
-  private final WeakHashMap<ViewChangeEvent, String> events = new WeakHashMap<>();
-
-  public ViewFactory(Navigator navigator) {
-    this.navigator = navigator;
-    this.views = new ConcurrentHashMap<>();
-    this.contexts = new ConcurrentHashMap<>();
-    this.viewChangeListenerRegistration = navigator.addViewChangeListener(this);
-
-    navigator.addProvider(this);
+  public ViewFactory(MainTabs tabs, Logger logger) {
+    this.tabs = tabs;
+    this.logger = logger;
+    this.tabs.setCloseHandler((sheet, component) -> {
+      try {
+        closeListeners.forEach(l -> l.onTabClose(sheet, component));
+      } catch (Exception x) {
+        logger.error("Unable to handle tab close", x);
+      } finally {
+        sheet.removeComponent(component);
+      }
+    });
   }
 
-  @Override
-  public String getViewName(String viewAndParameters) {
-    return views.containsKey(viewAndParameters) ? viewAndParameters : null;
-  }
-
-  @Override
-  public View getView(String viewName) {
-    return Optional.ofNullable(views.get(viewName))
-        .filter(c -> c.containsBean(viewName))
-        .map(c -> c.getBean(viewName, View.class))
-        .orElse(null);
-  }
-
-  public <V extends View> void show(String path, Class<V> view, Supplier<V> factory, GenericApplicationContext parent) {
+  public <T> Set<Tab> show(Class<T> conf, Supplier<T> supplier, GenericApplicationContext parent) {
     final var ctx = ContextUtils.context(parent, c -> {
-      c.setId(path);
-      c.setDisplayName(path);
-      c.registerBean(path, view, factory);
+      c.setId(conf.getName());
+      c.setDisplayName(conf.getName());
+      c.registerBean(conf, supplier);
       c.refresh();
       c.start();
     });
-    contexts.computeIfAbsent(parent, k -> new ConcurrentLinkedQueue<>()).add(ctx);
-    views.put(path, ctx);
-    ctx.addApplicationListener(closeListener(ctx, event -> {
-      views.remove(path);
+
+    final var tabs = ctx.getBeansOfType(Tab.class, false, true).values().stream()
+        .filter(tab -> IntStream.range(0, this.tabs.getComponentCount()).anyMatch(i -> this.tabs.getTab(i) == tab))
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    if (tabs.isEmpty()) {
+      logger.warn("No tabs found in {}", ctx.getId());
+      ctx.close();
+      return tabs;
+    }
+
+    contexts.computeIfAbsent(parent, k -> new LinkedList<>()).add(ctx);
+
+    final CloseHandler closeHandler = (CloseHandler) (sheet, component) -> {
+      final var tab = ViewFactory.this.tabs.getTab(component);
+      if (tabs.remove(tab) && tabs.isEmpty()) { // the current context is a candidate to be closed
+        if (!contexts.containsKey(ctx)) { // let's check whether there are tabs depending on this context
+          ctx.close();
+        }
+      }
+    };
+    closeListeners.add(closeHandler);
+    ctx.addApplicationListener(ContextUtils.closeListener(ctx, event -> {
+      closeListeners.remove(closeHandler);
       contexts.computeIfPresent(parent, (k, old) -> old.remove(ctx) && old.isEmpty() ? null : old);
+      if (!contexts.containsKey(parent)) {
+        parent.close();
+      }
     }));
-  }
 
-  @Override
-  public boolean beforeViewChange(ViewChangeEvent event) {
-    final var cur = event.getNavigator().getState();
-    if (cur != null && views.containsKey(cur)) {
-      synchronized (events) {
-        events.put(event, cur);
-      }
-    }
-    return true;
-  }
-
-  @Override
-  public void afterViewChange(ViewChangeEvent event) {
-    final String cur;
-    synchronized (events) {
-      cur = events.remove(event);
-    }
-    if (cur != null) {
-      final var context = views.get(cur);
-      if (!contexts.containsKey(context)) {
-        context.close();
-      }
-    }
-  }
-
-  @Override
-  public void close() {
-    navigator.removeProvider(this);
-    viewChangeListenerRegistration.remove();
+    return tabs;
   }
 }
