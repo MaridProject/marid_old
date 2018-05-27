@@ -20,13 +20,31 @@
  */
 package org.marid.ui.webide.base;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.TabSheet;
-import org.springframework.stereotype.Component;
+import org.marid.applib.annotation.SpringComponent;
+import org.marid.applib.l10n.Strs;
+import org.marid.applib.spring.init.Init;
+import org.marid.applib.spring.init.InitAfterStart;
+import org.marid.applib.spring.init.Inits;
+import org.marid.ui.webide.base.views.main.MainPanel;
+import org.marid.ui.webide.base.views.session.SessionForm;
 
-@Component
-public class MainTabs extends TabSheet {
+@SpringComponent
+@InitAfterStart
+public class MainTabs extends TabSheet implements Inits {
 
   public MainTabs() {
     setSizeFull();
+  }
+
+  @Init
+  public void initMainPanel(Strs strs, MainPanel mainPanel) {
+    addTab(mainPanel, strs.s("projects"), VaadinIcons.PACKAGE);
+  }
+
+  @Init
+  public void initSession(Strs strs, SessionForm sessionForm) {
+    addTab(sessionForm, strs.s("session"), VaadinIcons.USER);
   }
 }

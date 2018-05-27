@@ -18,17 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.views.main;
+package org.marid.applib.spring.init;
 
-import com.vaadin.ui.VerticalLayout;
-import org.springframework.stereotype.Component;
+import java.lang.annotation.*;
 
-@Component
-public class MainPanel extends VerticalLayout {
-
-  public MainPanel(MainToolbar toolbar, MainView view) {
-    setSizeFull();
-    addComponent(toolbar);
-    addComponentsAndExpand(view);
-  }
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+public @interface InitAfterStart {
 }

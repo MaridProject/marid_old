@@ -60,6 +60,7 @@ public class UndertowConfiguration {
     info.setResourceManager(maridResourceManager);
     info.addServlets(servlets);
     info.addWelcomePage("/app");
+    info.setDefaultSessionTimeout(3600);
 
     authenticationMechanism.initialize(info);
 
@@ -96,6 +97,7 @@ public class UndertowConfiguration {
         .setServerOption(UndertowOptions.ENABLE_HTTP2, true)
         .setServerOption(UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH, true)
         .setServerOption(UndertowOptions.SSL_USER_CIPHER_SUITES_ORDER, true)
+        .setServerOption(UndertowOptions.ALLOW_UNESCAPED_CHARACTERS_IN_URL, false)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())

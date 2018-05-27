@@ -20,13 +20,19 @@
  */
 package org.marid.applib.spring.init;
 
+import org.marid.applib.spring.events.ContextStartedListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.MethodParameter;
+import org.springframework.lang.NonNull;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
@@ -45,6 +51,24 @@ public interface Inits {
         .filter(m -> m.isAnnotationPresent(Init.class))
         .collect(toCollection(() -> new TreeSet<>(comparing(m -> orderMap.getOrDefault(m.getName(), 0)))));
 
+    if (getClass().isAnnotationPresent(InitAfterStart.class)) {
+      context.addApplicationListener(new ContextStartedListener() {
+        @Override
+        public void onApplicationEvent(@NonNull ContextStartedEvent event) {
+          context.getApplicationListeners().remove(this);
+          try {
+            invoke(beanFactory, methods);
+          } catch (ReflectiveOperationException x) {
+            throw new IllegalStateException(x);
+          }
+        }
+      });
+    } else {
+      invoke(beanFactory, methods);
+    }
+  }
+
+  private void invoke(DefaultListableBeanFactory beanFactory, Set<Method> methods) throws ReflectiveOperationException {
     for (final var method : methods) {
       final var args = new Object[method.getParameterCount()];
       for (int i = 0; i < args.length; i++) {
