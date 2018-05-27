@@ -18,37 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.views.main;
+package org.marid.ui.webide.base.views.projects;
 
+import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.misc.StringUtils;
-import org.marid.ui.webide.base.views.main.MainViewManager.Project;
+import org.marid.ui.webide.base.dao.ProjectsDao;
 
 import java.util.Locale;
 
 @SpringComponent
-public class MainView extends Grid<Project> implements Inits {
+public class ProjectList extends Grid<String> implements Inits {
 
-  public MainView(MainViewManager model) {
+  public ProjectList(ProjectManager model) {
     super(model.getDataProvider());
     setSizeFull();
   }
 
   @Init
   public void initNameColumn(Strs strs) {
-    addColumn(Project::getName)
+    addColumn(ValueProvider.identity())
         .setCaption(strs.s("name"))
         .setId("name")
         .setExpandRatio(4);
   }
 
   @Init
-  public void initSizeColumn(Strs strs, Locale locale) {
-    addColumn(project -> StringUtils.sizeBinary(locale, project.getSize(), 2))
+  public void initSizeColumn(Strs strs, Locale locale, ProjectsDao dao) {
+    addColumn(project -> StringUtils.sizeBinary(locale, dao.getSize(project), 2))
         .setCaption(strs.s("size"))
         .setId("size")
         .setExpandRatio(1)

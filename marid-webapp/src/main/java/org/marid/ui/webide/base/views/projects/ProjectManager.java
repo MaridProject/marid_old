@@ -18,11 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.views.main;
+package org.marid.ui.webide.base.views.projects;
 
 import com.vaadin.data.provider.ListDataProvider;
 import org.marid.ui.webide.base.dao.ProjectsDao;
-import org.marid.ui.webide.base.model.ProjectInfo;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,58 +29,38 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
-public class MainViewManager {
+public class ProjectManager {
 
   private final ProjectsDao dao;
-  private final ArrayList<Project> projects = new ArrayList<>();
-  private final ListDataProvider<Project> dataProvider = new ListDataProvider<>(projects);
+  private final ArrayList<String> projects = new ArrayList<>();
+  private final ListDataProvider<String> dataProvider = new ListDataProvider<>(projects);
 
-  public MainViewManager(ProjectsDao dao) {
+  public ProjectManager(ProjectsDao dao) {
     this.dao = dao;
   }
 
   @PostConstruct
   public void refresh() {
     projects.clear();
-    dao.getProjectNames().stream().map(Project::new).forEach(projects::add);
+    projects.addAll(dao.getProjectNames());
     dataProvider.refreshAll();
   }
 
-  public void remove(Collection<Project> projects) {
-    projects.forEach(p -> dao.removeProject(p.name));
+  public void refresh(String project) {
+    dataProvider.refreshItem(project);
+  }
+
+  public void remove(Collection<String> projects) {
+    projects.forEach(dao::removeProject);
     refresh();
   }
 
-  public void add(ProjectInfo info) {
-    dao.saveOrModify(info);
+  public void add(String project) {
+    dao.tryCreate(project);
     refresh();
   }
 
-  public ListDataProvider<Project> getDataProvider() {
+  public ListDataProvider<String> getDataProvider() {
     return dataProvider;
-  }
-
-  public class Project {
-
-    private final String name;
-    private long size;
-
-    private Project(String name) {
-      this.name = name;
-      this.size = dao.getSize(name);
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public long getSize() {
-      return size;
-    }
-
-    public void refresh() {
-      size = dao.getSize(name);
-      dataProvider.refreshItem(this);
-    }
   }
 }

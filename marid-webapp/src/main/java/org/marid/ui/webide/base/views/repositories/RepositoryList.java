@@ -18,17 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.model;
+package org.marid.ui.webide.base.views.repositories;
 
-public class ProjectInfo {
+import com.vaadin.ui.ListSelect;
+import org.springframework.stereotype.Component;
 
-  private transient String name;
+@Component
+public class RepositoryList extends ListSelect<String>{
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+  public RepositoryList(RepositoryManager manager) {
+    super(null, manager.getDataProvider());
   }
 }

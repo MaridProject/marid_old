@@ -20,61 +20,75 @@
  */
 package org.marid.ui.webide.base.dao;
 
-import org.marid.io.IOLongSupplier;
-import org.marid.io.IOSupplier;
 import org.marid.ui.webide.base.UserDirectories;
-import org.marid.ui.webide.base.model.ProjectInfo;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.nio.file.Files.walk;
 
 @Component
 public class ProjectsDao {
 
   private final Path directory;
+  private final Logger logger;
 
-  public ProjectsDao(UserDirectories userDirectories) {
+  public ProjectsDao(UserDirectories userDirectories, Logger logger) {
     this.directory = userDirectories.getProjectsDirectory();
+    this.logger = logger;
   }
 
   public List<String> getProjectNames() {
-    return IOSupplier.supply(() -> Files.list(directory)
-        .filter(Files::isDirectory)
-        .map(Path::getFileName)
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-  }
-
-  public long getSize(String projectName) {
-    return IOSupplier.supply(() -> Files.walk(directory.resolve(projectName))
-        .filter(Files::isRegularFile)
-        .mapToLong(p -> IOLongSupplier.supply(() -> Files.size(p)))
-        .sum()
-    );
-  }
-
-  public Optional<ProjectInfo> load(String projectName) {
-    final Path path = directory.resolve(projectName);
-    if (Files.isDirectory(path)) {
-      final ProjectInfo projectInfo = new ProjectInfo();
-      projectInfo.setName(projectName);
-      return Optional.of(projectInfo);
-    } else {
-      return Optional.empty();
+    try {
+      return Files.list(directory)
+          .filter(Files::isDirectory)
+          .map(Path::getFileName)
+          .map(Path::toString)
+          .collect(Collectors.toUnmodifiableList());
+    } catch (NoSuchFileException x) {
+      return List.of();
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
     }
   }
 
-  public void saveOrModify(ProjectInfo projectInfo) {
+  public long getSize(String projectName) {
     try {
-      final Path path = directory.resolve(projectInfo.getName());
+      return walk(directory.resolve(projectName))
+          .filter(Files::isRegularFile)
+          .mapToLong(f -> {
+            try {
+              return Files.size(f);
+            } catch (NoSuchFileException x) {
+              return 0L;
+            } catch (IOException x) {
+              throw new UncheckedIOException(x);
+            }
+          })
+          .sum();
+    } catch (NoSuchFileException x) {
+      return 0L;
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
+
+  public boolean exists(String projectName) {
+    final Path path = directory.resolve(projectName);
+    return Files.isDirectory(path);
+  }
+
+  public void tryCreate(String projectName) {
+    try {
+      final Path path = directory.resolve(projectName);
       Files.createDirectories(path);
     } catch (IOException x) {
       throw new UncheckedIOException(x);

@@ -33,13 +33,22 @@ public class UserDirectories {
 
   private final Path userDirectory;
   private final Path projectsDirectory;
+  private final Path repositoriesDirectory;
+  private final Path artifactsFile;
 
   public UserDirectories(Directories directories, CommonProfile profile) throws IOException {
     userDirectory = directories.getUsers().resolve(profile.getEmail());
     projectsDirectory = userDirectory.resolve("projects");
+    repositoriesDirectory = userDirectory.resolve("repositories");
+    artifactsFile = userDirectory.resolve("artifacts.lst");
 
     Files.createDirectories(userDirectory);
     Files.createDirectories(projectsDirectory);
+    Files.createDirectories(repositoriesDirectory);
+
+    if (!Files.isRegularFile(artifactsFile)) {
+      Files.createFile(artifactsFile);
+    }
   }
 
   public Path getUserDirectory() {
@@ -48,5 +57,13 @@ public class UserDirectories {
 
   public Path getProjectsDirectory() {
     return projectsDirectory;
+  }
+
+  public Path getRepositoriesDirectory() {
+    return repositoriesDirectory;
+  }
+
+  public Path getArtifactsFile() {
+    return artifactsFile;
   }
 }

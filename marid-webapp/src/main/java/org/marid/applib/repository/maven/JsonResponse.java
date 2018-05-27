@@ -18,17 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.views.main;
+package org.marid.applib.repository.maven;
 
-import com.vaadin.ui.VerticalLayout;
-import org.springframework.stereotype.Component;
+public class JsonResponse {
 
-@Component
-public class MainPanel extends VerticalLayout {
+  public Response response;
 
-  public MainPanel(MainToolbar toolbar, MainView view) {
-    setSizeFull();
-    addComponent(toolbar);
-    addComponentsAndExpand(view);
+  public static class Response {
+
+    public int numFound;
+    public int start;
+    public Doc[] docs;
+  }
+
+  public static class Doc {
+
+    public String id;
+    public String g;
+    public String a;
+    public String latestVersion;
+    public String p;
+    public long timestamp;
+    public int versionCount;
+    public String[] ec;
   }
 }
