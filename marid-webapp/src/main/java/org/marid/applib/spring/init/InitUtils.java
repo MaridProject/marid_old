@@ -37,7 +37,7 @@ class InitUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(InitUtils.class);
 
   static final MaridClassValue<Map<String, Integer>> METHOD_ORDERS = new MaridClassValue<>(c -> () -> {
-    final var name = c.getSimpleName() + "_MethodOrder.properties";
+    final var name = c.getSimpleName() + ".methods";
 
     try (final var inputStream = c.getResourceAsStream(name)) {
 

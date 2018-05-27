@@ -72,7 +72,7 @@ public class PreserveMethodOrderProcessor extends AbstractProcessor {
               }
 
               final var pkg = ((PackageElement) type.getEnclosingElement()).getQualifiedName();
-              final var name = type.getSimpleName() + "_MethodOrder.properties";
+              final var name = type.getSimpleName() + ".methods";
 
               try {
                 final var file = filer.createResource(StandardLocation.CLASS_OUTPUT, pkg, name);

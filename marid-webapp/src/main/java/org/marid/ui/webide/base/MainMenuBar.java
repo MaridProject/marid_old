@@ -25,9 +25,9 @@ import com.vaadin.ui.MenuBar;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
-import org.springframework.stereotype.Component;
+import org.marid.spring.annotation.SpringComponent;
 
-@Component
+@SpringComponent
 public class MainMenuBar extends MenuBar implements Inits {
 
   private final MenuItem sessionItem;
