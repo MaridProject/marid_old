@@ -26,12 +26,12 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import org.marid.applib.annotation.PrototypeScoped;
-import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Msgs;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
+import org.marid.spring.annotation.PrototypeScoped;
+import org.marid.spring.annotation.SpringComponent;
 
 import java.util.concurrent.atomic.AtomicReference;
 

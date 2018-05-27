@@ -224,6 +224,7 @@
     <module>marid-types</module>
     <module>marid-runtime</module>
     <module>marid-webapp</module>
+    <module>marid-spring</module>
   </modules>
 
   <build>

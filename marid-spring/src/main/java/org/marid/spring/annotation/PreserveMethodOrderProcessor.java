@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.processors;
+package org.marid.spring.annotation;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -35,7 +35,7 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 import static javax.tools.Diagnostic.Kind.NOTE;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_10)
-@SupportedAnnotationTypes({"org.marid.*"})
+@SupportedAnnotationTypes({"org.marid.spring.annotation.SpringComponent"})
 public class PreserveMethodOrderProcessor extends AbstractProcessor {
 
   private Filer filer;

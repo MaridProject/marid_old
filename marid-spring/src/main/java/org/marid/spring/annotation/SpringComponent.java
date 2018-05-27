@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-webapp
+ * marid-spring
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.annotation;
+package org.marid.spring.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
@@ -28,8 +28,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
 @Component
 public @interface SpringComponent {
 

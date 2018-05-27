@@ -22,11 +22,11 @@ package org.marid.ui.webide.base;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.TabSheet;
-import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.InitAfterStart;
 import org.marid.applib.spring.init.Inits;
+import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.views.projects.ProjectsPanel;
 import org.marid.ui.webide.base.views.repositories.RepositoryForm;
 import org.marid.ui.webide.base.views.session.SessionForm;

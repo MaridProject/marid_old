@@ -26,10 +26,10 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.TextField;
-import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
+import org.marid.spring.annotation.SpringComponent;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.Gender;
 

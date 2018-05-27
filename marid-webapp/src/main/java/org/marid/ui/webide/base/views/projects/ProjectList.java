@@ -22,11 +22,11 @@ package org.marid.ui.webide.base.views.projects;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
-import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.misc.StringUtils;
+import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.dao.ProjectsDao;
 
 import java.util.Locale;

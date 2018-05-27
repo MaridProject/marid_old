@@ -22,10 +22,10 @@ package org.marid.ui.webide.base.views.repositories;
 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import org.marid.applib.annotation.SpringComponent;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.applib.utils.ToolbarSupport;
+import org.marid.spring.annotation.SpringComponent;
 
 import static com.vaadin.icons.VaadinIcons.FILE_REMOVE;
 import static com.vaadin.icons.VaadinIcons.REFRESH;

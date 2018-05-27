@@ -19,7 +19,7 @@
  * #L%
  */
 
-package org.marid.applib.annotation;
+package org.marid.spring.annotation;
 
 import org.springframework.context.annotation.Scope;
 

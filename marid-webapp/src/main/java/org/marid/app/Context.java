@@ -21,7 +21,7 @@
 
 package org.marid.app;
 
-import org.marid.applib.annotation.PrototypeScoped;
+import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.applib.spring.LoggingPostProcessor;
 import org.marid.logging.MaridLogManager;
 import org.slf4j.Logger;
