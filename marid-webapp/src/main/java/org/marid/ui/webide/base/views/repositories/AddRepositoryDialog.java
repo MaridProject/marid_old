@@ -18,60 +18,71 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.views.projects;
+package org.marid.ui.webide.base.views.repositories;
 
 import com.vaadin.data.Binder;
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
+import org.marid.applib.components.PropertyEditor;
 import org.marid.applib.l10n.Msgs;
 import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
+import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.annotation.SpringComponent;
 
-import java.io.File;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Properties;
+
+import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 @PrototypeScoped
-public class AddProjectDialog extends Window implements Inits {
+public class AddRepositoryDialog extends Window implements Inits {
 
   private final FormLayout layout = new FormLayout();
-  private final AtomicReference<String> nameRef = new AtomicReference<>();
-  private final Binder<AtomicReference<String>> binder = new Binder<>();
+  private final Binder<AddRepositoryDialog> binder = new Binder<>();
 
-  public AddProjectDialog(Strs strs) {
-    super(strs.s("addProject"));
-    setModal(true);
+  private String name;
+  private Properties properties;
+
+  public AddRepositoryDialog(Strs strs) {
+    super(strs.s("addRepository"));
     setContent(layout);
+    setModal(true);
     layout.setSpacing(true);
     layout.setMargin(true);
   }
 
   @Init
   public void initName(Strs strs, Msgs msgs) {
-    final var nameField = new TextField(strs.s("name"));
-    layout.addComponent(nameField);
-    binder.forField(nameField)
-        .asRequired(msgs.m("nameNonEmpty"))
-        .withValidator(new StringLengthValidator(msgs.m("projectNameValidationLength"), 2, 32))
-        .withValidator(
-            v -> !v.contains("..") && !v.contains(File.separator),
-            c -> msgs.m("projectNameContainsPathCharacters")
-        )
-        .bind(AtomicReference::get, AtomicReference::set);
+    final var field = new TextField(strs.s("name"));
+    layout.addComponent(field);
+    binder
+        .forField(field)
+        .asRequired(c -> msgs.m("valueIsRequired"))
+        .withValidator(StringValidators.fileNameValidator())
+        .bind(d -> d.name, (d, v) -> d.name = v);
   }
 
   @Init
-  public void initButton(Strs strs, ProjectManager manager) {
+  public void initProperties() {
+    final var grid = new PropertyEditor();
+    grid.setCaption(s("properties"));
+    layout.addComponent(grid);
+    binder
+        .forField(grid)
+        .bind(d -> d.properties, (d, v) -> d.properties = v);
+  }
+
+  @Init
+  public void initButton(Strs strs) {
     final var button = new Button(strs.s("add"));
     button.addClickListener(event -> {
-      if (binder.writeBeanIfValid(nameRef)) {
-        manager.add(nameRef.get());
+      if (binder.writeBeanIfValid(this)) {
+
         close();
       }
     });

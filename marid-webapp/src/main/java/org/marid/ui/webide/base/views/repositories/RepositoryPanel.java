@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-spring
+ * marid-webapp
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,20 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.ui.webide.base.views.repositories;
 
-package org.marid.spring.annotation;
+import com.vaadin.ui.VerticalLayout;
+import org.marid.spring.annotation.SpringComponent;
 
-import org.springframework.context.annotation.Scope;
+@SpringComponent
+public class RepositoryPanel extends VerticalLayout {
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-
-@Scope(SCOPE_PROTOTYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
-public @interface PrototypeScoped {
+  public RepositoryPanel(RepositoryToolbar toolbar, RepositoryList list) {
+    setSizeFull();
+    addComponent(toolbar);
+    addComponentsAndExpand(list);
+  }
 }

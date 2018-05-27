@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-spring
+ * marid-webapp
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,20 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.applib.validators;
 
-package org.marid.spring.annotation;
+import com.vaadin.data.Validator;
 
-import org.springframework.context.annotation.Scope;
+import java.io.File;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import static com.vaadin.data.ValidationResult.error;
+import static com.vaadin.data.ValidationResult.ok;
+import static org.marid.applib.utils.Locales.m;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+public interface StringValidators {
 
-@Scope(SCOPE_PROTOTYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
-public @interface PrototypeScoped {
+  static Validator<String> fileNameValidator() {
+    return (c, ctx) -> {
+      if (c.isEmpty()) {
+        return error(m(ctx, "fileNameIsEmpty"));
+      }
+
+      if (c.startsWith(".")) {
+        return error(m(ctx, "fileNameStartsWithDot"));
+      }
+
+      if (c.contains(File.separator) || c.contains("/") || c.contains("..")) {
+        return error(m(ctx, "fileNameContainsPathCharacters"));
+      }
+
+      return ok();
+    };
+  }
 }

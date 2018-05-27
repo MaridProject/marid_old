@@ -28,5 +28,6 @@ public class RepositoryList extends ListSelect<String>{
 
   public RepositoryList(RepositoryManager manager) {
     super(null, manager.getDataProvider());
+    setSizeFull();
   }
 }

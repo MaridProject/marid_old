@@ -27,8 +27,9 @@ import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.InitAfterStart;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
+import org.marid.ui.webide.base.views.artifacts.ArtifactPanel;
 import org.marid.ui.webide.base.views.projects.ProjectsPanel;
-import org.marid.ui.webide.base.views.repositories.RepositoryForm;
+import org.marid.ui.webide.base.views.repositories.RepositoryPanel;
 import org.marid.ui.webide.base.views.session.SessionForm;
 
 @SpringComponent
@@ -50,7 +51,12 @@ public class MainTabs extends TabSheet implements Inits {
   }
 
   @Init
-  public void initRepositories(Strs strs, RepositoryForm repositoryForm) {
-    addTab(repositoryForm, strs.s("repositories"), VaadinIcons.LINES_LIST);
+  public void initRepositories(Strs strs, RepositoryPanel repositoryPanel) {
+    addTab(repositoryPanel, strs.s("repositories"), VaadinIcons.LINES_LIST);
+  }
+
+  @Init
+  public void initArtifacts(Strs strs, ArtifactPanel panel) {
+    addTab(panel, strs.s("artifacts"), VaadinIcons.BOOK);
   }
 }

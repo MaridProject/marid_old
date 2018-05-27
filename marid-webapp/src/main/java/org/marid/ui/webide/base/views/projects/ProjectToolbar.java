@@ -24,15 +24,15 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
-import org.marid.applib.utils.ToolbarSupport;
 import org.marid.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.ObjectFactory;
 
 import static com.vaadin.icons.VaadinIcons.*;
 import static com.vaadin.ui.themes.ValoTheme.WINDOW_TOP_TOOLBAR;
+import static org.marid.applib.utils.ToolbarSupport.button;
 
 @SpringComponent
-public class ProjectToolbar extends HorizontalLayout implements Inits, ToolbarSupport {
+public class ProjectToolbar extends HorizontalLayout implements Inits {
 
   private final ProjectManager manager;
   private final ProjectList list;

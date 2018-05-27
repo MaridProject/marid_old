@@ -24,15 +24,15 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
-import org.marid.applib.utils.ToolbarSupport;
 import org.marid.spring.annotation.SpringComponent;
+import org.springframework.beans.factory.ObjectFactory;
 
-import static com.vaadin.icons.VaadinIcons.FILE_REMOVE;
-import static com.vaadin.icons.VaadinIcons.REFRESH;
+import static com.vaadin.icons.VaadinIcons.*;
 import static com.vaadin.ui.themes.ValoTheme.WINDOW_TOP_TOOLBAR;
+import static org.marid.applib.utils.ToolbarSupport.button;
 
 @SpringComponent
-public class RepositoryToolbar extends HorizontalLayout implements Inits, ToolbarSupport {
+public class RepositoryToolbar extends HorizontalLayout implements Inits {
 
   private final RepositoryManager manager;
   private final RepositoryList list;
@@ -41,6 +41,11 @@ public class RepositoryToolbar extends HorizontalLayout implements Inits, Toolba
     this.manager = manager;
     this.list = list;
     addStyleName(WINDOW_TOP_TOOLBAR);
+  }
+
+  @Init
+  public void initAdd(ObjectFactory<AddRepositoryDialog> dialogFactory) {
+    addComponent(button(FILE_ADD, e -> getUI().addWindow(dialogFactory.getObject()), "addRepository"));
   }
 
   @Init

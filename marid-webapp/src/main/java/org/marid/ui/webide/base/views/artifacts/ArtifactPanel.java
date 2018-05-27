@@ -18,12 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.views.repositories;
+package org.marid.ui.webide.base.views.artifacts;
 
-import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.VerticalLayout;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RepositoryForm extends VerticalSplitPanel {
+public class ArtifactPanel extends VerticalLayout {
 
+  public ArtifactPanel(ArtifactTree tree) {
+    setSizeFull();
+    addComponent(tree);
+  }
 }

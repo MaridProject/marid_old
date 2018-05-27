@@ -29,10 +29,10 @@ import org.marid.l10n.L10n;
 
 public interface ToolbarSupport {
 
-  default Button button(Resource icon,
-                        Button.ClickListener clickListener,
-                        @PropertyKey(resourceBundle = "res.strings") String description,
-                        Object... params) {
+  static Button button(Resource icon,
+                       Button.ClickListener clickListener,
+                       @PropertyKey(resourceBundle = "res.strings") String description,
+                       Object... params) {
     final var session = VaadinSession.getCurrent();
     final var locale = session.getLocale();
     final var button = new Button(icon, clickListener);

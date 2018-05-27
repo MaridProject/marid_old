@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-util
+ * marid-spring
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
