@@ -8,27 +8,33 @@
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 package org.marid.ui.webide.base.views.projects;
 
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import org.marid.applib.dialog.Dialog;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
-import org.springframework.beans.factory.ObjectFactory;
+
+import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.vaadin.icons.VaadinIcons.*;
 import static com.vaadin.ui.themes.ValoTheme.WINDOW_TOP_TOOLBAR;
+import static org.marid.applib.utils.Locales.m;
+import static org.marid.applib.utils.Locales.s;
 import static org.marid.applib.utils.ToolbarSupport.button;
 
 @SpringComponent
@@ -44,8 +50,23 @@ public class ProjectToolbar extends HorizontalLayout implements Inits {
   }
 
   @Init
-  public void initAdd(ObjectFactory<AddProjectDialog> dialogFactory) {
-    addComponent(button(FOLDER_ADD, e -> getUI().addWindow(dialogFactory.getObject()), "addProject"));
+  public void initAdd() {
+    addComponent(button(
+        FOLDER_ADD,
+        e -> new Dialog<>(s("addProject"), new AtomicReference<String>(), true)
+            .addTextField(s("name"), "project", (f, b) -> b
+                .asRequired(m("nameNonEmpty"))
+                .withValidator(new StringLengthValidator(m("projectNameValidationLength"), 2, 32))
+                .withValidator(
+                    v -> !v.contains("..") && !v.contains(File.separator),
+                    c -> m("projectNameContainsPathCharacters")
+                )
+                .bind(AtomicReference::get, AtomicReference::set))
+            .addCancelButton(s("cancel"))
+            .addSubmitButton(s("addProject"), ref -> manager.add(ref.get()))
+            .show(),
+        "addProject")
+    );
   }
 
   @Init
