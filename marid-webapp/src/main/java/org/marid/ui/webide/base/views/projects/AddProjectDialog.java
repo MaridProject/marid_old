@@ -26,8 +26,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
-import org.marid.applib.l10n.Msgs;
-import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.PrototypeScoped;
@@ -35,6 +33,9 @@ import org.marid.spring.annotation.SpringComponent;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.marid.applib.utils.Locales.m;
+import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 @PrototypeScoped
@@ -44,8 +45,8 @@ public class AddProjectDialog extends Window implements Inits {
   private final AtomicReference<String> nameRef = new AtomicReference<>();
   private final Binder<AtomicReference<String>> binder = new Binder<>();
 
-  public AddProjectDialog(Strs strs) {
-    super(strs.s("addProject"));
+  public AddProjectDialog() {
+    super(s("addProject"));
     setModal(true);
     setContent(layout);
     layout.setSpacing(true);
@@ -53,22 +54,23 @@ public class AddProjectDialog extends Window implements Inits {
   }
 
   @Init
-  public void initName(Strs strs, Msgs msgs) {
-    final var nameField = new TextField(strs.s("name"));
+  public void initName() {
+    final var nameField = new TextField(s("name"));
+    nameField.setWidth(100, Unit.PERCENTAGE);
     layout.addComponent(nameField);
     binder.forField(nameField)
-        .asRequired(msgs.m("nameNonEmpty"))
-        .withValidator(new StringLengthValidator(msgs.m("projectNameValidationLength"), 2, 32))
+        .asRequired(m("nameNonEmpty"))
+        .withValidator(new StringLengthValidator(m("projectNameValidationLength"), 2, 32))
         .withValidator(
             v -> !v.contains("..") && !v.contains(File.separator),
-            c -> msgs.m("projectNameContainsPathCharacters")
+            c -> m("projectNameContainsPathCharacters")
         )
         .bind(AtomicReference::get, AtomicReference::set);
   }
 
   @Init
-  public void initButton(Strs strs, ProjectManager manager) {
-    final var button = new Button(strs.s("add"));
+  public void initButton(ProjectManager manager) {
+    final var button = new Button(s("add"));
     button.addClickListener(event -> {
       if (binder.writeBeanIfValid(nameRef)) {
         manager.add(nameRef.get());

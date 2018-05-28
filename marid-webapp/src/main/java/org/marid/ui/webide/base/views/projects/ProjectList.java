@@ -22,7 +22,6 @@ package org.marid.ui.webide.base.views.projects;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
-import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.misc.StringUtils;
@@ -30,6 +29,8 @@ import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.dao.ProjectsDao;
 
 import java.util.Locale;
+
+import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 public class ProjectList extends Grid<String> implements Inits {
@@ -40,17 +41,17 @@ public class ProjectList extends Grid<String> implements Inits {
   }
 
   @Init
-  public void initNameColumn(Strs strs) {
+  public void initNameColumn() {
     addColumn(ValueProvider.identity())
-        .setCaption(strs.s("name"))
+        .setCaption(s("name"))
         .setId("name")
         .setExpandRatio(4);
   }
 
   @Init
-  public void initSizeColumn(Strs strs, Locale locale, ProjectsDao dao) {
+  public void initSizeColumn(Locale locale, ProjectsDao dao) {
     addColumn(project -> StringUtils.sizeBinary(locale, dao.getSize(project), 2))
-        .setCaption(strs.s("size"))
+        .setCaption(s("size"))
         .setId("size")
         .setExpandRatio(1)
         .setMinimumWidthFromContent(true);

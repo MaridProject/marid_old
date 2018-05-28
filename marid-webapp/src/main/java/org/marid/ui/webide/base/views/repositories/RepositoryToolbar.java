@@ -25,7 +25,6 @@ import com.vaadin.ui.Label;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
-import org.springframework.beans.factory.ObjectFactory;
 
 import static com.vaadin.icons.VaadinIcons.*;
 import static com.vaadin.ui.themes.ValoTheme.WINDOW_TOP_TOOLBAR;
@@ -34,23 +33,22 @@ import static org.marid.applib.utils.ToolbarSupport.button;
 @SpringComponent
 public class RepositoryToolbar extends HorizontalLayout implements Inits {
 
-  private final RepositoryManager manager;
   private final RepositoryList list;
 
-  public RepositoryToolbar(RepositoryManager manager, RepositoryList list) {
-    this.manager = manager;
+  public RepositoryToolbar(RepositoryList list) {
     this.list = list;
     addStyleName(WINDOW_TOP_TOOLBAR);
   }
 
   @Init
-  public void initAdd(ObjectFactory<AddRepositoryDialog> dialogFactory) {
-    addComponent(button(FILE_ADD, e -> getUI().addWindow(dialogFactory.getObject()), "addRepository"));
+  public void initAdd() {
+    addComponent(button(FILE_ADD, e -> {
+    }, "addRepository"));
   }
 
   @Init
   public void initRemove() {
-    final var button = button(FILE_REMOVE, e -> manager.remove(list.getSelectedItems()), "removeItem");
+    final var button = button(FILE_REMOVE, e -> list.getDataProvider(), "removeItem");
     final Runnable selectionUpdater = () -> button.setVisible(!list.getSelectedItems().isEmpty());
     selectionUpdater.run();
     list.addSelectionListener(event -> selectionUpdater.run());
@@ -64,7 +62,7 @@ public class RepositoryToolbar extends HorizontalLayout implements Inits {
   }
 
   @Init
-  public void initRefresh() {
-    addComponent(button(REFRESH, e -> manager.refresh(), "refresh"));
+  public void initSave() {
+    addComponent(button(REFRESH, e -> {}, "refresh"));
   }
 }

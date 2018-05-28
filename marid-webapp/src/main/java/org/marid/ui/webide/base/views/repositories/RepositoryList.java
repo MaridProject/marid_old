@@ -20,14 +20,39 @@
  */
 package org.marid.ui.webide.base.views.repositories;
 
-import com.vaadin.ui.ListSelect;
-import org.springframework.stereotype.Component;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.TextField;
+import org.marid.applib.spring.init.Init;
+import org.marid.applib.spring.init.Inits;
+import org.marid.spring.annotation.SpringComponent;
+import org.marid.ui.webide.base.model.Repository;
 
-@Component
-public class RepositoryList extends ListSelect<String>{
+import static org.marid.applib.utils.Locales.s;
 
-  public RepositoryList(RepositoryManager manager) {
-    super(null, manager.getDataProvider());
+@SpringComponent
+public class RepositoryList extends Grid<Repository> implements Inits {
+
+  public RepositoryList() {
     setSizeFull();
+    setSelectionMode(SelectionMode.SINGLE);
+  }
+
+  @Init
+  public void initSelectorColumn() {
+    addColumn(Repository::getSelector)
+        .setCaption(s("selector"))
+        .setExpandRatio(1);
+  }
+
+  @Init
+  public void initNameColumn() {
+    addColumn(Repository::getName)
+        .setCaption(s("value"))
+        .setExpandRatio(4)
+        .setEditorBinding(getEditor().getBinder()
+            .forField(new TextField())
+            .bind(Repository::getName, Repository::setName)
+        )
+        .setEditable(true);
   }
 }

@@ -26,7 +26,6 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.TextField;
-import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
@@ -35,6 +34,7 @@ import org.pac4j.core.profile.Gender;
 
 import static com.vaadin.icons.VaadinIcons.FEMALE;
 import static com.vaadin.icons.VaadinIcons.MALE;
+import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 public class SessionForm extends FormLayout implements Inits {
@@ -46,11 +46,11 @@ public class SessionForm extends FormLayout implements Inits {
   }
 
   @Init
-  public void initProfile(CommonProfile profile, Strs strs) {
-    addField(strs.s("user"), profile.getFirstName() + " " + profile.getFamilyName(), profile.getGender() == Gender.MALE ? MALE : FEMALE);
-    addField(strs.s("email"), profile.getEmail(), VaadinIcons.MAILBOX);
-    addComponent(new Image(strs.s("photo"), new ExternalResource(profile.getPictureUrl().toASCIIString())));
-    addField(strs.s("locale"), profile.getLocale().toString(), VaadinIcons.LOCATION_ARROW_CIRCLE);
+  public void initProfile(CommonProfile profile) {
+    addField(s("user"), profile.getFirstName() + " " + profile.getFamilyName(), profile.getGender() == Gender.MALE ? MALE : FEMALE);
+    addField(s("email"), profile.getEmail(), VaadinIcons.MAILBOX);
+    addComponent(new Image(s("photo"), new ExternalResource(profile.getPictureUrl().toASCIIString())));
+    addField(s("locale"), profile.getLocale().toString(), VaadinIcons.LOCATION_ARROW_CIRCLE);
   }
 
   private void addField(String label, String value, Resource icon) {

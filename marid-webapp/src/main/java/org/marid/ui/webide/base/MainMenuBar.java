@@ -22,25 +22,26 @@ package org.marid.ui.webide.base;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.MenuBar;
-import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
+
+import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 public class MainMenuBar extends MenuBar implements Inits {
 
   private final MenuItem sessionItem;
 
-  public MainMenuBar(Strs strs) {
-    sessionItem = addItem(strs.s("session"), VaadinIcons.USER, null);
+  public MainMenuBar() {
+    sessionItem = addItem(s("session"), VaadinIcons.USER, null);
     setWidth(100, Unit.PERCENTAGE);
     setHeight(-1, Unit.PIXELS);
   }
 
   @Init
-  public void logout(Strs strs) {
-    sessionItem.addItem(strs.s("logout"), VaadinIcons.EXIT, item -> {
+  public void logout() {
+    sessionItem.addItem(s("logout"), VaadinIcons.EXIT, item -> {
       final var ui = getUI();
       ui.getSession().close();
       ui.getPage().setLocation("/app/logout");

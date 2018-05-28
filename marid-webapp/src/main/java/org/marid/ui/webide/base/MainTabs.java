@@ -22,7 +22,6 @@ package org.marid.ui.webide.base;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.TabSheet;
-import org.marid.applib.l10n.Strs;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.InitAfterStart;
 import org.marid.applib.spring.init.Inits;
@@ -31,6 +30,8 @@ import org.marid.ui.webide.base.views.artifacts.ArtifactPanel;
 import org.marid.ui.webide.base.views.projects.ProjectsPanel;
 import org.marid.ui.webide.base.views.repositories.RepositoryPanel;
 import org.marid.ui.webide.base.views.session.SessionForm;
+
+import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 @InitAfterStart
@@ -41,22 +42,22 @@ public class MainTabs extends TabSheet implements Inits {
   }
 
   @Init
-  public void initProjects(Strs strs, ProjectsPanel projectsPanel) {
-    addTab(projectsPanel, strs.s("projects"), VaadinIcons.PACKAGE);
+  public void initProjects(ProjectsPanel projectsPanel) {
+    addTab(projectsPanel, s("projects"), VaadinIcons.PACKAGE);
   }
 
   @Init
-  public void initSession(Strs strs, SessionForm sessionForm) {
-    addTab(sessionForm, strs.s("session"), VaadinIcons.USER);
+  public void initSession(SessionForm sessionForm) {
+    addTab(sessionForm, s("session"), VaadinIcons.USER);
   }
 
   @Init
-  public void initRepositories(Strs strs, RepositoryPanel repositoryPanel) {
-    addTab(repositoryPanel, strs.s("repositories"), VaadinIcons.LINES_LIST);
+  public void initRepositories(RepositoryPanel repositoryPanel) {
+    addTab(repositoryPanel, s("repositories"), VaadinIcons.LINES_LIST);
   }
 
   @Init
-  public void initArtifacts(Strs strs, ArtifactPanel panel) {
-    addTab(panel, strs.s("artifacts"), VaadinIcons.BOOK);
+  public void initArtifacts(ArtifactPanel panel) {
+    addTab(panel, s("artifacts"), VaadinIcons.BOOK);
   }
 }

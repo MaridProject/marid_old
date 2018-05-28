@@ -18,22 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.l10n;
+package org.marid.ui.webide.base.model;
 
-import org.jetbrains.annotations.PropertyKey;
-import org.marid.l10n.L10n;
+public class Repository {
 
-import java.util.Locale;
+  private final String selector;
+  private String name;
 
-public class Strs {
-
-  private final Locale locale;
-
-  public Strs(Locale locale) {
-    this.locale = locale;
+  public Repository(String selector, String name) {
+    this.selector = selector;
+    this.name = name;
   }
 
-  public String s(@PropertyKey(resourceBundle = "res.strings") String key, Object... args) {
-    return L10n.s(locale, key, args);
+  public String getSelector() {
+    return selector;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

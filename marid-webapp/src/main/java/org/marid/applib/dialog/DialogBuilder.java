@@ -18,22 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.l10n;
+package org.marid.applib.dialog;
 
-import org.jetbrains.annotations.PropertyKey;
-import org.marid.l10n.L10n;
-
-import java.util.Locale;
-
-public class Msgs {
-
-  private final Locale locale;
-
-  public Msgs(Locale locale) {
-    this.locale = locale;
-  }
-
-  public String m(@PropertyKey(resourceBundle = "res.messages") String key, Object... args) {
-    return L10n.m(locale, key, args);
-  }
+public class DialogBuilder {
 }

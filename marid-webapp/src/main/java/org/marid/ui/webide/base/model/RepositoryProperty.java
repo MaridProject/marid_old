@@ -18,28 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base;
+package org.marid.ui.webide.base.model;
 
-import com.vaadin.server.VaadinSession;
-import org.pac4j.core.context.Pac4jConstants;
-import org.pac4j.core.profile.CommonProfile;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+public class RepositoryProperty {
 
-import java.util.LinkedHashMap;
-import java.util.Locale;
+  private String key;
+  private String value;
 
-@Component
-public class UIConfiguration {
-
-  @Bean
-  public Locale locale(VaadinSession session) {
-    return session.getLocale();
+  public String getKey() {
+    return key;
   }
 
-  @Bean
-  public CommonProfile userProfile(VaadinSession session) {
-    final LinkedHashMap map = (LinkedHashMap) session.getSession().getAttribute(Pac4jConstants.USER_PROFILES);
-    return (CommonProfile) map.values().iterator().next();
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
   }
 }
