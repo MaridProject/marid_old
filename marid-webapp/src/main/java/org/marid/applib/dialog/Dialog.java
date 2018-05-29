@@ -8,12 +8,12 @@
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -24,10 +24,8 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.Binder.BindingBuilder;
 import com.vaadin.data.HasValue;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
 
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -38,14 +36,13 @@ public class Dialog<T> extends Window {
   private final Binder<T> binder = new Binder<>();
   private final FormLayout form = new FormLayout();
   private final HorizontalLayout buttons = new HorizontalLayout();
-  private final Registration attachRegistration;
-  private final Registration initRegistration;
 
-  public Dialog(String caption, T bean, boolean modal) {
+  public Dialog(String caption, T bean, boolean modal, int width, int height) {
     super(caption, new VerticalLayout());
     this.bean = bean;
     setModal(modal);
-    setId(UUID.randomUUID().toString());
+    setWidth(width, Unit.PIXELS);
+    setHeight(height, Unit.PIXELS);
 
     form.setSpacing(true);
     form.setMargin(true);
@@ -53,32 +50,14 @@ public class Dialog<T> extends Window {
 
     buttons.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
     buttons.setWidth(100, Unit.PERCENTAGE);
+    buttons.setSpacing(true);
+    buttons.setMargin(true);
 
-    getContent().setSpacing(true);
-    getContent().setMargin(true);
     getContent().addComponent(form);
     getContent().setExpandRatio(form, 1);
     getContent().addComponent(buttons);
     getContent().setExpandRatio(buttons, 0);
-
-    attachRegistration = addAttachListener(e -> {
-      final var dialog = this;
-      dialog.attachRegistration.remove();
-      final var javaScript = JavaScript.getCurrent();
-      javaScript.addFunction("dialogClientHeight", args -> {
-        javaScript.removeFunction("dialogClientHeight");
-        final var height = args.getNumber(0);
-        final var width = args.getNumber(1);
-        setHeight((float) height, Unit.PIXELS);
-        setWidth((float) width, Unit.PIXELS);
-        getContent().setSizeFull();
-      });
-    });
-    initRegistration = addFocusListener(e -> {
-      final var dialog = this;
-      dialog.initRegistration.remove();
-      JavaScript.eval("dialogClientHeight(document.getElementById('" + getId() + "').clientHeight,document.getElementById('" + getId() + "').clientWidth)");
-    });
+    getContent().setSizeFull();
   }
 
   @SafeVarargs
