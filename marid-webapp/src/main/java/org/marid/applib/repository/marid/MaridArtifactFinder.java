@@ -18,41 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.model;
+package org.marid.applib.repository.marid;
 
-import java.util.ArrayList;
+import org.marid.applib.repository.Artifact;
+import org.marid.applib.repository.ArtifactFinder;
 
-public class Repository {
+import java.util.List;
 
-  private String selector;
-  private String name;
-  private final ArrayList<RepositoryProperty> properties = new ArrayList<>();
+public class MaridArtifactFinder implements ArtifactFinder {
 
-  public Repository() {
-  }
-
-  public Repository(String selector, String name) {
-    this.selector = selector;
-    this.name = name;
-  }
-
-  public String getSelector() {
-    return selector;
-  }
-
-  public void setSelector(String selector) {
-    this.selector = selector;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public ArrayList<RepositoryProperty> getProperties() {
-    return properties;
+  @Override
+  public List<Artifact> find(String groupPattern, String artifactPattern, String classPattern) {
+    return List.of();
   }
 }

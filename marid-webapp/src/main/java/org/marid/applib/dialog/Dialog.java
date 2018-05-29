@@ -48,16 +48,20 @@ public class Dialog<T> extends Window {
     form.setMargin(true);
     form.setSizeFull();
 
-    buttons.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
-    buttons.setWidth(100, Unit.PERCENTAGE);
     buttons.setSpacing(true);
     buttons.setMargin(true);
 
+    getContent().setMargin(false);
     getContent().addComponent(form);
     getContent().setExpandRatio(form, 1);
     getContent().addComponent(buttons);
     getContent().setExpandRatio(buttons, 0);
+    getContent().setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
     getContent().setSizeFull();
+  }
+
+  public Dialog(String caption, T bean, int width, int height) {
+    this(caption, bean, true, width, height);
   }
 
   @SafeVarargs
@@ -110,6 +114,18 @@ public class Dialog<T> extends Window {
     buttons.addComponent(button);
     for (final var consumer : consumers) {
       consumer.accept(button);
+    }
+    return this;
+  }
+
+  @SafeVarargs
+  public final <C extends Component> Dialog<T> addComponent(C component, Consumer<C>... consumers) {
+    final int count = getContent().getComponentCount();
+    getContent().addComponent(component, count - 1);
+    component.setWidth(100, Unit.PERCENTAGE);
+    getContent().setExpandRatio(component, 1);
+    for (final var consumer : consumers) {
+      consumer.accept(component);
     }
     return this;
   }

@@ -20,15 +20,15 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
-import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import org.marid.applib.dialog.Dialog;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
+import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.SpringComponent;
 
-import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.vaadin.icons.VaadinIcons.*;
@@ -51,22 +51,15 @@ public class ProjectToolbar extends HorizontalLayout implements Inits {
 
   @Init
   public void initAdd() {
-    addComponent(button(
-        FOLDER_ADD,
-        e -> new Dialog<>(s("addProject"), new AtomicReference<String>(), true, 400, 300)
-            .addTextField(s("name"), "project", (f, b) -> b
-                .asRequired(m("nameNonEmpty"))
-                .withValidator(new StringLengthValidator(m("projectNameValidationLength"), 2, 32))
-                .withValidator(
-                    v -> !v.contains("..") && !v.contains(File.separator),
-                    c -> m("projectNameContainsPathCharacters")
-                )
-                .bind(AtomicReference::get, AtomicReference::set))
-            .addCancelButton(s("cancel"))
-            .addSubmitButton(s("addProject"), ref -> manager.add(ref.get()))
-            .show(),
-        "addProject")
-    );
+    final Button.ClickListener add = e -> new Dialog<>(s("addProject"), new AtomicReference<String>(), true, 350, 280)
+        .addTextField(s("name"), "project", (f, b) -> b
+            .asRequired(m("nameNonEmpty"))
+            .withValidator(StringValidators.fileNameValidator())
+            .bind(AtomicReference::get, AtomicReference::set))
+        .addCancelButton(s("cancel"))
+        .addSubmitButton(s("addProject"), ref -> manager.add(ref.get()))
+        .show();
+    addComponent(button(FOLDER_ADD, add, "addProject"));
   }
 
   @Init

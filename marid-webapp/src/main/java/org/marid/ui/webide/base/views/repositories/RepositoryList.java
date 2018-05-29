@@ -32,7 +32,8 @@ import static org.marid.applib.utils.Locales.s;
 @SpringComponent
 public class RepositoryList extends Grid<Repository> implements Inits {
 
-  public RepositoryList() {
+  public RepositoryList(RepositoryManager manager) {
+    super(manager.getDataProvider());
     setSizeFull();
     setSelectionMode(SelectionMode.SINGLE);
   }

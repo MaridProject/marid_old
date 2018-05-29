@@ -18,41 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.model;
+package org.marid.applib.repository.marid;
 
-import java.util.ArrayList;
+import org.marid.applib.repository.RepositoryProvider;
 
-public class Repository {
+import java.util.Map;
+import java.util.Properties;
 
-  private String selector;
-  private String name;
-  private final ArrayList<RepositoryProperty> properties = new ArrayList<>();
+public class MaridRepositoryProvider implements RepositoryProvider {
 
-  public Repository() {
+  @Override
+  public MaridRepository getRepository(Map<String, String> properties) {
+    return new MaridRepository();
   }
 
-  public Repository(String selector, String name) {
-    this.selector = selector;
-    this.name = name;
+  @Override
+  public Properties getProperties() {
+    return new Properties();
   }
 
-  public String getSelector() {
-    return selector;
-  }
-
-  public void setSelector(String selector) {
-    this.selector = selector;
-  }
-
+  @Override
   public String getName() {
-    return name;
+    return "Marid";
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public ArrayList<RepositoryProperty> getProperties() {
-    return properties;
+  @Override
+  public String getDescription() {
+    return "Marid Proprietary Repository";
   }
 }
