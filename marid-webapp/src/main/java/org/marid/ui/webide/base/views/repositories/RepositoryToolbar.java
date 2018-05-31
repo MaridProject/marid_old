@@ -50,7 +50,7 @@ public class RepositoryToolbar extends HorizontalLayout implements Inits {
 
   @Init
   public void initAdd(RepositoryManager manager, RepositoriesDao dao) {
-    final Button.ClickListener add = e -> new Dialog<>(s("addProject"), new Repository(), 380, 280)
+    final Button.ClickListener add = e -> new Dialog<>(s("addProject"), new Repository(), 400, 300)
         .addTextField(s("name"), "repository", (f, b) -> b
             .withValidator(StringValidators.fileNameValidator())
             .withValidator(manager::isNew, c -> m("alreadyExists"))
