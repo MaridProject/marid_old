@@ -20,16 +20,18 @@
  */
 package org.marid.applib.repository.maven;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.marid.applib.repository.Artifact;
 import org.marid.applib.repository.ArtifactFinder;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +47,7 @@ public class MavenArtifactFinder implements ArtifactFinder {
 
   public MavenArtifactFinder(URI searchUrl) {
     this.searchUrl = searchUrl;
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   }
 
   @Override
@@ -63,7 +66,7 @@ public class MavenArtifactFinder implements ArtifactFinder {
       conditions.add("c:\"" + classPattern + "\"");
     }
 
-    final var query = URLEncoder.encode(String.join(" AND ", conditions), UTF_8);
+    final var query = String.join("%32AND%32", conditions);
 
     try {
       final var uri = new URI(
@@ -84,10 +87,12 @@ public class MavenArtifactFinder implements ArtifactFinder {
         connection.setReadTimeout(1_000);
         connection.connect();
 
-        final JsonResponse response;
-        try (final var inputStream = connection.getInputStream()) {
-          response = mapper.readValue(inputStream, JsonResponse.class);
+        final var writer = new StringWriter();
+        try (final var reader = new InputStreamReader(connection.getInputStream(), UTF_8)) {
+          reader.transferTo(writer);
         }
+
+        final var response = mapper.readValue(writer.toString(), JsonResponse.class);
 
         return Stream.of(response.response.docs)
             .parallel()

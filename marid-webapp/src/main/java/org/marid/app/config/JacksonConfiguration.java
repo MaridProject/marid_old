@@ -27,6 +27,8 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+
 @Component
 public class JacksonConfiguration {
 
@@ -35,6 +37,7 @@ public class JacksonConfiguration {
     final var mapper = new ObjectMapper();
     mapper.setLocale(Locale.GERMANY);
     mapper.setTimeZone(TimeZone.getDefault());
+    mapper.disable(FAIL_ON_UNKNOWN_PROPERTIES);
     return mapper;
   }
 }

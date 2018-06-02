@@ -39,18 +39,22 @@ public class ArtifactToolbar extends Toolbar implements Inits {
 
   @Init
   public void initFind(RepositoryManager manager) {
-    button(VaadinIcons.SEARCH_PLUS, e -> {
-      final var finders = manager.repositories().stream()
-          .map(Repository::getArtifactFinder)
-          .collect(Collectors.toUnmodifiableList());
-      new Dialog<>(s("searchArtifacts"), new TreeMap<String, String>(), 400, 300)
-          .addTextField(s("group"), "", (f, b) -> b.bind(m -> m.get("group"), (m, v) -> m.put("group", v)))
-          .addTextField(s("artifact"), "", (f, b) -> b.bind(m -> m.get("artifact"), (m, v) -> m.put("artifact", v)))
-          .addTextField(s("class"), "", (f, b) -> b.bind(m -> m.get("class"), (m, v) -> m.put("class", v)))
-          .addSubmitButton(s("find"), map -> {
+    button(VaadinIcons.SEARCH, e -> new Dialog<>(s("searchArtifacts"), new TreeMap<String, String>(), 400, 300)
+        .addTextField(s("group"), "", (f, b) -> b.bind(m -> m.get("group"), (m, v) -> m.put("group", v)))
+        .addTextField(s("artifact"), "", (f, b) -> b.bind(m -> m.get("artifact"), (m, v) -> m.put("artifact", v)))
+        .addTextField(s("class"), "", (f, b) -> b.bind(m -> m.get("class"), (m, v) -> m.put("class", v)))
+        .addSubmitButton(s("find"), map -> {
+          final var group = map.getOrDefault("group", "").trim();
+          final var artifact = map.getOrDefault("artifact", "").trim();
+          final var klass = map.getOrDefault("class", "").trim();
 
-          })
-          .show();
-    }, "searchArtifacts");
+          final var found = manager.repositories().stream()
+              .map(Repository::getArtifactFinder)
+              .flatMap(f -> f.find(group, artifact, klass).stream())
+              .collect(Collectors.toUnmodifiableList());
+
+          System.out.println(found);
+        })
+        .show(), "searchArtifacts");
   }
 }
