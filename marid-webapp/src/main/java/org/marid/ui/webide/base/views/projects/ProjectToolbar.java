@@ -20,9 +20,8 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import org.marid.applib.components.Toolbar;
 import org.marid.applib.dialog.Dialog;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
@@ -32,13 +31,11 @@ import org.marid.spring.annotation.SpringComponent;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.vaadin.icons.VaadinIcons.*;
-import static com.vaadin.ui.themes.ValoTheme.WINDOW_TOP_TOOLBAR;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
-import static org.marid.applib.utils.ToolbarSupport.button;
 
 @SpringComponent
-public class ProjectToolbar extends HorizontalLayout implements Inits {
+public class ProjectToolbar extends Toolbar implements Inits {
 
   private final ProjectManager manager;
   private final ProjectList list;
@@ -46,20 +43,18 @@ public class ProjectToolbar extends HorizontalLayout implements Inits {
   public ProjectToolbar(ProjectManager manager, ProjectList list) {
     this.manager = manager;
     this.list = list;
-    addStyleNames(WINDOW_TOP_TOOLBAR);
   }
 
   @Init
   public void initAdd() {
-    final Button.ClickListener add = e -> new Dialog<>(s("addProject"), new AtomicReference<String>(), true, 350, 280)
+    button(FOLDER_ADD, e -> new Dialog<>(s("addProject"), new AtomicReference<String>(), true, 350, 280)
         .addTextField(s("name"), "project", (f, b) -> b
             .asRequired(m("nameNonEmpty"))
             .withValidator(StringValidators.fileNameValidator())
             .bind(AtomicReference::get, AtomicReference::set))
         .addCancelButton(s("cancel"))
         .addSubmitButton(s("addProject"), ref -> manager.add(ref.get()))
-        .show();
-    addComponent(button(FOLDER_ADD, add, "addProject"));
+        .show(), "addProject");
   }
 
   @Init
@@ -68,7 +63,6 @@ public class ProjectToolbar extends HorizontalLayout implements Inits {
     final Runnable selectionUpdater = () -> button.setVisible(!list.getSelectedItems().isEmpty());
     selectionUpdater.run();
     list.addSelectionListener(event -> selectionUpdater.run());
-    addComponent(button);
   }
 
   @Init
@@ -79,7 +73,7 @@ public class ProjectToolbar extends HorizontalLayout implements Inits {
 
   @Init
   public void initRefresh() {
-    addComponent(button(REFRESH, e -> manager.refresh(), "refresh"));
+    button(REFRESH, e -> manager.refresh(), "refresh");
   }
 
   @Init
@@ -88,6 +82,5 @@ public class ProjectToolbar extends HorizontalLayout implements Inits {
     final Runnable selectionUpdater = () -> button.setVisible(!list.getSelectedItems().isEmpty());
     selectionUpdater.run();
     list.getSelectionModel().addSelectionListener(event -> selectionUpdater.run());
-    addComponent(button);
   }
 }

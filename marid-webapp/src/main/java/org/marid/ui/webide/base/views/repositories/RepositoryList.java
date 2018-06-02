@@ -25,12 +25,12 @@ import com.vaadin.ui.TextField;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
-import org.marid.ui.webide.base.model.Repository;
+import org.marid.ui.webide.base.model.RepositoryItem;
 
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
-public class RepositoryList extends Grid<Repository> implements Inits {
+public class RepositoryList extends Grid<RepositoryItem> implements Inits {
 
   public RepositoryList(RepositoryManager manager) {
     super(manager.getDataProvider());
@@ -40,19 +40,19 @@ public class RepositoryList extends Grid<Repository> implements Inits {
 
   @Init
   public void initSelectorColumn() {
-    addColumn(Repository::getSelector)
+    addColumn(RepositoryItem::getSelector)
         .setCaption(s("selector"))
         .setExpandRatio(1);
   }
 
   @Init
   public void initNameColumn() {
-    addColumn(Repository::getName)
+    addColumn(RepositoryItem::getName)
         .setCaption(s("value"))
         .setExpandRatio(4)
         .setEditorBinding(getEditor().getBinder()
             .forField(new TextField())
-            .bind(Repository::getName, Repository::setName)
+            .bind(RepositoryItem::getName, RepositoryItem::setName)
         )
         .setEditable(true);
   }

@@ -34,10 +34,10 @@ public class MavenRepositoryProvider implements RepositoryProvider {
   }
 
   @Override
-  public MavenRepository getRepository(Map<String, String> properties) {
+  public MavenRepository getRepository(String name, Map<String, String> properties) {
     final Properties props = new Properties(this.properties);
     properties.forEach(props::setProperty);
-    return new MavenRepository(props);
+    return new MavenRepository(name, props);
   }
 
   @Override

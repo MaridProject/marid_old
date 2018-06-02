@@ -28,9 +28,11 @@ import java.util.Properties;
 
 public class MavenRepository implements Repository {
 
+  private final String name;
   private final Properties properties;
 
-  public MavenRepository(Properties properties) {
+  public MavenRepository(String name, Properties properties) {
+    this.name = name;
     this.properties = properties;
   }
 
@@ -38,5 +40,10 @@ public class MavenRepository implements Repository {
   public ArtifactFinder getArtifactFinder() {
     final String searchUrl = properties.getProperty("searchUrl");
     return new MavenArtifactFinder(URI.create(searchUrl));
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 }

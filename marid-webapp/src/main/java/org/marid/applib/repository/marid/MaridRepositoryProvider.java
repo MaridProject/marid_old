@@ -28,8 +28,8 @@ import java.util.Properties;
 public class MaridRepositoryProvider implements RepositoryProvider {
 
   @Override
-  public MaridRepository getRepository(Map<String, String> properties) {
-    return new MaridRepository();
+  public MaridRepository getRepository(String name, Map<String, String> properties) {
+    return new MaridRepository(name);
   }
 
   @Override

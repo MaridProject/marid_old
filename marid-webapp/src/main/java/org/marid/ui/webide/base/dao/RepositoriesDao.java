@@ -23,7 +23,7 @@ package org.marid.ui.webide.base.dao;
 import org.marid.applib.repository.RepositoryProvider;
 import org.marid.collections.MaridIterators;
 import org.marid.ui.webide.base.UserDirectories;
-import org.marid.ui.webide.base.model.Repository;
+import org.marid.ui.webide.base.model.RepositoryItem;
 import org.marid.ui.webide.base.model.RepositoryProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -43,7 +43,6 @@ import java.util.ServiceLoader.Provider;
 import java.util.TreeMap;
 
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 @Component
 public class RepositoriesDao {
@@ -54,10 +53,10 @@ public class RepositoriesDao {
     directory = directories.getRepositoriesDirectory();
   }
 
-  public List<Repository> repositories() {
+  public List<RepositoryItem> repositories() {
     try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties")) {
       final var paths = MaridIterators.array(Path.class, files);
-      final var repositories = new Repository[paths.length];
+      final var repositories = new RepositoryItem[paths.length];
       for (int i = 0; i < paths.length; i++) {
         try (final var inputStream = Files.newInputStream(paths[i])) {
           final var props = new Properties();
@@ -67,7 +66,7 @@ public class RepositoriesDao {
             continue;
           }
           final var name = StringUtils.stripFilenameExtension(paths[i].getFileName().toString());
-          final var repo = new Repository(selector, name);
+          final var repo = new RepositoryItem(selector, name);
           for (final var k : props.stringPropertyNames()) {
             repo.getProperties().add(new RepositoryProperty(k, props.getProperty(k)));
           }
@@ -82,20 +81,20 @@ public class RepositoriesDao {
     }
   }
 
-  public void remove(Repository repository) {
+  public void remove(RepositoryItem repositoryItem) {
     try {
-      Files.deleteIfExists(directory.resolve(repository.getName() + ".properties"));
+      Files.deleteIfExists(directory.resolve(repositoryItem.getName() + ".properties"));
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
   }
 
-  public void save(Repository repository) {
+  public void save(RepositoryItem repositoryItem) {
     try {
-      final var file = directory.resolve(repository.getName() + ".properties");
-      final var props = new Properties(repository.getProperties().size());
-      repository.getProperties().forEach(p -> props.setProperty(p.getKey(), p.getValue()));
-      props.setProperty("selector", repository.getSelector());
+      final var file = directory.resolve(repositoryItem.getName() + ".properties");
+      final var props = new Properties(repositoryItem.getProperties().size());
+      repositoryItem.getProperties().forEach(p -> props.setProperty(p.getKey(), p.getValue()));
+      props.setProperty("selector", repositoryItem.getSelector());
       try (final var stream = new PrintStream(Files.newOutputStream(file), false, StandardCharsets.UTF_8)) {
         props.list(stream);
       }
@@ -104,8 +103,10 @@ public class RepositoriesDao {
     }
   }
 
-  public List<RepositoryProvider> selectors() {
-    return ServiceLoader.load(RepositoryProvider.class).stream().map(Provider::get).collect(toUnmodifiableList());
+  public TreeMap<String, RepositoryProvider> selectors() {
+    return ServiceLoader.load(RepositoryProvider.class).stream()
+        .map(Provider::get)
+        .collect(toMap(RepositoryProvider::getName, p -> p, (v1, v2) -> v2, TreeMap::new));
   }
 
   public TreeMap<String, String> selectorsMap() {

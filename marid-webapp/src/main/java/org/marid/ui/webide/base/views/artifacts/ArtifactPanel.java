@@ -26,8 +26,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ArtifactPanel extends VerticalLayout {
 
-  public ArtifactPanel(ArtifactTree tree) {
+  public ArtifactPanel(ArtifactToolbar toolbar, ArtifactTree tree) {
     setSizeFull();
-    addComponent(tree);
+    addComponent(toolbar);
+    addComponentsAndExpand(tree);
   }
 }

@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.utils;
+package org.marid.ui.webide.base.views.session;
 
-import com.vaadin.server.Resource;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.themes.ValoTheme;
-import org.jetbrains.annotations.PropertyKey;
-import org.marid.l10n.L10n;
+import org.marid.applib.components.Toolbar;
+import org.marid.applib.spring.init.Init;
+import org.marid.applib.spring.init.Inits;
+import org.marid.spring.annotation.SpringComponent;
 
-public interface ToolbarSupport {
+@SpringComponent
+public class SessionToolbar extends Toolbar implements Inits {
 
-  static Button button(Resource icon,
-                       Button.ClickListener clickListener,
-                       @PropertyKey(resourceBundle = "res.strings") String description,
-                       Object... params) {
-    final var session = VaadinSession.getCurrent();
-    final var locale = session.getLocale();
-    final var button = new Button(icon, clickListener);
+  public SessionToolbar() {
+    addStyleName(ValoTheme.WINDOW_TOP_TOOLBAR);
+  }
 
-    button.addStyleName(ValoTheme.BUTTON_LARGE);
-    button.setDescription(L10n.s(locale, description, params));
-
-    return button;
+  @Init
+  public void initClose(VaadinSession session) {
+    button(VaadinIcons.CLOSE, e -> {
+      session.close();
+      getUI().getPage().setLocation("/app/logout");
+    }, "exitSession");
   }
 }

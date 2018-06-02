@@ -21,19 +21,24 @@
 package org.marid.ui.webide.base.views.repositories;
 
 import com.vaadin.data.provider.ListDataProvider;
+import org.marid.applib.repository.Repository;
 import org.marid.ui.webide.base.dao.RepositoriesDao;
-import org.marid.ui.webide.base.model.Repository;
+import org.marid.ui.webide.base.model.RepositoryItem;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class RepositoryManager {
 
   private final RepositoriesDao dao;
-  private final ArrayList<Repository> repositories = new ArrayList<>();
-  private final ListDataProvider<Repository> dataProvider = new ListDataProvider<>(repositories);
+  private final ArrayList<RepositoryItem> repositories = new ArrayList<>();
+  private final ListDataProvider<RepositoryItem> dataProvider = new ListDataProvider<>(repositories);
 
   public RepositoryManager(RepositoriesDao dao) {
     this.dao = dao;
@@ -44,13 +49,13 @@ public class RepositoryManager {
     repositories.addAll(dao.repositories());
   }
 
-  public void add(Repository repository) {
-    repositories.add(repository);
+  public void add(RepositoryItem repositoryItem) {
+    repositories.add(repositoryItem);
     dataProvider.refreshAll();
   }
 
-  public void remove(Repository repository) {
-    repositories.remove(repository);
+  public void remove(RepositoryItem repositoryItem) {
+    repositories.remove(repositoryItem);
     dataProvider.refreshAll();
   }
 
@@ -60,11 +65,19 @@ public class RepositoryManager {
     }
   }
 
-  public ListDataProvider<Repository> getDataProvider() {
+  public ListDataProvider<RepositoryItem> getDataProvider() {
     return dataProvider;
   }
 
   public boolean isNew(String repositoryName) {
-    return repositories.stream().map(Repository::getName).noneMatch(repositoryName::equals);
+    return repositories.stream().map(RepositoryItem::getName).noneMatch(repositoryName::equals);
+  }
+
+  public List<Repository> repositories() {
+    final var providers = dao.selectors();
+    return repositories.stream()
+        .flatMap(e -> Stream.ofNullable(providers.get(e.getSelector())).map(e::repository))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toUnmodifiableList());
   }
 }

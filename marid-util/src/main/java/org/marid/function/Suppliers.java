@@ -22,9 +22,10 @@
 package org.marid.function;
 
 import java.util.concurrent.atomic.AtomicMarkableReference;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author Dmitry Ovchinnikov
@@ -50,11 +51,14 @@ public interface Suppliers {
     };
   }
 
-  static <T, R> Function<T, R> elseFunc(Function<T, R> func) {
-    return v -> v == null ? null : func.apply(v);
+  static <A, E> BiFunction<A, E, A> accumulator(BiConsumer<A, E> consumer) {
+    return (a, e) -> {
+      consumer.accept(a, e);
+      return a;
+    };
   }
 
-  static <T, U, R> BiFunction<T, U, R> elseBiFunc(BiFunction<T, U, R> func) {
-    return (t, u) -> t == null ? null : func.apply(t, u);
+  static <A, E> A reduce(Stream<E> stream, A accumulator, BiConsumer<A, E> consumer) {
+    return stream.reduce(accumulator, accumulator(consumer), (a1, a2) -> a2);
   }
 }

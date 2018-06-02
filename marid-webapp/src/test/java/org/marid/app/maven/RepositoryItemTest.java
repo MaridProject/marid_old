@@ -52,7 +52,7 @@ import java.nio.file.Files;
 import static org.marid.test.TestGroups.MANUAL;
 
 @ContextConfiguration
-public class RepositoryTest extends AbstractTestNGSpringContextTests {
+public class RepositoryItemTest extends AbstractTestNGSpringContextTests {
 
   @Autowired
   private Ivy ivy;

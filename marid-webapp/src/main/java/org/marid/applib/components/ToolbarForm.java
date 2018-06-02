@@ -18,41 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base.model;
+package org.marid.applib.components;
 
-import java.util.ArrayList;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.VerticalLayout;
 
-public class Repository {
+public class ToolbarForm<T extends Toolbar, C extends Component> extends VerticalLayout {
 
-  private String selector;
-  private String name;
-  private final ArrayList<RepositoryProperty> properties = new ArrayList<>();
+  private final T toolbar;
+  private final C component;
 
-  public Repository() {
+  public ToolbarForm(T toolbar, C component) {
+    setSpacing(true);
+    setMargin(true);
+    addComponent(this.toolbar = toolbar);
+    addComponentsAndExpand(this.component = component);
   }
 
-  public Repository(String selector, String name) {
-    this.selector = selector;
-    this.name = name;
+  public T getToolbar() {
+    return toolbar;
   }
 
-  public String getSelector() {
-    return selector;
-  }
-
-  public void setSelector(String selector) {
-    this.selector = selector;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public ArrayList<RepositoryProperty> getProperties() {
-    return properties;
+  public C getComponent() {
+    return component;
   }
 }

@@ -22,5 +22,7 @@ package org.marid.applib.repository;
 
 public interface Repository {
 
+  String getName();
+
   ArtifactFinder getArtifactFinder();
 }

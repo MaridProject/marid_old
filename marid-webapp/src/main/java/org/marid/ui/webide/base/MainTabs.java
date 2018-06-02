@@ -22,6 +22,7 @@ package org.marid.ui.webide.base;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.TabSheet;
+import org.marid.applib.components.ToolbarForm;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.InitAfterStart;
 import org.marid.applib.spring.init.Inits;
@@ -30,6 +31,7 @@ import org.marid.ui.webide.base.views.artifacts.ArtifactPanel;
 import org.marid.ui.webide.base.views.projects.ProjectsPanel;
 import org.marid.ui.webide.base.views.repositories.RepositoryPanel;
 import org.marid.ui.webide.base.views.session.SessionForm;
+import org.marid.ui.webide.base.views.session.SessionToolbar;
 
 import static org.marid.applib.utils.Locales.s;
 
@@ -47,8 +49,8 @@ public class MainTabs extends TabSheet implements Inits {
   }
 
   @Init
-  public void initSession(SessionForm sessionForm) {
-    addTab(sessionForm, s("session"), VaadinIcons.USER);
+  public void initSession(SessionToolbar toolbar, SessionForm sessionForm) {
+    addTab(new ToolbarForm<>(toolbar, sessionForm), s("session"), VaadinIcons.USER);
   }
 
   @Init

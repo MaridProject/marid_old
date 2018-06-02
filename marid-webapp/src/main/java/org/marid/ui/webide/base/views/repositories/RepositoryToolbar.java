@@ -20,41 +20,39 @@
  */
 package org.marid.ui.webide.base.views.repositories;
 
-import com.vaadin.ui.Button;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import org.marid.applib.components.Toolbar;
 import org.marid.applib.dialog.Dialog;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.Inits;
 import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.dao.RepositoriesDao;
-import org.marid.ui.webide.base.model.Repository;
+import org.marid.ui.webide.base.model.RepositoryItem;
 
-import static com.vaadin.icons.VaadinIcons.*;
-import static com.vaadin.ui.themes.ValoTheme.WINDOW_TOP_TOOLBAR;
+import static com.vaadin.icons.VaadinIcons.FILE_ADD;
+import static com.vaadin.icons.VaadinIcons.FILE_REMOVE;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
-import static org.marid.applib.utils.ToolbarSupport.button;
 
 @SpringComponent
-public class RepositoryToolbar extends HorizontalLayout implements Inits {
+public class RepositoryToolbar extends Toolbar implements Inits {
 
   private final RepositoryList list;
 
   public RepositoryToolbar(RepositoryList list) {
     this.list = list;
-    addStyleName(WINDOW_TOP_TOOLBAR);
   }
 
   @Init
   public void initAdd(RepositoryManager manager, RepositoriesDao dao) {
-    final Button.ClickListener add = e -> new Dialog<>(s("addProject"), new Repository(), 400, 300)
+    button(FILE_ADD, e -> new Dialog<>(s("addProject"), new RepositoryItem(), 400, 300)
         .addTextField(s("name"), "repository", (f, b) -> b
             .withValidator(StringValidators.fileNameValidator())
             .withValidator(manager::isNew, c -> m("alreadyExists"))
-            .bind(Repository::getName, Repository::setName))
+            .bind(RepositoryItem::getName, RepositoryItem::setName))
         .add(() -> {
           final var map = dao.selectorsMap();
           final var combo = new ComboBox<>(s("repository"), map.keySet());
@@ -63,11 +61,10 @@ public class RepositoryToolbar extends HorizontalLayout implements Inits {
           combo.setEmptySelectionAllowed(false);
           map.descendingKeySet().stream().findFirst().ifPresent(combo::setSelectedItem);
           return combo;
-        }, (f, b) -> b.bind(Repository::getSelector, Repository::setSelector))
+        }, (f, b) -> b.bind(RepositoryItem::getSelector, RepositoryItem::setSelector))
         .addCancelButton(s("cancel"))
         .addSubmitButton(s("addProject"), manager::add)
-        .show();
-    addComponent(button(FILE_ADD, add, "addRepository"));
+        .show(), "addRepository");
   }
 
   @Init
@@ -76,7 +73,6 @@ public class RepositoryToolbar extends HorizontalLayout implements Inits {
     final Runnable selectionUpdater = () -> button.setVisible(!list.getSelectedItems().isEmpty());
     selectionUpdater.run();
     list.addSelectionListener(event -> selectionUpdater.run());
-    addComponent(button);
   }
 
   @Init
@@ -85,8 +81,9 @@ public class RepositoryToolbar extends HorizontalLayout implements Inits {
     addComponent(separator);
   }
 
+  @SuppressWarnings("deprecation")
   @Init
   public void initSave(RepositoryManager manager) {
-    addComponent(button(STORAGE, e -> manager.save(), "save"));
+    button(FontAwesome.SAVE, e -> manager.save(), "save");
   }
 }

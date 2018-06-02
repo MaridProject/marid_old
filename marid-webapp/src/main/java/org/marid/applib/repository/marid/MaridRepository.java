@@ -24,8 +24,19 @@ import org.marid.applib.repository.Repository;
 
 public class MaridRepository implements Repository {
 
+  private final String name;
+
+  public MaridRepository(String name) {
+    this.name = name;
+  }
+
   @Override
   public MaridArtifactFinder getArtifactFinder() {
     return new MaridArtifactFinder();
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 }

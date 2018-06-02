@@ -25,7 +25,7 @@ import java.util.Properties;
 
 public interface RepositoryProvider {
 
-  Repository getRepository(Map<String, String> properties);
+  Repository getRepository(String name, Map<String, String> properties);
 
   Properties getProperties();
 
