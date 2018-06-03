@@ -23,14 +23,13 @@ package org.marid.ui.webide.base.views.repositories;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.TextField;
 import org.marid.applib.spring.init.Init;
-import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.model.RepositoryItem;
 
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
-public class RepositoryList extends Grid<RepositoryItem> implements Inits {
+public class RepositoryList extends Grid<RepositoryItem> {
 
   public RepositoryList(RepositoryManager manager) {
     super(manager.getDataProvider());

@@ -25,7 +25,6 @@ import com.vaadin.ui.TabSheet;
 import org.marid.applib.components.ToolbarForm;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.spring.init.InitAfterStart;
-import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.views.artifacts.ArtifactPanel;
 import org.marid.ui.webide.base.views.projects.ProjectsPanel;
@@ -37,7 +36,7 @@ import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
 @InitAfterStart
-public class MainTabs extends TabSheet implements Inits {
+public class MainTabs extends TabSheet {
 
   public MainTabs() {
     setSizeFull();

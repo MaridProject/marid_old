@@ -26,7 +26,6 @@ import com.vaadin.ui.Label;
 import org.marid.applib.components.Toolbar;
 import org.marid.applib.dialog.Dialog;
 import org.marid.applib.spring.init.Init;
-import org.marid.applib.spring.init.Inits;
 import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.dao.RepositoriesDao;
@@ -38,7 +37,7 @@ import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
-public class RepositoryToolbar extends Toolbar implements Inits {
+public class RepositoryToolbar extends Toolbar {
 
   private final RepositoryList list;
 

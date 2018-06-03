@@ -23,13 +23,12 @@ package org.marid.ui.webide.base;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.MenuBar;
 import org.marid.applib.spring.init.Init;
-import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
 
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
-public class MainMenuBar extends MenuBar implements Inits {
+public class MainMenuBar extends MenuBar {
 
   private final MenuItem sessionItem;
 

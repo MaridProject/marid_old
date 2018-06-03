@@ -25,11 +25,10 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.themes.ValoTheme;
 import org.marid.applib.components.Toolbar;
 import org.marid.applib.spring.init.Init;
-import org.marid.applib.spring.init.Inits;
 import org.marid.spring.annotation.SpringComponent;
 
 @SpringComponent
-public class SessionToolbar extends Toolbar implements Inits {
+public class SessionToolbar extends Toolbar {
 
   public SessionToolbar() {
     addStyleName(ValoTheme.WINDOW_TOP_TOOLBAR);

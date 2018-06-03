@@ -21,54 +21,103 @@
 package org.marid.applib.spring.init;
 
 import org.marid.applib.spring.events.ContextStartedListener;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.marid.cache.MaridClassValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toCollection;
 
-public interface Inits {
+public class InitBeanPostProcessor implements BeanPostProcessor {
 
-  @Autowired
-  default void initialize(GenericApplicationContext context) throws ReflectiveOperationException {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InitBeanPostProcessor.class);
+  private static final MaridClassValue<Map<String, Integer>> METHOD_ORDERS = new MaridClassValue<>(c -> () -> {
+    final var name = c.getSimpleName() + ".methods";
+
+    try (final var inputStream = c.getResourceAsStream(name)) {
+
+      if (inputStream == null) {
+        LOGGER.warn("Unable to find {}", name);
+        return Map.of();
+      }
+
+      try (final Scanner scanner = new Scanner(inputStream, UTF_8)) {
+        return IntStream.range(0, Integer.MAX_VALUE)
+            .takeWhile(i -> scanner.hasNextLine())
+            .mapToObj(i -> Map.entry(scanner.nextLine(), i))
+            .filter(e -> !e.getKey().isEmpty())
+            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+      }
+    }
+  });
+
+  private final GenericApplicationContext context;
+
+  public InitBeanPostProcessor(GenericApplicationContext context) {
+    this.context = context;
+  }
+
+  @Override
+  public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) throws BeansException {
+    if (bean == null) {
+      return null;
+    }
+    try {
+      initialize(bean);
+    } catch (ReflectiveOperationException x) {
+      throw new BeanInitializationException("Unable to initialize " + beanName, x);
+    }
+    return bean;
+  }
+
+  private void initialize(Object bean) throws ReflectiveOperationException {
     final var beanFactory = context.getDefaultListableBeanFactory();
-    final Map<String, Integer> orderMap = InitUtils.METHOD_ORDERS.get(getClass());
-    final var methods = Stream.of(getClass().getMethods())
+    final Map<String, Integer> orderMap = METHOD_ORDERS.get(bean.getClass());
+    final var methods = Stream.of(bean.getClass().getMethods())
         .filter(m -> !Modifier.isStatic(m.getModifiers()))
-        .filter(m -> m.canAccess(this))
+        .filter(m -> m.canAccess(bean))
         .filter(m -> m.isAnnotationPresent(Init.class))
         .collect(toCollection(() -> new TreeSet<>(comparing(m -> orderMap.getOrDefault(m.getName(), 0)))));
 
-    if (getClass().isAnnotationPresent(InitAfterStart.class)) {
+    if (bean.getClass().isAnnotationPresent(InitAfterStart.class)) {
       context.addApplicationListener(new ContextStartedListener() {
         @Override
         public void onApplicationEvent(@NonNull ContextStartedEvent event) {
           context.getApplicationListeners().remove(this);
           try {
-            invoke(beanFactory, methods);
+            invoke(bean, beanFactory, methods);
           } catch (ReflectiveOperationException x) {
             throw new IllegalStateException(x);
           }
         }
       });
     } else {
-      invoke(beanFactory, methods);
+      invoke(bean, beanFactory, methods);
     }
   }
 
-  private void invoke(DefaultListableBeanFactory beanFactory, Set<Method> methods) throws ReflectiveOperationException {
+  private void invoke(Object bean, DefaultListableBeanFactory beanFactory, Set<Method> methods) throws ReflectiveOperationException {
     for (final var method : methods) {
       final var args = new Object[method.getParameterCount()];
       for (int i = 0; i < args.length; i++) {
@@ -76,7 +125,7 @@ public interface Inits {
         final var dd = new DependencyDescriptor(mp, true, true);
         args[i] = beanFactory.resolveDependency(dd, null);
       }
-      method.invoke(this, args);
+      method.invoke(bean, args);
     }
   }
 }

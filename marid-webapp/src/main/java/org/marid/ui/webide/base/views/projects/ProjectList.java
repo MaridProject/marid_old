@@ -23,7 +23,6 @@ package org.marid.ui.webide.base.views.projects;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import org.marid.applib.spring.init.Init;
-import org.marid.applib.spring.init.Inits;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.dao.ProjectsDao;
@@ -33,7 +32,7 @@ import java.util.Locale;
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
-public class ProjectList extends Grid<String> implements Inits {
+public class ProjectList extends Grid<String> {
 
   public ProjectList(ProjectManager model) {
     super(model.getDataProvider());

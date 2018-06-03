@@ -23,6 +23,7 @@ package org.marid.applib.spring;
 
 import org.marid.applib.spring.events.ContextClosedListener;
 import org.marid.applib.spring.events.ContextStartedListener;
+import org.marid.applib.spring.init.InitBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -38,6 +39,7 @@ public interface ContextUtils {
     context.setAllowBeanDefinitionOverriding(false);
     context.setAllowCircularReferences(false);
     context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
+    context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
 
     context.setParent(parent);
 

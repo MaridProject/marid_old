@@ -27,8 +27,6 @@ import org.marid.applib.repository.ArtifactFinder;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,15 +36,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class MavenArtifactFinder implements ArtifactFinder {
 
-  private final URI searchUrl;
+  private final URI url;
   private final ObjectMapper mapper = new ObjectMapper();
 
-  public MavenArtifactFinder(URI searchUrl) {
-    this.searchUrl = searchUrl;
+  MavenArtifactFinder(URI searchUrl) {
+    url = searchUrl;
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   }
 
@@ -66,49 +62,24 @@ public class MavenArtifactFinder implements ArtifactFinder {
       conditions.add("c:\"" + classPattern + "\"");
     }
 
-    final var query = String.join("%32AND%32", conditions);
+    final var query = "q=" + String.join("%32AND%32", conditions) + "&wt=json";
 
     try {
       final var uri = new URI(
-          searchUrl.getScheme(),
-          searchUrl.getRawUserInfo(),
-          searchUrl.getHost(),
-          searchUrl.getPort(),
-          searchUrl.getRawPath(),
-          "q=" + query + "&wt=json",
-          null
+          url.getScheme(), url.getRawUserInfo(), url.getHost(), url.getPort(), url.getRawPath(), query, null
       );
-      final var url = uri.toURL();
-      final var connection = url.openConnection();
+      final var connection = uri.toURL().openConnection();
+
+      final JsonResponse response;
       try {
         connection.setAllowUserInteraction(false);
         connection.setConnectTimeout(10_000);
         connection.setUseCaches(false);
         connection.setReadTimeout(1_000);
-        connection.connect();
 
-        final var writer = new StringWriter();
-        try (final var reader = new InputStreamReader(connection.getInputStream(), UTF_8)) {
-          reader.transferTo(writer);
+        try (final var stream = connection.getInputStream()) {
+          response = mapper.readValue(stream, JsonResponse.class);
         }
-
-        final var response = mapper.readValue(writer.toString(), JsonResponse.class);
-
-        return Stream.of(response.response.docs)
-            .parallel()
-            .flatMap(d -> Stream.of(d.ec)
-                .map(StringUtils::stripFilenameExtension)
-                .map(v -> v.startsWith("-") ? v.substring(1) : v)
-                .distinct()
-                .map(c -> new Artifact(d.g, d.a, d.latestVersion, c, d.p)))
-                .sorted(Comparator
-                    .comparing(Artifact::getGroupId)
-                    .thenComparing(Artifact::getArtifactId)
-                    .thenComparing(Artifact::getVersion)
-                    .thenComparing(Artifact::getClassifier)
-                    .thenComparing(Artifact::getPackaging)
-                )
-            .collect(Collectors.toUnmodifiableList());
       } finally {
         if (connection != null) {
           if (connection instanceof HttpURLConnection) {
@@ -116,6 +87,21 @@ public class MavenArtifactFinder implements ArtifactFinder {
           }
         }
       }
+
+      return Stream.of(response.response.docs).parallel()
+          .flatMap(d -> Stream.of(d.ec)
+              .map(StringUtils::stripFilenameExtension)
+              .map(v -> v.startsWith("-") ? v.substring(1) : v)
+              .distinct()
+              .map(c -> new Artifact(d.g, d.a, d.latestVersion, c, d.p)))
+          .sorted(Comparator
+              .comparing(Artifact::getGroupId)
+              .thenComparing(Artifact::getArtifactId)
+              .thenComparing(Artifact::getVersion)
+              .thenComparing(Artifact::getClassifier)
+              .thenComparing(Artifact::getPackaging)
+          )
+          .collect(Collectors.toUnmodifiableList());
     } catch (IOException | URISyntaxException x) {
       throw new IllegalStateException(x);
     }

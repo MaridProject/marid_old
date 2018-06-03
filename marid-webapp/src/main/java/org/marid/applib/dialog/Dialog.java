@@ -44,18 +44,15 @@ public class Dialog<T> extends Window {
     setWidth(width, Unit.PIXELS);
     setHeight(height, Unit.PIXELS);
 
-    form.setSpacing(true);
     form.setMargin(true);
     form.setSizeFull();
 
-    buttons.setSpacing(true);
     buttons.setMargin(true);
 
     getContent().setMargin(false);
     getContent().addComponent(form);
     getContent().setExpandRatio(form, 1);
     getContent().addComponent(buttons);
-    getContent().setExpandRatio(buttons, 0);
     getContent().setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
     getContent().setSizeFull();
   }
