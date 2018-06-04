@@ -37,17 +37,15 @@ import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toCollection;
 
 public class InitBeanPostProcessor implements BeanPostProcessor {
 
@@ -85,20 +83,26 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
     }
     try {
       initialize(bean);
-    } catch (ReflectiveOperationException x) {
+    } catch (Exception x) {
       throw new BeanInitializationException("Unable to initialize " + beanName, x);
     }
     return bean;
   }
 
-  private void initialize(Object bean) throws ReflectiveOperationException {
-    final var beanFactory = context.getDefaultListableBeanFactory();
+  private void initialize(Object bean) throws Exception {
     final Map<String, Integer> orderMap = METHOD_ORDERS.get(bean.getClass());
     final var methods = Stream.of(bean.getClass().getMethods())
         .filter(m -> !Modifier.isStatic(m.getModifiers()))
         .filter(m -> m.canAccess(bean))
         .filter(m -> m.isAnnotationPresent(Init.class))
-        .collect(toCollection(() -> new TreeSet<>(comparing(m -> orderMap.getOrDefault(m.getName(), 0)))));
+        .sorted(comparing(m -> orderMap.getOrDefault(m.getName(), 0)))
+        .collect(Collectors.toUnmodifiableList());
+
+    if (methods.isEmpty()) {
+      return;
+    }
+
+    final var beanFactory = context.getDefaultListableBeanFactory();
 
     if (bean.getClass().isAnnotationPresent(InitAfterStart.class)) {
       context.addApplicationListener(new ContextStartedListener() {
@@ -107,7 +111,7 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
           context.getApplicationListeners().remove(this);
           try {
             invoke(bean, beanFactory, methods);
-          } catch (ReflectiveOperationException x) {
+          } catch (Exception x) {
             throw new IllegalStateException(x);
           }
         }
@@ -117,14 +121,12 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
     }
   }
 
-  private void invoke(Object bean, DefaultListableBeanFactory beanFactory, Set<Method> methods) throws ReflectiveOperationException {
+  private void invoke(Object bean, DefaultListableBeanFactory beanFactory, List<Method> methods) throws Exception {
     for (final var method : methods) {
-      final var args = new Object[method.getParameterCount()];
-      for (int i = 0; i < args.length; i++) {
-        final var mp = new MethodParameter(method, i);
-        final var dd = new DependencyDescriptor(mp, true, true);
-        args[i] = beanFactory.resolveDependency(dd, null);
-      }
+      final var args = IntStream.range(0, method.getParameterCount())
+          .mapToObj(i -> new DependencyDescriptor(new MethodParameter(method, i), true, true))
+          .map(dd -> beanFactory.resolveDependency(dd, null))
+          .toArray();
       method.invoke(bean, args);
     }
   }

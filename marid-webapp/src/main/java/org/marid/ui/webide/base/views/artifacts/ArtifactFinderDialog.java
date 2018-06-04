@@ -52,14 +52,16 @@ public class ArtifactFinderDialog extends Window {
     super(s("searchArtifacts"), new VerticalLayout());
     this.manager = manager;
     setModal(true);
-    setWidth(400, Unit.PIXELS);
-    setHeight(300, Unit.PIXELS);
 
-    form.setMargin(true);
+    form.setMargin(false);
+    buttons.setMargin(false);
 
     artifactGrid.setSizeFull();
 
-    getContent().setMargin(false);
+    setWidth(400, Unit.PIXELS);
+    setHeight(400, Unit.PIXELS);
+
+    getContent().setMargin(true);
     getContent().addComponents(form, artifactGrid, buttons);
     getContent().setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
     getContent().setExpandRatio(artifactGrid, 1);
@@ -123,11 +125,13 @@ public class ArtifactFinderDialog extends Window {
   public void addFindButton() {
     final var button = new Button(s("find"), VaadinIcons.SEARCH);
     button.addClickListener(e -> {
-      final var found = manager.repositories().stream()
-          .map(Repository::getArtifactFinder)
-          .flatMap(f -> f.find(group, artifact, klass).stream())
-          .collect(Collectors.toUnmodifiableList());
-      System.out.println(found);
+      if (binder.writeBeanIfValid(this)) {
+        final var found = manager.repositories().stream()
+            .map(Repository::getArtifactFinder)
+            .flatMap(f -> f.find(group, artifact, klass).stream())
+            .collect(Collectors.toUnmodifiableList());
+        artifactGrid.setItems(found);
+      }
     });
     buttons.addComponent(button);
   }
