@@ -129,8 +129,11 @@ public class ArtifactFinderDialog extends Window {
         final var found = manager.repositories().stream()
             .map(Repository::getArtifactFinder)
             .flatMap(f -> f.find(group, artifact, klass).stream())
+            .filter(a -> "jar".equals(a.getPackaging()))
+            .filter(a -> "".equals(a.getClassifier()))
             .collect(Collectors.toUnmodifiableList());
         artifactGrid.setItems(found);
+        System.out.println(found);
       }
     });
     buttons.addComponent(button);

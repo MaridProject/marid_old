@@ -695,25 +695,25 @@
 
 @-webkit-keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @-moz-keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @-webkit-keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -722,7 +722,7 @@
 
 @-moz-keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -731,7 +731,7 @@
 
 @keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -899,25 +899,25 @@
 
 @-webkit-keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @-moz-keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @-webkit-keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -926,7 +926,7 @@
 
 @-moz-keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -935,7 +935,7 @@
 
 @keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -949,25 +949,25 @@
 
 @-webkit-keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @-moz-keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @keyframes valo-grid-editor-footer-animate-in {
 		0% {
-		margin-top: -30px;
+		margin-top: -28px;
 	}
 	}
 
 @-webkit-keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -976,7 +976,7 @@
 
 @-moz-keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -985,7 +985,7 @@
 
 @keyframes valo-grid-editor-footer-animate-in-alt {
 		0% {
-		margin-bottom: -31px;
+		margin-bottom: -29px;
 	}
 		100% {
 		margin-bottom: -1px;
@@ -1550,19 +1550,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .v-tabsheet-content  > div > .v-scrollable  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .v-tabsheet-content  > div > .v-scrollable  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .v-tabsheet-content  > div > .v-scrollable  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .v-tabsheet-content  > div > .v-scrollable  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .v-splitpanel-vertical, .v-splitpanel-horizontal {
@@ -1648,9 +1648,9 @@ div.v-layout.v-horizontal.v-widget {
 	left: 50%;
 	width: 28px;
 	height: 28px;
-	padding: 8px;
-	margin-top: -22px;
-	margin-left: -22px;
+	padding: 7px;
+	margin-top: -21px;
+	margin-left: -21px;
 	background: #fff url(../valo/shared/img/spinner.gif) no-repeat 50%;
 	border-radius: 5px;
 }
@@ -1739,7 +1739,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-errorindicator {
 	color: #ed473b;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 }
 
@@ -1750,7 +1750,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-errorindicator-info {
 	color: #00a7f5;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 }
 
@@ -1761,7 +1761,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-errorindicator-warning {
 	color: #fc9c00;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 }
 
@@ -1772,7 +1772,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-errorindicator-error {
 	color: #ed473b;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 }
 
@@ -1783,7 +1783,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-errorindicator-critical {
 	color: #fa007d;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 }
 
@@ -1794,7 +1794,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-errorindicator-system {
 	color: #bb00ff;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 }
 
@@ -1854,7 +1854,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 	color: white;
-	padding: 4px 8px;
+	padding: 4px 7px;
 	border-radius: 4px;
 	max-width: 35em;
 	overflow: hidden !important;
@@ -1869,8 +1869,8 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: white;
 	background-color: #fff;
 	color: #ed473b;
-	margin: -4px -8px;
-	padding: 4px 8px;
+	margin: -4px -7px;
+	padding: 4px 7px;
 	max-height: 10em;
 	overflow: auto;
 	font-weight: 500;
@@ -1956,8 +1956,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-contextmenu .gwt-MenuItem {
 	cursor: pointer;
-	line-height: 22px;
-	padding: 0 16px 0 8px;
+	line-height: 20px;
+	padding: 0 14px 0 7px;
 	border-radius: 4px;
 	font-weight: 400;
 	white-space: nowrap;
@@ -1980,7 +1980,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-contextmenu .gwt-MenuItem .v-icon {
-	max-height: 22px;
+	max-height: 20px;
 	margin-right: 4px;
 	min-width: 1em;
 }
@@ -1995,13 +1995,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-reconnect-dialog {
 	color: white;
-	top: 10px;
-	right: 10px;
+	top: 9px;
+	right: 9px;
 	max-width: 100%;
 	border-radius: 0;
 	-webkit-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
 	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
-	padding: 10px 12px;
+	padding: 9px 11px;
 	background-color: #444;
 	background-color: rgba(68, 68, 68, 0.9);
 	line-height: 20px;
@@ -2050,24 +2050,24 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-margin-top {
-	padding-top: 30px;
+	padding-top: 28px;
 }
 
 .marid .v-margin-right {
-	padding-right: 30px;
+	padding-right: 28px;
 }
 
 .marid .v-margin-bottom {
-	padding-bottom: 30px;
+	padding-bottom: 28px;
 }
 
 .marid .v-margin-left {
-	padding-left: 30px;
+	padding-left: 28px;
 }
 
 .marid .v-spacing {
-	width: 10px;
-	height: 10px;
+	width: 9px;
+	height: 9px;
 }
 
 .marid .v-verticallayout-well, .marid .v-horizontallayout-well {
@@ -2086,19 +2086,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-verticallayout-well  > .v-margin-top, .marid .v-horizontallayout-well  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-verticallayout-well  > .v-margin-right, .marid .v-horizontallayout-well  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-verticallayout-well  > .v-margin-bottom, .marid .v-horizontallayout-well  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-verticallayout-well  > .v-margin-left, .marid .v-horizontallayout-well  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-verticallayout-card, .marid .v-horizontallayout-card {
@@ -2111,19 +2111,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-verticallayout-card  > .v-margin-top, .marid .v-horizontallayout-card  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-verticallayout-card  > .v-margin-right, .marid .v-horizontallayout-card  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-verticallayout-card  > .v-margin-bottom, .marid .v-horizontallayout-card  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-verticallayout-card  > .v-margin-left, .marid .v-horizontallayout-card  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-horizontallayout-wrapping {
@@ -2131,7 +2131,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-horizontallayout-wrapping > .v-spacing + .v-slot, .marid .v-horizontallayout-wrapping > .v-slot:first-child {
-	margin-bottom: 10px;
+	margin-bottom: 9px;
 }
 
 .marid .v-horizontallayout-wrapping > .v-slot:first-child:last-child {
@@ -2146,7 +2146,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-tap-highlight-color: transparent;
 	-webkit-touch-callout: none;
 	cursor: pointer;
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -2239,7 +2239,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-primary {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #ecf2f8;
 	font-weight: 500;
@@ -2255,9 +2255,9 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: inset 0 1px 2px #2d91e5, inset 0 0 1px #238ce4, 0 2px 3px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 2px #2d91e5, inset 0 0 1px #238ce4, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-	padding: 0 15px;
+	padding: 0 14px;
 	font-weight: bold;
-	min-width: 66px;
+	min-width: 62px;
 }
 
 .marid .v-button-primary:after {
@@ -2283,7 +2283,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-friendly {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #eaf4e9;
 	font-weight: 500;
@@ -2324,7 +2324,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-danger {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #f9f0ef;
 	font-weight: 500;
@@ -2464,8 +2464,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-tiny {
-	height: 23px;
-	padding: 0 12px;
+	height: 21px;
+	padding: 0 11px;
 	
 	
 	font-size: 11px;
@@ -2482,8 +2482,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-small {
-	height: 26px;
-	padding: 0 13px;
+	height: 24px;
+	padding: 0 12px;
 	
 	
 	font-size: 12px;
@@ -2500,8 +2500,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-large {
-	height: 36px;
-	padding: 0 17px;
+	height: 34px;
+	padding: 0 16px;
 	
 	
 	font-size: 17px;
@@ -2518,8 +2518,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-huge {
-	height: 48px;
-	padding: 0 22px;
+	height: 45px;
+	padding: 0 21px;
 	
 	
 	font-size: 23px;
@@ -2541,7 +2541,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-button-icon-align-right .v-icon {
 	float: right;
-	margin-left: 11px;
+	margin-left: 10px;
 }
 
 .marid .v-button-icon-align-right .v-icon  + span:not(:empty) {
@@ -2570,24 +2570,24 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-button-icon-only {
-	width: 30px;
+	width: 28px;
 	padding: 0;
 }
 
 .marid .v-button-icon-only.v-button-tiny {
-	width: 23px;
+	width: 21px;
 }
 
 .marid .v-button-icon-only.v-button-small {
-	width: 26px;
+	width: 24px;
 }
 
 .marid .v-button-icon-only.v-button-large {
-	width: 36px;
+	width: 34px;
 }
 
 .marid .v-button-icon-only.v-button-huge {
-	width: 48px;
+	width: 45px;
 }
 
 .marid .v-button-icon-only .v-button-caption {
@@ -2596,7 +2596,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-checkbox {
 	position: relative;
-	line-height: 15px;
+	line-height: 14px;
 	white-space: nowrap;
 }
 
@@ -2605,7 +2605,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-checkbox {
-	padding-left: 20px;
+	padding-left: 19px;
 }
 
 :root .marid .v-checkbox label {
@@ -2636,8 +2636,8 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 15px;
-	height: 15px;
+	width: 14px;
+	height: 14px;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -2647,7 +2647,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-checkbox > input ~ label:before {
-	height: 15px;
+	height: 14px;
 	padding: 0 8px;
 	color: #191919;
 	font-weight: 500;
@@ -2664,7 +2664,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 15px;
+	height: 14px;
 }
 
 :root .marid .v-checkbox > input ~ label:after {
@@ -2685,7 +2685,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-checkbox > .v-icon, .marid .v-checkbox > label .v-icon {
-	margin: 0 5px 0 3px;
+	margin: 0 5px 0 2px;
 	min-width: 1em;
 	cursor: pointer;
 }
@@ -2723,7 +2723,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-checkbox-small {
 	position: relative;
-	line-height: 13px;
+	line-height: 12px;
 	white-space: nowrap;
 	font-size: 12px;
 }
@@ -2733,7 +2733,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-checkbox-small {
-	padding-left: 17px;
+	padding-left: 16px;
 }
 
 :root .marid .v-checkbox-small label {
@@ -2764,8 +2764,8 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 13px;
-	height: 13px;
+	width: 12px;
+	height: 12px;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -2775,7 +2775,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-checkbox-small > input ~ label:before {
-	height: 13px;
+	height: 12px;
 	padding: 0 6px;
 	color: #191919;
 	font-weight: 500;
@@ -2792,7 +2792,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 13px;
+	height: 12px;
 }
 
 :root .marid .v-checkbox-small > input ~ label:after {
@@ -2851,7 +2851,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-checkbox-large {
 	position: relative;
-	line-height: 18px;
+	line-height: 17px;
 	white-space: nowrap;
 	font-size: 17px;
 }
@@ -2861,7 +2861,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-checkbox-large {
-	padding-left: 24px;
+	padding-left: 23px;
 }
 
 :root .marid .v-checkbox-large label {
@@ -2892,18 +2892,18 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 18px;
-	height: 18px;
+	width: 17px;
+	height: 17px;
 	position: absolute;
 	top: 0;
 	left: 0;
 	border-radius: 5px;
-	font-size: 13px;
+	font-size: 14px;
 	text-align: center;
 }
 
 :root .marid .v-checkbox-large > input ~ label:before {
-	height: 18px;
+	height: 17px;
 	padding: 0 9px;
 	color: #191919;
 	font-weight: 500;
@@ -2920,7 +2920,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 18px;
+	height: 17px;
 }
 
 :root .marid .v-checkbox-large > input ~ label:after {
@@ -2979,8 +2979,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-filterselect {
 	position: relative;
-	width: 150px;
-	height: 30px;
+	width: 140px;
+	height: 28px;
 	border-radius: 5px;
 	white-space: nowrap;
 }
@@ -3001,7 +3001,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 30px;
+	height: 28px;
 	border-radius: 5px;
 	padding: 3px 7px;
 	border: 1px solid #e8e8e8;
@@ -3014,7 +3014,7 @@ div.v-layout.v-horizontal.v-widget {
 	transition: box-shadow 180ms, border 180ms;
 	width: 100% !important;
 	height: 100%;
-	padding-right: 31px;
+	padding-right: 29px;
 	border-radius: inherit;
 }
 
@@ -3040,17 +3040,17 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-filterselect .v-icon + [class*="input"] {
-	padding-left: 30px;
+	padding-left: 28px;
 }
 
 .marid .v-filterselect img.v-icon {
-	max-height: 30px;
+	max-height: 28px;
 	margin-left: 7px;
 }
 
 .marid .v-filterselect span.v-icon {
 	color: #474747;
-	width: 30px;
+	width: 28px;
 	line-height: 1;
 	padding-top: 0.12em;
 	margin-left: 7px;
@@ -3065,7 +3065,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-touch-callout: none;
 	cursor: pointer;
 	position: absolute;
-	width: 30px;
+	width: 28px;
 	top: 1px;
 	right: 1px;
 	bottom: 1px;
@@ -3081,7 +3081,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: color 140ms;
 	transition: color 140ms;
 	position: absolute;
-	width: 30px;
+	width: 28px;
 	text-align: center;
 	top: 50%;
 	line-height: 1;
@@ -3251,13 +3251,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-filterselect-suggestpopup .gwt-MenuItem {
 	cursor: pointer;
-	line-height: 22px;
-	padding: 0 16px 0 8px;
+	line-height: 20px;
+	padding: 0 14px 0 7px;
 	border-radius: 4px;
 	font-weight: 400;
 	white-space: nowrap;
 	position: relative;
-	height: 22px;
+	height: 20px;
 	box-sizing: border-box;
 	text-overflow: ellipsis;
 	overflow-x: hidden;
@@ -3278,7 +3278,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-filterselect-suggestpopup .gwt-MenuItem .v-icon {
-	max-height: 22px;
+	max-height: 20px;
 	margin-right: 4px;
 	min-width: 1em;
 }
@@ -3297,11 +3297,11 @@ div.v-layout.v-horizontal.v-widget {
 	background: rgba(212, 212, 212, 0.9);
 	color: #3b3b3b;
 	border-radius: 0 0 5px 5px;
-	height: 18px;
-	bottom: -18px;
+	height: 17px;
+	bottom: -17px;
 	font-size: 11px;
-	line-height: 18px;
-	padding: 0 5px;
+	line-height: 17px;
+	padding: 0 4px;
 	cursor: default;
 	pointer-events: none;
 	-webkit-animation: valo-animate-in-slide-down 200ms 80ms backwards;
@@ -3324,9 +3324,9 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: all 200ms;
 	-moz-transition: all 200ms;
 	transition: all 200ms;
-	width: 20px;
-	height: 20px;
-	line-height: 20px;
+	width: 19px;
+	height: 19px;
+	line-height: 19px;
 	text-align: center;
 	font-family: ThemeIcons;
 	-webkit-transform: scale(0.8);
@@ -3487,7 +3487,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-filterselect-tiny {
-	height: 23px;
+	height: 21px;
 	
 	font-size: 11px;
 }
@@ -3508,9 +3508,9 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 23px;
+	height: 21px;
 	
-	padding: 3px 4px;
+	padding: 2px 4px;
 	
 	
 	-webkit-transition: box-shadow 180ms, border 180ms;
@@ -3518,22 +3518,22 @@ div.v-layout.v-horizontal.v-widget {
 	transition: box-shadow 180ms, border 180ms;
 	width: 100% !important;
 	height: 100%;
-	padding-right: 24px;
+	padding-right: 22px;
 	border-radius: inherit;
 }
 
 .marid .v-filterselect-tiny .v-icon + [class*="input"] {
-	padding-left: 23px;
+	padding-left: 21px;
 }
 
 .marid .v-filterselect-tiny img.v-icon {
-	max-height: 23px;
+	max-height: 21px;
 	margin-left: 4px;
 }
 
 .marid .v-filterselect-tiny span.v-icon {
 	
-	width: 23px;
+	width: 21px;
 	line-height: 1;
 	padding-top: 0.12em;
 	margin-left: 4px;
@@ -3544,7 +3544,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-touch-callout: none;
 	cursor: pointer;
 	position: absolute;
-	width: 23px;
+	width: 21px;
 	border-radius: 0 5px 5px 0;
 }
 
@@ -3555,7 +3555,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: color 140ms;
 	transition: color 140ms;
 	position: absolute;
-	width: 23px;
+	width: 21px;
 	text-align: center;
 	top: 50%;
 	line-height: 1;
@@ -3608,7 +3608,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-filterselect-compact, .marid .v-filterselect-small {
-	height: 26px;
+	height: 24px;
 	
 }
 
@@ -3628,9 +3628,9 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 26px;
+	height: 24px;
 	
-	padding: 3px 5px;
+	padding: 3px 4px;
 	
 	
 	-webkit-transition: box-shadow 180ms, border 180ms;
@@ -3638,25 +3638,25 @@ div.v-layout.v-horizontal.v-widget {
 	transition: box-shadow 180ms, border 180ms;
 	width: 100% !important;
 	height: 100%;
-	padding-right: 27px;
+	padding-right: 25px;
 	border-radius: inherit;
 }
 
 .marid .v-filterselect-compact .v-icon + [class*="input"], .marid .v-filterselect-small .v-icon + [class*="input"] {
-	padding-left: 26px;
+	padding-left: 24px;
 }
 
 .marid .v-filterselect-compact img.v-icon, .marid .v-filterselect-small img.v-icon {
-	max-height: 26px;
-	margin-left: 5px;
+	max-height: 24px;
+	margin-left: 4px;
 }
 
 .marid .v-filterselect-compact span.v-icon, .marid .v-filterselect-small span.v-icon {
 	
-	width: 26px;
+	width: 24px;
 	line-height: 1;
 	padding-top: 0.12em;
-	margin-left: 5px;
+	margin-left: 4px;
 }
 
 .marid .v-filterselect-compact [class$="button"], .marid .v-filterselect-small [class$="button"] {
@@ -3664,7 +3664,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-touch-callout: none;
 	cursor: pointer;
 	position: absolute;
-	width: 26px;
+	width: 24px;
 	border-radius: 0 5px 5px 0;
 }
 
@@ -3675,7 +3675,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: color 140ms;
 	transition: color 140ms;
 	position: absolute;
-	width: 26px;
+	width: 24px;
 	text-align: center;
 	top: 50%;
 	line-height: 1;
@@ -3732,7 +3732,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-filterselect-large {
-	height: 36px;
+	height: 34px;
 	
 	font-size: 17px;
 }
@@ -3753,7 +3753,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 36px;
+	height: 34px;
 	
 	padding: 4px 6px;
 	
@@ -3763,22 +3763,22 @@ div.v-layout.v-horizontal.v-widget {
 	transition: box-shadow 180ms, border 180ms;
 	width: 100% !important;
 	height: 100%;
-	padding-right: 37px;
+	padding-right: 35px;
 	border-radius: inherit;
 }
 
 .marid .v-filterselect-large .v-icon + [class*="input"] {
-	padding-left: 36px;
+	padding-left: 34px;
 }
 
 .marid .v-filterselect-large img.v-icon {
-	max-height: 36px;
+	max-height: 34px;
 	margin-left: 6px;
 }
 
 .marid .v-filterselect-large span.v-icon {
 	
-	width: 36px;
+	width: 34px;
 	line-height: 1;
 	padding-top: 0.12em;
 	margin-left: 6px;
@@ -3789,7 +3789,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-touch-callout: none;
 	cursor: pointer;
 	position: absolute;
-	width: 36px;
+	width: 34px;
 	border-radius: 0 5px 5px 0;
 }
 
@@ -3800,7 +3800,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: color 140ms;
 	transition: color 140ms;
 	position: absolute;
-	width: 36px;
+	width: 34px;
 	text-align: center;
 	top: 50%;
 	line-height: 1;
@@ -3853,7 +3853,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-filterselect-huge {
-	height: 48px;
+	height: 45px;
 	
 	font-size: 23px;
 }
@@ -3874,7 +3874,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 48px;
+	height: 45px;
 	
 	padding: 5px 8px;
 	
@@ -3884,22 +3884,22 @@ div.v-layout.v-horizontal.v-widget {
 	transition: box-shadow 180ms, border 180ms;
 	width: 100% !important;
 	height: 100%;
-	padding-right: 49px;
+	padding-right: 46px;
 	border-radius: inherit;
 }
 
 .marid .v-filterselect-huge .v-icon + [class*="input"] {
-	padding-left: 48px;
+	padding-left: 45px;
 }
 
 .marid .v-filterselect-huge img.v-icon {
-	max-height: 48px;
+	max-height: 45px;
 	margin-left: 8px;
 }
 
 .marid .v-filterselect-huge span.v-icon {
 	
-	width: 48px;
+	width: 45px;
 	line-height: 1;
 	padding-top: 0.12em;
 	margin-left: 8px;
@@ -3910,7 +3910,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-touch-callout: none;
 	cursor: pointer;
 	position: absolute;
-	width: 48px;
+	width: 45px;
 	border-radius: 0 5px 5px 0;
 }
 
@@ -3921,7 +3921,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: color 140ms;
 	transition: color 140ms;
 	position: absolute;
-	width: 48px;
+	width: 45px;
 	text-align: center;
 	top: 50%;
 	line-height: 1;
@@ -3989,19 +3989,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-csslayout-well  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-csslayout-well  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-csslayout-well  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-csslayout-well  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-csslayout-card {
@@ -4014,19 +4014,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-csslayout-card  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-csslayout-card  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-csslayout-card  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-csslayout-card  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-csslayout-v-component-group {
@@ -4105,7 +4105,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid [class*="spacing"] > tbody > [class*="row"] > td {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid [class*="spacing"] > tbody > [class*="firstrow"] > td {
@@ -4113,27 +4113,27 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid [class*="margin-top"] > tbody > [class*="firstrow"] > td {
-	padding-top: 30px;
+	padding-top: 28px;
 }
 
 .marid [class*="margin-bottom"] > tbody > [class*="lastrow"] > td {
-	padding-bottom: 30px;
+	padding-bottom: 28px;
 }
 
 .marid [class*="margin-left"] > tbody > [class*="row"] > [class*="captioncell"] {
-	padding-left: 30px;
+	padding-left: 28px;
 }
 
 .marid [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h2, .marid [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h3, .marid [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h4 {
-	left: 30px;
+	left: 28px;
 }
 
 .marid [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"] {
-	padding-right: 30px;
+	padding-right: 28px;
 }
 
 .marid [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h2, .marid [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h3, .marid [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h4 {
-	right: 30px;
+	right: 28px;
 }
 
 .marid .v-formlayout > table {
@@ -4146,12 +4146,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-formlayout-error-indicator {
-	width: 15px;
+	width: 14px;
 }
 
 .marid .v-formlayout-captioncell {
 	vertical-align: top;
-	line-height: 29px;
+	line-height: 27px;
 }
 
 .marid .v-formlayout-captioncell .v-caption {
@@ -4182,7 +4182,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-formlayout.light  > table > tbody > tr > td {
 	padding-top: 0;
-	height: 30px;
+	height: 28px;
 	border-bottom: 1px solid #f4f4f4;
 }
 
@@ -4194,7 +4194,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: #7d7d7d;
 	text-align: right;
 	padding-left: 10px;
-	line-height: 30px;
+	line-height: 28px;
 }
 
 .marid .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"] {
@@ -4220,7 +4220,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 30px;
+	height: 28px;
 	border-radius: 0;
 	padding: 3px 5px;
 	
@@ -4533,8 +4533,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-grid-cell {
 	background-color: white;
-	padding: 0 15px;
-	line-height: 30px;
+	padding: 0 13.5px;
+	line-height: 28px;
 	text-overflow: ellipsis;
 }
 
@@ -4605,14 +4605,14 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-grid-header .sort-asc, .marid .v-grid-header .sort-desc {
-	padding-right: 29px;
+	padding-right: 27.5px;
 }
 
 .marid .v-grid-header .sort-asc:after, .marid .v-grid-header .sort-desc:after {
 	font-family: ThemeIcons, sans-serif;
 	content: "\f0de" " " attr(sort-order);
 	position: absolute;
-	right: 15px;
+	right: 13.5px;
 	font-size: 10px;
 }
 
@@ -4622,8 +4622,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-grid-column-resize-handle {
 	position: absolute;
-	width: 30px;
-	right: -15px;
+	width: 27px;
+	right: -13.5px;
 	top: 0px;
 	bottom: 0px;
 	cursor: col-resize;
@@ -4639,7 +4639,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	width: 3px;
 	top: 0px;
-	left: 15px;
+	left: 13.5px;
 	z-index: 9001;
 	background: #fff;
 	box-shadow: 0px 0px 5px #000;
@@ -4672,7 +4672,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 30px;
+	line-height: 28px;
 	vertical-align: baseline;
 }
 
@@ -4766,15 +4766,15 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-grid-editor-cells  > div input[type="text"], .marid .v-grid-editor-cells  > div input[type="text"].v-filterselect-input, .marid .v-grid-editor-cells  > div input[type="password"] {
-	padding-left: 15px;
+	padding-left: 13.5px;
 }
 
 .marid .v-grid-editor-cells  > div input[type="text"]:not(.v-filterselect-input), .marid .v-grid-editor-cells  > div input[type="password"] {
-	padding-right: 7.5px;
+	padding-right: 6.75px;
 }
 
 .marid .v-grid-editor-cells  > div input[type="checkbox"] {
-	margin-left: 15px;
+	margin-left: 13.5px;
 }
 
 .marid .v-grid-editor-cells  > div .v-textfield, .marid .v-grid-editor-cells  > div .v-datefield, .marid .v-grid-editor-cells  > div .v-filterselect {
@@ -4809,7 +4809,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-grid-editor-footer {
 	display: table;
-	height: 30px;
+	height: 28px;
 	border-top: 1px solid #f0f0f0;
 	margin-top: -1px;
 	background: white;
@@ -4844,7 +4844,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 30px;
+	line-height: 28px;
 	top: 0;
 }
 
@@ -4920,7 +4920,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-grid-header .v-grid-cell.dragged-column-header {
-	margin-top: -15px;
+	margin-top: -14px;
 }
 
 .marid .v-grid-footer .v-grid-cell {
@@ -4992,8 +4992,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-grid-editor-cells > div .error::before {
-	border-top: 8px solid #ed473b;
-	border-right: 8px solid transparent;
+	border-top: 7px solid #ed473b;
+	border-right: 7px solid transparent;
 }
 
 .marid .v-grid-editor-cells > div .error, .marid .v-grid-editor-cells > div .error > input {
@@ -5009,7 +5009,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-grid-editor-cells > div input[type="text"].v-datefield-textfield {
-	padding-left: 36px;
+	padding-left: 33.6px;
 }
 
 .marid .v-grid-editor-cells > div .v-textfield-focus, .marid .v-grid-editor-cells > div .v-datefield .v-textfield-focus, .marid .v-grid-editor-cells > div .v-filterselect-input:focus {
@@ -5017,12 +5017,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-grid-editor-cells > div .v-select {
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 7px;
+	padding-right: 7px;
 }
 
 .marid .v-grid-editor-cells > div .v-checkbox {
-	margin: 0 8px 0 15px;
+	margin: 0 7px 0 13.5px;
 }
 
 .marid .v-grid-editor-cells > div .v-checkbox  > input[type="checkbox"] {
@@ -5037,7 +5037,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	color: #ed473b;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 	content: "!";
 }
@@ -5190,7 +5190,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 30px;
+	height: 28px;
 	border-radius: 5px;
 	padding: 3px 7px;
 	border: 1px solid #e8e8e8;
@@ -5201,7 +5201,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	width: 150px;
+	width: 140px;
 }
 
 .marid .v-textfield.v-disabled {
@@ -5308,9 +5308,9 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 23px;
+	height: 21px;
 	border-radius: 5px;
-	padding: 3px 6px;
+	padding: 2px 6px;
 	
 	
 	-webkit-transition: box-shadow 180ms, border 180ms;
@@ -5334,9 +5334,9 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 26px;
+	height: 24px;
 	border-radius: 5px;
-	padding: 3px 7px;
+	padding: 3px 6px;
 	
 	
 	-webkit-transition: box-shadow 180ms, border 180ms;
@@ -5363,7 +5363,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 36px;
+	height: 34px;
 	border-radius: 5px;
 	padding: 4px 8px;
 	
@@ -5389,7 +5389,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 48px;
+	height: 45px;
 	border-radius: 5px;
 	padding: 5px 10px;
 	
@@ -5424,19 +5424,19 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-caption-inline-icon span.v-icon {
 	left: 1px;
 	bottom: 1px;
-	width: 30px;
-	line-height: 28px;
+	width: 28px;
+	line-height: 26px;
 	text-align: center;
 	font-size: 14px;
 }
 
 .marid .v-caption-inline-icon img.v-icon {
-	left: 7px;
-	bottom: 7px;
+	left: 6px;
+	bottom: 6px;
 }
 
 .marid .v-textfield-inline-icon  {
-	padding-left: 30px;
+	padding-left: 28px;
 }
 
 .marid .v-slot-inline-icon.v-slot-tiny {
@@ -5463,19 +5463,19 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-caption-inline-icon.v-caption-tiny span.v-icon {
 	left: 1px;
 	bottom: 1px;
-	width: 23px;
-	line-height: 21px;
+	width: 21px;
+	line-height: 19px;
 	text-align: center;
 	font-size: 11px;
 }
 
 .marid .v-caption-inline-icon.v-caption-tiny img.v-icon {
-	left: 4px;
-	bottom: 4px;
+	left: 3px;
+	bottom: 3px;
 }
 
 .marid .v-textfield-inline-icon.v-textfield-tiny  {
-	padding-left: 23px;
+	padding-left: 21px;
 }
 
 .marid .v-slot-inline-icon.v-slot-compact {
@@ -5502,19 +5502,19 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-caption-inline-icon.v-caption-compact span.v-icon {
 	left: 1px;
 	bottom: 1px;
-	width: 26px;
-	line-height: 24px;
+	width: 24px;
+	line-height: 22px;
 	text-align: center;
 	font-size: 14px;
 }
 
 .marid .v-caption-inline-icon.v-caption-compact img.v-icon {
-	left: 5px;
-	bottom: 5px;
+	left: 4px;
+	bottom: 4px;
 }
 
 .marid .v-textfield-inline-icon.v-textfield-compact  {
-	padding-left: 26px;
+	padding-left: 24px;
 }
 
 .marid .v-slot-inline-icon.v-slot-small {
@@ -5541,19 +5541,19 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-caption-inline-icon.v-caption-small span.v-icon {
 	left: 1px;
 	bottom: 1px;
-	width: 26px;
-	line-height: 24px;
+	width: 24px;
+	line-height: 22px;
 	text-align: center;
 	font-size: 12px;
 }
 
 .marid .v-caption-inline-icon.v-caption-small img.v-icon {
-	left: 5px;
-	bottom: 5px;
+	left: 4px;
+	bottom: 4px;
 }
 
 .marid .v-textfield-inline-icon.v-textfield-small  {
-	padding-left: 26px;
+	padding-left: 24px;
 }
 
 .marid .v-slot-inline-icon.v-slot-large {
@@ -5580,19 +5580,19 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-caption-inline-icon.v-caption-large span.v-icon {
 	left: 1px;
 	bottom: 1px;
-	width: 36px;
-	line-height: 34px;
+	width: 34px;
+	line-height: 32px;
 	text-align: center;
 	font-size: 17px;
 }
 
 .marid .v-caption-inline-icon.v-caption-large img.v-icon {
-	left: 10px;
-	bottom: 10px;
+	left: 9px;
+	bottom: 9px;
 }
 
 .marid .v-textfield-inline-icon.v-textfield-large  {
-	padding-left: 36px;
+	padding-left: 34px;
 }
 
 .marid .v-slot-inline-icon.v-slot-huge {
@@ -5619,19 +5619,19 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-caption-inline-icon.v-caption-huge span.v-icon {
 	left: 1px;
 	bottom: 1px;
-	width: 48px;
-	line-height: 46px;
+	width: 45px;
+	line-height: 43px;
 	text-align: center;
 	font-size: 23px;
 }
 
 .marid .v-caption-inline-icon.v-caption-huge img.v-icon {
-	left: 16px;
-	bottom: 16px;
+	left: 15px;
+	bottom: 15px;
 }
 
 .marid .v-textfield-inline-icon.v-textfield-huge  {
-	padding-left: 48px;
+	padding-left: 45px;
 }
 
 .marid .v-textfield-align-right {
@@ -5657,7 +5657,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 30px;
+	height: 28px;
 	border-radius: 5px;
 	padding: 5px;
 	border: 1px solid #e8e8e8;
@@ -5671,7 +5671,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: auto;
 	resize: none;
 	white-space: pre-wrap;
-	width: 150px;
+	width: 140px;
 }
 
 .marid .v-textarea.v-disabled {
@@ -5748,7 +5748,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 23px;
+	height: 21px;
 	border-radius: 5px;
 	padding: 5px;
 	
@@ -5778,7 +5778,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 26px;
+	height: 24px;
 	border-radius: 5px;
 	padding: 5px;
 	
@@ -5808,7 +5808,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 36px;
+	height: 34px;
 	border-radius: 5px;
 	padding: 5px;
 	
@@ -5838,7 +5838,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 48px;
+	height: 45px;
 	border-radius: 5px;
 	padding: 5px;
 	
@@ -5863,8 +5863,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-datefield {
 	position: relative;
-	width: 150px;
-	height: 30px;
+	width: 140px;
+	height: 28px;
 	border-radius: 5px;
 }
 
@@ -5884,7 +5884,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 30px;
+	height: 28px;
 	border-radius: 5px;
 	padding: 3px 7px;
 	border: 1px solid #e8e8e8;
@@ -5895,7 +5895,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	padding-left: 36px;
+	padding-left: 33.6px;
 	width: 100%;
 	height: 100%;
 	border-radius: inherit;
@@ -5935,8 +5935,8 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 	position: absolute;
 	z-index: 10;
-	width: 30px;
-	line-height: 28px;
+	width: 28px;
+	line-height: 26px;
 	text-align: center;
 	font: inherit;
 	outline: none;
@@ -6079,7 +6079,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-day {
-	width: 150px;
+	width: 140px;
 }
 
 .marid .v-datefield-month {
@@ -6127,7 +6127,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-popup td {
-	padding: 2px;
+	padding: 1px;
 }
 
 .marid .v-datefield-popup .v-datefield-calendarpanel {
@@ -6141,10 +6141,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-datefield-popup .v-datefield-calendarpanel-day {
 	box-sizing: border-box;
-	width: 24px;
-	height: 21px;
+	width: 22px;
+	height: 20px;
 	border: 1px solid transparent;
-	line-height: 21px;
+	line-height: 20px;
 	text-align: center;
 	font-size: 13px;
 	background: #fafafa;
@@ -6193,7 +6193,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-popup .v-datefield-calendarpanel-weekdays {
-	height: 21px;
+	height: 20px;
 	color: rgba(133, 133, 133, 0.85);
 }
 
@@ -6219,8 +6219,8 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 	color: transparent;
 	font-size: 0;
-	width: 15px;
-	height: 20px;
+	width: 14px;
+	height: 19px;
 	outline: none;
 	position: relative;
 	vertical-align: middle;
@@ -6270,16 +6270,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-popup td.v-datefield-calendarpanel-month {
-	width: 120px;
+	width: 112px;
 	color: #197de1;
 }
 
 .marid .v-datefield-popup .v-datefield-calendarpanel-year td.v-datefield-calendarpanel-month {
-	width: 60px;
+	width: 56px;
 }
 
 .marid .v-datefield-popup .v-datefield-calendarpanel-weeknumber, .marid .v-datefield-popup .v-datefield-calendarpanel-weekdays.v-datefield-calendarpanel-weeknumbers td:first-child {
-	width: 24px;
+	width: 22px;
 	color: rgba(133, 133, 133, 0.85);
 	font-size: 13px;
 	display: inline-block;
@@ -6293,10 +6293,10 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-datefield-popup .v-datefield-calendarpanel-weeknumbers .v-first:before {
 	content: "";
 	position: absolute;
-	top: 30px;
+	top: 29px;
 	bottom: 0;
 	left: 0;
-	width: 27px;
+	width: 26px;
 	border-top: 1px solid #f4f4f4;
 	border-right: 1px solid #f4f4f4;
 	border-top-right-radius: 5px;
@@ -6326,10 +6326,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-datefield-calendarpanel-day {
 	box-sizing: border-box;
-	width: 24px;
-	height: 21px;
+	width: 22px;
+	height: 20px;
 	border: 1px solid transparent;
-	line-height: 21px;
+	line-height: 20px;
 	text-align: center;
 	font-size: 13px;
 	background: #fafafa;
@@ -6378,7 +6378,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-calendarpanel-weekdays {
-	height: 21px;
+	height: 20px;
 	color: rgba(133, 133, 133, 0.85);
 }
 
@@ -6404,8 +6404,8 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 	color: transparent;
 	font-size: 0;
-	width: 15px;
-	height: 20px;
+	width: 14px;
+	height: 19px;
 	outline: none;
 	position: relative;
 	vertical-align: middle;
@@ -6455,16 +6455,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid td.v-datefield-calendarpanel-month {
-	width: 120px;
+	width: 112px;
 	color: #197de1;
 }
 
 .marid .v-datefield-calendarpanel-year td.v-datefield-calendarpanel-month {
-	width: 60px;
+	width: 56px;
 }
 
 .marid .v-datefield-calendarpanel-weeknumber, .marid .v-datefield-calendarpanel-weekdays.v-datefield-calendarpanel-weeknumbers td:first-child {
-	width: 24px;
+	width: 22px;
 	color: rgba(133, 133, 133, 0.85);
 	font-size: 13px;
 	display: inline-block;
@@ -6478,10 +6478,10 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-datefield-calendarpanel-weeknumbers .v-first:before {
 	content: "";
 	position: absolute;
-	top: 30px;
+	top: 29px;
 	bottom: 0;
 	left: 0;
-	width: 27px;
+	width: 26px;
 	border-top: 1px solid #f4f4f4;
 	border-right: 1px solid #f4f4f4;
 	border-top-right-radius: 5px;
@@ -6536,7 +6536,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-tiny {
-	height: 23px;
+	height: 21px;
 	border-radius: 5px;
 	font-size: 11px;
 }
@@ -6557,16 +6557,16 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 23px;
+	height: 21px;
 	border-radius: 5px;
-	padding: 3px 6px;
+	padding: 2px 6px;
 	
 	
 	
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	padding-left: 27.6px;
+	padding-left: 25.2px;
 	width: 100%;
 	height: 100%;
 	border-radius: inherit;
@@ -6581,8 +6581,8 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 	position: absolute;
 	z-index: 10;
-	width: 23px;
-	line-height: 23px;
+	width: 21px;
+	line-height: 21px;
 	text-align: center;
 	font: inherit;
 	outline: none;
@@ -6644,7 +6644,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-compact, .marid .v-datefield-small {
-	height: 26px;
+	height: 24px;
 	border-radius: 5px;
 }
 
@@ -6664,16 +6664,16 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 26px;
+	height: 24px;
 	border-radius: 5px;
-	padding: 3px 7px;
+	padding: 3px 6px;
 	
 	
 	
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	padding-left: 31.2px;
+	padding-left: 28.8px;
 	width: 100%;
 	height: 100%;
 	border-radius: inherit;
@@ -6688,8 +6688,8 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 	position: absolute;
 	z-index: 10;
-	width: 26px;
-	line-height: 26px;
+	width: 24px;
+	line-height: 24px;
 	text-align: center;
 	font: inherit;
 	outline: none;
@@ -6755,7 +6755,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-large {
-	height: 36px;
+	height: 34px;
 	border-radius: 5px;
 	font-size: 17px;
 }
@@ -6776,7 +6776,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 36px;
+	height: 34px;
 	border-radius: 5px;
 	padding: 4px 8px;
 	
@@ -6785,7 +6785,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	padding-left: 43.2px;
+	padding-left: 40.8px;
 	width: 100%;
 	height: 100%;
 	border-radius: inherit;
@@ -6800,8 +6800,8 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 	position: absolute;
 	z-index: 10;
-	width: 36px;
-	line-height: 36px;
+	width: 34px;
+	line-height: 34px;
 	text-align: center;
 	font: inherit;
 	outline: none;
@@ -6863,7 +6863,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-datefield-huge {
-	height: 48px;
+	height: 45px;
 	border-radius: 5px;
 	font-size: 23px;
 }
@@ -6884,7 +6884,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 48px;
+	height: 45px;
 	border-radius: 5px;
 	padding: 5px 10px;
 	
@@ -6893,7 +6893,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	padding-left: 57.6px;
+	padding-left: 54.0px;
 	width: 100%;
 	height: 100%;
 	border-radius: inherit;
@@ -6908,8 +6908,8 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 	position: absolute;
 	z-index: 10;
-	width: 48px;
-	line-height: 48px;
+	width: 45px;
+	line-height: 45px;
 	text-align: center;
 	font: inherit;
 	outline: none;
@@ -6981,10 +6981,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-inline-datefield-calendarpanel-day {
 	box-sizing: border-box;
-	width: 24px;
-	height: 21px;
+	width: 22px;
+	height: 20px;
 	border: 1px solid transparent;
-	line-height: 21px;
+	line-height: 20px;
 	text-align: center;
 	font-size: 13px;
 	background: #fafafa;
@@ -7033,7 +7033,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-inline-datefield-calendarpanel-weekdays {
-	height: 21px;
+	height: 20px;
 	color: rgba(133, 133, 133, 0.85);
 }
 
@@ -7059,8 +7059,8 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 	color: transparent;
 	font-size: 0;
-	width: 15px;
-	height: 20px;
+	width: 14px;
+	height: 19px;
 	outline: none;
 	position: relative;
 	vertical-align: middle;
@@ -7110,16 +7110,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid td.v-inline-datefield-calendarpanel-month {
-	width: 120px;
+	width: 112px;
 	color: #197de1;
 }
 
 .marid .v-inline-datefield-calendarpanel-year td.v-inline-datefield-calendarpanel-month {
-	width: 60px;
+	width: 56px;
 }
 
 .marid .v-inline-datefield-calendarpanel-weeknumber, .marid .v-inline-datefield-calendarpanel-weekdays.v-inline-datefield-calendarpanel-weeknumbers td:first-child {
-	width: 24px;
+	width: 22px;
 	color: rgba(133, 133, 133, 0.85);
 	font-size: 13px;
 	display: inline-block;
@@ -7133,10 +7133,10 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-inline-datefield-calendarpanel-weeknumbers .v-first:before {
 	content: "";
 	position: absolute;
-	top: 30px;
+	top: 29px;
 	bottom: 0;
 	left: 0;
-	width: 27px;
+	width: 26px;
 	border-top: 1px solid #f4f4f4;
 	border-right: 1px solid #f4f4f4;
 	border-top-right-radius: 5px;
@@ -7162,24 +7162,24 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-gridlayout-margin-top {
-	padding-top: 30px;
+	padding-top: 28px;
 }
 
 .marid .v-gridlayout-margin-bottom {
-	padding-bottom: 30px;
+	padding-bottom: 28px;
 }
 
 .marid .v-gridlayout-margin-left {
-	padding-left: 30px;
+	padding-left: 28px;
 }
 
 .marid .v-gridlayout-margin-right {
-	padding-right: 30px;
+	padding-right: 28px;
 }
 
 .marid .v-gridlayout-spacing-on {
-	padding-left: 10px;
-	padding-top: 10px;
+	padding-left: 9px;
+	padding-top: 9px;
 }
 
 .marid .v-menubar {
@@ -7190,7 +7190,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-tap-highlight-color: transparent;
 	-webkit-touch-callout: none;
 	cursor: pointer;
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -7208,7 +7208,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
 	text-align: left;
-	line-height: 28px;
+	line-height: 26px;
 }
 
 .marid .v-menubar:after {
@@ -7254,11 +7254,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-menubar  > .v-menubar-menuitem {
-	padding: 0 12px;
+	padding: 0 11px;
 }
 
 .marid .v-menubar  > .v-menubar-menuitem[class*="-icon-only"] {
-	width: 30px;
+	width: 28px;
 }
 
 .marid .v-menubar:active:after {
@@ -7270,7 +7270,7 @@ div.v-layout.v-horizontal.v-widget {
 	z-index: 1;
 	display: inline-block;
 	box-sizing: border-box;
-	height: 30px;
+	height: 28px;
 	padding: 0 12px;
 	color: inherit;
 	font-weight: 500;
@@ -7339,7 +7339,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-menubar > .v-menubar-menuitem[class*="-icon-only"] {
-	width: 30px;
+	width: 28px;
 	padding: 0;
 }
 
@@ -7445,14 +7445,14 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-menubar-popup .v-menubar-menuitem {
 	display: block;
 	cursor: pointer;
-	line-height: 22px;
-	padding: 0 16px 0 8px;
+	line-height: 20px;
+	padding: 0 14px 0 7px;
 	border-radius: 4px;
 	font-weight: 400;
 	white-space: nowrap;
 	position: relative;
-	padding-left: 26px;
-	padding-right: 30px;
+	padding-left: 24px;
+	padding-right: 28px;
 	position: relative;
 }
 
@@ -7471,7 +7471,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-menubar-popup .v-menubar-menuitem .v-icon {
-	max-height: 22px;
+	max-height: 20px;
 	margin-right: 4px;
 	min-width: 1em;
 }
@@ -7482,10 +7482,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-menubar-popup .v-menubar-submenu-indicator  + .v-menubar-menuitem-caption:after {
 	position: absolute;
-	right: 8px;
+	right: 7px;
 	font-family: ThemeIcons;
 	content: "\f054";
-	line-height: 24px;
+	line-height: 22px;
 }
 
 .marid .v-menubar-popup .v-menubar-menuitem-selected {
@@ -7508,7 +7508,7 @@ div.v-layout.v-horizontal.v-widget {
 	content: "\f00c";
 	font-family: ThemeIcons;
 	position: absolute;
-	left: 8px;
+	left: 7px;
 }
 
 .marid .v-menubar-popup [class*="unchecked"] .v-menubar-menuitem-caption:before {
@@ -7520,8 +7520,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-menubar-small {
-	height: 26px;
-	padding: 0 13px;
+	height: 24px;
+	padding: 0 12px;
 	
 	font-weight: 500;
 	
@@ -7529,7 +7529,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 5px;
 	padding: 0;
 	text-align: left;
-	line-height: 24px;
+	line-height: 22px;
 	font-size: 12px;
 }
 
@@ -7542,11 +7542,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-menubar-small  > .v-menubar-menuitem {
-	padding: 0 10px;
+	padding: 0 9px;
 }
 
 .marid .v-menubar-small  > .v-menubar-menuitem[class*="-icon-only"] {
-	width: 26px;
+	width: 24px;
 }
 
 .marid .v-menubar-borderless {
@@ -7571,7 +7571,7 @@ div.v-layout.v-horizontal.v-widget {
 	margin-right: 1px;
 	border-radius: 5px;
 	color: #197de1;
-	padding: 0 10px;
+	padding: 0 9px;
 	-webkit-transition: color 140ms;
 	-moz-transition: color 140ms;
 	transition: color 140ms;
@@ -7618,7 +7618,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-radiobutton {
 	position: relative;
-	line-height: 15px;
+	line-height: 14px;
 	white-space: nowrap;
 }
 
@@ -7627,7 +7627,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-radiobutton {
-	padding-left: 20px;
+	padding-left: 19px;
 }
 
 :root .marid .v-radiobutton label {
@@ -7658,8 +7658,8 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 15px;
-	height: 15px;
+	width: 14px;
+	height: 14px;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -7669,7 +7669,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-radiobutton > input ~ label:before {
-	height: 15px;
+	height: 14px;
 	padding: 0 8px;
 	color: #191919;
 	font-weight: 500;
@@ -7686,7 +7686,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 15px;
+	height: 14px;
 }
 
 :root .marid .v-radiobutton > input ~ label:after {
@@ -7707,7 +7707,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-radiobutton > .v-icon, .marid .v-radiobutton > label .v-icon {
-	margin: 0 5px 0 3px;
+	margin: 0 5px 0 2px;
 	min-width: 1em;
 	cursor: pointer;
 }
@@ -7758,7 +7758,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-optiongroup .v-radiobutton, .marid .v-select-optiongroup .v-checkbox {
 	display: block;
-	margin: 8px 14px 0 0;
+	margin: 7px 14px 0 0;
 }
 
 .marid .v-select-optiongroup .v-radiobutton:first-child, .marid .v-select-optiongroup .v-checkbox:first-child {
@@ -7779,7 +7779,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-optiongroup-small .v-checkbox {
 	position: relative;
-	line-height: 13px;
+	line-height: 12px;
 	white-space: nowrap;
 }
 
@@ -7788,7 +7788,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-small .v-checkbox {
-	padding-left: 17px;
+	padding-left: 16px;
 }
 
 :root .marid .v-select-optiongroup-small .v-checkbox label {
@@ -7819,8 +7819,8 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 13px;
-	height: 13px;
+	width: 12px;
+	height: 12px;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -7830,7 +7830,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-small .v-checkbox > input ~ label:before {
-	height: 13px;
+	height: 12px;
 	padding: 0 6px;
 	color: #191919;
 	font-weight: 500;
@@ -7847,7 +7847,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 13px;
+	height: 12px;
 }
 
 :root .marid .v-select-optiongroup-small .v-checkbox > input ~ label:after {
@@ -7906,7 +7906,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-optiongroup-small .v-radiobutton {
 	position: relative;
-	line-height: 13px;
+	line-height: 12px;
 	white-space: nowrap;
 }
 
@@ -7915,7 +7915,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-small .v-radiobutton {
-	padding-left: 17px;
+	padding-left: 16px;
 }
 
 :root .marid .v-select-optiongroup-small .v-radiobutton label {
@@ -7946,8 +7946,8 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 13px;
-	height: 13px;
+	width: 12px;
+	height: 12px;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -7957,7 +7957,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-small .v-radiobutton > input ~ label:before {
-	height: 13px;
+	height: 12px;
 	padding: 0 6px;
 	color: #191919;
 	font-weight: 500;
@@ -7974,7 +7974,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 13px;
+	height: 12px;
 }
 
 :root .marid .v-select-optiongroup-small .v-radiobutton > input ~ label:after {
@@ -8032,8 +8032,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-small .v-radiobutton > input:checked ~ label:after {
-	width: 5px;
-	height: 5px;
+	width: 4px;
+	height: 4px;
 	top: 4px;
 	left: 4px;
 	background: #197de1;
@@ -8046,7 +8046,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-optiongroup-small .v-radiobutton, .marid .v-select-optiongroup-small .v-checkbox {
 	display: block;
-	margin: 7px 14px 0 0;
+	margin: 6px 14px 0 0;
 }
 
 .marid .v-select-optiongroup-small .v-radiobutton:first-child, .marid .v-select-optiongroup-small .v-checkbox:first-child {
@@ -8067,7 +8067,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-optiongroup-large .v-checkbox {
 	position: relative;
-	line-height: 18px;
+	line-height: 17px;
 	white-space: nowrap;
 }
 
@@ -8076,7 +8076,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-large .v-checkbox {
-	padding-left: 24px;
+	padding-left: 23px;
 }
 
 :root .marid .v-select-optiongroup-large .v-checkbox label {
@@ -8107,18 +8107,18 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 18px;
-	height: 18px;
+	width: 17px;
+	height: 17px;
 	position: absolute;
 	top: 0;
 	left: 0;
 	border-radius: 5px;
-	font-size: 13px;
+	font-size: 14px;
 	text-align: center;
 }
 
 :root .marid .v-select-optiongroup-large .v-checkbox > input ~ label:before {
-	height: 18px;
+	height: 17px;
 	padding: 0 9px;
 	color: #191919;
 	font-weight: 500;
@@ -8135,7 +8135,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 18px;
+	height: 17px;
 }
 
 :root .marid .v-select-optiongroup-large .v-checkbox > input ~ label:after {
@@ -8194,7 +8194,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-optiongroup-large .v-radiobutton {
 	position: relative;
-	line-height: 18px;
+	line-height: 17px;
 	white-space: nowrap;
 }
 
@@ -8203,7 +8203,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 :root .marid .v-select-optiongroup-large .v-radiobutton {
-	padding-left: 24px;
+	padding-left: 23px;
 }
 
 :root .marid .v-select-optiongroup-large .v-radiobutton label {
@@ -8234,18 +8234,18 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	display: inline-block;
 	box-sizing: border-box;
-	width: 18px;
-	height: 18px;
+	width: 17px;
+	height: 17px;
 	position: absolute;
 	top: 0;
 	left: 0;
 	border-radius: 5px;
-	font-size: 13px;
+	font-size: 14px;
 	text-align: center;
 }
 
 :root .marid .v-select-optiongroup-large .v-radiobutton > input ~ label:before {
-	height: 18px;
+	height: 17px;
 	padding: 0 9px;
 	color: #191919;
 	font-weight: 500;
@@ -8262,7 +8262,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: inset 0 1px 2px white, inset 0 0 1px #fbfbfb, 0 2px 3px rgba(0, 0, 0, 0.05);
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	padding: 0;
-	height: 18px;
+	height: 17px;
 }
 
 :root .marid .v-select-optiongroup-large .v-radiobutton > input ~ label:after {
@@ -8435,8 +8435,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 16px 80px -6px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 16px 80px -6px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.2);
 	padding: 0;
-	min-width: 120px !important;
-	min-height: 30px !important;
+	min-width: 112px !important;
+	min-height: 28px !important;
 	white-space: nowrap;
 	overflow: hidden !important;
 	-webkit-transition: width 200ms, height 200ms, top 200ms, left 200ms;
@@ -8520,9 +8520,9 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-header {
-	line-height: 29px;
-	padding-left: 10px;
-	margin-right: 60px;
+	line-height: 27px;
+	padding-left: 9px;
+	margin-right: 56px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -8530,11 +8530,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-restorebox-disabled  ~ .v-window-closebox ~ .v-window-header, .marid .v-window-maximizebox-disabled  ~ .v-window-closebox ~ .v-window-header {
-	margin-right: 30px;
+	margin-right: 28px;
 }
 
 .marid .v-window-restorebox-disabled  ~ .v-window-closebox-disabled ~ .v-window-header, .marid .v-window-maximizebox-disabled  ~ .v-window-closebox-disabled ~ .v-window-header {
-	margin-right: 10px;
+	margin-right: 9px;
 }
 
 .marid .v-window-closebox, .marid .v-window-maximizebox, .marid .v-window-restorebox {
@@ -8543,10 +8543,10 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	right: 0;
 	box-sizing: border-box;
-	width: 27px;
-	height: 29px;
+	width: 25px;
+	height: 27px;
 	background-color: white;
-	line-height: 27px;
+	line-height: 25px;
 	text-align: center;
 	cursor: pointer;
 	font-size: 18px;
@@ -8604,7 +8604,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-maximizebox, .marid .v-window-restorebox {
-	right: 27px;
+	right: 25px;
 	padding-left: 3px;
 	border-radius: 0 0 0 5px;
 }
@@ -8618,7 +8618,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-closebox-disabled  + .v-window-closebox, .marid .v-window-resizebox-disabled  + .v-window-closebox, .marid .v-window-restorebox-disabled  + .v-window-closebox, .marid .v-window-maximizebox-disabled  + .v-window-closebox {
-	width: 30px;
+	width: 28px;
 	padding-right: 0;
 	border-bottom-left-radius: 5px;
 }
@@ -8650,43 +8650,43 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-top"] > tbody > [class*="firstrow"] > td {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-bottom"] > tbody > [class*="lastrow"] > td {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-left"] > tbody > [class*="row"] > [class*="captioncell"] {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h2, .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h3, .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-left"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h4 {
-	left: 10px;
+	left: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"] {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h2, .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h3, .marid .v-window-contents  > .v-scrollable  > .v-formlayout [class*="margin-right"] > tbody > [class*="row"] > [class*="contentcell"]  > .v-label-h4 {
-	right: 10px;
+	right: 9px;
 }
 
 .marid .v-window-contents  > .v-scrollable:focus {
@@ -8721,8 +8721,8 @@ div.v-layout.v-horizontal.v-widget {
 	z-index: 1000;
 	right: 0;
 	bottom: 0;
-	width: 15px;
-	height: 15px;
+	width: 14px;
+	height: 14px;
 	cursor: nwse-resize;
 }
 
@@ -8737,7 +8737,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-top-toolbar .v-label, .marid .v-window-bottom-toolbar .v-label {
-	line-height: 29px;
+	line-height: 27px;
 }
 
 .marid .v-window-top-toolbar .v-spacing, .marid .v-window-bottom-toolbar .v-spacing {
@@ -8745,7 +8745,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-top-toolbar.v-layout {
-	padding: 6px 10px;
+	padding: 6px 9px;
 	position: relative;
 	z-index: 2;
 	border-top: 1px solid #f1f1f1;
@@ -8754,7 +8754,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-top-toolbar.v-menubar {
-	margin: 10px 10px 5px;
+	margin: 9px 9px 5px;
 }
 
 .marid .v-window-top-toolbar.v-menubar-borderless {
@@ -8764,7 +8764,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-window-bottom-toolbar.v-layout {
-	padding: 6px 10px;
+	padding: 6px 9px;
 	background-color: #fafafa;
 	background-image: -webkit-linear-gradient(top, #ebebeb 0, #fafafa 3px);
 	background-image: linear-gradient(to bottom,#ebebeb 0, #fafafa 3px);
@@ -8774,7 +8774,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-margin-left.v-margin-right.v-margin-top .v-window-top-toolbar.v-layout {
 	box-sizing: content-box;
-	margin: -10px -10px 0;
+	margin: -9px -9px 0;
 }
 
 .marid .v-margin-left.v-margin-right.v-margin-top .v-window-top-toolbar.v-menubar {
@@ -8782,13 +8782,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-margin-left.v-margin-right.v-margin-top .v-window-top-toolbar.v-menubar-borderless {
-	margin: -5px -5px 0;
+	margin: -4px -4px 0;
 	padding: 0;
 }
 
 .marid .v-margin-left.v-margin-right.v-margin-bottom .v-window-bottom-toolbar.v-layout {
 	box-sizing: content-box;
-	margin: 0 -10px -10px;
+	margin: 0 -9px -9px;
 }
 
 .marid .v-tree {
@@ -8806,15 +8806,15 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	z-index: 3;
 	width: 1.9em;
-	height: 23px;
+	height: 22px;
 	cursor: pointer;
 	background: red;
 	opacity: 0;
 }
 
 .marid .v-tree-node-caption {
-	height: 23px;
-	line-height: 22px;
+	height: 22px;
+	line-height: 21px;
 	overflow: hidden;
 	white-space: nowrap;
 	vertical-align: top;
@@ -8840,7 +8840,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree-node-caption span {
-	padding-right: 23px;
+	padding-right: 22px;
 	cursor: pointer;
 	display: inline-block;
 	width: 100%;
@@ -8863,9 +8863,9 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	z-index: 1;
 	left: 0;
-	margin-top: -23px;
+	margin-top: -22px;
 	width: 100%;
-	height: 23px;
+	height: 22px;
 	border-radius: 5px;
 	opacity: 0;
 	-webkit-transition: opacity 120ms;
@@ -8906,7 +8906,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree-node-children {
-	padding-left: 15px;
+	padding-left: 14px;
 }
 
 .marid .v-tree-node-drag-top:before, .marid .v-tree-node-drag-bottom:after, .marid .v-tree-node-drag-bottom.v-tree-node-dragfolder.v-tree-node-expanded > .v-tree-node-children:before {
@@ -9179,8 +9179,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-tree8-cell {
 	background-color: white;
-	padding: 0 15px;
-	line-height: 30px;
+	padding: 0 13.5px;
+	line-height: 28px;
 	text-overflow: ellipsis;
 }
 
@@ -9251,14 +9251,14 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree8-header .sort-asc, .marid .v-tree8-header .sort-desc {
-	padding-right: 29px;
+	padding-right: 27.5px;
 }
 
 .marid .v-tree8-header .sort-asc:after, .marid .v-tree8-header .sort-desc:after {
 	font-family: ThemeIcons, sans-serif;
 	content: "\f0de" " " attr(sort-order);
 	position: absolute;
-	right: 15px;
+	right: 13.5px;
 	font-size: 10px;
 }
 
@@ -9268,8 +9268,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-tree8-column-resize-handle {
 	position: absolute;
-	width: 30px;
-	right: -15px;
+	width: 27px;
+	right: -13.5px;
 	top: 0px;
 	bottom: 0px;
 	cursor: col-resize;
@@ -9285,7 +9285,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	width: 3px;
 	top: 0px;
-	left: 15px;
+	left: 13.5px;
 	z-index: 9001;
 	background: #fff;
 	box-shadow: 0px 0px 5px #000;
@@ -9318,7 +9318,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 30px;
+	line-height: 28px;
 	vertical-align: baseline;
 }
 
@@ -9412,15 +9412,15 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree8-editor-cells  > div input[type="text"], .marid .v-tree8-editor-cells  > div input[type="text"].v-filterselect-input, .marid .v-tree8-editor-cells  > div input[type="password"] {
-	padding-left: 15px;
+	padding-left: 13.5px;
 }
 
 .marid .v-tree8-editor-cells  > div input[type="text"]:not(.v-filterselect-input), .marid .v-tree8-editor-cells  > div input[type="password"] {
-	padding-right: 7.5px;
+	padding-right: 6.75px;
 }
 
 .marid .v-tree8-editor-cells  > div input[type="checkbox"] {
-	margin-left: 15px;
+	margin-left: 13.5px;
 }
 
 .marid .v-tree8-editor-cells  > div .v-textfield, .marid .v-tree8-editor-cells  > div .v-datefield, .marid .v-tree8-editor-cells  > div .v-filterselect {
@@ -9455,7 +9455,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-tree8-editor-footer {
 	display: table;
-	height: 30px;
+	height: 28px;
 	border-top: 1px solid #f0f0f0;
 	margin-top: -1px;
 	background: white;
@@ -9490,7 +9490,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 30px;
+	line-height: 28px;
 	top: 0;
 }
 
@@ -9566,7 +9566,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree8-header .v-tree8-cell.dragged-column-header {
-	margin-top: -15px;
+	margin-top: -14px;
 }
 
 .marid .v-tree8-footer .v-tree8-cell {
@@ -9638,8 +9638,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree8-editor-cells > div .error::before {
-	border-top: 8px solid #ed473b;
-	border-right: 8px solid transparent;
+	border-top: 7px solid #ed473b;
+	border-right: 7px solid transparent;
 }
 
 .marid .v-tree8-editor-cells > div .error, .marid .v-tree8-editor-cells > div .error > input {
@@ -9655,7 +9655,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree8-editor-cells > div input[type="text"].v-datefield-textfield {
-	padding-left: 36px;
+	padding-left: 33.6px;
 }
 
 .marid .v-tree8-editor-cells > div .v-textfield-focus, .marid .v-tree8-editor-cells > div .v-datefield .v-textfield-focus, .marid .v-tree8-editor-cells > div .v-filterselect-input:focus {
@@ -9663,12 +9663,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tree8-editor-cells > div .v-select {
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 7px;
+	padding-right: 7px;
 }
 
 .marid .v-tree8-editor-cells > div .v-checkbox {
-	margin: 0 8px 0 15px;
+	margin: 0 7px 0 13.5px;
 }
 
 .marid .v-tree8-editor-cells > div .v-checkbox  > input[type="checkbox"] {
@@ -9683,7 +9683,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	color: #ed473b;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 	content: "!";
 }
@@ -10255,8 +10255,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-treegrid-cell {
 	background-color: white;
-	padding: 0 15px;
-	line-height: 30px;
+	padding: 0 13.5px;
+	line-height: 28px;
 	text-overflow: ellipsis;
 }
 
@@ -10327,14 +10327,14 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treegrid-header .sort-asc, .marid .v-treegrid-header .sort-desc {
-	padding-right: 29px;
+	padding-right: 27.5px;
 }
 
 .marid .v-treegrid-header .sort-asc:after, .marid .v-treegrid-header .sort-desc:after {
 	font-family: ThemeIcons, sans-serif;
 	content: "\f0de" " " attr(sort-order);
 	position: absolute;
-	right: 15px;
+	right: 13.5px;
 	font-size: 10px;
 }
 
@@ -10344,8 +10344,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-treegrid-column-resize-handle {
 	position: absolute;
-	width: 30px;
-	right: -15px;
+	width: 27px;
+	right: -13.5px;
 	top: 0px;
 	bottom: 0px;
 	cursor: col-resize;
@@ -10361,7 +10361,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	width: 3px;
 	top: 0px;
-	left: 15px;
+	left: 13.5px;
 	z-index: 9001;
 	background: #fff;
 	box-shadow: 0px 0px 5px #000;
@@ -10394,7 +10394,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 30px;
+	line-height: 28px;
 	vertical-align: baseline;
 }
 
@@ -10488,15 +10488,15 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treegrid-editor-cells  > div input[type="text"], .marid .v-treegrid-editor-cells  > div input[type="text"].v-filterselect-input, .marid .v-treegrid-editor-cells  > div input[type="password"] {
-	padding-left: 15px;
+	padding-left: 13.5px;
 }
 
 .marid .v-treegrid-editor-cells  > div input[type="text"]:not(.v-filterselect-input), .marid .v-treegrid-editor-cells  > div input[type="password"] {
-	padding-right: 7.5px;
+	padding-right: 6.75px;
 }
 
 .marid .v-treegrid-editor-cells  > div input[type="checkbox"] {
-	margin-left: 15px;
+	margin-left: 13.5px;
 }
 
 .marid .v-treegrid-editor-cells  > div .v-textfield, .marid .v-treegrid-editor-cells  > div .v-datefield, .marid .v-treegrid-editor-cells  > div .v-filterselect {
@@ -10531,7 +10531,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-treegrid-editor-footer {
 	display: table;
-	height: 30px;
+	height: 28px;
 	border-top: 1px solid #f0f0f0;
 	margin-top: -1px;
 	background: white;
@@ -10566,7 +10566,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 30px;
+	line-height: 28px;
 	top: 0;
 }
 
@@ -10642,7 +10642,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treegrid-header .v-treegrid-cell.dragged-column-header {
-	margin-top: -15px;
+	margin-top: -14px;
 }
 
 .marid .v-treegrid-footer .v-treegrid-cell {
@@ -10714,8 +10714,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treegrid-editor-cells > div .error::before {
-	border-top: 8px solid #ed473b;
-	border-right: 8px solid transparent;
+	border-top: 7px solid #ed473b;
+	border-right: 7px solid transparent;
 }
 
 .marid .v-treegrid-editor-cells > div .error, .marid .v-treegrid-editor-cells > div .error > input {
@@ -10731,7 +10731,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treegrid-editor-cells > div input[type="text"].v-datefield-textfield {
-	padding-left: 36px;
+	padding-left: 33.6px;
 }
 
 .marid .v-treegrid-editor-cells > div .v-textfield-focus, .marid .v-treegrid-editor-cells > div .v-datefield .v-textfield-focus, .marid .v-treegrid-editor-cells > div .v-filterselect-input:focus {
@@ -10739,12 +10739,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treegrid-editor-cells > div .v-select {
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 7px;
+	padding-right: 7px;
 }
 
 .marid .v-treegrid-editor-cells > div .v-checkbox {
-	margin: 0 8px 0 15px;
+	margin: 0 7px 0 13.5px;
 }
 
 .marid .v-treegrid-editor-cells > div .v-checkbox  > input[type="checkbox"] {
@@ -10759,7 +10759,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	color: #ed473b;
 	font-weight: 600;
-	width: 15px;
+	width: 14px;
 	text-align: center;
 	content: "!";
 }
@@ -11064,12 +11064,12 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-table-footer-container, .marid .v-table-caption-container {
 	overflow: hidden;
 	line-height: 1;
-	min-height: 30px;
+	min-height: 28px;
 	box-sizing: border-box;
 }
 
 .marid .v-table-footer-container {
-	padding: 8px 10px 9px;
+	padding: 7px 9px 8px;
 	float: right;
 }
 
@@ -11078,7 +11078,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-caption-container, .marid .v-table-header-drag {
-	padding: 9px 10px 8px;
+	padding: 8px 9px 7px;
 	border-left: 1px solid #f0f0f0;
 }
 
@@ -11087,20 +11087,20 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-resizer {
-	height: 30px;
-	width: 7px;
+	height: 28px;
+	width: 6px;
 	cursor: e-resize;
 	cursor: col-resize;
 	position: relative;
-	right: -4px;
+	right: -3px;
 	z-index: 1;
-	margin-left: -7px;
+	margin-left: -6px;
 }
 
 .marid .v-table-cell-content {
 	border-left: 1px solid #f0f0f0;
 	overflow: hidden;
-	height: 30px;
+	height: 28px;
 	vertical-align: middle;
 }
 
@@ -11115,13 +11115,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-table-cell-wrapper {
 	line-height: 1;
-	padding: 0 10px;
+	padding: 0 9px;
 	box-sizing: border-box;
 	margin-right: 0 !important;
 }
 
 .marid .v-table-cell-wrapper  > .v-widget {
-	margin: 3px -5px;
+	margin: 2px -5px;
 }
 
 .marid .v-table-cell-wrapper  > .v-widget.v-label, .marid .v-table-cell-wrapper  > .v-widget.v-checkbox, .marid .v-table-cell-wrapper  > .v-widget.v-select-optiongroup {
@@ -11196,10 +11196,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-table-header-cell-asc .v-table-sort-indicator, .marid .v-table-header-cell-desc .v-table-sort-indicator {
 	background: transparent;
-	width: 15px;
-	height: 30px;
-	line-height: 30px;
-	margin-left: -15px;
+	width: 14px;
+	height: 28px;
+	line-height: 28px;
+	margin-left: -14px;
 }
 
 .marid .v-table-header-cell-asc .v-table-sort-indicator:before, .marid .v-table-header-cell-desc .v-table-sort-indicator:before {
@@ -11235,7 +11235,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	opacity: 0.9;
 	filter: alpha(opacity=90) ;
-	margin-top: -15px;
+	margin-top: -14px;
 	z-index: 30000;
 	line-height: 1;
 }
@@ -11243,7 +11243,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-table-focus-slot-right {
 	border-right: 3px solid #197de1;
 	right: -2px;
-	margin-left: -10px !important;
+	margin-left: -9px !important;
 }
 
 .marid .v-table-focus-slot-left {
@@ -11252,11 +11252,11 @@ div.v-layout.v-horizontal.v-widget {
 	left: -1px;
 	right: auto;
 	margin-left: 0 !important;
-	margin-right: -10px;
+	margin-right: -9px;
 }
 
 .marid .v-table-column-selector {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -11276,9 +11276,9 @@ div.v-layout.v-horizontal.v-widget {
 	z-index: 2;
 	top: 0;
 	right: 0;
-	width: 15px;
-	height: 15px;
-	line-height: 15px;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
 	padding: 0;
 	border-top-width: 0;
 	border-right-width: 0;
@@ -11393,9 +11393,9 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	top: 50%;
 	width: 100%;
-	height: 30px;
-	line-height: 30px;
-	margin: -15px 0 0 !important;
+	height: 28px;
+	line-height: 28px;
+	margin: -14px 0 0 !important;
 	text-align: center;
 }
 
@@ -11420,7 +11420,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-table-row-drag-bottom td.v-table-cell-content {
 	border-bottom: 2px solid #197de1;
-	height: 28px;
+	height: 26px;
 }
 
 .marid .v-table-row-drag-bottom .v-table-cell-wrapper {
@@ -11429,7 +11429,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-table-row-drag-top td.v-table-cell-content {
 	border-top: 2px solid #197de1;
-	height: 29px;
+	height: 27px;
 }
 
 .marid .v-table-row-drag-top .v-table-cell-wrapper {
@@ -11446,7 +11446,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-no-vertical-lines.v-treetable .v-table-cell-content {
-	padding-left: 11px;
+	padding-left: 10px;
 }
 
 .marid .v-table-no-horizontal-lines .v-table-cell-content {
@@ -11455,7 +11455,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-no-horizontal-lines .v-table-row-drag-top .v-table-cell-content, .marid .v-table-no-horizontal-lines .v-table-row-drag-bottom .v-table-cell-content {
-	height: 29px;
+	height: 27px;
 }
 
 .marid .v-table-no-header .v-table-header-wrap {
@@ -11479,12 +11479,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-compact .v-table-footer-container, .marid .v-table-small .v-table-footer-container {
-	padding: 6px 6px 7px;
+	padding: 5px 6px 6px;
 }
 
 .marid .v-table-compact .v-table-caption-container, .marid .v-table-compact .v-table-header-drag, .marid .v-table-small .v-table-caption-container, .marid .v-table-small .v-table-header-drag {
-	padding-top: 7px;
-	padding-bottom: 6px;
+	padding-top: 6px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -11494,11 +11494,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-compact .v-table-resizer, .marid .v-table-small .v-table-resizer {
-	height: 26px;
+	height: 24px;
 }
 
 .marid .v-table-compact .v-table-cell-content, .marid .v-table-small .v-table-cell-content {
-	height: 26px;
+	height: 24px;
 }
 
 .marid .v-table-compact .v-table-cell-wrapper, .marid .v-table-small .v-table-cell-wrapper {
@@ -11520,12 +11520,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-compact .v-table-header-cell-asc .v-table-sort-indicator, .marid .v-table-compact .v-table-header-cell-desc .v-table-sort-indicator, .marid .v-table-small .v-table-header-cell-asc .v-table-sort-indicator, .marid .v-table-small .v-table-header-cell-desc .v-table-sort-indicator {
-	height: 26px;
-	line-height: 26px;
+	height: 24px;
+	line-height: 24px;
 }
 
 .marid .v-table-compact .v-table-header-drag, .marid .v-table-small .v-table-header-drag {
-	margin-top: -13px;
+	margin-top: -12px;
 }
 
 .marid .v-table-compact.v-treetable .v-table-cell-wrapper, .marid .v-table-small.v-treetable .v-table-cell-wrapper {
@@ -11549,7 +11549,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-table-compact .v-table-row-drag-top .v-table-cell-content, .marid .v-table-compact .v-table-row-drag-bottom .v-table-cell-content, .marid .v-table-small .v-table-row-drag-top .v-table-cell-content, .marid .v-table-small .v-table-row-drag-bottom .v-table-cell-content {
-	height: 25px;
+	height: 23px;
 }
 
 .marid .v-table-small {
@@ -11575,31 +11575,31 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-treetable [class*="caption-container"] {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-treetable [class*="caption-container-align-right"] {
-	padding-left: 17px;
+	padding-left: 15px;
 }
 
 .marid .v-treetable [class*="footer-container"] {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-treetable [class*="cell-content"] {
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 9px;
+	padding-right: 9px;
 }
 
 .marid .v-treetable [class*="cell-content"]:first-child {
-	padding-left: 11px;
+	padding-left: 10px;
 }
 
 .marid .v-treetable-treespacer {
 	display: inline-block;
 	position: absolute;
-	width: 15px !important;
-	margin-left: -20px;
+	width: 14px !important;
+	margin-left: -19px;
 	text-align: center;
 	cursor: pointer;
 }
@@ -11619,12 +11619,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-splitpanel-horizontal  > div > .v-splitpanel-hsplitter:after {
-	left: -5px;
-	right: -5px;
+	left: -4px;
+	right: -4px;
 }
 
 .marid .v-splitpanel-horizontal  > div > .v-splitpanel-hsplitter div:before {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -11679,12 +11679,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-splitpanel-vertical  > div > .v-splitpanel-vsplitter:after {
-	top: -5px;
-	bottom: -5px;
+	top: -4px;
+	bottom: -4px;
 }
 
 .marid .v-splitpanel-vertical  > div > .v-splitpanel-vsplitter div:before {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -11728,7 +11728,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter {
-	width: 10px;
+	width: 9px;
 }
 
 .marid .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter:after {
@@ -11737,7 +11737,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter div:before {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -11792,17 +11792,17 @@ div.v-layout.v-horizontal.v-widget {
 	top: 50%;
 	left: 50%;
 	width: 0;
-	height: 30px;
+	height: 28px;
 	margin-left: -1px;
-	margin-top: -15px;
+	margin-top: -14px;
 }
 
 .marid .v-splitpanel-horizontal.large  > div > .v-splitpanel-second-container {
-	margin-left: 10px;
+	margin-left: 9px;
 }
 
 .marid .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter {
-	height: 10px;
+	height: 9px;
 }
 
 .marid .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter:after {
@@ -11811,7 +11811,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter div:before {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -11862,20 +11862,20 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 30px;
+	width: 28px;
 	height: 0;
-	margin-left: -15px;
+	margin-left: -14px;
 	margin-top: -1px;
 }
 
 .marid .v-progressbar-wrapper {
 	border-radius: 5px;
-	height: 8px;
+	height: 7px;
 	background-color: #e1e1e1;
 	background-image: -webkit-linear-gradient(bottom, #e4e4e4 2%, #cfcfcf 98%);
 	background-image: linear-gradient(to top,#e4e4e4 2%, #cfcfcf 98%);
 	box-sizing: border-box;
-	min-width: 60px;
+	min-width: 56px;
 }
 
 .marid .v-progressbar-indicator {
@@ -11917,7 +11917,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: 1px solid #1774d1;
 	box-sizing: border-box;
 	max-width: 100%;
-	width: 8px;
+	width: 7px;
 	vertical-align: top;
 }
 
@@ -11958,14 +11958,14 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-slider-base {
 	border-radius: 5px;
-	height: 8px;
+	height: 7px;
 	background-color: #e1e1e1;
 	background-image: -webkit-linear-gradient(bottom, #e4e4e4 2%, #cfcfcf 98%);
 	background-image: linear-gradient(to top,#e4e4e4 2%, #cfcfcf 98%);
 	box-sizing: border-box;
-	min-width: 60px;
+	min-width: 56px;
 	height: 4px;
-	margin: 13px 9px;
+	margin: 12px 8px;
 	white-space: nowrap;
 	overflow: hidden;
 	
@@ -11974,9 +11974,9 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-slider-base:before {
 	content: "";
 	position: absolute;
-	top: 13px;
-	bottom: 13px;
-	left: 9px;
+	top: 12px;
+	bottom: 12px;
+	left: 8px;
 	width: 10px;
 	border-radius: 5px;
 	border-left: 1px solid #1774d1;
@@ -12005,14 +12005,14 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-slider-handle {
-	margin-top: -13px;
+	margin-top: -12px;
 	width: 0.1px;
 	display: inline-block;
 	vertical-align: top;
 }
 
 .marid .v-slider-handle:before {
-	height: 30px;
+	height: 28px;
 	padding: 0 14px;
 	color: #191919;
 	font-weight: 500;
@@ -12067,13 +12067,13 @@ div.v-layout.v-horizontal.v-widget {
 	content: "";
 	box-sizing: border-box;
 	padding: 0;
-	width: 18px;
-	height: 18px;
-	border-radius: 9px;
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
 	position: absolute;
 	z-index: 1;
 	margin-top: 6px;
-	margin-left: -9px;
+	margin-left: -8px;
 }
 
 .marid .v-slider-feedback {
@@ -12081,7 +12081,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 	color: white;
-	padding: 4px 8px;
+	padding: 4px 7px;
 	border-radius: 4px;
 	max-width: 35em;
 	overflow: hidden !important;
@@ -12089,8 +12089,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-slider-vertical {
-	padding: 9px 0;
-	height: 78px;
+	padding: 8px 0;
+	height: 72px;
 }
 
 .marid .v-slider-vertical .v-slider-base {
@@ -12100,14 +12100,14 @@ div.v-layout.v-horizontal.v-widget {
 	width: 4px;
 	height: 100% !important;
 	min-width: 0;
-	margin: 0 13px;
+	margin: 0 12px;
 }
 
 .marid .v-slider-vertical .v-slider-base:before {
 	top: auto;
-	bottom: 9px;
-	left: 13px;
-	right: 13px;
+	bottom: 8px;
+	left: 12px;
+	right: 12px;
 	width: auto;
 	height: 10px;
 	border-left: none;
@@ -12125,15 +12125,15 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-slider-vertical .v-slider-handle {
 	width: 0;
 	height: 0.1px;
-	width: 30px;
+	width: 28px;
 	display: block;
 }
 
 .marid .v-slider-vertical .v-slider-handle:before, .marid .v-slider-vertical .v-slider-handle:after {
-	width: 18px;
-	height: 18px;
-	margin-top: -9px;
-	margin-left: -7px;
+	width: 16px;
+	height: 16px;
+	margin-top: -8px;
+	margin-left: -6px;
 }
 
 .marid .v-slider-no-indicator .v-slider-base:before, .marid .v-slider-no-indicator .v-slider-base:after {
@@ -12177,12 +12177,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tabsheet-tabitemcell .v-caption {
-	margin-left: 15px;
+	margin-left: 14px;
 	padding: 0 3px;
 	box-sizing: border-box;
 	cursor: pointer;
 	text-align: center;
-	line-height: 30px;
+	line-height: 28px;
 	font-size: 13px;
 	font-weight: 400;
 	color: #696969;
@@ -12201,7 +12201,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tabsheet-tabitemcell .v-caption .v-icon + .v-captiontext {
-	margin-left: 8px;
+	margin-left: 7px;
 }
 
 .marid .v-tabsheet-tabitemcell .v-caption:hover {
@@ -12268,7 +12268,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	right: 0;
 	bottom: 0;
-	padding-left: 15px;
+	padding-left: 14px;
 	background-color: transparent;
 	background-image: -webkit-linear-gradient(right, #fafafa 70%, rgba(250, 250, 250, 0) 100%);
 	background-image: linear-gradient(to left,#fafafa 70%, rgba(250, 250, 250, 0) 100%);
@@ -12300,7 +12300,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: inherit;
 	height: 100%;
 	margin: 0;
-	padding: 0 8px;
+	padding: 0 7px;
 	outline: none;
 	cursor: pointer;
 	pointer-events: auto;
@@ -12357,8 +12357,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tabsheet-deco {
-	height: 16px !important;
-	width: 16px !important;
+	height: 14px !important;
+	width: 14px !important;
 	box-sizing: border-box;
 	border: 2px solid rgba(25, 125, 225, 0.2);
 	border-top-color: #197de1;
@@ -12372,9 +12372,9 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	z-index: 1;
 	bottom: 50%;
-	margin-bottom: -23px;
+	margin-bottom: -21px;
 	left: 50%;
-	margin-left: -8px;
+	margin-left: -7px;
 }
 
 .marid .v-tabsheet-loading .v-tabsheet-deco {
@@ -12401,10 +12401,10 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-caption {
 	margin-left: 3px;
-	padding: 0 10px;
+	padding: 0 9px;
 	background-color: #fafafa;
 	border: 1px solid transparent;
-	line-height: 29px;
+	line-height: 27px;
 	border-radius: 5px 5px 0 0;
 	font-weight: 500;
 	-webkit-transition: background-color 160ms;
@@ -12422,7 +12422,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-caption-closable {
-	padding-right: 25px;
+	padding-right: 24px;
 }
 
 .marid .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-tabsheet-caption-close {
@@ -12475,7 +12475,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tabsheet-padded-tabbar  > .v-tabsheet-tabcontainer .v-tabsheet-tabs {
-	padding: 0 8px;
+	padding: 0 7px;
 }
 
 .marid .v-tabsheet-icons-on-top  > .v-tabsheet-tabcontainer .v-caption {
@@ -12493,7 +12493,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-tabsheet-icons-on-top  > .v-tabsheet-tabcontainer .v-caption-closable {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-tabsheet-icons-on-top  > .v-tabsheet-tabcontainer .v-tabsheet-caption-close {
@@ -12518,11 +12518,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-colorpicker-popup .v-tabsheet-tabs {
-	padding: 0 8px;
+	padding: 0 7px;
 }
 
 .marid .v-colorpicker-popup [class$="sliders"] {
-	padding: 10px;
+	padding: 9px;
 }
 
 .marid .v-colorpicker-popup [class$="sliders"] .v-widget {
@@ -12593,7 +12593,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-colorpicker-popup .v-horizontallayout {
 	height: auto !important;
-	padding: 8px 0;
+	padding: 7px 0;
 	background-color: #fafafa;
 	border-top: 1px solid #ededed;
 }
@@ -12609,7 +12609,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-colorpicker-preview {
 	width: 100% !important;
 	height: auto !important;
-	padding: 8px;
+	padding: 7px;
 	display: inline-flex;
 }
 
@@ -12631,11 +12631,11 @@ div.v-layout.v-horizontal.v-widget {
 	left: 5px;
 	border-radius: 4px;
 	border: 1px solid rgba(0, 0, 0, 0.5);
-	max-width: 18px;
+	max-width: 17px;
 }
 
 .marid .v-colorpicker-button-color  + .v-button-caption:not(:empty) {
-	margin-left: 15px;
+	margin-left: 14px;
 }
 
 .marid .v-panel {
@@ -12650,8 +12650,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-panel-caption {
 	box-sizing: border-box;
-	padding: 0 10px;
-	line-height: 29px;
+	padding: 0 9px;
+	line-height: 27px;
 	border-bottom: 1px solid #ededed;
 	background-color: #fafafa;
 	background-image: -webkit-linear-gradient(top, #fafafa 2%, #f5f5f5 98%);
@@ -12672,19 +12672,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-panel-content  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-panel-content  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-panel-content  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-panel-content  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-panel-borderless {
@@ -12702,7 +12702,7 @@ div.v-layout.v-horizontal.v-widget {
 	box-shadow: none;
 	color: inherit;
 	padding: 0;
-	margin: 0 10px;
+	margin: 0 9px;
 	border-bottom: none;
 }
 
@@ -12758,7 +12758,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-panel-caption.v-horizontallayout .v-label {
-	line-height: 30px;
+	line-height: 28px;
 }
 
 .marid .v-accordion {
@@ -12811,8 +12811,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-accordion-item-caption  > .v-caption {
 	box-sizing: border-box;
-	padding: 0 10px;
-	line-height: 29px;
+	padding: 0 9px;
+	line-height: 27px;
 	border-bottom: 1px solid #ededed;
 	background-color: #fafafa;
 	background-image: -webkit-linear-gradient(top, #fafafa 2%, #f5f5f5 98%);
@@ -12858,19 +12858,19 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-accordion-item-content  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-accordion-item-content  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-accordion-item-content  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-accordion-item-content  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-accordion-borderless {
@@ -12904,11 +12904,11 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-twincol .v-textfield, .marid .v-select-twincol .v-nativebutton {
 	width: auto !important;
-	margin-top: 8px;
+	margin-top: 7px;
 }
 
 .marid .v-select-twincol .v-nativebutton {
-	margin-left: 8px;
+	margin-left: 7px;
 }
 
 .marid .v-select-twincol-caption-left, .marid .v-select-twincol-caption-right {
@@ -12933,9 +12933,9 @@ div.v-layout.v-horizontal.v-widget {
 	text-align: left;
 	white-space: normal;
 	position: absolute;
-	left: 8px;
-	right: 8px;
-	top: 29px;
+	left: 7px;
+	right: 7px;
+	top: 27px;
 	padding: 0;
 	text-align: center;
 }
@@ -13026,12 +13026,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-select  + .v-textfield {
 	width: auto !important;
-	margin-top: 8px;
+	margin-top: 7px;
 }
 
 .marid .v-select-select  + .v-textfield  + .v-nativebutton {
-	margin-top: 8px;
-	margin-left: 8px;
+	margin-top: 7px;
+	margin-left: 7px;
 }
 
 .marid .v-select-error .v-select-select {
@@ -13118,7 +13118,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-calendar-bottom-spacer, .marid .v-calendar-spacer, .marid .v-calendar-bottom-spacer-empty {
 	height: 17px;
-	margin-bottom: 3px;
+	margin-bottom: 2px;
 }
 
 .marid .v-calendar-bottom-spacer {
@@ -13132,7 +13132,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-calendar-day-number {
-	line-height: 20px;
+	line-height: 19px;
 	font-size: 14px;
 	text-align: right;
 	margin: 0 4px;
@@ -13153,7 +13153,7 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: 500;
 	color: #197de1;
 	border-top: 2px solid #197de1;
-	line-height: 19px;
+	line-height: 18px;
 	margin: 0;
 	padding: 0 4px;
 }
@@ -13172,13 +13172,13 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-calendar-weekly-longevents {
 	margin-left: 50px;
-	border-bottom: 3px solid #e0e0e0;
+	border-bottom: 2px solid #e0e0e0;
 }
 
 .marid .v-calendar-weekly-longevents .v-calendar-event-all-day {
 	height: 19px;
 	line-height: 1.6;
-	margin-bottom: 3px;
+	margin-bottom: 2px;
 }
 
 .marid .v-calendar-header-week td {
@@ -13198,7 +13198,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-calendar-time {
 	text-align: right;
-	padding-right: 8px;
+	padding-right: 7px;
 	margin-top: -6px;
 	padding-bottom: 6px;
 }
@@ -13283,7 +13283,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .v-calendar-event-month {
 	padding: 0 4px;
 	box-sizing: border-box;
-	margin-bottom: 3px;
+	margin-bottom: 2px;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	height: 17px;
@@ -13345,7 +13345,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 4px 0;
 	position: absolute;
 	overflow: hidden;
-	right: 8px;
+	right: 7px;
 	left: 4px;
 	bottom: 0;
 	top: 0;
@@ -13595,7 +13595,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: #474747;
 	border: 2px solid #2c9720;
 	border-radius: 5px;
-	padding: 6px 15px 6px 30px;
+	padding: 6px 14px 6px 28px;
 	font-weight: 500;
 	font-size: 13px;
 }
@@ -13604,7 +13604,7 @@ div.v-layout.v-horizontal.v-widget {
 	font-family: ThemeIcons;
 	content: "\f00c";
 	margin-right: 0.5em;
-	margin-left: -15px;
+	margin-left: -14px;
 	color: #2c9720;
 }
 
@@ -13744,12 +13744,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-select-select  + .v-textfield {
 	width: auto !important;
-	margin-top: 8px;
+	margin-top: 7px;
 }
 
 .marid .v-select-select  + .v-textfield  + .v-nativebutton {
-	margin-top: 8px;
-	margin-left: 8px;
+	margin-top: 7px;
+	margin-left: 7px;
 }
 
 .marid .v-select-error .v-select-select {
@@ -13803,23 +13803,23 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-popupview-popup .popupContent  > .v-margin-top {
-	padding-top: 10px;
+	padding-top: 9px;
 }
 
 .marid .v-popupview-popup .popupContent  > .v-margin-right {
-	padding-right: 10px;
+	padding-right: 9px;
 }
 
 .marid .v-popupview-popup .popupContent  > .v-margin-bottom {
-	padding-bottom: 10px;
+	padding-bottom: 9px;
 }
 
 .marid .v-popupview-popup .popupContent  > .v-margin-left {
-	padding-left: 10px;
+	padding-left: 9px;
 }
 
 .marid .v-popupview-loading {
-	margin: 10px 10px;
+	margin: 9px 9px;
 	height: 24px !important;
 	width: 24px !important;
 	box-sizing: border-box;
@@ -13848,7 +13848,7 @@ div.v-layout.v-horizontal.v-widget {
 	
 	font-weight: 400;
 	line-height: normal;
-	height: 30px;
+	height: 28px;
 	border-radius: 5px;
 	padding: 0;
 	border: 1px solid #e8e8e8;
@@ -13879,8 +13879,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-richtextarea .gwt-ToggleButton, .marid .v-richtextarea .gwt-PushButton {
 	display: inline-block;
-	line-height: 30px;
-	width: 30px;
+	line-height: 28px;
+	width: 28px;
 	text-align: center;
 	outline: none;
 }
@@ -13977,11 +13977,11 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .v-richtextarea .gwt-RichTextToolbar-bottom {
 	font-size: 11px;
-	padding: 0 8px 8px 0;
+	padding: 0 7px 7px 0;
 }
 
 .marid .v-richtextarea .gwt-RichTextToolbar-bottom select {
-	margin: 8px 0 0 8px;
+	margin: 7px 0 0 7px;
 }
 
 .marid .v-richtextarea .gwt-RichTextArea {
@@ -14013,26 +14013,26 @@ div.v-layout.v-horizontal.v-widget {
 	z-index: -1;
 	position: absolute;
 	right: 0;
-	height: 30px;
+	height: 28px;
 	text-align: right;
 	border: none;
 	background: transparent;
 }
 
 .marid .v-Notification.v-position-top {
-	top: 10px;
+	top: 9px;
 }
 
 .marid .v-Notification.v-position-right {
-	right: 10px;
+	right: 9px;
 }
 
 .marid .v-Notification.v-position-bottom {
-	bottom: 10px;
+	bottom: 9px;
 }
 
 .marid .v-Notification.v-position-left {
-	left: 10px;
+	left: 9px;
 }
 
 .marid .v-Notification.v-position-assistive {
@@ -14081,7 +14081,7 @@ div.v-layout.v-horizontal.v-widget {
 	background: white;
 	-webkit-box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.15);
 	box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.15);
-	padding: 15px 18px;
+	padding: 14px 16px;
 }
 
 .marid .v-Notification .v-Notification-caption {
@@ -14130,7 +14130,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 0;
 	-webkit-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
 	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
-	padding: 10px 12px;
+	padding: 9px 11px;
 	background-color: #444;
 	background-color: rgba(68, 68, 68, 0.9);
 	font-weight: 500;
@@ -14212,7 +14212,7 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: 500;
 	-webkit-box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.25);
 	box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.25);
-	padding-right: 48px;
+	padding-right: 44px;
 	overflow: hidden !important;
 	cursor: pointer;
 }
@@ -14230,11 +14230,11 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 1.5em;
 	position: absolute;
 	top: 50%;
-	margin-top: -10px;
-	right: 10px;
-	width: 20px;
-	height: 20px;
-	line-height: 19px;
+	margin-top: -9px;
+	right: 9px;
+	width: 19px;
+	height: 19px;
+	line-height: 18px;
 	cursor: pointer;
 	color: #000;
 	opacity: 0.5;
@@ -14298,7 +14298,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 0;
 	-webkit-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
 	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
-	padding: 10px 12px;
+	padding: 9px 11px;
 }
 
 .marid .v-Notification.bar .v-Notification-description, .marid .v-Notification.bar .v-Notification-details {
@@ -14338,7 +14338,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-Notification.small {
-	padding: 9px 11px;
+	padding: 8px 10px;
 }
 
 .marid .v-Notification.small .v-Notification-caption {
@@ -14365,7 +14365,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-Notification.closable {
-	padding-right: 48px;
+	padding-right: 44px;
 	overflow: hidden !important;
 	cursor: pointer;
 }
@@ -14375,11 +14375,11 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 1.5em;
 	position: absolute;
 	top: 50%;
-	margin-top: -10px;
-	right: 10px;
-	width: 20px;
-	height: 20px;
-	line-height: 19px;
+	margin-top: -9px;
+	right: 9px;
+	width: 19px;
+	height: 19px;
+	line-height: 18px;
 	cursor: pointer;
 	color: #000;
 	opacity: 0.5;
@@ -14420,7 +14420,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-Notification.closable.tray:after {
-	top: 13px;
+	top: 12px;
 	margin-top: 0;
 }
 
@@ -14460,11 +14460,11 @@ div.v-layout.v-horizontal.v-widget {
 .marid .valo-menu {
 	height: 100%;
 	background-color: #4b4b4b;
-	background-image: -webkit-linear-gradient(right, #3c3c3c 0%, #4b4b4b 8px);
-	background-image: linear-gradient(to left,#3c3c3c 0%, #4b4b4b 8px);
+	background-image: -webkit-linear-gradient(right, #3c3c3c 0%, #4b4b4b 7px);
+	background-image: linear-gradient(to left,#3c3c3c 0%, #4b4b4b 7px);
 	color: #a5a5a5;
 	font-size: 13px;
-	line-height: 24px;
+	line-height: 22px;
 	border-right: 1px solid #454545;
 	white-space: nowrap;
 }
@@ -14473,15 +14473,15 @@ div.v-layout.v-horizontal.v-widget {
 	display: none;
 	position: fixed;
 	z-index: 200;
-	top: 3px;
-	left: 3px;
+	top: 2px;
+	left: 2px;
 	min-width: 0;
 }
 
 .marid .valo-menu-part {
 	border-left: 1px solid #474747;
 	height: 100%;
-	padding-bottom: 30px;
+	padding-bottom: 28px;
 	overflow: auto;
 }
 
@@ -14498,7 +14498,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .valo-menu-title .valo-menu-badge, .marid .valo-menu-subtitle .valo-menu-badge, .marid .valo-menu-item .valo-menu-badge {
 	position: absolute;
-	right: 15px;
+	right: 14px;
 }
 
 .marid .valo-menu-title {
@@ -14508,7 +14508,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: linear-gradient(to bottom,#1c8ce4 2%, #1467cf 98%);
 	color: white;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-	padding: 10px 15px;
+	padding: 9px 14px;
 	font-size: 13px;
 	border-bottom: 1px solid #1774d1;
 	-webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
@@ -14549,7 +14549,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-shadow: none;
 	background: transparent;
 	color: inherit;
-	margin: 15px 6px;
+	margin: 14px 6px;
 	display: block;
 	overflow: hidden;
 	text-align: center;
@@ -14568,7 +14568,7 @@ div.v-layout.v-horizontal.v-widget {
 	margin-right: 1px;
 	border-radius: 5px;
 	color: #197de1;
-	padding: 0 10px;
+	padding: 0 9px;
 	-webkit-transition: color 140ms;
 	-moz-transition: color 140ms;
 	transition: color 140ms;
@@ -14621,9 +14621,9 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .v-menubar-user-menu  > .v-menubar-menuitem img.v-icon {
-	width: 45px;
-	height: 45px;
-	border-radius: 24px;
+	width: 42px;
+	height: 42px;
+	border-radius: 22px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	display: block;
 	margin: 0 auto 0.3em;
@@ -14643,7 +14643,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .valo-menu-subtitle {
 	color: #868686;
-	margin: 6px 0 6px 15px;
+	margin: 6px 0 6px 14px;
 	border-bottom: 1px solid #545454;
 }
 
@@ -14658,7 +14658,7 @@ div.v-layout.v-horizontal.v-widget {
 .marid .valo-menu-item {
 	outline: none;
 	font-weight: 500;
-	padding: 0 30px 0 15px;
+	padding: 0 28px 0 14px;
 	cursor: pointer;
 	position: relative;
 	overflow: hidden;
@@ -14673,7 +14673,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: inline-block;
 	width: 90%;
 	max-width: 15em;
-	padding-right: 15px;
+	padding-right: 14px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
@@ -14703,7 +14703,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .valo-menu-item span.v-icon {
 	min-width: 1em;
-	margin-right: 15px;
+	margin-right: 14px;
 	text-align: center;
 	vertical-align: middle;
 	-webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(black), to(rgba(0, 0, 0, 0.75)));
@@ -14722,14 +14722,14 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 3px 5px;
 	min-width: 9px;
 	text-align: center;
-	top: 2.5px;
+	top: 1.5px;
 	border-radius: 5px;
 }
 
 .marid .valo-menu-part.large-icons {
 	background-color: #4b4b4b;
-	min-width: 60px;
-	max-width: 90px;
+	min-width: 56px;
+	max-width: 84px;
 }
 
 .marid .valo-menu-part.large-icons .valo-menu-title {
@@ -14747,13 +14747,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .valo-menu-part.large-icons .v-menubar-user-menu img.v-icon {
-	width: 23px;
-	height: 23px;
+	width: 22px;
+	height: 22px;
 }
 
 .marid .valo-menu-part.large-icons [class*="subtitle"] {
-	margin: 8px 0 0;
-	padding: 6px 20px 6px 8px;
+	margin: 7px 0 0;
+	padding: 6px 19px 6px 7px;
 	line-height: 1;
 	border: none;
 	text-overflow: ellipsis;
@@ -14764,7 +14764,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .valo-menu-part.large-icons [class*="subtitle"] [class*="badge"] {
-	right: 8px;
+	right: 7px;
 }
 
 .marid .valo-menu-part.large-icons [class*="subtitle"]  + .valo-menu-item {
@@ -14775,7 +14775,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: block;
 	font-size: 22px;
 	line-height: 1;
-	padding: 10px;
+	padding: 9px;
 	text-align: center;
 	border-top: 1px solid #4e4e4e;
 }
@@ -14824,17 +14824,17 @@ div.v-layout.v-horizontal.v-widget {
 .marid .valo-menu-logo {
 	display: block;
 	overflow: hidden;
-	width: 36px !important;
-	height: 36px;
+	width: 34px !important;
+	height: 34px;
 	border-radius: 5px;
 	text-align: center;
 	background-color: #197de1;
 	background-image: -webkit-linear-gradient(top, #1c8ce4 2%, #1467cf 98%);
 	background-image: linear-gradient(to bottom,#1c8ce4 2%, #1467cf 98%);
 	color: white;
-	font-size: 20px;
-	line-height: 36px;
-	margin: 15px auto;
+	font-size: 19px;
+	line-height: 34px;
+	margin: 14px auto;
 	-webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 }
@@ -14845,8 +14845,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part {
 	background-color: #4b4b4b;
-	min-width: 60px;
-	max-width: 90px;
+	min-width: 56px;
+	max-width: 84px;
 }
 
 .marid .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-title {
@@ -14864,13 +14864,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .v-menubar-user-menu img.v-icon {
-	width: 23px;
-	height: 23px;
+	width: 22px;
+	height: 22px;
 }
 
 .marid .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part [class*="subtitle"] {
-	margin: 8px 0 0;
-	padding: 6px 20px 6px 8px;
+	margin: 7px 0 0;
+	padding: 6px 19px 6px 7px;
 	line-height: 1;
 	border: none;
 	text-overflow: ellipsis;
@@ -14881,7 +14881,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part [class*="subtitle"] [class*="badge"] {
-	right: 8px;
+	right: 7px;
 }
 
 .marid .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part [class*="subtitle"]  + .valo-menu-item {
@@ -14892,7 +14892,7 @@ div.v-layout.v-horizontal.v-widget {
 	display: block;
 	font-size: 22px;
 	line-height: 1;
-	padding: 10px;
+	padding: 9px;
 	text-align: center;
 	border-top: 1px solid #4e4e4e;
 }
@@ -14939,13 +14939,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .marid .valo-menu-responsive[width-range~="0-800px"] {
-	padding-top: 30px;
+	padding-top: 28px;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
 .marid .valo-menu-responsive[width-range~="0-800px"] .v-loading-indicator {
-	top: 30px;
+	top: 28px;
 }
 
 .marid .valo-menu-responsive[width-range~="0-800px"]  > .v-widget {
@@ -14970,7 +14970,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 30px !important;
+	height: 28px !important;
 	padding-top: 0;
 	padding-bottom: 0;
 	-webkit-backface-visibility: hidden;
@@ -14983,44 +14983,44 @@ div.v-layout.v-horizontal.v-widget {
 	right: 0;
 	margin: 0;
 	padding: 0;
-	height: 30px;
+	height: 28px;
 	color: #97bee5;
 	max-width: 30%;
 	-webkit-backface-visibility: hidden;
 }
 
 .marid .valo-menu-responsive[width-range~="0-800px"] .valo-menu .v-menubar-user-menu .v-menubar-menuitem {
-	line-height: 29px;
+	line-height: 27px;
 	white-space: nowrap;
 }
 
 .marid .valo-menu-responsive[width-range~="0-800px"] .valo-menu .v-menubar-user-menu img.v-icon {
 	display: inline-block;
 	margin: 0 5px 0 0;
-	width: 15px;
-	height: 15px;
-	border-radius: 8px;
+	width: 14px;
+	height: 14px;
+	border-radius: 7px;
 	border: none;
 }
 
 .marid .valo-menu-responsive[width-range~="0-800px"] .valo-menuitems {
 	height: 100%;
 	background-color: #4b4b4b;
-	background-image: -webkit-linear-gradient(right, #3c3c3c 0%, #4b4b4b 8px);
-	background-image: linear-gradient(to left,#3c3c3c 0%, #4b4b4b 8px);
+	background-image: -webkit-linear-gradient(right, #3c3c3c 0%, #4b4b4b 7px);
+	background-image: linear-gradient(to left,#3c3c3c 0%, #4b4b4b 7px);
 	color: #a5a5a5;
 	font-size: 13px;
-	line-height: 24px;
+	line-height: 22px;
 	border-right: 1px solid #454545;
 	white-space: nowrap;
 	position: fixed;
 	z-index: 9000;
-	top: 30px;
+	top: 28px;
 	bottom: 0;
 	height: auto;
 	max-width: 100%;
 	overflow: auto;
-	padding: 15px 0;
+	padding: 14px 0;
 	-webkit-transform: translatex(-100%);
 	-moz-transform: translatex(-100%);
 	-ms-transform: translatex(-100%);
@@ -15045,6 +15045,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .marid .valo-menu-responsive[width-range~="0-500px"] .valo-menu .v-menubar-user-menu .v-menubar-menuitem-caption {
 	display: inline-block;
-	width: 15px;
+	width: 14px;
 	overflow: hidden;
 }

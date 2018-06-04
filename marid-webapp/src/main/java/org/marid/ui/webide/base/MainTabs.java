@@ -53,11 +53,12 @@ public class MainTabs extends TabSheet {
   }
 
   @Init
-  public void initRepositories(RepositoryPanel repositoryPanel, ArtifactPanel artifactPanel) {
-    final var tabs = new TabSheet();
-    tabs.setSizeFull();
-    tabs.addTab(repositoryPanel, s("repositories"), VaadinIcons.LINES);
-    tabs.addTab(artifactPanel, s("artifacts"), VaadinIcons.LINES_LIST);
-    addTab(tabs, s("libraries"), VaadinIcons.BOOK);
+  public void initRepositories(RepositoryPanel repositoryPanel) {
+    addTab(repositoryPanel, s("repositories"), VaadinIcons.LINES);
+  }
+
+  @Init
+  public void initArtifacts(ArtifactPanel artifactPanel) {
+    addTab(artifactPanel, s("artifacts"), VaadinIcons.LINES_LIST);
   }
 }

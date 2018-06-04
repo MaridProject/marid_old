@@ -34,8 +34,8 @@ public class Artifact {
     this.groupId = groupId;
     this.artifactId = artifactId;
     this.version = version;
-    this.classifier = classifier;
-    this.packaging = packaging;
+    this.classifier = classifier == null ? "" : classifier;
+    this.packaging = packaging == null ? "jar" : packaging;
   }
 
   public String getGroupId() {
