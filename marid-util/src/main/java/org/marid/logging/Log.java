@@ -24,10 +24,11 @@ package org.marid.logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandles;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+
+import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 
 /**
  * @author Dmitry Ovchinnikov
@@ -42,17 +43,14 @@ public class Log {
       return index < 0 ? Logger.getLogger(name) : Logger.getLogger(name.substring(0, index));
     }
   };
+  private static final StackWalker WALKER = StackWalker.getInstance(RETAIN_CLASS_REFERENCE);
 
   public static void log(@NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
-    log(LOGGERS.get(caller(3)), level, message, thrown, args);
+    log(LOGGERS.get(WALKER.getCallerClass()), level, message, thrown, args);
   }
 
   public static void log(@NotNull Level level, @NotNull String message, @NotNull Object... args) {
-    log(LOGGERS.get(caller(3)), level, message, args);
-  }
-
-  public static void log(int depth, @NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
-    log(LOGGERS.get(caller(depth)), level, message, thrown, args);
+    log(LOGGERS.get(WALKER.getCallerClass()), level, message, args);
   }
 
   public static void log(@NotNull Logger logger, @NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
@@ -69,17 +67,5 @@ public class Log {
                          @NotNull String message,
                          @NotNull Object... args) {
     log(logger, level, message, null, args);
-  }
-
-  private static Class<?> caller(int depth) {
-    final Class<?>[] classes = new SecurityPublicClassContext().getClassContext();
-    return classes.length > depth ? classes[depth] : MethodHandles.lookup().lookupClass();
-  }
-
-  private static class SecurityPublicClassContext extends SecurityManager {
-    @Override
-    public Class<?>[] getClassContext() {
-      return super.getClassContext();
-    }
   }
 }
