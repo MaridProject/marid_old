@@ -45,15 +45,24 @@ public class Log {
   };
   private static final StackWalker WALKER = StackWalker.getInstance(RETAIN_CLASS_REFERENCE);
 
-  public static void log(@NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
+  public static void log(@NotNull Level level,
+                         @NotNull String message,
+                         @Nullable Throwable thrown,
+                         @NotNull Object... args) {
     log(LOGGERS.get(WALKER.getCallerClass()), level, message, thrown, args);
   }
 
-  public static void log(@NotNull Level level, @NotNull String message, @NotNull Object... args) {
+  public static void log(@NotNull Level level,
+                         @NotNull String message,
+                         @NotNull Object... args) {
     log(LOGGERS.get(WALKER.getCallerClass()), level, message, args);
   }
 
-  public static void log(@NotNull Logger logger, @NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
+  public static void log(@NotNull Logger logger,
+                         @NotNull Level level,
+                         @NotNull String message,
+                         @Nullable Throwable thrown,
+                         @NotNull Object... args) {
     final LogRecord record = new LogRecord(level, message);
     record.setLoggerName(logger.getName());
     record.setSourceClassName(null);
