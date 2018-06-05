@@ -20,40 +20,26 @@
  */
 package org.marid.ui.webide.base.views.artifacts;
 
-import com.vaadin.ui.Grid;
+import com.vaadin.data.provider.ListDataProvider;
 import org.marid.applib.repository.Artifact;
-import org.marid.applib.spring.init.Init;
-import org.marid.spring.annotation.SpringComponent;
+import org.springframework.stereotype.Component;
 
-@SpringComponent
-public class ArtifactTable extends Grid<Artifact> {
+import java.util.Collection;
+import java.util.TreeSet;
 
-  public ArtifactTable(ArtifactManager manager) {
-    super(manager.getDataProvider());
-    setSizeFull();
+@Component
+public class ArtifactManager {
+
+  private final TreeSet<Artifact> artifacts = new TreeSet<>();
+  private final ListDataProvider<Artifact> dataProvider = new ListDataProvider<>(artifacts);
+
+  public ListDataProvider<Artifact> getDataProvider() {
+    return dataProvider;
   }
 
-  @Init
-  public void initGroupId() {
-    addColumn(Artifact::getGroupId)
-        .setId("groupId")
-        .setCaption("groupId")
-        .setExpandRatio(2);
-  }
-
-  @Init
-  public void initArtifactId() {
-    addColumn(Artifact::getArtifactId)
-        .setId("artifactId")
-        .setCaption("artifactId")
-        .setExpandRatio(3);
-  }
-
-  @Init
-  public void initVersion() {
-    addColumn(Artifact::getVersion)
-        .setId("version")
-        .setCaption("version")
-        .setExpandRatio(1);
+  public void addArtifacts(Collection<Artifact> artifacts) {
+    if (this.artifacts.addAll(artifacts)) {
+      dataProvider.refreshAll();
+    }
   }
 }

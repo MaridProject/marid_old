@@ -58,6 +58,7 @@ public class ArtifactFinderDialog extends Window {
     buttons.setMargin(false);
 
     artifactGrid.setSizeFull();
+    artifactGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
     setWidth(400, Unit.PIXELS);
     setHeight(400, Unit.PIXELS);
@@ -139,6 +140,25 @@ public class ArtifactFinderDialog extends Window {
         }
       }
     });
+    buttons.addComponent(button);
+  }
+
+  @Init
+  public void addCloseButton() {
+    final var button = new Button(s("close"), VaadinIcons.CLOSE);
+    button.addClickListener(e -> close());
+    buttons.addComponent(button);
+  }
+
+  @Init
+  public void addAddButton(ArtifactManager manager) {
+    final var button = new Button(s("add"), VaadinIcons.FILE_ADD);
+    button.setEnabled(false);
+    button.addClickListener(e -> {
+      manager.addArtifacts(artifactGrid.getSelectedItems());
+      close();
+    });
+    artifactGrid.addSelectionListener(e -> button.setEnabled(!artifactGrid.getSelectedItems().isEmpty()));
     buttons.addComponent(button);
   }
 

@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,12 +90,7 @@ public class MavenArtifactFinder implements ArtifactFinder {
               .distinct()
               .map(c -> new Artifact(d.g, d.a, d.latestVersion, c, d.p))
           )
-          .sorted(Comparator.comparing(Artifact::getGroupId)
-              .thenComparing(Artifact::getArtifactId)
-              .thenComparing(Artifact::getVersion)
-              .thenComparing(Artifact::getClassifier)
-              .thenComparing(Artifact::getPackaging)
-          )
+          .sorted()
           .collect(Collectors.toUnmodifiableList());
     } catch (IOException | URISyntaxException x) {
       throw new IllegalStateException(x);
