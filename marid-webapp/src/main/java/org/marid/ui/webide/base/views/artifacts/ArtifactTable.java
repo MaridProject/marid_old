@@ -1,8 +1,8 @@
 /*-
  * #%L
- * marid-util
+ * marid-webapp
  * %%
- * Copyright (C) 2012 - 2017 MARID software development group
+ * Copyright (C) 2012 - 2018 MARID software development group
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,29 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.ui.webide.base.views.artifacts;
 
-package org.marid.cache;
+import com.vaadin.ui.Grid;
+import org.marid.applib.repository.Artifact;
+import org.marid.spring.annotation.SpringComponent;
 
-import java.util.concurrent.Callable;
-import java.util.function.Function;
+@SpringComponent
+public class ArtifactTable extends Grid<Artifact> {
 
-/**
- * @author Dmitry Ovchinnikov.
- */
-public class MaridClassValue<T> extends ClassValue<T> {
-
-  private final Function<Class<?>, Callable<T>> computeFunction;
-
-  public MaridClassValue(Function<Class<?>, Callable<T>> computeFunction) {
-    this.computeFunction = computeFunction;
-  }
-
-  @Override
-  protected T computeValue(Class<?> type) {
-    try {
-      return computeFunction.apply(type).call();
-    } catch (Exception x) {
-      throw new IllegalArgumentException(type.getName(), x);
-    }
+  public ArtifactTable() {
+    setSizeFull();
   }
 }

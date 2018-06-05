@@ -32,6 +32,7 @@ import org.marid.ui.webide.base.views.repositories.RepositoryManager;
 
 import java.util.stream.Collectors;
 
+import static com.vaadin.ui.Notification.Type.WARNING_MESSAGE;
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
@@ -133,7 +134,9 @@ public class ArtifactFinderDialog extends Window {
             .filter(a -> "".equals(a.getClassifier()))
             .collect(Collectors.toUnmodifiableList());
         artifactGrid.setItems(found);
-        System.out.println(found);
+        if (found.isEmpty()) {
+          Notification.show(s("emptyArtifactList"), WARNING_MESSAGE);
+        }
       }
     });
     buttons.addComponent(button);

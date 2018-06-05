@@ -21,7 +21,7 @@
 package org.marid.applib.spring.init;
 
 import org.marid.applib.spring.events.ContextStartedListener;
-import org.marid.cache.MaridClassValue;
+import org.marid.spring.annotation.SpringComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -35,6 +35,8 @@ import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -50,25 +52,30 @@ import static java.util.Comparator.comparing;
 public class InitBeanPostProcessor implements BeanPostProcessor {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(InitBeanPostProcessor.class);
-  private static final MaridClassValue<Map<String, Integer>> METHOD_ORDERS = new MaridClassValue<>(c -> () -> {
-    final var name = c.getSimpleName() + ".methods";
+  private static final ClassValue<Map<String, Integer>> METHOD_ORDERS = new ClassValue<>() {
+    @Override
+    protected Map<String, Integer> computeValue(Class<?> type) {
+      final var name = type.getSimpleName() + ".methods";
 
-    try (final var inputStream = c.getResourceAsStream(name)) {
+      try (final var inputStream = type.getResourceAsStream(name)) {
 
-      if (inputStream == null) {
-        LOGGER.warn("Unable to find {}", name);
-        return Map.of();
-      }
+        if (inputStream == null) {
+          LOGGER.warn("Unable to find {}", name);
+          return Map.of();
+        }
 
-      try (final Scanner scanner = new Scanner(inputStream, UTF_8)) {
-        return IntStream.range(0, Integer.MAX_VALUE)
-            .takeWhile(i -> scanner.hasNextLine())
-            .mapToObj(i -> Map.entry(scanner.nextLine(), i))
-            .filter(e -> !e.getKey().isEmpty())
-            .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        try (final var scanner = new Scanner(inputStream, UTF_8)) {
+          return IntStream.range(0, Integer.MAX_VALUE)
+              .takeWhile(i -> scanner.hasNextLine())
+              .mapToObj(i -> Map.entry(scanner.nextLine(), i))
+              .filter(e -> !e.getKey().isEmpty())
+              .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+      } catch (IOException x) {
+        throw new UncheckedIOException(x);
       }
     }
-  });
+  };
 
   private final GenericApplicationContext context;
 
@@ -78,8 +85,8 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
 
   @Override
   public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) throws BeansException {
-    if (bean == null) {
-      return null;
+    if (bean == null || !bean.getClass().isAnnotationPresent(SpringComponent.class)) {
+      return bean;
     }
     try {
       initialize(bean);

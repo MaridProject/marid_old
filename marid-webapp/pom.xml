@@ -88,7 +88,7 @@
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-bom</artifactId>
         <type>pom</type>
-        <version>8.4.2</version>
+        <version>8.4.3</version>
         <scope>import</scope>
       </dependency>
     </dependencies>
@@ -195,7 +195,7 @@
       <plugin>
         <groupId>com.vaadin</groupId>
         <artifactId>vaadin-maven-plugin</artifactId>
-        <version>8.4.2</version>
+        <version>8.4.3</version>
         <executions>
           <execution>
             <id>vaadin</id>

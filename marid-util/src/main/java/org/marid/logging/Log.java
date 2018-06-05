@@ -23,7 +23,6 @@ package org.marid.logging;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.marid.cache.MaridClassValue;
 
 import java.lang.invoke.MethodHandles;
 import java.util.logging.Level;
@@ -35,28 +34,25 @@ import java.util.logging.Logger;
  */
 public class Log {
 
-  private static final ClassValue<Logger> LOGGER_CLASS_VALUE = new MaridClassValue<>(c -> () -> {
-    final String name = c.getName();
-    final int index = name.indexOf("$$");
-    final String loggerName;
-    if (index >= 0) {
-      loggerName = name.substring(0, index);
-    } else {
-      loggerName = name;
+  private static final ClassValue<Logger> LOGGERS = new ClassValue<>() {
+    @Override
+    protected Logger computeValue(Class<?> type) {
+      final String name = type.getName();
+      final int index = name.indexOf('$');
+      return index < 0 ? Logger.getLogger(name) : Logger.getLogger(name.substring(0, index));
     }
-    return Logger.getLogger(loggerName);
-  });
+  };
 
   public static void log(@NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
-    log(LOGGER_CLASS_VALUE.get(caller(3)), level, message, thrown, args);
+    log(LOGGERS.get(caller(3)), level, message, thrown, args);
   }
 
   public static void log(@NotNull Level level, @NotNull String message, @NotNull Object... args) {
-    log(LOGGER_CLASS_VALUE.get(caller(3)), level, message, args);
+    log(LOGGERS.get(caller(3)), level, message, args);
   }
 
   public static void log(int depth, @NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
-    log(LOGGER_CLASS_VALUE.get(caller(depth)), level, message, thrown, args);
+    log(LOGGERS.get(caller(depth)), level, message, thrown, args);
   }
 
   public static void log(@NotNull Logger logger, @NotNull Level level, @NotNull String message, @Nullable Throwable thrown, @NotNull Object... args) {
@@ -73,11 +69,6 @@ public class Log {
                          @NotNull String message,
                          @NotNull Object... args) {
     log(logger, level, message, null, args);
-  }
-
-  public static boolean isLoggable(Level level) {
-    final Logger logger = LOGGER_CLASS_VALUE.get(caller(3));
-    return logger.isLoggable(level);
   }
 
   private static Class<?> caller(int depth) {

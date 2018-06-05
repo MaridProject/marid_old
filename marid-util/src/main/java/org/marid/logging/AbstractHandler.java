@@ -35,6 +35,14 @@ public abstract class AbstractHandler extends Handler {
     this(new MaridLogFormatter(), null);
   }
 
+  @Override
+  public void flush() {
+  }
+
+  @Override
+  public void close() throws SecurityException {
+  }
+
   protected Formatter formatter(LogManager logManager, String key, Formatter defaultFormatter) {
     final String formatter = logManager.getProperty(getClass().getName() + "." + key);
     if (formatter == null) {
