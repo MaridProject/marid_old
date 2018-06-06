@@ -21,6 +21,7 @@
 package org.marid.ui.webide.base.views.artifacts;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.FontAwesome;
 import org.marid.applib.components.Toolbar;
 import org.marid.applib.spring.init.Init;
 import org.marid.spring.annotation.SpringComponent;
@@ -31,8 +32,20 @@ import static org.marid.applib.utils.Locales.s;
 @SpringComponent
 public class ArtifactToolbar extends Toolbar {
 
+  private final ArtifactManager manager;
+
+  public ArtifactToolbar(ArtifactManager manager) {
+    this.manager = manager;
+  }
+
   @Init
   public void initFind(ObjectFactory<ArtifactFinderDialog> dialogFactory) {
     button(VaadinIcons.SEARCH, e -> dialogFactory.getObject().show(), s("searchArtifacts"));
+  }
+
+  @SuppressWarnings("deprecation")
+  @Init
+  public void initSave() {
+    button(FontAwesome.SAVE, e -> manager.save(), s("save"));
   }
 }

@@ -20,6 +20,7 @@
  */
 package org.marid.applib.repository;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -34,6 +35,7 @@ public class Artifact implements Comparable<Artifact> {
   private final String classifier;
   private final String packaging;
 
+  @JsonCreator
   public Artifact(String groupId, String artifactId, String version, String classifier, String packaging) {
     this.groupId = groupId;
     this.artifactId = artifactId;

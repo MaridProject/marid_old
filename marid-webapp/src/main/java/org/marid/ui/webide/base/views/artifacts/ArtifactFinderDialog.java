@@ -30,6 +30,7 @@ import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.views.repositories.RepositoryManager;
 
+import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 import static com.vaadin.ui.Notification.Type.WARNING_MESSAGE;
@@ -44,7 +45,7 @@ public class ArtifactFinderDialog extends Window {
   private final Accordion accordion = new Accordion();
   private final Accordion.Tab formTab;
   private final Accordion.Tab gridTab;
-  private final Grid<Artifact> artifactGrid = new Grid<>();
+  private final Grid<Artifact> grid = new Grid<>();
   private final HorizontalLayout buttons = new HorizontalLayout();
   private final Binder<ArtifactFinderDialog> binder = new Binder<>();
 
@@ -60,11 +61,11 @@ public class ArtifactFinderDialog extends Window {
     form.setMargin(true);
     buttons.setMargin(false);
 
-    artifactGrid.setSizeFull();
-    artifactGrid.setSelectionMode(Grid.SelectionMode.MULTI);
+    grid.setSizeFull();
+    grid.setSelectionMode(Grid.SelectionMode.MULTI);
 
     formTab = accordion.addTab(form, s("query"), VaadinIcons.FORM);
-    gridTab = accordion.addTab(artifactGrid, s("artifacts"), VaadinIcons.LIST);
+    gridTab = accordion.addTab(grid, s("artifacts"), VaadinIcons.LIST);
     accordion.setSizeFull();
 
     setWidth(400, Unit.PIXELS);
@@ -108,7 +109,7 @@ public class ArtifactFinderDialog extends Window {
 
   @Init
   public void initGroupColumn() {
-    artifactGrid.addColumn(Artifact::getGroupId)
+    grid.addColumn(Artifact::getGroupId)
         .setId("groupId")
         .setCaption("groupId")
         .setExpandRatio(1);
@@ -116,7 +117,7 @@ public class ArtifactFinderDialog extends Window {
 
   @Init
   public void initArtifactColumn() {
-    artifactGrid.addColumn(Artifact::getArtifactId)
+    grid.addColumn(Artifact::getArtifactId)
         .setId("artifactId")
         .setCaption("artifactId")
         .setExpandRatio(2);
@@ -124,7 +125,7 @@ public class ArtifactFinderDialog extends Window {
 
   @Init
   public void initVersionColumn() {
-    artifactGrid.addColumn(Artifact::getVersion)
+    grid.addColumn(Artifact::getVersion)
         .setId("version")
         .setCaption("version")
         .setExpandRatio(1);
@@ -141,7 +142,7 @@ public class ArtifactFinderDialog extends Window {
             .filter(a -> "jar".equals(a.getPackaging()))
             .filter(a -> "".equals(a.getClassifier()))
             .collect(Collectors.toUnmodifiableList());
-        artifactGrid.setItems(found);
+        grid.setItems(found);
         if (found.isEmpty()) {
           Notification.show(s("emptyArtifactList"), WARNING_MESSAGE);
         } else {
@@ -165,10 +166,12 @@ public class ArtifactFinderDialog extends Window {
     final var button = new Button(s("add"), VaadinIcons.FILE_ADD);
     button.setEnabled(false);
     button.addClickListener(e -> {
-      manager.addArtifacts(artifactGrid.getSelectedItems());
+      manager.addArtifacts(grid.getSelectedItems());
       close();
     });
-    artifactGrid.addSelectionListener(e -> button.setEnabled(!artifactGrid.getSelectedItems().isEmpty()));
+    final BooleanSupplier enabled = () -> accordion.getSelectedTab() == gridTab.getComponent() && !grid.getSelectedItems().isEmpty();
+    grid.addSelectionListener(e -> button.setEnabled(enabled.getAsBoolean()));
+    accordion.addSelectedTabChangeListener(e -> button.setEnabled(enabled.getAsBoolean()));
     buttons.addComponent(button);
   }
 

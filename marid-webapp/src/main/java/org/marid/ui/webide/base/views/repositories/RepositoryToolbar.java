@@ -28,7 +28,7 @@ import org.marid.applib.dialog.Dialog;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.SpringComponent;
-import org.marid.ui.webide.base.dao.RepositoriesDao;
+import org.marid.ui.webide.base.dao.RepositoryDao;
 import org.marid.ui.webide.base.model.RepositoryItem;
 
 import static com.vaadin.icons.VaadinIcons.FILE_ADD;
@@ -46,7 +46,7 @@ public class RepositoryToolbar extends Toolbar {
   }
 
   @Init
-  public void initAdd(RepositoryManager manager, RepositoriesDao dao) {
+  public void initAdd(RepositoryManager manager, RepositoryDao dao) {
     button(FILE_ADD, e -> new Dialog<>(s("addProject"), new RepositoryItem(), 400, 300)
         .addTextField(s("name"), "repository", (f, b) -> b
             .withValidator(StringValidators.fileNameValidator())

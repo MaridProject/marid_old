@@ -45,11 +45,11 @@ import java.util.TreeMap;
 import static java.util.stream.Collectors.toMap;
 
 @Component
-public class RepositoriesDao {
+public class RepositoryDao {
 
   private final Path directory;
 
-  public RepositoriesDao(UserDirectories directories) {
+  public RepositoryDao(UserDirectories directories) {
     directory = directories.getRepositoriesDirectory();
   }
 

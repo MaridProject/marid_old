@@ -21,7 +21,7 @@
 package org.marid.ui.webide.base.views.projects;
 
 import com.vaadin.data.provider.ListDataProvider;
-import org.marid.ui.webide.base.dao.ProjectsDao;
+import org.marid.ui.webide.base.dao.ProjectDao;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -31,11 +31,11 @@ import java.util.Collection;
 @Component
 public class ProjectManager {
 
-  private final ProjectsDao dao;
+  private final ProjectDao dao;
   private final ArrayList<String> projects = new ArrayList<>();
   private final ListDataProvider<String> dataProvider = new ListDataProvider<>(projects);
 
-  public ProjectManager(ProjectsDao dao) {
+  public ProjectManager(ProjectDao dao) {
     this.dao = dao;
   }
 

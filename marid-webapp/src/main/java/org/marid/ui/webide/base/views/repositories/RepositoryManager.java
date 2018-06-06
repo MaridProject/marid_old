@@ -22,7 +22,7 @@ package org.marid.ui.webide.base.views.repositories;
 
 import com.vaadin.data.provider.ListDataProvider;
 import org.marid.applib.repository.Repository;
-import org.marid.ui.webide.base.dao.RepositoriesDao;
+import org.marid.ui.webide.base.dao.RepositoryDao;
 import org.marid.ui.webide.base.model.RepositoryItem;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +36,11 @@ import java.util.stream.Stream;
 @Component
 public class RepositoryManager {
 
-  private final RepositoriesDao dao;
+  private final RepositoryDao dao;
   private final ArrayList<RepositoryItem> repositories = new ArrayList<>();
   private final ListDataProvider<RepositoryItem> dataProvider = new ListDataProvider<>(repositories);
 
-  public RepositoryManager(RepositoriesDao dao) {
+  public RepositoryManager(RepositoryDao dao) {
     this.dao = dao;
   }
 

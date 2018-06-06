@@ -25,7 +25,7 @@ import com.vaadin.ui.Grid;
 import org.marid.applib.spring.init.Init;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
-import org.marid.ui.webide.base.dao.ProjectsDao;
+import org.marid.ui.webide.base.dao.ProjectDao;
 
 import java.util.Locale;
 
@@ -48,7 +48,7 @@ public class ProjectList extends Grid<String> {
   }
 
   @Init
-  public void initSizeColumn(Locale locale, ProjectsDao dao) {
+  public void initSizeColumn(Locale locale, ProjectDao dao) {
     addColumn(project -> StringUtils.sizeBinary(locale, dao.getSize(project), 2))
         .setCaption(s("size"))
         .setId("size")

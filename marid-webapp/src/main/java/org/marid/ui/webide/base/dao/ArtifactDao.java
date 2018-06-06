@@ -20,8 +20,50 @@
  */
 package org.marid.ui.webide.base.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.marid.applib.repository.Artifact;
+import org.marid.ui.webide.base.UserDirectories;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
 public class ArtifactDao {
+
+  private final Path directory;
+  private final ObjectMapper mapper;
+
+  public ArtifactDao(UserDirectories userDirectories, ObjectMapper mapper) {
+    this.directory = userDirectories.getRepositoriesDirectory();
+    this.mapper = mapper;
+  }
+
+  public List<Artifact> loadArtifacts() {
+    final Path artifacts = directory.resolve("artifacts.list");
+    try (final var reader = Files.newBufferedReader(artifacts, UTF_8)) {
+      final var parser = mapper.getFactory().createParser(reader);
+      return mapper.readValues(parser, Artifact.class).readAll();
+    } catch (NoSuchFileException x) {
+      return List.of();
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
+
+  public void save(Iterable<Artifact> artifacts) {
+    final Path file = directory.resolve("artifacts.list");
+    try (final Writer writer = Files.newBufferedWriter(file, UTF_8)) {
+      mapper.writerFor(Artifact.class).writeValues(writer).writeAll(artifacts);
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
 }

@@ -22,6 +22,7 @@ package org.marid.ui.webide.base.views.artifacts;
 
 import com.vaadin.data.provider.ListDataProvider;
 import org.marid.applib.repository.Artifact;
+import org.marid.ui.webide.base.dao.ArtifactDao;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -30,8 +31,15 @@ import java.util.TreeSet;
 @Component
 public class ArtifactManager {
 
-  private final TreeSet<Artifact> artifacts = new TreeSet<>();
-  private final ListDataProvider<Artifact> dataProvider = new ListDataProvider<>(artifacts);
+  private final ArtifactDao dao;
+  private final TreeSet<Artifact> artifacts;
+  private final ListDataProvider<Artifact> dataProvider;
+
+  public ArtifactManager(ArtifactDao dao) {
+    this.dao = dao;
+    this.artifacts = new TreeSet<>(dao.loadArtifacts());
+    this.dataProvider = new ListDataProvider<>(artifacts);
+  }
 
   public ListDataProvider<Artifact> getDataProvider() {
     return dataProvider;
@@ -41,5 +49,9 @@ public class ArtifactManager {
     if (this.artifacts.addAll(artifacts)) {
       dataProvider.refreshAll();
     }
+  }
+
+  public void save() {
+    dao.save(artifacts);
   }
 }

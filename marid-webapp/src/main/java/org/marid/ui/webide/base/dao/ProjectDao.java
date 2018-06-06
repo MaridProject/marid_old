@@ -21,7 +21,6 @@
 package org.marid.ui.webide.base.dao;
 
 import org.marid.ui.webide.base.UserDirectories;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 
@@ -36,14 +35,12 @@ import java.util.stream.Collectors;
 import static java.nio.file.Files.walk;
 
 @Component
-public class ProjectsDao {
+public class ProjectDao {
 
   private final Path directory;
-  private final Logger logger;
 
-  public ProjectsDao(UserDirectories userDirectories, Logger logger) {
+  public ProjectDao(UserDirectories userDirectories) {
     this.directory = userDirectories.getProjectsDirectory();
-    this.logger = logger;
   }
 
   public List<String> getProjectNames() {

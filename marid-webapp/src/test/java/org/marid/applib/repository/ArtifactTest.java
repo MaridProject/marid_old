@@ -18,27 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.config;
+package org.marid.applib.repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import java.util.Locale;
-import java.util.TimeZone;
+import java.lang.reflect.Parameter;
+import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.marid.test.TestGroups.NORMAL;
 
-@Component
-public class JacksonConfiguration {
+public class ArtifactTest {
 
-  @Bean
-  public ObjectMapper objectMapper() {
-    final var mapper = new ObjectMapper();
-    mapper.setLocale(Locale.GERMANY);
-    mapper.setTimeZone(TimeZone.getDefault());
-    mapper.disable(FAIL_ON_UNKNOWN_PROPERTIES);
-    mapper.findAndRegisterModules();
-    return mapper;
+  @Test(groups = {NORMAL})
+  public void checkParameters() {
+    final var parameters = Artifact.class.getConstructors()[0].getParameters();
+    final var names = Stream.of(parameters).map(Parameter::getName).collect(toUnmodifiableList());
+
+    Assert.assertTrue(names.contains("groupId"));
   }
 }
