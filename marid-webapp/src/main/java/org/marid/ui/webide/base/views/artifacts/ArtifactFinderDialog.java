@@ -41,6 +41,9 @@ public class ArtifactFinderDialog extends Window {
 
   private final RepositoryManager manager;
   private final FormLayout form = new FormLayout();
+  private final Accordion accordion = new Accordion();
+  private final Accordion.Tab formTab;
+  private final Accordion.Tab gridTab;
   private final Grid<Artifact> artifactGrid = new Grid<>();
   private final HorizontalLayout buttons = new HorizontalLayout();
   private final Binder<ArtifactFinderDialog> binder = new Binder<>();
@@ -54,19 +57,23 @@ public class ArtifactFinderDialog extends Window {
     this.manager = manager;
     setModal(true);
 
-    form.setMargin(false);
+    form.setMargin(true);
     buttons.setMargin(false);
 
     artifactGrid.setSizeFull();
     artifactGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
+    formTab = accordion.addTab(form, s("query"), VaadinIcons.FORM);
+    gridTab = accordion.addTab(artifactGrid, s("artifacts"), VaadinIcons.LIST);
+    accordion.setSizeFull();
+
     setWidth(400, Unit.PIXELS);
     setHeight(400, Unit.PIXELS);
 
     getContent().setMargin(true);
-    getContent().addComponents(form, artifactGrid, buttons);
+    getContent().addComponents(accordion, buttons);
     getContent().setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT);
-    getContent().setExpandRatio(artifactGrid, 1);
+    getContent().setExpandRatio(accordion, 1);
     getContent().setSizeFull();
   }
 
@@ -137,9 +144,12 @@ public class ArtifactFinderDialog extends Window {
         artifactGrid.setItems(found);
         if (found.isEmpty()) {
           Notification.show(s("emptyArtifactList"), WARNING_MESSAGE);
+        } else {
+          accordion.setSelectedTab(gridTab);
         }
       }
     });
+    accordion.addSelectedTabChangeListener(e -> button.setEnabled(accordion.getSelectedTab() == formTab.getComponent()));
     buttons.addComponent(button);
   }
 
