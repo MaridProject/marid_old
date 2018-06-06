@@ -23,24 +23,43 @@ package org.marid.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.logging.Formatter;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class MaridLogFormatter extends Formatter {
+
+  private final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+      .appendValue(ChronoField.YEAR, 4)
+      .appendLiteral('-')
+      .appendValue(ChronoField.MONTH_OF_YEAR, 2)
+      .appendLiteral('-')
+      .appendValue(ChronoField.DAY_OF_MONTH, 2)
+      .appendLiteral('T')
+      .appendValue(ChronoField.HOUR_OF_DAY, 2)
+      .appendLiteral(':')
+      .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+      .appendLiteral(':')
+      .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+      .appendLiteral('.')
+      .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+      .appendLiteral(' ')
+      .toFormatter();
 
   @Override
   public String format(LogRecord record) {
     final StringWriter buf = new StringWriter(64);
 
     try (final PrintWriter writer = new PrintWriter(buf)) {
-      writer.print(record.getInstant());
-      writer.write(' ');
-
-      final String levelName = record.getLevel().getName();
-      writer.write(levelName.charAt(0));
-      writer.write(levelName.charAt(levelName.length() - 1));
-
-      writer.format(" %08X ", record.getThreadID());
+      formatter.formatTo(record.getInstant().atZone(ZoneId.systemDefault()), writer);
+      writer.append(levelSym(record.getLevel()));
+      writer.append('/');
+      writer.print(record.getThreadID());
+      writer.print(' ');
       writer.write(record.getLoggerName());
       writer.write(' ');
 
@@ -52,5 +71,21 @@ public class MaridLogFormatter extends Formatter {
     }
 
     return buf.toString();
+  }
+
+  private char levelSym(Level level) {
+    switch (level.intValue()) {
+      case 300: return 'F';
+      case 400: return 'T';
+      case 500: return 'D';
+      case 700: return 'C';
+      case 800: return 'I';
+      case 900: return 'W';
+      case 1000: return 'E';
+      default: {
+        final var name = level.getName();
+        return name.isEmpty() ? '-' : name.charAt(0);
+      }
+    }
   }
 }
