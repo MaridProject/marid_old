@@ -20,8 +20,7 @@
  */
 package org.marid.applib.repository.maven;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.marid.applib.json.MaridJackson;
 import org.marid.applib.repository.Artifact;
 import org.marid.applib.repository.ArtifactFinder;
 import org.springframework.util.StringUtils;
@@ -38,11 +37,9 @@ import java.util.stream.Stream;
 public class MavenArtifactFinder implements ArtifactFinder {
 
   private final URI url;
-  private final ObjectMapper mapper = new ObjectMapper();
 
   MavenArtifactFinder(URI searchUrl) {
     url = searchUrl;
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   }
 
   @Override
@@ -75,7 +72,7 @@ public class MavenArtifactFinder implements ArtifactFinder {
 
       final JsonResponse response;
       try (final var stream = connection.getInputStream()) {
-        response = mapper.readValue(stream, JsonResponse.class);
+        response = MaridJackson.MAPPER.readValue(stream, JsonResponse.class);
       } finally {
         if (connection instanceof HttpURLConnection) {
           ((HttpURLConnection) connection).disconnect();

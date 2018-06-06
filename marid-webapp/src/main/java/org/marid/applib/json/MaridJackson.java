@@ -18,27 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.config;
+package org.marid.applib.json;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+public interface MaridJackson {
 
-@Component
-public class JacksonConfiguration {
-
-  @Bean
-  public ObjectMapper objectMapper() {
-    final var mapper = new ObjectMapper();
-    mapper.setLocale(Locale.GERMANY);
-    mapper.setTimeZone(TimeZone.getDefault());
-    mapper.disable(FAIL_ON_UNKNOWN_PROPERTIES);
-    mapper.findAndRegisterModules();
-    return mapper;
-  }
+  ObjectMapper MAPPER = new ObjectMapper()
+      .setLocale(Locale.GERMANY)
+      .setTimeZone(TimeZone.getDefault())
+      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+      .findAndRegisterModules();
 }
