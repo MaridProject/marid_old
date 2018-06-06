@@ -21,9 +21,6 @@
 
 package org.marid.db.hsqldb;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.io.File;
 import java.util.Properties;
 
@@ -76,10 +73,5 @@ public final class HsqldbProperties {
 
   public void setSilent(boolean silent) {
     this.silent = silent;
-  }
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 }

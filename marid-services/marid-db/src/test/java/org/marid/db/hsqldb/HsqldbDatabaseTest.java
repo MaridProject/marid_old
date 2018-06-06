@@ -21,8 +21,6 @@
 
 package org.marid.db.hsqldb;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.marid.db.dao.NumericWriter;
 import org.marid.db.data.DataRecord;
 import org.marid.db.data.DataRecordKey;
@@ -77,12 +75,12 @@ public class HsqldbDatabaseTest extends AbstractTestNGSpringContextTests {
     final long t1 = Instant.parse("2000-01-01T00:00:10Z").toEpochMilli();
     final long t2 = Instant.parse("2000-01-01T00:00:40Z").toEpochMilli();
     final long t3 = Instant.parse("2000-01-01T00:00:50Z").toEpochMilli();
-    final List<DataRecord<Double>> records = ImmutableList.of(
+    final List<DataRecord<Double>> records = List.of(
         new DataRecord<>(0, t1, 2.3),
         new DataRecord<>(0, t2, 3.4),
         new DataRecord<>(0, t3, 3.3));
     final Set<DataRecordKey> mergeResult = numericWriter.merge(records, false);
-    assertEquals(mergeResult.stream().map(DataRecordKey::getTimestamp).collect(toSet()), ImmutableSet.of(t1, t2));
+    assertEquals(mergeResult.stream().map(DataRecordKey::getTimestamp).collect(toSet()), Set.of(t1, t2));
     assertEquals(numericWriter.fetchRecord(0, t1).getValue(), 2.3, 1e-3);
     assertEquals(numericWriter.fetchRecord(0, t2).getValue(), 3.4, 1e-3);
     assertEquals(numericWriter.fetchRecord(0, t3).getValue(), 3.3, 1e-3);

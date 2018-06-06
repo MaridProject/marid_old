@@ -18,11 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.test.logging;
 
-package org.marid.test;
+import java.util.logging.LogManager;
 
-import org.testng.ITestNGListener;
+public class TestLogInitializer {
 
-public class MaridBaseTestNGListener implements ITestNGListener {
-
+  public TestLogInitializer() {
+    LogManager.getLogManager().reset();
+    LogManager.getLogManager().getLogger("").addHandler(new TestLogHandler());
+  }
 }

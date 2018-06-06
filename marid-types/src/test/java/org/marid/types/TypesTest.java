@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang3.reflect.TypeUtils.parameterize;
 import static org.marid.test.TestGroups.NORMAL;
 import static org.marid.types.AuxTypeUtils.*;
 import static org.marid.types.Classes.classes;
@@ -74,7 +73,7 @@ public class TypesTest {
     final MappedVars map = Types.resolveVars(AuxTypeUtils.Map2.class);
 
     assertEquals(Set.of(Map1.class.getTypeParameters()), map.vars().collect(toSet()));
-    assertEquals(Set.of(parameterize(I1.class, I1.class)), map.types().collect(toSet()));
+    assertEquals(Set.of(p(I1.class, I1.class)), map.types().collect(toSet()));
   }
 
   @DataProvider

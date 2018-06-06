@@ -35,7 +35,6 @@ import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static org.apache.commons.lang3.ArrayUtils.EMPTY_INT_ARRAY;
 import static org.marid.test.TestGroups.SLOW;
 import static org.marid.types.AuxTypeUtils.p;
 import static org.testng.Assert.assertEquals;
@@ -48,22 +47,22 @@ public class ApplierTest {
         {
             Runnable.class,
             new InvokableMethod(String.class.getMethod("length")),
-            Runnable.class, String.class, EMPTY_INT_ARRAY, new Type[0]
+            Runnable.class, String.class, new int[0], new Type[0]
         },
         {
             p(Callable.class, Integer.class),
             new InvokableMethod(String.class.getMethod("length")),
-            Callable.class, String.class, EMPTY_INT_ARRAY, new Type[0]
+            Callable.class, String.class, new int[0], new Type[0]
         },
         {
             p(Callable.class, p(ArrayList.class, Object.class)),
             new InvokableConstructor(ArrayList.class.getConstructor()),
-            Callable.class, ArrayList.class, EMPTY_INT_ARRAY, new Type[0]
+            Callable.class, ArrayList.class, new int[0], new Type[0]
         },
         {
             p(Callable.class, p(ArrayList.class, Integer.class)),
             new InvokableConstructor(ArrayList.class.getConstructor(Collection.class)),
-            Callable.class, ArrayList.class, EMPTY_INT_ARRAY, new Type[] {p(Collection.class, Integer.class)}
+            Callable.class, ArrayList.class, new int[0], new Type[] {p(Collection.class, Integer.class)}
         },
         {
             p(Consumer.class, Integer.class),
