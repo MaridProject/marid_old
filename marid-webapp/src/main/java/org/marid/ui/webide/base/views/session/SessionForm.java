@@ -27,6 +27,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.TextField;
 import org.marid.applib.spring.init.Init;
+import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.annotation.SpringComponent;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.Gender;
@@ -36,6 +37,7 @@ import static com.vaadin.icons.VaadinIcons.MALE;
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
+@PrototypeScoped
 public class SessionForm extends FormLayout {
 
   public SessionForm() {

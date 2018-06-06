@@ -29,6 +29,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import org.marid.app.web.MaridServlet;
 import org.marid.applib.spring.ContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,14 @@ public class MainUI extends UI {
   }
 
   @Autowired
-  private void init(MainTabs tabs) {
-    setContent(tabs);
+  private void init(MainMenuBar mainMenuBar, MainTabs tabs) {
+    final var layout = new VerticalLayout(mainMenuBar, tabs);
+    layout.setMargin(false);
+    layout.setSpacing(true);
+    layout.setExpandRatio(tabs, 1);
+    layout.setSizeFull();
+
+    setContent(layout);
   }
 
   @Override

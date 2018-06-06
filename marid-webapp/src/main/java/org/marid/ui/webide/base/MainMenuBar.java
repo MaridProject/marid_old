@@ -21,9 +21,14 @@
 package org.marid.ui.webide.base;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 import org.marid.applib.spring.init.Init;
 import org.marid.spring.annotation.SpringComponent;
+import org.marid.ui.webide.base.views.session.SessionForm;
+import org.springframework.beans.factory.ObjectFactory;
 
 import static org.marid.applib.utils.Locales.s;
 
@@ -36,6 +41,22 @@ public class MainMenuBar extends MenuBar {
     sessionItem = addItem(s("session"), VaadinIcons.USER, null);
     setWidth(100, Unit.PERCENTAGE);
     setHeight(-1, Unit.PIXELS);
+  }
+
+  @Init
+  public void sessionInfo(ObjectFactory<SessionForm> sessionFormFactory) {
+    sessionItem.addItem(s("information"), VaadinIcons.INFO_CIRCLE, item -> {
+      final Window window = new Window(s("sessionInformation"), sessionFormFactory.getObject());
+      window.setModal(true);
+      window.setResizable(false);
+      window.setWindowMode(WindowMode.MAXIMIZED);
+      UI.getCurrent().addWindow(window);
+    });
+  }
+
+  @Init
+  public void sepBeforeLogout() {
+    sessionItem.addSeparator();
   }
 
   @Init
