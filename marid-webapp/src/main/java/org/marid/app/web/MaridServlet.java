@@ -20,10 +20,7 @@
  */
 package org.marid.app.web;
 
-import com.vaadin.server.DeploymentConfiguration;
-import com.vaadin.server.ServiceException;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinServletService;
+import com.vaadin.server.*;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -48,8 +45,13 @@ public class MaridServlet extends VaadinServlet {
   }
 
   @Override
-  protected MaridServletService createServletService(DeploymentConfiguration configuration) throws ServiceException {
-    final var service = new MaridServletService(this, configuration);
+  protected VaadinServletService createServletService(DeploymentConfiguration configuration) throws ServiceException {
+    final var service = new VaadinServletService(this, configuration);
+    service.setSystemMessagesProvider(systemMessagesInfo -> {
+      final var messages = new CustomizedSystemMessages();
+      messages.setSessionExpiredNotificationEnabled(false);
+      return messages;
+    });
     service.init();
     return service;
   }

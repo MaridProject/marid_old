@@ -63,8 +63,9 @@ public class MainMenuBar extends MenuBar {
   public void logout() {
     sessionItem.addItem(s("logout"), VaadinIcons.EXIT, item -> {
       final var ui = getUI();
-      ui.getSession().close();
-      ui.getPage().setLocation("/app/logout");
+      final var session = ui.getSession();
+      ui.getPage().replaceState("/logout");
+      session.close();
     });
   }
 

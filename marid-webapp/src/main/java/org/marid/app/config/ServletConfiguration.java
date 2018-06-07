@@ -25,6 +25,7 @@ import io.undertow.servlet.api.ServletInfo;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
 import org.marid.app.web.AuthServlet;
 import org.marid.app.web.CallbackServlet;
+import org.marid.app.web.LogoutServlet;
 import org.marid.app.web.MaridServlet;
 import org.marid.ui.webide.base.MainUI;
 import org.pac4j.core.client.Clients;
@@ -67,6 +68,15 @@ public class ServletConfiguration {
     info.setLoadOnStartup(2);
     info.setEnabled(true);
     clients.findAllClients().forEach(c -> info.addMapping("/" + c.getName()));
+    return info;
+  }
+
+  @Bean
+  public ServletInfo logoutServletInfo(LogoutServlet servlet) {
+    final var info = new ServletInfo("logoutServlet", LogoutServlet.class, new ImmediateInstanceFactory<>(servlet));
+    info.setAsyncSupported(true);
+    info.setEnabled(true);
+    info.addMapping("/logout");
     return info;
   }
 }

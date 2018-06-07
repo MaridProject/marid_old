@@ -36,9 +36,6 @@ import org.pac4j.core.engine.decision.AlwaysUseSessionProfileStorageDecision;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.List;
 
 @Component
@@ -82,16 +79,10 @@ public class MaridAuthenticationMechanism implements AuthenticationMechanism {
     exchange.getResponseHeaders().add(Headers.CACHE_CONTROL, "no-cache, max-age=0, must-revalidate, no-store");
     exchange.getResponseHeaders().add(Headers.PRAGMA, "no-cache");
     exchange.getResponseHeaders().add(Headers.EXPIRES, "0");
+    exchange.getResponseHeaders().add(Headers.LOCATION, "/public/unauthorized.html");
+    exchange.setStatusCode(HttpServletResponse.SC_TEMPORARY_REDIRECT);
 
-    try (final InputStream inputStream = getClass().getResourceAsStream("/auth/unauthorized.html")) {
-      inputStream.transferTo(exchange.getOutputStream());
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
-
-    exchange.setStatusCode(HttpServletResponse.SC_OK);
-
-    return new ChallengeResult(true, HttpServletResponse.SC_OK);
+    return new ChallengeResult(true, HttpServletResponse.SC_TEMPORARY_REDIRECT);
   }
 
   public void initialize(DeploymentInfo deploymentInfo) {
