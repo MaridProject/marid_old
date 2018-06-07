@@ -8,12 +8,12 @@
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -61,6 +61,7 @@ public class UndertowConfiguration {
     info.addServlets(servlets);
     info.addWelcomePage("/app");
     info.setDefaultSessionTimeout(3600);
+    info.setUseCachedAuthenticationMechanism(false);
 
     authenticationMechanism.initialize(info);
 
@@ -96,8 +97,6 @@ public class UndertowConfiguration {
     return Undertow.builder()
         .setServerOption(UndertowOptions.ENABLE_HTTP2, true)
         .setServerOption(UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH, true)
-        .setServerOption(UndertowOptions.SSL_USER_CIPHER_SUITES_ORDER, true)
-        .setServerOption(UndertowOptions.ALLOW_UNESCAPED_CHARACTERS_IN_URL, false)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())

@@ -20,6 +20,7 @@
  */
 package org.marid.ui.webide.base;
 
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Viewport;
@@ -39,6 +40,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Push(value = PushMode.AUTOMATIC, transport = Transport.LONG_POLLING)
+@PreserveOnRefresh
 @Viewport("width=device-width, initial-scale=1")
 @Theme("marid")
 @Component
