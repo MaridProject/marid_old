@@ -25,6 +25,9 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultLogoutLogic;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class MaridServletService extends VaadinServletService {
 
   public MaridServletService(MaridServlet servlet, DeploymentConfiguration configuration) throws ServiceException {
@@ -46,9 +49,7 @@ public class MaridServletService extends VaadinServletService {
       switch (pathInfo) {
         case "/logout": {
           final var config = getServlet().getContext().getBean(Config.class);
-          final var r = (VaadinServletRequest) request;
-          final var q = (VaadinServletResponse) response;
-          final var context = new J2EContext(r, q);
+          final var context = new J2EContext((HttpServletRequest) request, (HttpServletResponse) response);
 
           final var logic = new DefaultLogoutLogic<Void, J2EContext>();
           logic.perform(context, config, (code, ctx) -> null, "/app", null, true, false, false);
