@@ -30,14 +30,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class Dialog<T> extends Window {
+public class Dlg<T> extends Window {
 
   private final T bean;
   private final Binder<T> binder = new Binder<>();
   private final FormLayout form = new FormLayout();
   private final HorizontalLayout buttons = new HorizontalLayout();
 
-  public Dialog(String caption, T bean, boolean modal, int width, int height) {
+  public Dlg(String caption, T bean, boolean modal, int width, int height) {
     super(caption, new VerticalLayout());
     this.bean = bean;
     setModal(modal);
@@ -57,14 +57,14 @@ public class Dialog<T> extends Window {
     getContent().setSizeFull();
   }
 
-  public Dialog(String caption, T bean, int width, int height) {
+  public Dlg(String caption, T bean, int width, int height) {
     this(caption, bean, true, width, height);
   }
 
   @SafeVarargs
-  public final Dialog<T> addTextField(String label,
-                                      String value,
-                                      BiConsumer<TextField, BindingBuilder<T, String>>... consumers) {
+  public final Dlg<T> addTextField(String label,
+                                   String value,
+                                   BiConsumer<TextField, BindingBuilder<T, String>>... consumers) {
     final var field = new TextField(label, value);
     field.setWidth(100, Unit.PERCENTAGE);
     form.addComponent(field);
@@ -76,8 +76,8 @@ public class Dialog<T> extends Window {
   }
 
   @SafeVarargs
-  public final <V, C extends Component & HasValue<V>> Dialog<T> add(Supplier<C> supplier,
-                                                                    BiConsumer<C, BindingBuilder<T, V>>... consumers) {
+  public final <V, C extends Component & HasValue<V>> Dlg<T> add(Supplier<C> supplier,
+                                                                 BiConsumer<C, BindingBuilder<T, V>>... consumers) {
     final var field = supplier.get();
     field.setWidth(100, Unit.PERCENTAGE);
     form.addComponent(field);
@@ -89,7 +89,7 @@ public class Dialog<T> extends Window {
   }
 
   @SafeVarargs
-  public final Dialog<T> addCancelButton(String text, Consumer<Button>... consumers) {
+  public final Dlg<T> addCancelButton(String text, Consumer<Button>... consumers) {
     final var button = new Button(text, VaadinIcons.CLOSE);
     button.addClickListener(e -> close());
     buttons.addComponent(button);
@@ -100,7 +100,7 @@ public class Dialog<T> extends Window {
   }
 
   @SafeVarargs
-  public final Dialog<T> addSubmitButton(String text, Consumer<T> onSuccess, Consumer<Button>... consumers) {
+  public final Dlg<T> addSubmitButton(String text, Consumer<T> onSuccess, Consumer<Button>... consumers) {
     final var button = new Button(text, VaadinIcons.ENTER);
     button.addClickListener(event -> {
       if (binder.writeBeanIfValid(bean)) {
@@ -116,7 +116,7 @@ public class Dialog<T> extends Window {
   }
 
   @SafeVarargs
-  public final <C extends Component> Dialog<T> addComponent(C component, Consumer<C>... consumers) {
+  public final <C extends Component> Dlg<T> addComponent(C component, Consumer<C>... consumers) {
     final int count = getContent().getComponentCount();
     getContent().addComponent(component, count - 1);
     component.setWidth(100, Unit.PERCENTAGE);
@@ -127,17 +127,17 @@ public class Dialog<T> extends Window {
     return this;
   }
 
-  public Dialog<T> resizable(boolean resizable) {
+  public Dlg<T> resizable(boolean resizable) {
     setResizable(resizable);
     return this;
   }
 
-  public Dialog<T> closeable(boolean closeable) {
+  public Dlg<T> closeable(boolean closeable) {
     setClosable(closeable);
     return this;
   }
 
-  public Dialog<T> draggable(boolean draggable) {
+  public Dlg<T> draggable(boolean draggable) {
     setDraggable(draggable);
     return this;
   }

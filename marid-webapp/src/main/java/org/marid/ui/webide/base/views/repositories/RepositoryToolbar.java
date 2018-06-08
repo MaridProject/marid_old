@@ -24,7 +24,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Label;
 import org.marid.applib.components.Toolbar;
-import org.marid.applib.dialog.Dialog;
+import org.marid.applib.dialog.Dlg;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.SpringComponent;
@@ -47,7 +47,7 @@ public class RepositoryToolbar extends Toolbar {
 
   @Init
   public void initAdd(RepositoryManager manager, RepositoryDao dao) {
-    button(FILE_ADD, e -> new Dialog<>(s("addProject"), new RepositoryItem(), 400, 300)
+    button(FILE_ADD, e -> new Dlg<>(s("addProject"), new RepositoryItem(), 400, 300)
         .addTextField(s("name"), "repository", (f, b) -> b
             .withValidator(StringValidators.fileNameValidator())
             .withValidator(manager::isNew, c -> m("alreadyExists"))

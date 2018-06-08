@@ -22,7 +22,7 @@ package org.marid.ui.webide.base.views.projects;
 
 import com.vaadin.ui.Label;
 import org.marid.applib.components.Toolbar;
-import org.marid.applib.dialog.Dialog;
+import org.marid.applib.dialog.Dlg;
 import org.marid.applib.spring.init.Init;
 import org.marid.applib.validators.StringValidators;
 import org.marid.spring.annotation.SpringComponent;
@@ -46,7 +46,7 @@ public class ProjectToolbar extends Toolbar {
 
   @Init
   public void initAdd() {
-    button(FOLDER_ADD, e -> new Dialog<>(s("addProject"), new AtomicReference<String>(), true, 350, 280)
+    button(FOLDER_ADD, e -> new Dlg<>(s("addProject"), new AtomicReference<String>(), true, 350, 280)
         .addTextField(s("name"), "project", (f, b) -> b
             .asRequired(m("nameNonEmpty"))
             .withValidator(StringValidators.fileNameValidator())
