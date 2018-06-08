@@ -19,22 +19,16 @@
  * #L%
  */
 
-package org.marid.app.config;
+package org.marid.app.undertow;
 
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
-import io.undertow.security.api.AuthenticationMode;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
-import io.undertow.server.session.SslSessionConfig;
 import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.api.ServletInfo;
 import org.marid.app.props.UndertowProperties;
-import org.marid.app.web.MaridAuthenticationMechanism;
-import org.marid.app.web.MaridResourceManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -44,33 +38,9 @@ import javax.servlet.ServletException;
 @Component
 public class UndertowConfiguration {
 
-  @Bean
-  public DeploymentInfo deploymentInfo(MaridResourceManager maridResourceManager,
-                                       MaridAuthenticationMechanism authenticationMechanism,
-                                       ServletInfo[] servlets) {
-    final var info = new DeploymentInfo();
-    info.setDeploymentName("marid");
-    info.setClassLoader(Thread.currentThread().getContextClassLoader());
-    info.setDefaultEncoding("UTF-8");
-    info.setDisableCachingForSecuredPages(true);
-    info.setInvalidateSessionOnLogout(true);
-    info.setAuthenticationMode(AuthenticationMode.PRO_ACTIVE);
-    info.setContextPath("/");
-    info.setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()));
-    info.setResourceManager(maridResourceManager);
-    info.addServlets(servlets);
-    info.addWelcomePage("/app");
-    info.setDefaultSessionTimeout(3600);
-    info.setUseCachedAuthenticationMechanism(false);
-
-    authenticationMechanism.initialize(info);
-
-    return info;
-  }
-
   @Bean(initMethod = "deploy", destroyMethod = "stop")
-  public DeploymentManager deploymentManager(DeploymentInfo deploymentInfo) {
-    return Servlets.defaultContainer().addDeployment(deploymentInfo);
+  public DeploymentManager deploymentManager(DeploymentProvider deploymentProvider) {
+    return Servlets.defaultContainer().addDeployment(deploymentProvider.getDeploymentInfo());
   }
 
   @Bean
@@ -107,4 +77,3 @@ public class UndertowConfiguration {
         .build();
   }
 }
-

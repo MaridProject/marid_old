@@ -20,9 +20,6 @@
  */
 package org.marid.app.web;
 
-import io.undertow.server.handlers.form.FormData;
-import io.undertow.server.handlers.form.FormDataParser;
-import io.undertow.servlet.spec.HttpServletRequestImpl;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultCallbackLogic;
@@ -45,13 +42,6 @@ public class CallbackServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest q, HttpServletResponse r) {
-    final var request = (HttpServletRequestImpl) q;
-    final var exchange = request.getExchange();
-
-    final var formData = new FormData(request.getQueryParameters().size());
-    request.getQueryParameters().forEach((k, v) -> formData.add(k, v.peek()));
-    exchange.putAttachment(FormDataParser.FORM_DATA, formData);
-
     callbackLogic.perform(new J2EContext(q, r), config, (code, ctx) -> null, "/app", true, false, null, null);
   }
 }

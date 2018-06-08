@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.config;
+package org.marid.app.undertow;
 
 import com.vaadin.server.VaadinServlet;
+import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.ServletInfo;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
-import org.marid.app.web.AuthServlet;
-import org.marid.app.web.CallbackServlet;
-import org.marid.app.web.LogoutServlet;
-import org.marid.app.web.MaridServlet;
+import io.undertow.servlet.util.ImmediateInstanceHandle;
+import org.marid.app.web.*;
 import org.marid.ui.webide.base.MainUI;
 import org.pac4j.core.client.Clients;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -77,6 +77,16 @@ public class ServletConfiguration {
     info.setAsyncSupported(true);
     info.setEnabled(true);
     info.addMapping("/logout");
+    return info;
+  }
+
+  @Bean
+  public FilterInfo securityFilterInfo(ObjectFactory<SecurityFilter> securityFilter) {
+    final var info = new FilterInfo("securityFilter", SecurityFilter.class, () -> {
+      final var filter = securityFilter.getObject();
+      return new ImmediateInstanceHandle<>(filter);
+    });
+    info.setAsyncSupported(true);
     return info;
   }
 }

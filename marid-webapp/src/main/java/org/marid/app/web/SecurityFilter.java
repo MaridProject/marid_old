@@ -20,6 +20,7 @@
  */
 package org.marid.app.web;
 
+import org.marid.spring.annotation.PrototypeScoped;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
@@ -29,37 +30,38 @@ import org.pac4j.core.engine.decision.AlwaysUseSessionProfileStorageDecision;
 import org.pac4j.core.exception.HttpAction;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServlet;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @Component
-public class AuthServlet extends HttpServlet {
+@PrototypeScoped
+public class SecurityFilter extends HttpFilter {
 
   private final Config config;
-  private final DefaultSecurityLogic<Void, J2EContext> securityLogic = new DefaultSecurityLogic<>() {
+  private final DefaultSecurityLogic<Boolean, J2EContext> logic = new DefaultSecurityLogic<>() {
     @Override
     protected HttpAction unauthorized(J2EContext context, List<Client> currentClients) {
       return HttpAction.redirect(context, "/public/unauthorized.html");
     }
   };
+  private final SecurityGrantedAccessAdapter<Boolean, J2EContext> authorize = (ctx, profiles, params) -> true;
 
-  public AuthServlet(Config config) {
+  public SecurityFilter(Config config) {
     this.config = config;
-    this.securityLogic.setProfileStorageDecision(new AlwaysUseSessionProfileStorageDecision());
+    this.logic.setProfileStorageDecision(new AlwaysUseSessionProfileStorageDecision());
   }
 
   @Override
-  protected void doGet(HttpServletRequest q, HttpServletResponse r) {
-    final var path = q.getServletPath();
-    final var client = path.substring(1);
-
-    final SecurityGrantedAccessAdapter<Void, J2EContext> granted = (ctx, profiles, params) -> {
-      r.sendRedirect("/app");
-      return null;
-    };
-
-    securityLogic.perform(new J2EContext(q, r), config, granted, (code, context) -> null, client, "user", null, false);
+  protected void doFilter(HttpServletRequest q, HttpServletResponse r, FilterChain c) throws IOException, ServletException {
+    final var context = new J2EContext(q, r);
+    final var result = logic.perform(context, config, authorize, (code, ctx) -> false, null, "user", null, false);
+    if (result) {
+      super.doFilter(q, r, c);
+    }
   }
 }
