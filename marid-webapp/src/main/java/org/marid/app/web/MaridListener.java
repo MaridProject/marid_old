@@ -24,7 +24,7 @@ import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.application.ApplicationRunner;
 import org.marid.app.common.Directories;
-import org.marid.ui.webide.base.boot.MainUI;
+import org.marid.ui.webide.base.boot.MainEntryPoint;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -64,6 +64,6 @@ public class MaridListener implements ServletContextListener, ApplicationConfigu
   @Override
   public void configure(Application application) {
     application.setOperationMode(Application.OperationMode.SWT_COMPATIBILITY);
-    application.addEntryPoint("/app", () -> new MainUI(context), Map.of());
+    application.addEntryPoint("/main.marid", () -> new MainEntryPoint(context), Map.of());
   }
 }

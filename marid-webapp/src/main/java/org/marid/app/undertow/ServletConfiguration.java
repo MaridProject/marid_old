@@ -40,7 +40,7 @@ public class ServletConfiguration {
     info.setAsyncSupported(true);
     info.setLoadOnStartup(4);
     info.setEnabled(true);
-    info.addMappings("/app/*");
+    info.addMappings("*.marid");
     return info;
   }
 

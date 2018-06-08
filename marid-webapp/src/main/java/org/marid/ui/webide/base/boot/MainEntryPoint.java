@@ -28,13 +28,13 @@ import org.marid.applib.spring.ContextUtils;
 import org.marid.ui.webide.base.UIConfiguration;
 import org.springframework.context.support.GenericApplicationContext;
 
-public class MainUI implements EntryPoint {
+public class MainEntryPoint implements EntryPoint {
 
   public static final String CONTEXT_KEY = "applicationContext";
 
   private final GenericApplicationContext parent;
 
-  public MainUI(GenericApplicationContext parent) {
+  public MainEntryPoint(GenericApplicationContext parent) {
     this.parent = parent;
   }
 
