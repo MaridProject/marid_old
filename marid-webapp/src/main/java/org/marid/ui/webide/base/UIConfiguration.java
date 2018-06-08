@@ -22,16 +22,27 @@ package org.marid.ui.webide.base;
 
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.service.UISession;
+import org.eclipse.swt.widgets.Shell;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
 @Component
+@ComponentScan
 public class UIConfiguration {
+
+  private final Shell shell;
+
+  @Autowired(required = false)
+  public UIConfiguration(Shell shell) {
+    this.shell = shell;
+  }
 
   @Bean
   public Locale locale(UISession session) {
@@ -47,5 +58,9 @@ public class UIConfiguration {
   @Bean
   public UISession uiSession() {
     return RWT.getUISession();
+  }
+
+  public Shell getShell() {
+    return shell;
   }
 }

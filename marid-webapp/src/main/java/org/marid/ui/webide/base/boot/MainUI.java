@@ -18,17 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.ui.webide.base;
+package org.marid.ui.webide.base.boot;
 
 import org.eclipse.rap.rwt.application.EntryPoint;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.marid.applib.spring.ContextUtils;
-import org.springframework.context.annotation.ComponentScan;
+import org.marid.ui.webide.base.UIConfiguration;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.stereotype.Component;
 
-@Component
-@ComponentScan
 public class MainUI implements EntryPoint {
 
   public static final String CONTEXT_KEY = "applicationContext";
@@ -42,14 +41,14 @@ public class MainUI implements EntryPoint {
   @Override
   public int createUI() {
     final var display = new Display();
-    final var shell = new MainShell(display);
+    final var shell = new Shell(display, SWT.NO_TRIM);
 
     shell.setMaximized(true);
 
     final var child = ContextUtils.context(parent, c -> {
       c.setId("mainUI");
       c.setDisplayName("mainUI");
-      c.registerBean("mainShell", MainShell.class, () -> shell);
+      c.registerBean(UIConfiguration.class, () -> new UIConfiguration(shell));
       display.setData(CONTEXT_KEY, c);
     });
     child.refresh();

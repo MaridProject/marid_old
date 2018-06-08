@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-spring
+ * marid-webapp
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.spring.annotation;
+package org.marid.ui.webide.base.boot;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.ToolBar;
+import org.marid.ui.webide.base.UIConfiguration;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.TYPE})
 @Component
-public @interface InternalComponent {
+public class MainToolbar extends ToolBar {
+
+  public MainToolbar(UIConfiguration configuration) {
+    super(configuration.getShell(), SWT.WRAP | SWT.SHADOW_OUT | SWT.HORIZONTAL);
+  }
 }
