@@ -18,28 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.components;
+package org.marid.ui.webide.base;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.VerticalLayout;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.marid.spring.annotation.InternalComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class ToolbarForm<T extends Toolbar, C extends Component> extends VerticalLayout {
+@InternalComponent
+public class MainShell extends Shell {
 
-  private final T toolbar;
-  private final C component;
-
-  public ToolbarForm(T toolbar, C component) {
-    setSpacing(true);
-    setMargin(true);
-    addComponent(this.toolbar = toolbar);
-    addComponentsAndExpand(this.component = component);
-  }
-
-  public T getToolbar() {
-    return toolbar;
-  }
-
-  public C getComponent() {
-    return component;
+  @Autowired(required = false)
+  MainShell(Display display) {
+    super(display, SWT.NO_TRIM);
+    setLayout(new GridLayout(1, false));
   }
 }

@@ -20,7 +20,8 @@
  */
 package org.marid.ui.webide.base;
 
-import com.vaadin.server.VaadinSession;
+import org.eclipse.rap.rwt.RWT;
+import org.eclipse.rap.rwt.service.UISession;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.annotation.Bean;
@@ -33,13 +34,18 @@ import java.util.Locale;
 public class UIConfiguration {
 
   @Bean
-  public Locale locale(VaadinSession session) {
+  public Locale locale(UISession session) {
     return session.getLocale();
   }
 
   @Bean
-  public CommonProfile userProfile(VaadinSession session) {
-    final LinkedHashMap map = (LinkedHashMap) session.getSession().getAttribute(Pac4jConstants.USER_PROFILES);
+  public CommonProfile userProfile(UISession session) {
+    final LinkedHashMap map = (LinkedHashMap) session.getHttpSession().getAttribute(Pac4jConstants.USER_PROFILES);
     return (CommonProfile) map.values().iterator().next();
+  }
+
+  @Bean
+  public UISession uiSession() {
+    return RWT.getUISession();
   }
 }

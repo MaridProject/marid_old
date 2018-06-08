@@ -22,23 +22,35 @@ package org.marid.app.undertow;
 
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.Resource;
+import io.undertow.server.handlers.resource.URLResource;
+import org.marid.app.common.Directories;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Component
 public class MaridResourceManager extends ClassPathResourceManager {
 
-  public MaridResourceManager() {
+  private final Path rwtDir;
+
+  public MaridResourceManager(Directories directories) {
     super(Thread.currentThread().getContextClassLoader());
+    this.rwtDir = directories.getRwtDir();
   }
 
   @Override
   public Resource getResource(String path) throws IOException {
-    if (path.startsWith("/public/") || path.startsWith("/VAADIN/")) {
+    if (path.startsWith("/public/")) {
       return super.getResource(path);
     } else {
-      return null;
+      final Path p = rwtDir.resolve(path.substring(1));
+      if (p.startsWith(rwtDir) && Files.isRegularFile(p)) {
+        return new URLResource(p.toUri().toURL(), path);
+      } else {
+        return null;
+      }
     }
   }
 }

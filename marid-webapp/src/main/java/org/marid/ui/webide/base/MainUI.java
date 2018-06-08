@@ -20,77 +20,54 @@
  */
 package org.marid.ui.webide.base;
 
-import com.vaadin.annotations.PreserveOnRefresh;
-import com.vaadin.annotations.Push;
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Viewport;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServletService;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.shared.communication.PushMode;
-import com.vaadin.shared.ui.ui.Transport;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import org.marid.app.web.MaridServlet;
+import org.eclipse.rap.rwt.application.EntryPoint;
+import org.eclipse.swt.widgets.Display;
 import org.marid.applib.spring.ContextUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
-@Push(value = PushMode.AUTOMATIC, transport = Transport.LONG_POLLING)
-@PreserveOnRefresh
-@Viewport("width=device-width, initial-scale=1")
-@Theme("marid")
 @Component
 @ComponentScan
-public class MainUI extends UI {
+public class MainUI implements EntryPoint {
 
-  @Override
-  protected void init(VaadinRequest request) {
-    getPage().setTitle("Menu");
-    setSizeFull();
-  }
+  public static final String CONTEXT_KEY = "applicationContext";
 
-  @Autowired
-  private void init(MainMenuBar mainMenuBar, MainTabs tabs) {
-    final var layout = new VerticalLayout(mainMenuBar, tabs);
-    layout.setMargin(false);
-    layout.setSpacing(true);
-    layout.setExpandRatio(tabs, 1);
-    layout.setSizeFull();
+  private final GenericApplicationContext parent;
 
-    setContent(layout);
+  public MainUI(GenericApplicationContext parent) {
+    this.parent = parent;
   }
 
   @Override
-  public void attach() {
-    final var parent = getContext();
+  public int createUI() {
+    final var display = new Display();
+    final var shell = new MainShell(display);
+
+    shell.setMaximized(true);
+
     final var child = ContextUtils.context(parent, c -> {
       c.setId("mainUI");
       c.setDisplayName("mainUI");
-      c.registerBean("mainUI", MainUI.class, () -> this);
-      final var registration = addDetachListener(event -> c.close());
-      final var closeListener = ContextUtils.closeListener(c, event -> registration.remove());
-      c.addApplicationListener(closeListener);
+      c.registerBean("mainShell", MainShell.class, () -> shell);
+      display.setData(CONTEXT_KEY, c);
     });
-
-    super.attach();
-
     child.refresh();
     child.start();
-  }
 
-  @Bean("vaadinSession")
-  @Override
-  public VaadinSession getSession() {
-    return super.getSession();
-  }
+    try (child) {
+      shell.layout();
+      shell.open();
 
-  private GenericApplicationContext getContext() {
-    final var service = (VaadinServletService) getSession().getService();
-    final var servlet = (MaridServlet) service.getServlet();
-    return servlet.getContext();
+      while (!shell.isDisposed()) {
+        if (!display.readAndDispatch()) {
+          display.sleep();
+        }
+      }
+    } finally {
+      display.dispose();
+    }
+
+    return 0;
   }
 }

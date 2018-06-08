@@ -23,6 +23,7 @@ package org.marid.app.undertow;
 import io.undertow.server.session.SslSessionConfig;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.FilterInfo;
+import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,11 @@ public class DeploymentProvider {
   public void setFilters(FilterInfo[] filters) {
     deploymentInfo.addFilters(filters);
     deploymentInfo.addFilterUrlMapping("securityFilter", "/app", DispatcherType.REQUEST);
+  }
+
+  @Autowired
+  public void setListeners(ListenerInfo[] listeners) {
+    deploymentInfo.addListeners(listeners);
   }
 
   public DeploymentInfo getDeploymentInfo() {

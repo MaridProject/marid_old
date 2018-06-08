@@ -20,40 +20,17 @@
  */
 package org.marid.app.web;
 
-import com.vaadin.server.*;
+import org.eclipse.rap.rwt.engine.RWTServlet;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
-
 @Component
-public class MaridServlet extends VaadinServlet {
+public class MaridServlet extends RWTServlet {
 
   private final GenericApplicationContext context;
-  private final MainServletBootstrapListener bootstrapListener;
 
-  public MaridServlet(GenericApplicationContext context, MainServletBootstrapListener bootstrapListener) {
+  public MaridServlet(GenericApplicationContext context) {
     this.context = context;
-    this.bootstrapListener = bootstrapListener;
-  }
-
-  @Override
-  protected VaadinServletService createServletService() throws ServletException, ServiceException {
-    final var service = super.createServletService();
-    service.addSessionInitListener(event -> event.getSession().addBootstrapListener(bootstrapListener));
-    return service;
-  }
-
-  @Override
-  protected VaadinServletService createServletService(DeploymentConfiguration configuration) throws ServiceException {
-    final var service = new VaadinServletService(this, configuration);
-    service.setSystemMessagesProvider(systemMessagesInfo -> {
-      final var messages = new CustomizedSystemMessages();
-      messages.setSessionExpiredNotificationEnabled(false);
-      return messages;
-    });
-    service.init();
-    return service;
   }
 
   public GenericApplicationContext getContext() {

@@ -20,7 +20,6 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
-import com.vaadin.data.provider.ListDataProvider;
 import org.marid.ui.webide.base.dao.ProjectDao;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +32,6 @@ public class ProjectManager {
 
   private final ProjectDao dao;
   private final ArrayList<String> projects = new ArrayList<>();
-  private final ListDataProvider<String> dataProvider = new ListDataProvider<>(projects);
 
   public ProjectManager(ProjectDao dao) {
     this.dao = dao;
@@ -43,11 +41,6 @@ public class ProjectManager {
   public void refresh() {
     projects.clear();
     projects.addAll(dao.getProjectNames());
-    dataProvider.refreshAll();
-  }
-
-  public void refresh(String project) {
-    dataProvider.refreshItem(project);
   }
 
   public void remove(Collection<String> projects) {
@@ -58,9 +51,5 @@ public class ProjectManager {
   public void add(String project) {
     dao.tryCreate(project);
     refresh();
-  }
-
-  public ListDataProvider<String> getDataProvider() {
-    return dataProvider;
   }
 }

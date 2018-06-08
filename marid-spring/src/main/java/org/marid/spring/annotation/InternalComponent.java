@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-webapp
+ * marid-spring
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,22 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.web;
+package org.marid.spring.annotation;
 
-import com.vaadin.server.BootstrapFragmentResponse;
-import com.vaadin.server.BootstrapListener;
-import com.vaadin.server.BootstrapPageResponse;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.TYPE})
 @Component
-public class MainServletBootstrapListener implements BootstrapListener {
-  @Override
-  public void modifyBootstrapFragment(BootstrapFragmentResponse response) {
-
-  }
-
-  @Override
-  public void modifyBootstrapPage(BootstrapPageResponse response) {
-    response.getDocument().head().getElementsByAttributeValue("rel", "icon").attr("href", "/public/marid32.png");
-  }
+public @interface InternalComponent {
 }

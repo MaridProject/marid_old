@@ -20,7 +20,6 @@
  */
 package org.marid.ui.webide.base.views.repositories;
 
-import com.vaadin.data.provider.ListDataProvider;
 import org.marid.applib.repository.Repository;
 import org.marid.ui.webide.base.dao.RepositoryDao;
 import org.marid.ui.webide.base.model.RepositoryItem;
@@ -38,7 +37,6 @@ public class RepositoryManager {
 
   private final RepositoryDao dao;
   private final ArrayList<RepositoryItem> repositories = new ArrayList<>();
-  private final ListDataProvider<RepositoryItem> dataProvider = new ListDataProvider<>(repositories);
 
   public RepositoryManager(RepositoryDao dao) {
     this.dao = dao;
@@ -51,22 +49,16 @@ public class RepositoryManager {
 
   public void add(RepositoryItem repositoryItem) {
     repositories.add(repositoryItem);
-    dataProvider.refreshAll();
   }
 
   public void remove(RepositoryItem repositoryItem) {
     repositories.remove(repositoryItem);
-    dataProvider.refreshAll();
   }
 
   public void save() {
     for (final var repository : repositories) {
       dao.save(repository);
     }
-  }
-
-  public ListDataProvider<RepositoryItem> getDataProvider() {
-    return dataProvider;
   }
 
   public boolean isNew(String repositoryName) {

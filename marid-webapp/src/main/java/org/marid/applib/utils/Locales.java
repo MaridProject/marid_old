@@ -20,33 +20,22 @@
  */
 package org.marid.applib.utils;
 
-import com.vaadin.data.ValueContext;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Component;
+import org.eclipse.rap.rwt.RWT;
 import org.jetbrains.annotations.PropertyKey;
 import org.marid.l10n.L10n;
 
 import java.util.Locale;
-import java.util.Optional;
 
 public interface Locales {
 
-  static String m(ValueContext ctx, @PropertyKey(resourceBundle = "res.messages") String key, Object... args) {
-    final var locale = ctx.getLocale()
-        .or(() -> ctx.getComponent().map(Component::getLocale))
-        .or(() -> Optional.ofNullable(VaadinSession.getCurrent()).map(VaadinSession::getLocale))
-        .orElseGet(Locale::getDefault);
-    return L10n.m(locale, key, args);
-  }
-
   static String m(@PropertyKey(resourceBundle = "res.messages") String key, Object... args) {
-    final var session = VaadinSession.getCurrent();
+    final var session = RWT.getUISession();
     final var locale = session == null ? Locale.getDefault() : session.getLocale();
     return L10n.m(locale, key, args);
   }
 
   static String s(@PropertyKey(resourceBundle = "res.strings") String key, Object... args) {
-    final var session = VaadinSession.getCurrent();
+    final var session = RWT.getUISession();
     final var locale = session == null ? Locale.getDefault() : session.getLocale();
     return L10n.s(locale, key, args);
   }

@@ -20,34 +20,27 @@
  */
 package org.marid.app.undertow;
 
-import com.vaadin.server.VaadinServlet;
 import io.undertow.servlet.api.FilterInfo;
+import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletInfo;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
 import io.undertow.servlet.util.ImmediateInstanceHandle;
 import org.marid.app.web.*;
-import org.marid.ui.webide.base.MainUI;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import static com.vaadin.server.Constants.SERVLET_PARAMETER_PRODUCTION_MODE;
-import static com.vaadin.server.VaadinSession.UI_PARAMETER;
 
 @Component
 public class ServletConfiguration {
 
   @Bean
-  public ServletInfo vaadinServletInfo(MaridServlet servlet, @Value("${vaadin.production:true}") boolean production) {
-    final var info = new ServletInfo("vaadinServlet", VaadinServlet.class, new ImmediateInstanceFactory<>(servlet));
+  public ServletInfo maridServletInfo(MaridServlet servlet) {
+    final var info = new ServletInfo("maridServlet", MaridServlet.class, new ImmediateInstanceFactory<>(servlet));
     info.setAsyncSupported(true);
     info.setLoadOnStartup(4);
     info.setEnabled(true);
     info.addMappings("/app/*");
-    info.addInitParam(SERVLET_PARAMETER_PRODUCTION_MODE, Boolean.toString(production));
-    info.addInitParam(UI_PARAMETER, MainUI.class.getName());
     return info;
   }
 
@@ -88,5 +81,10 @@ public class ServletConfiguration {
     });
     info.setAsyncSupported(true);
     return info;
+  }
+
+  @Bean
+  public ListenerInfo maridServletListener(ObjectFactory<MaridListener> f) {
+    return new ListenerInfo(MaridListener.class, () -> new ImmediateInstanceHandle<>(f.getObject()), true);
   }
 }

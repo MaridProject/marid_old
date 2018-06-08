@@ -18,21 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.utils;
+package org.marid.ui.webide.base;
 
-import com.vaadin.ui.CustomLayout;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.ToolBar;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
+@Component
+public class MainToolbar extends ToolBar {
 
-public interface Layouts {
-
-  static CustomLayout customLayout(String location) {
-    final var classLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      return new CustomLayout(classLoader.getResourceAsStream(location));
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
+  public MainToolbar(MainShell shell) {
+    super(shell, SWT.WRAP | SWT.SHADOW_OUT | SWT.HORIZONTAL);
   }
 }

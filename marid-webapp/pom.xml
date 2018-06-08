@@ -19,23 +19,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-server</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client-compiled</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-push</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-themes</artifactId>
+      <groupId>org.eclipse.rap</groupId>
+      <artifactId>org.eclipse.rap.rwt</artifactId>
+      <version>3.4.0</version>
     </dependency>
 
     <dependency>
@@ -94,18 +80,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-bom</artifactId>
-        <type>pom</type>
-        <version>8.4.3</version>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <plugins>
@@ -203,26 +177,6 @@
           <url>scp://marid.org</url>
           <displayCommandOutputs>true</displayCommandOutputs>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-maven-plugin</artifactId>
-        <version>8.4.3</version>
-        <executions>
-          <execution>
-            <id>vaadin</id>
-            <goals>
-              <goal>update-theme</goal>
-              <goal>compile-theme</goal>
-            </goals>
-            <phase>none</phase>
-            <configuration>
-              <theme>marid</theme>
-              <warSourceDirectory>src/main/binary-resources</warSourceDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

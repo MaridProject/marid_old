@@ -22,8 +22,10 @@
 package org.marid.app.common;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,16 +37,25 @@ public class Directories {
   private final Path userHome;
   private final Path base;
   private final Path users;
+  private final Path tempDir;
+  private final Path rwtDir;
 
-  public Directories() {
+  public Directories() throws Exception {
     this.userHome = Paths.get(System.getProperty("user.home"));
     this.base = userHome.resolve("marid-app");
     this.users = base.resolve("users");
+    this.tempDir = Files.createTempDirectory("marid");
+    this.rwtDir = tempDir.resolve("rwt");
   }
 
   @PostConstruct
   private void createDirectoriesIfNecessary() throws IOException {
     Files.createDirectories(users);
+  }
+
+  @PreDestroy
+  private void deleteTempDir() throws IOException {
+    FileSystemUtils.deleteRecursively(tempDir);
   }
 
   public Path getUserHome() {
@@ -57,5 +68,13 @@ public class Directories {
 
   public Path getUsers() {
     return users;
+  }
+
+  public Path getTempDir() {
+    return tempDir;
+  }
+
+  public Path getRwtDir() {
+    return rwtDir;
   }
 }
