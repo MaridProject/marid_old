@@ -15,6 +15,7 @@ package org.marid.ui.webide.base;
 
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.service.UISession;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
@@ -28,12 +29,14 @@ import java.util.Locale;
 
 @Component
 @ComponentScan
-public class UIConfiguration {
+public class UI {
 
+  private final Display display;
   private final Shell shell;
 
   @Autowired(required = false)
-  public UIConfiguration(Shell shell) {
+  public UI(Display display, Shell shell) {
+    this.display = display;
     this.shell = shell;
   }
 
@@ -51,6 +54,10 @@ public class UIConfiguration {
   @Bean
   public UISession uiSession() {
     return RWT.getUISession();
+  }
+
+  public Display getDisplay() {
+    return display;
   }
 
   public Shell getShell() {

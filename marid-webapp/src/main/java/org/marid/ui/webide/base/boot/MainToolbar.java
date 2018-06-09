@@ -15,13 +15,13 @@ package org.marid.ui.webide.base.boot;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ToolBar;
-import org.marid.ui.webide.base.UIConfiguration;
+import org.marid.ui.webide.base.UI;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MainToolbar extends ToolBar {
 
-  public MainToolbar(UIConfiguration configuration) {
+  public MainToolbar(UI configuration) {
     super(configuration.getShell(), SWT.WRAP | SWT.SHADOW_OUT | SWT.HORIZONTAL);
   }
 }

@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.marid.applib.spring.ContextUtils;
-import org.marid.ui.webide.base.UIConfiguration;
+import org.marid.ui.webide.base.UI;
 import org.springframework.context.support.GenericApplicationContext;
 
 public class MainEntryPoint implements EntryPoint {
@@ -41,7 +41,7 @@ public class MainEntryPoint implements EntryPoint {
     final var child = ContextUtils.context(parent, c -> {
       c.setId("mainUI");
       c.setDisplayName("mainUI");
-      c.registerBean(UIConfiguration.class, () -> new UIConfiguration(shell));
+      c.registerBean(UI.class, () -> new UI(display, shell));
       display.setData(CONTEXT_KEY, c);
     });
     child.refresh();
