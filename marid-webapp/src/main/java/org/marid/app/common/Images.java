@@ -16,7 +16,6 @@ package org.marid.app.common;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Widget;
-import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.AppImage;
 import org.marid.image.MaridIcon;
 import org.slf4j.Logger;
@@ -75,10 +74,6 @@ public class Images {
 
   public Image image(Widget widget, AppImage image) {
     return new Image(widget.getDisplay(), image(image));
-  }
-
-  public Image icon(Widget widget, AppIcon icon) {
-    return image(widget, icon);
   }
 
   public Image maridIcon(Widget widget, int size, Color color) {

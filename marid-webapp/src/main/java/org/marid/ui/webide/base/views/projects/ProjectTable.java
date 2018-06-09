@@ -14,10 +14,12 @@
 package org.marid.ui.webide.base.views.projects;
 
 import org.eclipse.rap.rwt.RWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.marid.applib.manager.ListManager;
+import org.marid.applib.utils.Tables;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
@@ -37,21 +39,23 @@ public class ProjectTable extends Table implements AutoCloseable {
   private final Consumer<ListManager<ProjectDao, ProjectItem>.Event> removeListener;
   private final Consumer<ListManager<ProjectDao, ProjectItem>.Event> updateListener;
 
-  public ProjectTable(ProjectTab tab, ProjectManager manager) {
-    super(tab.getParent(), V_SCROLL | H_SCROLL);
+  public ProjectTable(ProjectToolbar toolbar, ProjectManager manager) {
+    super(toolbar.getParent(), BORDER | V_SCROLL | H_SCROLL);
     this.manager = manager;
-    tab.setControl(this);
     setHeaderVisible(true);
+    setLayoutData(new GridData(GridData.FILL_BOTH));
+
+    Tables.autoResizeColumns(this);
 
     addListener = manager.addAddListener(e -> e.update.forEach((index, v) -> {
       final TableItem item = new TableItem(this, NONE, index);
       item.setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
     }));
-    removeListener = manager.addRemoveListener(e -> e.update.forEach((index, v) -> {
-
+    removeListener = manager.addRemoveListener(e -> e.update.descendingMap().forEach((index, v) -> {
+      remove(index);
     }));
     updateListener = manager.addUpdateListener(e -> e.update.forEach((index, v) -> {
-
+      getItem(index).setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
     }));
   }
 

@@ -15,7 +15,6 @@ package org.marid.ui.webide.base.common;
 
 import org.eclipse.swt.graphics.Image;
 import org.marid.app.common.Images;
-import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.AppImage;
 import org.marid.ui.webide.base.UI;
 import org.springframework.stereotype.Component;
@@ -31,10 +30,6 @@ public class UserImages {
   public UserImages(Images images, UI ui) {
     this.images = images;
     this.ui = ui;
-  }
-
-  public Image icon(AppIcon icon) {
-    return images.icon(ui.getShell(), icon);
   }
 
   public Image image(AppImage image) {

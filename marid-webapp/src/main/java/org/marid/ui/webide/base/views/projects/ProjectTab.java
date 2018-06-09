@@ -13,6 +13,9 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabItem;
 import org.marid.app.common.Images;
 import org.marid.applib.image.AppIcon;
@@ -25,9 +28,15 @@ import static org.eclipse.swt.SWT.NONE;
 @SpringComponent
 public class ProjectTab extends TabItem {
 
+  final Composite panel;
+
   public ProjectTab(MainTabs mainTabs, Images images) {
     super(mainTabs, NONE);
+    panel = new Composite(mainTabs, SWT.NONE);
+    panel.setLayout(new GridLayout(1, false));
+    setControl(panel);
+
     setText(Locales.s("projects"));
-    setImage(images.icon(this, AppIcon.PROJECT));
+    setImage(images.image(this, AppIcon.PROJECT));
   }
 }

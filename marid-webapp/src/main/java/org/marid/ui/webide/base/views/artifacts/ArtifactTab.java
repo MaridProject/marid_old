@@ -14,8 +14,8 @@
 package org.marid.ui.webide.base.views.artifacts;
 
 import org.eclipse.swt.widgets.TabItem;
-import org.marid.app.common.Images;
 import org.marid.spring.annotation.SpringComponent;
+import org.marid.ui.webide.base.common.UserImages;
 import org.marid.ui.webide.base.views.repositories.RepositoryTab;
 
 import static org.eclipse.swt.SWT.NONE;
@@ -25,9 +25,9 @@ import static org.marid.applib.utils.Locales.s;
 @SpringComponent
 public class ArtifactTab extends TabItem {
 
-  public ArtifactTab(RepositoryTab tab, Images images) {
+  public ArtifactTab(RepositoryTab tab, UserImages images) {
     super(tab.getParent(), NONE);
     setText(s("artifacts"));
-    setImage(images.icon(this, ARTIFACT));
+    setImage(images.image(ARTIFACT));
   }
 }
