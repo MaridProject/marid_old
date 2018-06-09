@@ -14,6 +14,7 @@
 package org.marid.ui.webide.base.dao;
 
 import org.marid.ui.webide.base.UserDirectories;
+import org.marid.ui.webide.base.model.ProjectItem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 
@@ -23,12 +24,13 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.walk;
 
 @Component
-public class ProjectDao {
+public class ProjectDao implements Supplier<List<ProjectItem>> {
 
   private final Path directory;
 
@@ -36,23 +38,9 @@ public class ProjectDao {
     this.directory = userDirectories.getProjectsDirectory();
   }
 
-  public List<String> getProjectNames() {
+  private long getSize(Path dir) {
     try {
-      return Files.list(directory)
-          .filter(Files::isDirectory)
-          .map(Path::getFileName)
-          .map(Path::toString)
-          .collect(Collectors.toUnmodifiableList());
-    } catch (NoSuchFileException x) {
-      return List.of();
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
-  }
-
-  public long getSize(String projectName) {
-    try {
-      return walk(directory.resolve(projectName))
+      return walk(dir)
           .filter(Files::isRegularFile)
           .mapToLong(f -> {
             try {
@@ -71,29 +59,43 @@ public class ProjectDao {
     }
   }
 
-  public boolean exists(String projectName) {
-    final Path path = directory.resolve(projectName);
+  public boolean exists(ProjectItem item) {
+    final Path path = directory.resolve(item.name);
     return Files.isDirectory(path);
   }
 
-  public void tryCreate(String projectName) {
+  public void create(ProjectItem item) {
     try {
-      final Path path = directory.resolve(projectName);
+      final Path path = directory.resolve(item.name);
       Files.createDirectories(path);
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
   }
 
-  public boolean removeProject(String project) {
+  public boolean removeProject(ProjectItem item) {
     try {
-      final Path path = directory.resolve(project);
+      final Path path = directory.resolve(item.name);
       if (Files.isDirectory(path)) {
         FileSystemUtils.deleteRecursively(path);
         return true;
       } else {
         return false;
       }
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
+
+  @Override
+  public List<ProjectItem> get() {
+    try {
+      return Files.list(directory)
+          .filter(Files::isDirectory)
+          .map(p -> new ProjectItem(p.getFileName().toString(), getSize(p)))
+          .collect(Collectors.toUnmodifiableList());
+    } catch (NoSuchFileException x) {
+      return List.of();
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }

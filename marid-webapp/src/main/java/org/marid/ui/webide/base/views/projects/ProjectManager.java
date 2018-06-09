@@ -13,36 +13,47 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
+import org.marid.applib.manager.ListManager;
 import org.marid.ui.webide.base.dao.ProjectDao;
+import org.marid.ui.webide.base.model.ProjectItem;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @Component
-public class ProjectManager {
-
-  private final ProjectDao dao;
-  private final ArrayList<String> projects = new ArrayList<>();
+public class ProjectManager extends ListManager<ProjectDao, ProjectItem> {
 
   public ProjectManager(ProjectDao dao) {
-    this.dao = dao;
+    super(dao);
   }
 
-  @PostConstruct
-  public void refresh() {
-    projects.clear();
-    projects.addAll(dao.getProjectNames());
+  @Override
+  public void add(List<ProjectItem> added) {
+    final var addedListener = addAddListener(e -> e.update.values().forEach(dao::create));
+    try {
+      super.add(added);
+    } finally {
+      removeAddListener(addedListener);
+    }
   }
 
-  public void remove(Collection<String> projects) {
-    projects.forEach(dao::removeProject);
-    refresh();
+  @Override
+  public void remove(int... indices) {
+    final var removedListener = addRemoveListener(e -> e.update.values().forEach(dao::removeProject));
+    try {
+      super.remove(indices);
+    } finally {
+      removeRemoveListener(removedListener);
+    }
   }
 
-  public void add(String project) {
-    dao.tryCreate(project);
-    refresh();
+  @Override
+  public void remove(List<ProjectItem> removed) {
+    final var removedListener = addRemoveListener(e -> e.update.values().forEach(dao::removeProject));
+    try {
+      super.remove(removed);
+    } finally {
+      removeRemoveListener(removedListener);
+    }
   }
 }
