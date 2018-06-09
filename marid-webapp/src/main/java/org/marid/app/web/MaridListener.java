@@ -56,7 +56,6 @@ public class MaridListener implements ServletContextListener, ApplicationConfigu
 
   @Override
   public void configure(Application application) {
-    application.setOperationMode(Application.OperationMode.SWT_COMPATIBILITY);
     application.addEntryPoint("/main.marid", () -> new MainEntryPoint(context), Map.of());
   }
 }

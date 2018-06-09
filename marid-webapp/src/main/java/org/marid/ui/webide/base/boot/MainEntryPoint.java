@@ -47,18 +47,9 @@ public class MainEntryPoint implements EntryPoint {
     child.refresh();
     child.start();
 
-    try (child) {
-      shell.layout();
-      shell.open();
-
-      while (!shell.isDisposed()) {
-        if (!display.readAndDispatch()) {
-          display.sleep();
-        }
-      }
-    } finally {
-      display.dispose();
-    }
+    shell.addDisposeListener(e -> child.close());
+    shell.layout();
+    shell.open();
 
     return 0;
   }
