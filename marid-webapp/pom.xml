@@ -10,6 +10,10 @@
 
   <artifactId>marid-webapp</artifactId>
 
+  <properties>
+    <license.licenseName>epl_v1</license.licenseName>
+  </properties>
+
   <dependencies>
     <!-- web -->
     <dependency>
@@ -20,8 +24,14 @@
 
     <dependency>
       <groupId>org.eclipse.rap</groupId>
-      <artifactId>org.eclipse.rap.rwt</artifactId>
+      <artifactId>org.eclipse.rap.nebula.jface.gridviewer</artifactId>
       <version>3.4.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.equinox.common</artifactId>
+      <version>3.9.0</version>
     </dependency>
 
     <dependency>
