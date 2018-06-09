@@ -13,17 +13,16 @@
  */
 package org.marid.ui.webide.base.boot;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.TabFolder;
 import org.marid.spring.annotation.SpringComponent;
 
-import static org.eclipse.swt.SWT.BORDER;
-
 @SpringComponent
 public class MainTabs extends TabFolder {
 
-  public MainTabs(MainToolbar toolbar) {
-    super(toolbar.getShell(), BORDER);
+  public MainTabs(MainMenu menu) {
+    super(menu.getShell(), SWT.NONE);
     setLayoutData(new GridData(GridData.FILL_BOTH));
   }
 }

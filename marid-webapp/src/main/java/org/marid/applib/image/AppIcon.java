@@ -19,7 +19,8 @@ public enum AppIcon implements AppImage {
 
   PROJECT("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/16/Actions-project-development-new-template-icon.png"),
   ARTIFACT("http://icons.iconarchive.com/icons/artdesigner/my-secret/16/diamond-icon.png"),
-  REPOSITORY("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/16/Places-repository-icon.png");
+  REPOSITORY("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/16/Places-repository-icon.png"),
+  CLOSE("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/16/Actions-window-close-icon.png");
 
   private final String url;
 

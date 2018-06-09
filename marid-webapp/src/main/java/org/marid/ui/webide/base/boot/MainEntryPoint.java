@@ -15,6 +15,7 @@ package org.marid.ui.webide.base.boot;
 
 import org.eclipse.rap.rwt.application.EntryPoint;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.marid.spring.ContextUtils;
@@ -35,6 +36,7 @@ public class MainEntryPoint implements EntryPoint {
   public int createUI() {
     final var display = new Display();
     final var shell = new Shell(display, SWT.NO_TRIM);
+    shell.setLayout(new GridLayout(1, false));
 
     shell.setMaximized(true);
 

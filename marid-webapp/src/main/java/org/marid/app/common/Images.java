@@ -14,13 +14,20 @@
 package org.marid.app.common;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Widget;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.AppImage;
+import org.marid.image.MaridIcon;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +42,7 @@ public class Images {
   private final String fallbackImage;
   private final Logger logger;
   private final ConcurrentHashMap<String, String> fileMap = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<Integer, ImageData> maridIcons = new ConcurrentHashMap<>();
 
   public Images(Directories directories, Logger logger) throws IOException {
     this.imageDirectory = directories.getTempDir().resolve("images");
@@ -71,5 +79,23 @@ public class Images {
 
   public Image icon(Widget widget, AppIcon icon) {
     return image(widget, icon);
+  }
+
+  public Image maridIcon(Widget widget, int size, Color color) {
+    final var data = maridIcons.computeIfAbsent(size, s -> {
+      final var img = MaridIcon.getImage(size, color);
+      final var buf = new ByteArrayOutputStream(size * size * 64);
+      try {
+        ImageIO.write(img, "gif", buf);
+      } catch (IOException x) {
+        throw new UncheckedIOException(x);
+      }
+      return new ImageData(new ByteArrayInputStream(buf.toByteArray()));
+    });
+    return new Image(widget.getDisplay(), data);
+  }
+
+  public Image maridIcon(Widget widget, int size) {
+    return maridIcon(widget, size, Color.GREEN);
   }
 }

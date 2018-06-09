@@ -38,7 +38,7 @@ public class ProjectTable extends Table implements AutoCloseable {
   private final Consumer<ListManager<ProjectDao, ProjectItem>.Event> updateListener;
 
   public ProjectTable(ProjectTab tab, ProjectManager manager) {
-    super(tab.getParent(), BORDER | V_SCROLL | H_SCROLL);
+    super(tab.getParent(), V_SCROLL | H_SCROLL);
     this.manager = manager;
     tab.setControl(this);
     setHeaderVisible(true);

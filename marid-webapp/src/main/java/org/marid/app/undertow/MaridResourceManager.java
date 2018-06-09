@@ -13,10 +13,12 @@
  */
 package org.marid.app.undertow;
 
-import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.Resource;
+import io.undertow.server.handlers.resource.ResourceChangeListener;
+import io.undertow.server.handlers.resource.ResourceManager;
 import io.undertow.server.handlers.resource.URLResource;
 import org.marid.app.common.Directories;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,26 +26,53 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
-public class MaridResourceManager extends ClassPathResourceManager {
+public class MaridResourceManager implements ResourceManager {
 
   private final Path rwtDir;
+  private final Logger logger;
 
-  public MaridResourceManager(Directories directories) {
-    super(Thread.currentThread().getContextClassLoader());
+  public MaridResourceManager(Directories directories, Logger logger) {
     this.rwtDir = directories.getRwtDir();
+    this.logger = logger;
   }
 
   @Override
   public Resource getResource(String path) throws IOException {
+    final Resource resource;
     if (path.startsWith("/public/")) {
-      return super.getResource(path);
+      final var classLoader = Thread.currentThread().getContextClassLoader();
+      final var url = classLoader.getResource(path.substring(1));
+      resource = url == null ? null : new URLResource(url, path);
     } else {
       final Path p = rwtDir.resolve(path.substring(1));
       if (p.startsWith(rwtDir) && Files.isRegularFile(p)) {
-        return new URLResource(p.toUri().toURL(), path);
+        resource = new URLResource(p.toUri().toURL(), path);
       } else {
-        return null;
+        resource = null;
       }
     }
+    if (resource == null) {
+      logger.warn("Not found {}", path);
+    }
+    return resource;
+  }
+
+  @Override
+  public boolean isResourceChangeListenerSupported() {
+    return false;
+  }
+
+  @Override
+  public void registerResourceChangeListener(ResourceChangeListener listener) {
+
+  }
+
+  @Override
+  public void removeResourceChangeListener(ResourceChangeListener listener) {
+
+  }
+
+  @Override
+  public void close() {
   }
 }
