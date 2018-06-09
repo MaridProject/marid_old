@@ -27,7 +27,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.marid.app.ivy.IvyCommonConfiguration;
 import org.marid.app.ivy.IvySlfLoggerAdapter;
-import org.marid.applib.spring.LoggingPostProcessor;
+import org.marid.spring.LoggingPostProcessor;
 import org.marid.test.FileHolder;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -17,7 +17,7 @@ import org.eclipse.rap.rwt.application.EntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.marid.applib.spring.ContextUtils;
+import org.marid.spring.ContextUtils;
 import org.marid.ui.webide.base.UI;
 import org.springframework.context.support.GenericApplicationContext;
 

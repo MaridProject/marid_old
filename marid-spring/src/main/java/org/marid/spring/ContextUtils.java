@@ -12,11 +12,11 @@
  * #L%
  */
 
-package org.marid.applib.spring;
+package org.marid.spring;
 
-import org.marid.applib.spring.events.ContextClosedListener;
-import org.marid.applib.spring.events.ContextStartedListener;
-import org.marid.applib.spring.init.InitBeanPostProcessor;
+import org.marid.spring.events.ContextClosedListener;
+import org.marid.spring.events.ContextStartedListener;
+import org.marid.spring.init.InitBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;

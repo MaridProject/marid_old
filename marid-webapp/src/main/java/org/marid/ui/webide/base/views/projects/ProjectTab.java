@@ -11,12 +11,10 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.spring.init;
+package org.marid.ui.webide.base.views.projects;
 
-import java.lang.annotation.*;
+import org.marid.spring.annotation.SpringComponent;
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface InitAfterStart {
+@SpringComponent
+public class ProjectTab {
 }

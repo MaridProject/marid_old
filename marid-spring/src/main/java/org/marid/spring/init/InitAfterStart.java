@@ -11,17 +11,12 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.spring.init;
+package org.marid.spring.init;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.lang.annotation.*;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.ANNOTATION_TYPE})
-@Autowired
-public @interface InitAutowire {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+public @interface InitAfterStart {
 }

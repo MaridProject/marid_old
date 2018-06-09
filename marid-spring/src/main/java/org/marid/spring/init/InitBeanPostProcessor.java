@@ -11,12 +11,10 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.spring.init;
+package org.marid.spring.init;
 
-import org.marid.applib.spring.events.ContextStartedListener;
 import org.marid.spring.annotation.SpringComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.marid.spring.events.ContextStartedListener;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -41,10 +39,11 @@ import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
+import static java.util.logging.Level.WARNING;
+import static org.marid.logging.Log.log;
 
 public class InitBeanPostProcessor implements BeanPostProcessor {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(InitBeanPostProcessor.class);
   private static final ClassValue<Map<String, Integer>> METHOD_ORDERS = new ClassValue<>() {
     @Override
     protected Map<String, Integer> computeValue(Class<?> type) {
@@ -53,7 +52,7 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
       try (final var inputStream = type.getResourceAsStream(name)) {
 
         if (inputStream == null) {
-          LOGGER.warn("Unable to find {}", name);
+          log(WARNING, "Unable to find {0}", name);
           return Map.of();
         }
 

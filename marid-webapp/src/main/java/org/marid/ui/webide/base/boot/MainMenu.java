@@ -11,13 +11,18 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.spring.init;
+package org.marid.ui.webide.base.boot;
 
-import java.lang.annotation.*;
+import org.eclipse.swt.widgets.Menu;
+import org.marid.spring.annotation.SpringComponent;
+import org.marid.ui.webide.base.UI;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@InitAutowire
-public @interface Init {
+import static org.eclipse.swt.SWT.BAR;
+
+@SpringComponent
+public class MainMenu extends Menu {
+
+  public MainMenu(UI ui) {
+    super(ui.getShell(), BAR);
+  }
 }

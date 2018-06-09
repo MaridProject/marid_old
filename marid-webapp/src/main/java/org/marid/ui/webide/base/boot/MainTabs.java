@@ -14,17 +14,16 @@
 package org.marid.ui.webide.base.boot;
 
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.ToolBar;
-import org.springframework.stereotype.Component;
+import org.eclipse.swt.widgets.TabFolder;
+import org.marid.spring.annotation.SpringComponent;
 
-import static org.eclipse.swt.SWT.*;
-import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
+import static org.eclipse.swt.SWT.BORDER;
 
-@Component
-public class MainToolbar extends ToolBar {
+@SpringComponent
+public class MainTabs extends TabFolder {
 
-  public MainToolbar(MainMenu mainMenu) {
-    super(mainMenu.getShell(), WRAP | SHADOW_OUT | HORIZONTAL);
-    setLayoutData(new GridData(FILL_HORIZONTAL));
+  public MainTabs(MainToolbar toolbar) {
+    super(toolbar.getShell(), BORDER);
+    setLayoutData(new GridData(GridData.FILL_BOTH));
   }
 }

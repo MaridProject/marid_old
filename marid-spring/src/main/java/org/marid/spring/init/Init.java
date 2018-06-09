@@ -11,20 +11,13 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.boot;
+package org.marid.spring.init;
 
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.ToolBar;
-import org.springframework.stereotype.Component;
+import java.lang.annotation.*;
 
-import static org.eclipse.swt.SWT.*;
-import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
-
-@Component
-public class MainToolbar extends ToolBar {
-
-  public MainToolbar(MainMenu mainMenu) {
-    super(mainMenu.getShell(), WRAP | SHADOW_OUT | HORIZONTAL);
-    setLayoutData(new GridData(FILL_HORIZONTAL));
-  }
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@InitAutowire
+public @interface Init {
 }
