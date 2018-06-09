@@ -51,7 +51,7 @@ public class UI {
     return (CommonProfile) map.values().iterator().next();
   }
 
-  @Bean
+  @Bean(destroyMethod = "")
   public UISession uiSession() {
     return RWT.getUISession();
   }
