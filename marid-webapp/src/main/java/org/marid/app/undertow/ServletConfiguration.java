@@ -30,7 +30,7 @@ public class ServletConfiguration {
   @Bean
   public ServletInfo maridServletInfo(MaridServlet servlet) {
     final var info = new ServletInfo("maridServlet", MaridServlet.class, new ImmediateInstanceFactory<>(servlet));
-    info.setAsyncSupported(true);
+    info.setAsyncSupported(false);
     info.setLoadOnStartup(4);
     info.setEnabled(true);
     info.addMappings("*.marid");
@@ -72,7 +72,7 @@ public class ServletConfiguration {
       final var filter = securityFilter.getObject();
       return new ImmediateInstanceHandle<>(filter);
     });
-    info.setAsyncSupported(true);
+    info.setAsyncSupported(false);
     return info;
   }
 

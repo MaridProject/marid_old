@@ -17,10 +17,9 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.JavaScriptExecutor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.marid.applib.controls.DropDownToolItem;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.listeners.Listeners;
 import org.marid.applib.utils.Locales;
@@ -29,37 +28,25 @@ import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.UI;
 import org.marid.ui.webide.base.common.UserImages;
 
-import static java.awt.Color.CYAN;
 import static org.eclipse.swt.SWT.*;
 import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
 
 @SpringComponent
 public class MainMenu extends ToolBar {
 
-  private final ToolItem sessionItem;
-  private final Menu sessionMenu;
+  private final DropDownToolItem sessionItem;
 
   public MainMenu(UI ui, UserImages images) {
     super(ui.getShell(), BORDER | WRAP | SHADOW_OUT);
     setLayoutData(new GridData(FILL_HORIZONTAL));
 
-    sessionMenu = new Menu(ui.getShell(), POP_UP);
-
-    sessionItem = new ToolItem(this, DROP_DOWN);
+    sessionItem = new DropDownToolItem(this);
     sessionItem.setImage(images.maridIcon(24));
-    sessionItem.setHotImage(images.maridIcon(24, CYAN));
-    sessionItem.addSelectionListener(Listeners.select(e -> {
-      final var r = sessionItem.getBounds();
-      final var p = toDisplay(r.x, r.y + r.height);
-
-      sessionMenu.setLocation(p);
-      sessionMenu.setVisible(true);
-    }));
   }
 
   @Init
   public void closeSessionItem(UserImages images) {
-    final MenuItem item = new MenuItem(sessionMenu, SWT.PUSH);
+    final MenuItem item = new MenuItem(sessionItem.menu, SWT.PUSH);
     item.setText(Locales.s("closeSession"));
     item.setImage(images.image(AppIcon.CLOSE));
     item.addSelectionListener(Listeners.select(e -> {

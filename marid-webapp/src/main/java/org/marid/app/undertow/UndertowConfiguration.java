@@ -15,7 +15,6 @@
 package org.marid.app.undertow;
 
 import io.undertow.Undertow;
-import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
@@ -27,6 +26,9 @@ import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletException;
+
+import static io.undertow.UndertowOptions.ENABLE_HTTP2;
+import static io.undertow.UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH;
 
 @Component
 public class UndertowConfiguration {
@@ -58,8 +60,8 @@ public class UndertowConfiguration {
   @Bean(initMethod = "start", destroyMethod = "stop")
   public Undertow undertow(SSLContext sslContext, UndertowProperties properties, HttpHandler rootHandler) {
     return Undertow.builder()
-        .setServerOption(UndertowOptions.ENABLE_HTTP2, true)
-        .setServerOption(UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH, true)
+        .setServerOption(ENABLE_HTTP2, true)
+        .setServerOption(HTTP2_SETTINGS_ENABLE_PUSH, true)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())
