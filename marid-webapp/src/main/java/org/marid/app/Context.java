@@ -14,9 +14,9 @@
 
 package org.marid.app;
 
-import org.marid.spring.annotation.PrototypeScoped;
-import org.marid.spring.LoggingPostProcessor;
 import org.marid.logging.MaridLogManager;
+import org.marid.spring.LoggingPostProcessor;
+import org.marid.spring.annotation.PrototypeScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
@@ -24,7 +24,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -36,7 +35,6 @@ import java.io.InputStream;
 import java.lang.ref.Cleaner;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.LogManager;
 
 @EnableScheduling
@@ -70,25 +68,6 @@ public class Context {
   @Bean
   public static Cleaner refCleaner() {
     return Cleaner.create();
-  }
-
-  @Bean(initMethod = "start")
-  public static Thread quitter(GenericApplicationContext context) {
-    final Thread thread = new Thread(null, () -> {
-      try (final Scanner scanner = new Scanner(System.in)) {
-        while (scanner.hasNextLine()) {
-          switch (scanner.nextLine().trim()) {
-            case "q":
-            case "quit":
-              context.close();
-              System.exit(0);
-              break;
-          }
-        }
-      }
-    }, "quitter", 64L * 1024L, false);
-    thread.setDaemon(true);
-    return thread;
   }
 
   public static void main(String... args) throws Exception {
