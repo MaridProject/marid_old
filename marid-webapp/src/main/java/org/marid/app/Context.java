@@ -30,11 +30,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.InputStream;
 import java.lang.ref.Cleaner;
-import java.nio.file.Files;
-import java.util.List;
 import java.util.logging.LogManager;
 
 @EnableScheduling
@@ -78,9 +75,6 @@ public class Context {
       logManager.readConfiguration(inputStream);
     }
 
-    final File pidFile = new File("marid-webapp.pid");
-    pidFile.deleteOnExit();
-
     final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
     context.setId("marid");
@@ -94,7 +88,5 @@ public class Context {
     context.getEnvironment().getPropertySources().addFirst(new SimpleCommandLinePropertySource(args));
     context.refresh();
     context.start();
-
-    Files.write(pidFile.toPath(), List.of(Long.toString(ProcessHandle.current().pid())));
   }
 }
