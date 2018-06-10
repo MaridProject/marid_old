@@ -27,8 +27,11 @@ import static org.eclipse.swt.SWT.*;
 @SpringComponent
 public class ProjectToolbar extends ToolBar {
 
-  public ProjectToolbar(ProjectTab tab) {
+  private final ProjectManager manager;
+
+  public ProjectToolbar(ProjectTab tab, ProjectManager manager) {
     super(tab.panel, BORDER | WRAP | SHADOW_OUT);
+    this.manager = manager;
     setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
 
@@ -39,9 +42,11 @@ public class ProjectToolbar extends ToolBar {
   }
 
   @Init
-  public void removeButton(UserImages images) {
+  public void removeButton(UserImages images, ProjectTable table) {
     final var item = new ToolItem(this, SWT.PUSH);
     item.setImage(images.image(ToolIcon.REMOVE));
+    item.addListener(Selection, e -> manager.remove(table.getSelectionIndices()));
+    table.addListener(Selection, e -> item.setEnabled(table.getSelectionCount() > 0));
   }
 
   @Init

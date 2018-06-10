@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.marid.applib.controls.DropDownToolItem;
 import org.marid.applib.image.AppIcon;
-import org.marid.applib.listeners.Listeners;
 import org.marid.applib.utils.Locales;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
@@ -49,9 +48,9 @@ public class MainMenu extends ToolBar {
     final MenuItem item = new MenuItem(sessionItem.menu, SWT.PUSH);
     item.setText(Locales.s("closeSession"));
     item.setImage(images.image(AppIcon.CLOSE));
-    item.addSelectionListener(Listeners.select(e -> {
+    item.addListener(SWT.Selection, e -> {
       final var jsExecutor = RWT.getClient().getService(JavaScriptExecutor.class);
       jsExecutor.execute("window.location.replace('/logout')");
-    }));
+    });
   }
 }

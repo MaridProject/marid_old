@@ -13,21 +13,21 @@
  */
 package org.marid.applib.utils;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
-import org.marid.applib.listeners.Listeners;
 
 import java.util.stream.IntStream;
 
 public interface Tables {
 
   static void autoResizeColumns(Table table) {
-    table.addControlListener(Listeners.resize(e -> {
+    table.addListener(SWT.Resize, e -> {
       final int sum = IntStream.range(0, table.getColumnCount()).map(i -> table.getColumn(i).getWidth()).sum();
       final int width = Math.max(0, table.getBounds().width - 16);
       for (int i = 0; i < table.getColumnCount(); i++) {
         final var column = table.getColumn(i);
         column.setWidth((width * column.getWidth()) / sum);
       }
-    }));
+    });
   }
 }
