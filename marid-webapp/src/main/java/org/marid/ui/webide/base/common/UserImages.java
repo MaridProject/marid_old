@@ -33,14 +33,14 @@ public class UserImages {
   }
 
   public Image image(AppImage image) {
-    return images.image(ui.getShell(), image);
+    return images.image(ui.shell, image);
   }
 
   public Image maridIcon(int size, Color color) {
-    return images.maridIcon(ui.getShell(), size, color);
+    return images.maridIcon(ui.shell, size, color);
   }
 
   public Image maridIcon(int size) {
-    return images.maridIcon(ui.getShell(), size);
+    return images.maridIcon(ui.shell, size);
   }
 }

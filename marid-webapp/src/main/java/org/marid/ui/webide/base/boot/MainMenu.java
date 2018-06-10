@@ -37,7 +37,7 @@ public class MainMenu extends ToolBar {
   private final DropDownToolItem sessionItem;
 
   public MainMenu(UI ui, UserImages images) {
-    super(ui.getShell(), BORDER | WRAP | SHADOW_OUT);
+    super(ui.shell, BORDER | WRAP | SHADOW_OUT);
     setLayoutData(new GridData(FILL_HORIZONTAL));
 
     sessionItem = new DropDownToolItem(this);

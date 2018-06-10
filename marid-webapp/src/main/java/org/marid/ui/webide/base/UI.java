@@ -31,8 +31,8 @@ import java.util.Locale;
 @ComponentScan
 public class UI {
 
-  private final Display display;
-  private final Shell shell;
+  public final Display display;
+  public final Shell shell;
 
   @Autowired(required = false)
   public UI(Display display, Shell shell) {
@@ -54,13 +54,5 @@ public class UI {
   @Bean(destroyMethod = "")
   public UISession uiSession() {
     return RWT.getUISession();
-  }
-
-  public Display getDisplay() {
-    return display;
-  }
-
-  public Shell getShell() {
-    return shell;
   }
 }

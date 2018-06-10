@@ -13,8 +13,6 @@
  */
 package org.marid.ui.webide.base;
 
-import org.eclipse.rap.rwt.RWT;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,22 +21,19 @@ import javax.annotation.PostConstruct;
 public class UIPinger implements Runnable {
 
   private final UI ui;
-  private final Logger logger;
 
-  public UIPinger(UI ui, Logger logger) {
+  public UIPinger(UI ui) {
     this.ui = ui;
-    this.logger = logger;
   }
 
   @PostConstruct
   public void init() {
-    ui.getDisplay().timerExec(30_000, this);
+    ui.display.timerExec(30_000, this);
   }
 
   @Override
   public void run() {
     init();
-    ui.getDisplay().asyncExec(null);
-    logger.info("Ping {}", RWT.getUISession().getId());
+    ui.display.wake();
   }
 }
