@@ -54,6 +54,8 @@ public class ProjectTable extends Table implements AutoCloseable {
     updateListener = manager.addUpdateListener(e -> e.update.forEach((index, v) -> {
       getItem(index).setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
     }));
+
+    manager.refresh();
   }
 
   @Init
