@@ -13,15 +13,20 @@
  */
 package org.marid.applib.controls;
 
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Table;
+import org.marid.applib.utils.Tables;
 
-public class Pane extends Composite {
+public class TablePane extends Pane {
 
-  protected final ToolBar toolbar;
+  protected final Table table;
 
-  public Pane(Composite parent, int style, int toolbarStyle) {
-    super(parent, style);
-    this.toolbar = new ToolBar(this, toolbarStyle);
+  public TablePane(Composite parent, int style, int toolbarStyle, int tableStyle) {
+    super(parent, style, toolbarStyle);
+    table = new Table(this, tableStyle);
+    table.setHeaderVisible(true);
+    table.setLayoutData(new GridData(GridData.FILL_BOTH));
+    Tables.autoResizeColumns(table);
   }
 }
