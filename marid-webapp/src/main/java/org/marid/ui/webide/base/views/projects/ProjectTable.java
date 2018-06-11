@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.marid.applib.manager.ListManager;
+import org.marid.applib.dao.ListManager;
 import org.marid.applib.utils.Tables;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;

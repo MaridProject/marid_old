@@ -13,6 +13,7 @@
  */
 package org.marid.ui.webide.base.dao;
 
+import org.marid.applib.dao.ListDao;
 import org.marid.ui.webide.base.UserDirectories;
 import org.marid.ui.webide.base.model.ProjectItem;
 import org.springframework.stereotype.Component;
@@ -24,13 +25,13 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.walk;
 
 @Component
-public class ProjectDao implements Supplier<List<ProjectItem>> {
+public class ProjectDao implements ListDao<String, ProjectItem> {
 
   private final Path directory;
 
@@ -59,12 +60,8 @@ public class ProjectDao implements Supplier<List<ProjectItem>> {
     }
   }
 
-  public boolean exists(ProjectItem item) {
-    final Path path = directory.resolve(item.name);
-    return Files.isDirectory(path);
-  }
-
-  public void create(ProjectItem item) {
+  @Override
+  public void add(ProjectItem item) {
     try {
       final Path path = directory.resolve(item.name);
       Files.createDirectories(path);
@@ -73,18 +70,20 @@ public class ProjectDao implements Supplier<List<ProjectItem>> {
     }
   }
 
-  public boolean removeProject(ProjectItem item) {
+  @Override
+  public void remove(ProjectItem item) {
     try {
       final Path path = directory.resolve(item.name);
       if (Files.isDirectory(path)) {
         FileSystemUtils.deleteRecursively(path);
-        return true;
-      } else {
-        return false;
       }
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
+  }
+
+  @Override
+  public void update(ProjectItem item) {
   }
 
   @Override
@@ -99,5 +98,11 @@ public class ProjectDao implements Supplier<List<ProjectItem>> {
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
+  }
+
+  @Override
+  public Optional<ProjectItem> get(String name) {
+    final Path dir = directory.resolve(name);
+    return Files.isDirectory(dir) ? new ProjectItem(name, getSize(dir));
   }
 }

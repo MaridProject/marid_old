@@ -14,8 +14,9 @@
 package org.marid.ui.webide.base.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.marid.applib.model.Identifiable;
 
-public class ProjectItem implements Comparable<ProjectItem> {
+public final class ProjectItem implements Identifiable<String> {
 
   public final String name;
   public final long size;
@@ -25,8 +26,26 @@ public class ProjectItem implements Comparable<ProjectItem> {
     this.size = size;
   }
 
+  @NotNull
   @Override
-  public int compareTo(@NotNull ProjectItem o) {
-    return name.compareTo(o.name);
+  public String getId() {
+    return name;
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    } else if (obj == null || obj.getClass() != ProjectItem.class) {
+      return false;
+    } else {
+      final var that = (ProjectItem) obj;
+      return name.equals(that.name) && size == that.size;
+    }
   }
 }

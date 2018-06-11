@@ -11,8 +11,9 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.manager;
+package org.marid.applib.dao;
 
+import org.marid.applib.model.Identifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class ListManager<D extends Supplier<List<T>>, T extends Comparable<? super T>> {
+public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> {
 
   protected final D dao;
   protected final Logger logger;
@@ -39,34 +39,32 @@ public class ListManager<D extends Supplier<List<T>>, T extends Comparable<? sup
   }
 
   public void refresh() {
-    if (!list.isEmpty()) {
-      final var m = new TreeMap<Integer, T>();
-      for (int i = 0; i < list.size(); i++) {
-        m.put(i, list.get(i));
+    final var newList = dao.get();
+    final var remove = new TreeMap<Integer, T>();
+
+    for (int i = list.size() - 1; i >= 0; i--) {
+      final var e = list.get(i);
+      if (!newList.contains(e)) {
+        list.remove(i);
+        remove.put(i, e);
       }
-      removedListeners.forEach(new Event(m)::fire);
     }
 
-    try {
-      final var newList = dao.get();
-      final var remove = new TreeMap<Integer, T>();
-
-      for (int i = list.size() - 1; i >= 0; i--) {
-        final var e = list.get(i);
-        if (!newList.contains(e)) {
-          list.remove(i);
-          remove.put(i, e);
-        }
-      }
-
-      if (!remove.isEmpty()) {
-        removedListeners.forEach(new Event(remove)::fire);
-      }
-
-      add(newList);
-    } catch (Exception x) {
-      logger.warn("Unable to get data", x);
+    if (!remove.isEmpty()) {
+      removedListeners.forEach(new Event(remove)::fire);
     }
+
+    add(newList);
+  }
+
+  private int locateIndex(T element) {
+    for (final var i = list.listIterator(); i.hasNext(); ) {
+      final var e = i.next();
+      if (e.getId().equals(element.getId())) {
+        return i.previousIndex();
+      }
+    }
+    return -1;
   }
 
   public void add(List<T> added) {
@@ -77,8 +75,10 @@ public class ListManager<D extends Supplier<List<T>>, T extends Comparable<? sup
       if (index < 0) {
         final int pos = -(index + 1);
         add.put(pos, e);
+        dao.add(e);
       } else {
         update.put(index, e);
+        dao.update(e);
       }
     }
     if (!add.isEmpty()) {
@@ -96,6 +96,7 @@ public class ListManager<D extends Supplier<List<T>>, T extends Comparable<? sup
       final int index = Collections.binarySearch(list, e);
       if (index >= 0) {
         remove.put(index, e);
+        dao.remove(e);
       }
     }
     if (!remove.isEmpty()) {
@@ -108,7 +109,9 @@ public class ListManager<D extends Supplier<List<T>>, T extends Comparable<? sup
     final TreeMap<Integer, T> remove = new TreeMap<>();
     for (final int i : indices) {
       if (i >= 0 && i < list.size()) {
-        remove.put(i, list.get(i));
+        final var e = list.get(i);
+        remove.put(i, e);
+        dao.remove(e);
       }
     }
     if (!remove.isEmpty()) {

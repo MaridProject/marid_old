@@ -13,7 +13,7 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
-import org.marid.applib.manager.ListManager;
+import org.marid.applib.dao.ListManager;
 import org.marid.ui.webide.base.dao.ProjectDao;
 import org.marid.ui.webide.base.model.ProjectItem;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class ProjectManager extends ListManager<ProjectDao, ProjectItem> {
 
   @Override
   public void add(List<ProjectItem> added) {
-    final var addedListener = addAddListener(e -> e.update.values().forEach(dao::create));
+    final var addedListener = addAddListener(e -> e.update.values().forEach(dao::add));
     try {
       super.add(added);
     } finally {
@@ -39,7 +39,7 @@ public class ProjectManager extends ListManager<ProjectDao, ProjectItem> {
 
   @Override
   public void remove(int... indices) {
-    final var removedListener = addRemoveListener(e -> e.update.values().forEach(dao::removeProject));
+    final var removedListener = addRemoveListener(e -> e.update.values().forEach(dao::remove));
     try {
       super.remove(indices);
     } finally {
@@ -49,7 +49,7 @@ public class ProjectManager extends ListManager<ProjectDao, ProjectItem> {
 
   @Override
   public void remove(List<ProjectItem> removed) {
-    final var removedListener = addRemoveListener(e -> e.update.values().forEach(dao::removeProject));
+    final var removedListener = addRemoveListener(e -> e.update.values().forEach(dao::remove));
     try {
       super.remove(removed);
     } finally {
