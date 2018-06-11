@@ -18,13 +18,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.marid.applib.dao.ListManager;
 import org.marid.applib.utils.Tables;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
-import org.marid.ui.webide.base.dao.ProjectDao;
-import org.marid.ui.webide.base.model.ProjectItem;
 
 import java.util.function.Consumer;
 
@@ -35,9 +32,9 @@ import static org.marid.applib.utils.Locales.s;
 public class ProjectTable extends Table implements AutoCloseable {
 
   private final ProjectManager manager;
-  private final Consumer<ListManager<ProjectDao, ProjectItem>.Event> addListener;
-  private final Consumer<ListManager<ProjectDao, ProjectItem>.Event> removeListener;
-  private final Consumer<ListManager<ProjectDao, ProjectItem>.Event> updateListener;
+  private final Consumer<ProjectManager.Event> addListener;
+  private final Consumer<ProjectManager.Event> removeListener;
+  private final Consumer<ProjectManager.Event> updateListener;
 
   public ProjectTable(ProjectTab tab, ProjectManager manager) {
     super(tab.panel, BORDER | V_SCROLL | H_SCROLL);

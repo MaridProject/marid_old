@@ -14,6 +14,7 @@
 package org.marid.ui.webide.base.dao;
 
 import org.marid.applib.dao.ListDao;
+import org.marid.io.MaridFiles;
 import org.marid.ui.webide.base.UserDirectories;
 import org.marid.ui.webide.base.model.ProjectItem;
 import org.springframework.stereotype.Component;
@@ -26,9 +27,8 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.nio.file.Files.walk;
 
 @Component
 public class ProjectDao implements ListDao<String, ProjectItem> {
@@ -37,27 +37,6 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
 
   public ProjectDao(UserDirectories userDirectories) {
     this.directory = userDirectories.getProjectsDirectory();
-  }
-
-  private long getSize(Path dir) {
-    try {
-      return walk(dir)
-          .filter(Files::isRegularFile)
-          .mapToLong(f -> {
-            try {
-              return Files.size(f);
-            } catch (NoSuchFileException x) {
-              return 0L;
-            } catch (IOException x) {
-              throw new UncheckedIOException(x);
-            }
-          })
-          .sum();
-    } catch (NoSuchFileException x) {
-      return 0L;
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
   }
 
   @Override
@@ -71,9 +50,9 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
   }
 
   @Override
-  public void remove(ProjectItem item) {
+  public void remove(String id) {
     try {
-      final Path path = directory.resolve(item.name);
+      final Path path = directory.resolve(id);
       if (Files.isDirectory(path)) {
         FileSystemUtils.deleteRecursively(path);
       }
@@ -91,7 +70,7 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
     try {
       return Files.list(directory)
           .filter(Files::isDirectory)
-          .map(p -> new ProjectItem(p.getFileName().toString(), getSize(p)))
+          .map(p -> new ProjectItem(p.getFileName().toString(), MaridFiles.size(p)))
           .collect(Collectors.toUnmodifiableList());
     } catch (NoSuchFileException x) {
       return List.of();
@@ -101,8 +80,24 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
   }
 
   @Override
+  public Set<String> getIds() {
+    try {
+      return Files.list(directory)
+          .filter(Files::isDirectory)
+          .map(p -> p.getFileName().toString())
+          .collect(Collectors.toUnmodifiableSet());
+    } catch (NoSuchFileException x) {
+      return Set.of();
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
+
+  @Override
   public Optional<ProjectItem> get(String name) {
     final Path dir = directory.resolve(name);
-    return Files.isDirectory(dir) ? new ProjectItem(name, getSize(dir));
+    return Optional.of(dir)
+        .filter(Files::isDirectory)
+        .map(d -> new ProjectItem(d.getFileName().toString(), MaridFiles.size(d)));
   }
 }

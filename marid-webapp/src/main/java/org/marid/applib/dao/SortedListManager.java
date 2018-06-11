@@ -11,17 +11,22 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.projects;
+package org.marid.applib.dao;
 
-import org.marid.applib.dao.SortedListManager;
-import org.marid.ui.webide.base.dao.ProjectDao;
-import org.marid.ui.webide.base.model.ProjectItem;
-import org.springframework.stereotype.Component;
+import org.marid.applib.model.Identifiable;
+import org.marid.collections.ListView;
 
-@Component
-public class ProjectManager extends SortedListManager<String, ProjectItem, ProjectDao> {
+import java.util.Collections;
 
-  public ProjectManager(ProjectDao dao) {
+public class SortedListManager<I extends Comparable<? super I>, T extends Identifiable<I>, D extends ListDao<I, T>>
+    extends ListManager<I, T, D> {
+
+  public SortedListManager(D dao) {
     super(dao);
+  }
+
+  @Override
+  protected int locateIndex(I key) {
+    return Collections.binarySearch(new ListView<>(list, Identifiable::getId), key);
   }
 }

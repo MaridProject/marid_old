@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -44,7 +43,7 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
 
     for (int i = list.size() - 1; i >= 0; i--) {
       final var e = list.get(i);
-      if (!newList.contains(e)) {
+      if (newList.stream().noneMatch(v -> v.getId().equals(e.getId()))) {
         list.remove(i);
         remove.put(i, e);
       }
@@ -57,26 +56,26 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
     add(newList);
   }
 
-  private int locateIndex(T element) {
+  protected int locateIndex(I key) {
     for (final var i = list.listIterator(); i.hasNext(); ) {
       final var e = i.next();
-      if (e.getId().equals(element.getId())) {
+      if (e.getId().equals(key)) {
         return i.previousIndex();
       }
     }
-    return -1;
+    return -list.size() - 1;
   }
 
   public void add(List<T> added) {
     final var add = new TreeMap<Integer, T>();
     final var update = new TreeMap<Integer, T>();
     for (final var e : added) {
-      final int index = Collections.binarySearch(list, e);
+      final int index = locateIndex(e.getId());
       if (index < 0) {
         final int pos = -(index + 1);
         add.put(pos, e);
         dao.add(e);
-      } else {
+      } else if (!e.equals(list.get(index))) {
         update.put(index, e);
         dao.update(e);
       }
@@ -93,7 +92,7 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
   public void remove(List<T> removed) {
     final var remove = new TreeMap<Integer, T>();
     for (final var e : removed) {
-      final int index = Collections.binarySearch(list, e);
+      final int index = locateIndex(e.getId());
       if (index >= 0) {
         remove.put(index, e);
         dao.remove(e);
@@ -117,20 +116,6 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
     if (!remove.isEmpty()) {
       remove.descendingKeySet().stream().mapToInt(Integer::intValue).forEach(list::remove);
       removedListeners.forEach(new Event(remove)::fire);
-    }
-  }
-
-  public void update(List<T> updated) {
-    final var update = new TreeMap<Integer, T>();
-    for (final var e : updated) {
-      final int index = Collections.binarySearch(list, e);
-      if (index >= 0) {
-        list.set(index, e);
-        update.put(index, e);
-      }
-    }
-    if (!update.isEmpty()) {
-      updatedListeners.forEach(new Event(update)::fire);
     }
   }
 
@@ -173,7 +158,7 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
       this.update = update;
     }
 
-    public ListManager<D, T> getSource() {
+    public ListManager<I, T, D> getSource() {
       return ListManager.this;
     }
 
