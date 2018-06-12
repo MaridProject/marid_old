@@ -13,19 +13,25 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.TablePane;
+import org.marid.applib.dialogs.MaridInputDialog;
 import org.marid.applib.image.ToolIcon;
+import org.marid.applib.validators.InputValidators;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.common.UserImages;
 import org.marid.ui.webide.base.model.ProjectItem;
 
+import java.util.List;
+
 import static org.eclipse.swt.SWT.*;
+import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
@@ -54,6 +60,9 @@ public class ProjectTable extends TablePane {
   public void addButton(UserImages images) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.ADD));
+    item.addListener(Selection, e -> new MaridInputDialog(this, s("add"), m("newProjectName"), "", InputValidators::projectName)
+        .setOnClose(o -> o.ifPresent(v -> manager.add(List.of(new ProjectItem(v, 0L)))))
+        .open());
   }
 
   @Init
