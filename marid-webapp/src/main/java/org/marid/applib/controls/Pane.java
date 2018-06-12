@@ -13,6 +13,8 @@
  */
 package org.marid.applib.controls;
 
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
@@ -22,6 +24,8 @@ public class Pane extends Composite {
 
   public Pane(Composite parent, int style, int toolbarStyle) {
     super(parent, style);
-    this.toolbar = new ToolBar(this, toolbarStyle);
+    setLayout(new GridLayout(1, false));
+    toolbar = new ToolBar(this, toolbarStyle);
+    toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
 }
