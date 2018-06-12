@@ -16,7 +16,12 @@ package org.marid.applib.controls;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.marid.applib.utils.Tables;
+
+import java.util.function.Consumer;
+
+import static org.eclipse.swt.SWT.NONE;
 
 public class TablePane extends Pane {
 
@@ -28,5 +33,16 @@ public class TablePane extends Pane {
     table.setHeaderVisible(true);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
     Tables.autoResizeColumns(table);
+  }
+
+  @SafeVarargs
+  protected final TableColumn addColumn(String text, int width, Consumer<TableColumn>... consumers) {
+    final var column = new TableColumn(table, NONE);
+    column.setText(text);
+    column.setWidth(width);
+    for (final var consumer : consumers) {
+      consumer.accept(column);
+    }
+    return column;
   }
 }

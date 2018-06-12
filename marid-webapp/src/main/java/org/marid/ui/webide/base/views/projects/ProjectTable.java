@@ -15,7 +15,6 @@ package org.marid.ui.webide.base.views.projects;
 
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.TablePane;
@@ -37,24 +36,21 @@ public class ProjectTable extends TablePane {
     super(tab.getParent(), NONE, BORDER | WRAP | SHADOW_OUT, BORDER | V_SCROLL | H_SCROLL | CHECK);
     this.manager = manager;
     tab.setControl(this);
-  }
+    addColumn(s("name"), 150);
+    addColumn(s("size"), 100);
 
-  @Init
-  public void nameColumn() {
-    final var column = new TableColumn(table, NONE);
-    column.setText(s("name"));
-    column.setResizable(true);
-    column.setMoveable(false);
-    column.setWidth(150);
-  }
+    manager.addAddListener(e -> e.update.forEach((index, v) -> {
+      final TableItem item = new TableItem(table, NONE, index);
+      item.setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
+    }));
+    manager.addRemoveListener(e -> e.update.descendingMap().forEach((index, v) -> {
+      table.remove(index);
+    }));
+    manager.addUpdateListener(e -> e.update.forEach((index, v) -> {
+      table.getItem(index).setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
+    }));
 
-  @Init
-  public void sizeColumn() {
-    final var column = new TableColumn(table, NONE);
-    column.setText(s("size"));
-    column.setResizable(true);
-    column.setMoveable(false);
-    column.setWidth(100);
+    manager.refresh();
   }
 
   @Init
@@ -97,24 +93,5 @@ public class ProjectTable extends TablePane {
   public void editButton(UserImages images) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.EDIT));
-  }
-
-  @Init
-  public void initListeners() {
-    manager.addAddListener(e -> e.update.forEach((index, v) -> {
-      final TableItem item = new TableItem(table, NONE, index);
-      item.setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
-    }));
-    manager.addRemoveListener(e -> e.update.descendingMap().forEach((index, v) -> {
-      table.remove(index);
-    }));
-    manager.addUpdateListener(e -> e.update.forEach((index, v) -> {
-      table.getItem(index).setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
-    }));
-  }
-
-  @Init
-  public void refresh() {
-    manager.refresh();
   }
 }
