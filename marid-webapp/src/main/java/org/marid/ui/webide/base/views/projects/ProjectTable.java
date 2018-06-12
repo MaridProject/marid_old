@@ -23,6 +23,7 @@ import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.common.UserImages;
+import org.marid.ui.webide.base.model.ProjectItem;
 
 import static org.eclipse.swt.SWT.*;
 import static org.marid.applib.utils.Locales.s;
@@ -41,14 +42,10 @@ public class ProjectTable extends TablePane {
 
     manager.addAddListener(e -> e.update.forEach((index, v) -> {
       final TableItem item = new TableItem(table, NONE, index);
-      item.setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
+      item.setText(values(v));
     }));
-    manager.addRemoveListener(e -> e.update.descendingMap().forEach((index, v) -> {
-      table.remove(index);
-    }));
-    manager.addUpdateListener(e -> e.update.forEach((index, v) -> {
-      table.getItem(index).setText(new String[] {v.name, StringUtils.sizeBinary(RWT.getLocale(), v.size, 2)});
-    }));
+    manager.addRemoveListener(e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));
+    manager.addUpdateListener(e -> e.update.forEach((index, v) -> table.getItem(index).setText(values(v))));
 
     manager.refresh();
   }
@@ -93,5 +90,9 @@ public class ProjectTable extends TablePane {
   public void editButton(UserImages images) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.EDIT));
+  }
+
+  private String[] values(ProjectItem item) {
+    return new String[] {item.name, StringUtils.sizeBinary(RWT.getLocale(), item.size, 2)};
   }
 }
