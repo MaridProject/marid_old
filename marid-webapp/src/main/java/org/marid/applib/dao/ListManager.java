@@ -87,7 +87,7 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
             if (a.isEmpty()) {
               a.put(e.getKey(), e.getValue());
             } else {
-              if (e.getKey() == a.lastKey() + 1) {
+              if (e.getKey() > a.lastKey()) {
                 a.put(e.getKey(), e.getValue());
               } else {
                 listeners.getOrDefault(ADD, emptyList()).forEach(new Event(a)::fire);
