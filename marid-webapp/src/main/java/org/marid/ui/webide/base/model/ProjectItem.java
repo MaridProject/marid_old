@@ -48,4 +48,9 @@ public final class ProjectItem implements Identifiable<String> {
       return name.equals(that.name) && size == that.size;
     }
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }

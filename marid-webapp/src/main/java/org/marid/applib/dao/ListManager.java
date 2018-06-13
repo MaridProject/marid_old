@@ -66,13 +66,13 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
   }
 
   public void add(List<T> added) {
-    final var add = new TreeMap<Integer, T>();
+    final var addOrdered = new LinkedList<Map.Entry<Integer, T>>();
     final var update = new TreeMap<Integer, T>();
     for (final var e : added) {
       final int index = locateIndex(e.getId());
       if (index < 0) {
         final int pos = -(index + 1);
-        add.put(pos, e);
+        addOrdered.add(Map.entry(pos, e));
         list.add(pos, e);
         dao.add(e);
       } else if (!e.equals(list.get(index))) {
@@ -80,7 +80,24 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
         dao.update(e);
       }
     }
-    if (!add.isEmpty()) {
+    if (!addOrdered.isEmpty()) {
+      final var add = addOrdered.stream().reduce(
+          new TreeMap<Integer, T>(),
+          (a, e) -> {
+            if (a.isEmpty()) {
+              a.put(e.getKey(), e.getValue());
+            } else {
+              if (e.getKey() == a.lastKey() + 1) {
+                a.put(e.getKey(), e.getValue());
+              } else {
+                listeners.getOrDefault(ADD, emptyList()).forEach(new Event(a)::fire);
+                return new TreeMap<>(Map.ofEntries(e));
+              }
+            }
+            return a;
+          },
+          (a1, a2) -> a2
+      );
       listeners.getOrDefault(ADD, emptyList()).forEach(new Event(add)::fire);
     }
 
