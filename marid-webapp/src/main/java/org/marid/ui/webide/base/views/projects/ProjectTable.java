@@ -30,6 +30,7 @@ import org.marid.ui.webide.base.model.ProjectItem;
 import java.util.List;
 
 import static org.eclipse.swt.SWT.*;
+import static org.marid.applib.dao.ListManager.EventType.*;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
 
@@ -45,12 +46,12 @@ public class ProjectTable extends TablePane {
     addColumn(s("name"), 150);
     addColumn(s("size"), 100);
 
-    manager.addAddListener(e -> e.update.forEach((index, v) -> {
+    manager.addListener(ADD, e -> e.update.forEach((index, v) -> {
       final TableItem item = new TableItem(table, NONE, index);
       item.setText(values(v));
     }));
-    manager.addRemoveListener(e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));
-    manager.addUpdateListener(e -> e.update.forEach((index, v) -> table.getItem(index).setText(values(v))));
+    manager.addListener(REMOVE, e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));
+    manager.addListener(UPDATE, e -> e.update.forEach((index, v) -> table.getItem(index).setText(values(v))));
 
     manager.refresh();
   }

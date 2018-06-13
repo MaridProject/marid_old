@@ -17,20 +17,19 @@ import org.marid.applib.model.Identifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+
+import static java.util.Collections.emptyList;
+import static org.marid.applib.dao.ListManager.EventType.*;
 
 public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> {
 
   protected final D dao;
   protected final Logger logger;
   protected final ArrayList<T> list = new ArrayList<>();
-  protected final ConcurrentLinkedQueue<Consumer<Event>> addedListeners = new ConcurrentLinkedQueue<>();
-  protected final ConcurrentLinkedQueue<Consumer<Event>> removedListeners = new ConcurrentLinkedQueue<>();
-  protected final ConcurrentLinkedQueue<Consumer<Event>> updatedListeners = new ConcurrentLinkedQueue<>();
+  protected final EnumMap<EventType, Collection<Consumer<Event>>> listeners = new EnumMap<>(EventType.class);
 
   public ListManager(D dao) {
     this.dao = dao;
@@ -50,7 +49,7 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
     }
 
     if (!remove.isEmpty()) {
-      removedListeners.forEach(new Event(remove)::fire);
+      listeners.getOrDefault(REMOVE, emptyList()).forEach(new Event(remove)::fire);
     }
 
     add(newList);
@@ -74,6 +73,7 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
       if (index < 0) {
         final int pos = -(index + 1);
         add.put(pos, e);
+        list.add(pos, e);
         dao.add(e);
       } else if (!e.equals(list.get(index))) {
         update.put(index, e);
@@ -81,26 +81,27 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
       }
     }
     if (!add.isEmpty()) {
-      addedListeners.forEach(new Event(add)::fire);
+      listeners.getOrDefault(ADD, emptyList()).forEach(new Event(add)::fire);
     }
 
     if (!update.isEmpty()) {
-      updatedListeners.forEach(new Event(update)::fire);
+      listeners.getOrDefault(UPDATE, emptyList()).forEach(new Event(update)::fire);
     }
   }
 
-  public void remove(List<T> removed) {
+  public void remove(List<I> removed) {
     final var remove = new TreeMap<Integer, T>();
-    for (final var e : removed) {
-      final int index = locateIndex(e.getId());
+    for (final var id : removed) {
+      final int index = locateIndex(id);
       if (index >= 0) {
+        final var e = get(index);
         remove.put(index, e);
         dao.remove(e);
       }
     }
     if (!remove.isEmpty()) {
       remove.descendingKeySet().stream().mapToInt(Integer::intValue).forEach(list::remove);
-      removedListeners.forEach(new Event(remove)::fire);
+      listeners.getOrDefault(REMOVE, emptyList()).forEach(new Event(remove)::fire);
     }
   }
 
@@ -115,35 +116,17 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
     }
     if (!remove.isEmpty()) {
       remove.descendingKeySet().stream().mapToInt(Integer::intValue).forEach(list::remove);
-      removedListeners.forEach(new Event(remove)::fire);
+      listeners.getOrDefault(REMOVE, emptyList()).forEach(new Event(remove)::fire);
     }
   }
 
-  public Consumer<Event> addAddListener(Consumer<Event> listener) {
-    addedListeners.add(listener);
+  public Consumer<Event> addListener(EventType type, Consumer<Event> listener) {
+    listeners.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(listener);
     return listener;
   }
 
-  public void removeAddListener(Consumer<Event> listener) {
-    addedListeners.remove(listener);
-  }
-
-  public Consumer<Event> addUpdateListener(Consumer<Event> listener) {
-    updatedListeners.add(listener);
-    return listener;
-  }
-
-  public void removeUpdateListener(Consumer<Event> listener) {
-    updatedListeners.remove(listener);
-  }
-
-  public Consumer<Event> addRemoveListener(Consumer<Event> listener) {
-    removedListeners.add(listener);
-    return listener;
-  }
-
-  public void removeRemoveListener(Consumer<Event> listener) {
-    removedListeners.remove(listener);
+  public void removeListener(EventType type, Consumer<Event> listener) {
+    listeners.computeIfPresent(type, (k, old) -> old.remove(listener) && old.isEmpty() ? null : old);
   }
 
   public T get(int index) {
@@ -171,5 +154,11 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
         logger.error("Unexpected error of {}", this, x);
       }
     }
+  }
+
+  public enum EventType {
+    ADD,
+    REMOVE,
+    UPDATE
   }
 }

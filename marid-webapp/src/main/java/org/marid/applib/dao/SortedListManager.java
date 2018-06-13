@@ -14,9 +14,6 @@
 package org.marid.applib.dao;
 
 import org.marid.applib.model.Identifiable;
-import org.marid.collections.ListView;
-
-import java.util.Collections;
 
 public class SortedListManager<I extends Comparable<? super I>, T extends Identifiable<I>, D extends ListDao<I, T>>
     extends ListManager<I, T, D> {
@@ -27,6 +24,23 @@ public class SortedListManager<I extends Comparable<? super I>, T extends Identi
 
   @Override
   protected int locateIndex(I key) {
-    return Collections.binarySearch(new ListView<>(list, Identifiable::getId), key);
+    int low = 0;
+    int high = list.size() - 1;
+
+    while (low <= high) {
+      final int mid = (low + high) >>> 1;
+      final T midVal = list.get(mid);
+      final int cmp = midVal.getId().compareTo(key);
+
+      if (cmp < 0) {
+        low = mid + 1;
+      } else if (cmp > 0) {
+        high = mid - 1;
+      } else {
+        return mid;
+      }
+    }
+
+    return -(low + 1);
   }
 }
