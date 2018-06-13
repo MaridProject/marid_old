@@ -13,20 +13,22 @@
  */
 package org.marid.applib.validators;
 
+import static org.marid.applib.utils.Locales.m;
+
 public interface InputValidators {
 
   static String projectName(String value) {
     if (value == null) {
-      return "nullValue";
+      return m("nullValue");
     }
     if (value.isEmpty()) {
-      return "emptyValue";
+      return m("emptyValue");
     }
     if (value.length() < 2) {
-      return "tooShortName";
+      return m("tooShortName");
     }
     if (value.chars().anyMatch(c -> !Character.isJavaIdentifierPart(c))) {
-      return "invalidName";
+      return m("invalidName");
     }
     return null;
   }
