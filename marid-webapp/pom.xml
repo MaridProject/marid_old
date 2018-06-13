@@ -52,7 +52,6 @@
     </dependency>
 
     <!-- business -->
-
     <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-runtime</artifactId>

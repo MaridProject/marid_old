@@ -13,13 +13,12 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.TablePane;
-import org.marid.applib.dialogs.MaridInputDialog;
+import org.marid.applib.dialogs.Dialogs;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.validators.InputValidators;
 import org.marid.misc.StringUtils;
@@ -60,9 +59,15 @@ public class ProjectTable extends TablePane {
   public void addButton(UserImages images) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.ADD));
-    item.addListener(Selection, e -> new MaridInputDialog(this, s("add"), m("newProjectName"), "", InputValidators::projectName)
-        .setOnClose(o -> o.ifPresent(v -> manager.add(List.of(new ProjectItem(v, 0L)))))
-        .open());
+    item.addListener(Selection, e -> Dialogs.input()
+        .setShell(getShell())
+        .setMessage(m("newProjectName") + ":")
+        .setTitle(s("addProject"))
+        .setValue("project")
+        .setValidator(InputValidators::projectName)
+        .setCallback(v -> v.ifPresent(txt -> manager.add(List.of(new ProjectItem(txt, 0L)))))
+        .open()
+    );
   }
 
   @Init
@@ -102,6 +107,6 @@ public class ProjectTable extends TablePane {
   }
 
   private String[] values(ProjectItem item) {
-    return new String[] {item.name, StringUtils.sizeBinary(RWT.getLocale(), item.size, 2)};
+    return new String[]{item.name, StringUtils.sizeBinary(RWT.getLocale(), item.size, 2)};
   }
 }
