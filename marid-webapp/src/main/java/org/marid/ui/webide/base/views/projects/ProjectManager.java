@@ -15,7 +15,7 @@ package org.marid.ui.webide.base.views.projects;
 
 import org.marid.applib.dao.SortedListManager;
 import org.marid.ui.webide.base.dao.ProjectDao;
-import org.marid.ui.webide.base.model.ProjectItem;
+import org.marid.applib.model.ProjectItem;
 import org.springframework.stereotype.Component;
 
 @Component

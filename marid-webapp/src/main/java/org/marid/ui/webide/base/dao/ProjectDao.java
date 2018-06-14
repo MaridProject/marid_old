@@ -16,7 +16,7 @@ package org.marid.ui.webide.base.dao;
 import org.marid.applib.dao.ListDao;
 import org.marid.io.MaridFiles;
 import org.marid.ui.webide.base.UserDirectories;
-import org.marid.ui.webide.base.model.ProjectItem;
+import org.marid.applib.model.ProjectItem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 

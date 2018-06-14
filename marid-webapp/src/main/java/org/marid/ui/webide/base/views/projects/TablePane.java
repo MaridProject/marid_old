@@ -25,7 +25,7 @@ import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.common.UserImages;
-import org.marid.ui.webide.base.model.ProjectItem;
+import org.marid.applib.model.ProjectItem;
 
 import java.util.List;
 

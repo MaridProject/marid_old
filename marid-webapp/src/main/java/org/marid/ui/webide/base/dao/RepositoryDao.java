@@ -16,8 +16,8 @@ package org.marid.ui.webide.base.dao;
 import org.marid.applib.repository.RepositoryProvider;
 import org.marid.collections.MaridIterators;
 import org.marid.ui.webide.base.UserDirectories;
-import org.marid.ui.webide.base.model.RepositoryItem;
-import org.marid.ui.webide.base.model.RepositoryProperty;
+import org.marid.applib.model.RepositoryItem;
+import org.marid.applib.model.RepositoryProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
