@@ -37,8 +37,8 @@ import static org.marid.applib.utils.Locales.s;
 @SpringComponent
 public class ProjectTable extends ListTablePane<String, ProjectItem, ProjectManager> {
 
-  public ProjectTable(ProjectTab tab, ProjectManager manager) {
-    super(manager, tab.getParent(), NONE, BORDER | WRAP | SHADOW_OUT, BORDER | V_SCROLL | H_SCROLL | CHECK);
+  public ProjectTable(ProjectTab tab, UserImages images, ProjectManager manager) {
+    super(manager, images, tab.getParent(), NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
     tab.setControl(this);
     table.setLinesVisible(true);
     addColumn(s("name"), 150);
@@ -64,8 +64,8 @@ public class ProjectTable extends ListTablePane<String, ProjectItem, ProjectMana
 
   @Init
   @Override
-  public void addStandardButtons(UserImages images) {
-    super.addStandardButtons(images);
+  public void addStandardButtons() {
+    super.addStandardButtons();
   }
 
   @Init

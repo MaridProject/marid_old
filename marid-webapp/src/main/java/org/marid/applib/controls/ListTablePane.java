@@ -31,10 +31,12 @@ import static org.marid.applib.dao.ListManager.EventType.*;
 public abstract class ListTablePane<I, T extends Id<I>, M extends ListManager<I, T, ? extends ListDao<I, T>>> extends TablePane {
 
   protected final M manager;
+  protected final UserImages images;
 
-  public ListTablePane(M manager, Composite parent, int style, int toolbarStyle, int tableStyle) {
+  public ListTablePane(M manager, UserImages images, Composite parent, int style, int toolbarStyle, int tableStyle) {
     super(parent, style, toolbarStyle, tableStyle);
     this.manager = manager;
+    this.images = images;
 
     manager.addListener(ADD, e -> e.update.forEach((index, v) -> {
       final var item = new TableItem(table, NONE, index);
@@ -56,37 +58,37 @@ public abstract class ListTablePane<I, T extends Id<I>, M extends ListManager<I,
 
   protected abstract Image[] getRowImages(T data);
 
-  protected void addStandardButtons(UserImages images) {
-    addRemoveButton(images);
+  protected void addStandardButtons() {
+    addRemoveButton();
     addSeparator();
-    addRefreshButton(images);
+    addRefreshButton();
     addSeparator();
-    addSelectAllButton(images);
-    addDeselectAllButton(images);
+    addSelectAllButton();
+    addDeselectAllButton();
     addSeparator();
   }
 
-  protected void addRemoveButton(UserImages images) {
+  protected void addRemoveButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.REMOVE));
     item.addListener(Selection, e -> manager.remove(selectionManager.getSelected()));
     setupSelectionEnabled(item);
   }
 
-  protected void addRefreshButton(UserImages images) {
+  protected void addRefreshButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.REFRESH));
     item.addListener(Selection, e -> manager.refresh());
   }
 
-  protected void addSelectAllButton(UserImages images) {
+  protected void addSelectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.SELECT_ALL));
     item.addListener(Selection, e -> selectionManager.selectAll());
     setupTableEmpty(item);
   }
 
-  protected void addDeselectAllButton(UserImages images) {
+  protected void addDeselectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.DESELECT_ALL));
     item.addListener(Selection, e -> selectionManager.deselectAll());
