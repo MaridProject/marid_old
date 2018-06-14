@@ -13,23 +13,44 @@
  */
 package org.marid.applib.validators;
 
+import org.eclipse.jface.dialogs.IInputValidator;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
+
 import static org.marid.applib.utils.Locales.m;
 
 public interface InputValidators {
 
-  static String projectName(String value) {
-    if (value == null) {
-      return m("nullValue");
-    }
-    if (value.isEmpty()) {
-      return m("emptyValue");
-    }
-    if (value.length() < 2) {
-      return m("tooShortName");
-    }
-    if (value.chars().anyMatch(c -> !Character.isJavaIdentifierPart(c))) {
-      return m("invalidName");
-    }
-    return null;
+  static IInputValidator fileName() {
+    return value -> {
+      if (value == null) {
+        return m("nullValue");
+      }
+      if (value.isEmpty()) {
+        return m("emptyValue");
+      }
+      if (value.length() < 2) {
+        return m("tooShortName");
+      }
+      if (value.chars().anyMatch(c -> !Character.isJavaIdentifierPart(c))) {
+        return m("invalidName");
+      }
+      return null;
+    };
+  }
+
+  static IInputValidator input(UnaryOperator<Optional<String>> predicate) {
+    return value -> predicate.apply(Optional.ofNullable(value)).orElse(null);
+  }
+
+  static IInputValidator inputs(IInputValidator... validators) {
+    return v -> Stream.of(validators)
+        .map(validator -> validator.isValid(v))
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null);
   }
 }

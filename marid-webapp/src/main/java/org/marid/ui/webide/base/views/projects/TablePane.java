@@ -17,11 +17,10 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolItem;
-import org.marid.applib.controls.ListTablePane;
+import org.marid.applib.controls.ListTable;
 import org.marid.applib.dialogs.Dialogs;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
-import org.marid.applib.validators.InputValidators;
 import org.marid.misc.StringUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
@@ -33,11 +32,12 @@ import java.util.List;
 import static org.eclipse.swt.SWT.*;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
+import static org.marid.applib.validators.InputValidators.*;
 
 @SpringComponent
-public class ProjectTable extends ListTablePane<String, ProjectItem, ProjectManager> {
+public class TablePane extends ListTable<String, ProjectItem, ProjectManager> {
 
-  public ProjectTable(ProjectTab tab, UserImages images, ProjectManager manager) {
+  public TablePane(ProjectTab tab, UserImages images, ProjectManager manager) {
     super(manager, images, tab.getParent(), NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
     tab.setControl(this);
     table.setLinesVisible(true);
@@ -56,7 +56,7 @@ public class ProjectTable extends ListTablePane<String, ProjectItem, ProjectMana
         .setMessage(m("newProjectName") + ":")
         .setTitle(s("addProject"))
         .setValue("project")
-        .setValidator(InputValidators::projectName)
+        .setValidator(inputs(fileName(), input(o -> o.filter(manager::contains).map(id -> m("duplicateItem", id)))))
         .setCallback(v -> v.ifPresent(txt -> manager.add(List.of(new ProjectItem(txt, 0L)))))
         .open()
     );
@@ -69,7 +69,7 @@ public class ProjectTable extends ListTablePane<String, ProjectItem, ProjectMana
   }
 
   @Init
-  public void editButton(UserImages images) {
+  public void editButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(images.image(ToolIcon.EDIT));
     setupSelectionEnabled(item);

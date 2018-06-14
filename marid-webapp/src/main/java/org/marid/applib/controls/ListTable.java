@@ -28,12 +28,12 @@ import static org.eclipse.swt.SWT.NONE;
 import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.dao.ListManager.EventType.*;
 
-public abstract class ListTablePane<I, T extends Id<I>, M extends ListManager<I, T, ? extends ListDao<I, T>>> extends TablePane {
+public abstract class ListTable<I, T extends Id<I>, M extends ListManager<I, T, ? extends ListDao<I, T>>> extends TablePane {
 
   protected final M manager;
   protected final UserImages images;
 
-  public ListTablePane(M manager, UserImages images, Composite parent, int style, int toolbarStyle, int tableStyle) {
+  public ListTable(M manager, UserImages images, Composite parent, int style, int toolbarStyle, int tableStyle) {
     super(parent, style, toolbarStyle, tableStyle);
     this.manager = manager;
     this.images = images;

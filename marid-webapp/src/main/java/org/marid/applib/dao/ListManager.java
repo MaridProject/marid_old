@@ -150,6 +150,10 @@ public class ListManager<I, T extends Id<I>, D extends ListDao<I, T>> {
     return list.get(index);
   }
 
+  public boolean contains(I id) {
+    return locateIndex(id) >= 0;
+  }
+
   public boolean isEmpty() {
     return list.isEmpty();
   }

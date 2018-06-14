@@ -15,12 +15,17 @@ package org.marid.applib.dialogs;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.marid.applib.image.AppIcon;
 import org.marid.ui.webide.base.common.UserImages;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class InputDialogBuilder {
 
@@ -94,6 +99,17 @@ public class InputDialogBuilder {
         if (icon != null) {
           getShell().setImage(userImages.image(icon));
         }
+      }
+
+      @Override
+      protected Control createDialogArea(Composite parent) {
+        final var composite = (Composite) super.createDialogArea(parent);
+        Stream.of(composite.getChildren())
+            .filter(Text.class::isInstance)
+            .filter(c -> (c.getStyle() & SWT.READ_ONLY) != 0)
+            .findFirst()
+            .ifPresent(c -> c.setForeground(c.getDisplay().getSystemColor(SWT.COLOR_RED)));
+        return composite;
       }
 
       @Override
