@@ -14,9 +14,9 @@
 package org.marid.ui.webide.base.model;
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.applib.model.Identifiable;
+import org.marid.applib.model.Id;
 
-public final class ProjectItem implements Identifiable<String> {
+public final class ProjectItem implements Id<String> {
 
   public final String name;
   public final long size;

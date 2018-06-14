@@ -13,10 +13,12 @@
  */
 package org.marid.applib.controls;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class Pane extends Composite {
 
@@ -27,5 +29,9 @@ public class Pane extends Composite {
     setLayout(new GridLayout(1, false));
     toolbar = new ToolBar(this, toolbarStyle);
     toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+  }
+
+  protected void addSeparator() {
+    new ToolItem(toolbar, SWT.SEPARATOR);
   }
 }

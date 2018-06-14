@@ -16,18 +16,27 @@ package org.marid.applib.dialogs;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.marid.applib.image.AppIcon;
+import org.marid.ui.webide.base.common.UserImages;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class InputDialogBuilder {
 
+  private final UserImages userImages;
+
+  private AppIcon icon;
   private String title;
   private String message;
   private Shell shell;
   private String value;
   private IInputValidator validator;
   private Consumer<Optional<String>> callback;
+
+  InputDialogBuilder(UserImages userImages) {
+    this.userImages = userImages;
+  }
 
   public InputDialogBuilder setShell(Shell shell) {
     this.shell = shell;
@@ -46,6 +55,11 @@ public class InputDialogBuilder {
 
   public InputDialogBuilder setTitle(String title) {
     this.title = title;
+    return this;
+  }
+
+  public InputDialogBuilder setIcon(AppIcon icon) {
+    this.icon = icon;
     return this;
   }
 
@@ -74,6 +88,14 @@ public class InputDialogBuilder {
 
   public void open() {
     final var dialog = new InputDialog(shell, title, message, value, validator) {
+      @Override
+      public void create() {
+        super.create();
+        if (icon != null) {
+          getShell().setImage(userImages.image(icon));
+        }
+      }
+
       @Override
       public boolean close() {
         final boolean result = super.close();

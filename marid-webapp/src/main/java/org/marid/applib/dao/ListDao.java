@@ -13,13 +13,13 @@
  */
 package org.marid.applib.dao;
 
-import org.marid.applib.model.Identifiable;
+import org.marid.applib.model.Id;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ListDao<I, T extends Identifiable<I>> {
+public interface ListDao<I, T extends Id<I>> {
 
   void add(T item);
 

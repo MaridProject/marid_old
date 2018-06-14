@@ -15,7 +15,7 @@ package org.marid.applib.model;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Identifiable<I> {
+public interface Id<I> {
 
   @NotNull
   I getId();

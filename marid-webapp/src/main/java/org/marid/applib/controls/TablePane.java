@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.marid.applib.selection.SelectionManager;
 import org.marid.applib.utils.Tables;
 
 import java.util.function.Consumer;
@@ -26,23 +27,25 @@ import static org.eclipse.swt.SWT.NONE;
 public class TablePane extends Pane {
 
   protected final Table table;
+  protected final SelectionManager selectionManager;
 
   public TablePane(Composite parent, int style, int toolbarStyle, int tableStyle) {
     super(parent, style, toolbarStyle);
     table = new Table(this, tableStyle);
     table.setHeaderVisible(true);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
+    selectionManager = new SelectionManager(table);
+
     Tables.autoResizeColumns(table);
   }
 
   @SafeVarargs
-  protected final TableColumn addColumn(String text, int width, Consumer<TableColumn>... consumers) {
+  protected final void addColumn(String text, int width, Consumer<TableColumn>... consumers) {
     final var column = new TableColumn(table, NONE);
     column.setText(text);
     column.setWidth(width);
     for (final var consumer : consumers) {
       consumer.accept(column);
     }
-    return column;
   }
 }

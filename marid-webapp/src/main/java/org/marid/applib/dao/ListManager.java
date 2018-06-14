@@ -13,7 +13,7 @@
  */
 package org.marid.applib.dao;
 
-import org.marid.applib.model.Identifiable;
+import org.marid.applib.model.Id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 import static java.util.Collections.emptyList;
 import static org.marid.applib.dao.ListManager.EventType.*;
 
-public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> {
+public class ListManager<I, T extends Id<I>, D extends ListDao<I, T>> {
 
   protected final D dao;
   protected final Logger logger;
@@ -148,6 +148,10 @@ public class ListManager<I, T extends Identifiable<I>, D extends ListDao<I, T>> 
 
   public T get(int index) {
     return list.get(index);
+  }
+
+  public boolean isEmpty() {
+    return list.isEmpty();
   }
 
   public class Event {

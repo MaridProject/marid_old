@@ -13,9 +13,11 @@
  */
 package org.marid.applib.dialogs;
 
+import org.marid.ui.webide.base.common.UserImages;
+
 public interface Dialogs {
 
-  static InputDialogBuilder input() {
-    return new InputDialogBuilder();
+  static InputDialogBuilder input(UserImages userImages) {
+    return new InputDialogBuilder(userImages);
   }
 }

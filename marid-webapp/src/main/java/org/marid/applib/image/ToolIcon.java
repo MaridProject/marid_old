@@ -22,7 +22,9 @@ public enum ToolIcon implements AppImage {
   REFRESH("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-view-refresh-icon.png"),
   UPDATE("http://icons.iconarchive.com/icons/visualpharm/must-have/24/Refresh-icon.png"),
   EDIT("http://icons.iconarchive.com/icons/turbomilk/livejournal-10/24/pencil-icon.png"),
-  PROJECT("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-project-development-new-template-icon.png");
+  PROJECT("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-project-development-new-template-icon.png"),
+  SELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/24/layer-select-icon.png"),
+  DESELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/24/select-invert-icon.png");
 
   private final String url;
 
