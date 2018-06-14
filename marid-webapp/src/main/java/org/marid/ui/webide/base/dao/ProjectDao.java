@@ -42,7 +42,7 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
   @Override
   public void add(ProjectItem item) {
     try {
-      final Path path = directory.resolve(item.name);
+      final Path path = directory.resolve(item.getId());
       Files.createDirectories(path);
     } catch (IOException x) {
       throw new UncheckedIOException(x);

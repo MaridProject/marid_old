@@ -13,54 +13,27 @@
  */
 package org.marid.ui.webide.base.views.repositories;
 
+import org.marid.applib.dao.SortedListManager;
+import org.marid.applib.model.RepositoryItem;
 import org.marid.applib.repository.Repository;
 import org.marid.ui.webide.base.dao.RepositoryDao;
-import org.marid.applib.model.RepositoryItem;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class RepositoryManager {
-
-  private final RepositoryDao dao;
-  private final ArrayList<RepositoryItem> repositories = new ArrayList<>();
+public class RepositoryManager extends SortedListManager<String, RepositoryItem, RepositoryDao> {
 
   public RepositoryManager(RepositoryDao dao) {
-    this.dao = dao;
-  }
-
-  @PostConstruct
-  public void init() {
-    repositories.addAll(dao.repositories());
-  }
-
-  public void add(RepositoryItem repositoryItem) {
-    repositories.add(repositoryItem);
-  }
-
-  public void remove(RepositoryItem repositoryItem) {
-    repositories.remove(repositoryItem);
-  }
-
-  public void save() {
-    for (final var repository : repositories) {
-      dao.save(repository);
-    }
-  }
-
-  public boolean isNew(String repositoryName) {
-    return repositories.stream().map(RepositoryItem::getName).noneMatch(repositoryName::equals);
+    super(dao);
   }
 
   public List<Repository> repositories() {
     final var providers = dao.selectors();
-    return repositories.stream()
+    return list.stream()
         .flatMap(e -> Stream.ofNullable(providers.get(e.getSelector())).map(e::repository))
         .filter(Objects::nonNull)
         .collect(Collectors.toUnmodifiableList());

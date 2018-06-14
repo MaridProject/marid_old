@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ProjectItem implements Id<String> {
 
-  public final String name;
-  public final long size;
+  private final String name;
+  private final long size;
 
   public ProjectItem(String name, long size) {
     this.name = name;
@@ -29,6 +29,10 @@ public final class ProjectItem implements Id<String> {
   @Override
   public String getId() {
     return name;
+  }
+
+  public long getSize() {
+    return size;
   }
 
   @Override

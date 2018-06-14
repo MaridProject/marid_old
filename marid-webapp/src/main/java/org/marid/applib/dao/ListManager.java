@@ -137,6 +137,37 @@ public class ListManager<I, T extends Id<I>, D extends ListDao<I, T>> {
     }
   }
 
+  public void update(int... indices) {
+    final TreeMap<Integer, T> update = new TreeMap<>();
+    for (final int i : indices) {
+      if (i >= 0 && i < list.size()) {
+        final var e = list.get(i);
+        update.put(i, e);
+        dao.update(e);
+      }
+    }
+    if (!update.isEmpty()) {
+      listeners.getOrDefault(UPDATE, emptyList()).forEach(new Event(update)::fire);
+    }
+  }
+
+  @SafeVarargs
+  public final void update(T... items) {
+    final TreeMap<Integer, T> update = new TreeMap<>();
+    for (final var item : items) {
+      final int i = locateIndex(item.getId());
+      if (i < 0) {
+        continue;
+      }
+      update.put(i, item);
+      list.set(i, item);
+      dao.update(item);
+    }
+    if (!update.isEmpty()) {
+      listeners.getOrDefault(UPDATE, emptyList()).forEach(new Event(update)::fire);
+    }
+  }
+
   public Consumer<Event> addListener(EventType type, Consumer<Event> listener) {
     listeners.computeIfAbsent(type, k -> new ConcurrentLinkedQueue<>()).add(listener);
     return listener;

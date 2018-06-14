@@ -13,11 +13,12 @@
  */
 package org.marid.ui.webide.base.dao;
 
+import org.marid.applib.dao.ListDao;
+import org.marid.applib.model.RepositoryItem;
+import org.marid.applib.model.RepositoryProperty;
 import org.marid.applib.repository.RepositoryProvider;
 import org.marid.collections.MaridIterators;
 import org.marid.ui.webide.base.UserDirectories;
-import org.marid.applib.model.RepositoryItem;
-import org.marid.applib.model.RepositoryProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -29,16 +30,14 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Properties;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.ServiceLoader.Provider;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
 @Component
-public class RepositoryDao {
+public class RepositoryDao implements ListDao<String, RepositoryItem> {
 
   private final Path directory;
 
@@ -46,7 +45,37 @@ public class RepositoryDao {
     directory = directories.getRepositoriesDirectory();
   }
 
-  public List<RepositoryItem> repositories() {
+  @Override
+  public void add(RepositoryItem repositoryItem) {
+    try {
+      final var file = directory.resolve(repositoryItem.getId() + ".properties");
+      final var props = new Properties(repositoryItem.getProperties().size());
+      repositoryItem.getProperties().forEach(p -> props.setProperty(p.getKey(), p.getValue()));
+      props.setProperty("selector", repositoryItem.getSelector());
+      try (final var stream = new PrintStream(Files.newOutputStream(file), false, StandardCharsets.UTF_8)) {
+        props.list(stream);
+      }
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
+
+  @Override
+  public void remove(String id) {
+    try {
+      Files.deleteIfExists(directory.resolve(id + ".properties"));
+    } catch (IOException x) {
+      throw new UncheckedIOException(x);
+    }
+  }
+
+  @Override
+  public void update(RepositoryItem item) {
+    add(item);
+  }
+
+  @Override
+  public List<RepositoryItem> get() {
     try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties")) {
       final var paths = MaridIterators.array(Path.class, files);
       final var repositories = new RepositoryItem[paths.length];
@@ -74,23 +103,16 @@ public class RepositoryDao {
     }
   }
 
-  public void remove(RepositoryItem repositoryItem) {
-    try {
-      Files.deleteIfExists(directory.resolve(repositoryItem.getName() + ".properties"));
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
-  }
-
-  public void save(RepositoryItem repositoryItem) {
-    try {
-      final var file = directory.resolve(repositoryItem.getName() + ".properties");
-      final var props = new Properties(repositoryItem.getProperties().size());
-      repositoryItem.getProperties().forEach(p -> props.setProperty(p.getKey(), p.getValue()));
-      props.setProperty("selector", repositoryItem.getSelector());
-      try (final var stream = new PrintStream(Files.newOutputStream(file), false, StandardCharsets.UTF_8)) {
-        props.list(stream);
-      }
+  @Override
+  public Set<String> getIds() {
+    try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties")) {
+      return MaridIterators.stream(files)
+          .map(Path::getFileName)
+          .map(Path::toString)
+          .map(StringUtils::stripFilenameExtension)
+          .collect(Collectors.toUnmodifiableSet());
+    } catch (NoSuchFileException x) {
+      return Set.of();
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }

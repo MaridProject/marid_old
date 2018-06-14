@@ -13,6 +13,7 @@
  */
 package org.marid.applib.model;
 
+import org.jetbrains.annotations.NotNull;
 import org.marid.applib.repository.Repository;
 import org.marid.applib.repository.RepositoryProvider;
 
@@ -21,14 +22,11 @@ import java.util.TreeMap;
 
 import static org.marid.function.Suppliers.reduce;
 
-public class RepositoryItem {
+public class RepositoryItem implements Id<String> {
 
-  private String selector;
-  private String name;
+  private final String selector;
+  private final String name;
   private final ArrayList<RepositoryProperty> properties = new ArrayList<>();
-
-  public RepositoryItem() {
-  }
 
   public RepositoryItem(String selector, String name) {
     this.selector = selector;
@@ -39,20 +37,14 @@ public class RepositoryItem {
     return selector;
   }
 
-  public void setSelector(String selector) {
-    this.selector = selector;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public ArrayList<RepositoryProperty> getProperties() {
     return properties;
+  }
+
+  @NotNull
+  @Override
+  public String getId() {
+    return name;
   }
 
   public Repository repository(RepositoryProvider provider) {
