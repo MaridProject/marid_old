@@ -21,6 +21,8 @@
 
 package org.marid.misc;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Path;
@@ -66,5 +68,13 @@ public interface StringUtils {
     final var format = NumberFormat.getNumberInstance(locale);
     format.setMaximumFractionDigits(precision);
     return format.format(value) + suffices[index];
+  }
+
+  static String stripBrackets(@NotNull String value) {
+    if (value.startsWith("[") && value.endsWith("]")) {
+      return value.substring(1, value.length() - 1);
+    } else {
+      return value;
+    }
   }
 }

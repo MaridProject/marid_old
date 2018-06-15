@@ -17,10 +17,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jetbrains.annotations.NotNull;
 import org.marid.applib.repository.Repository;
 import org.marid.applib.repository.RepositoryProvider;
+import org.marid.misc.EHT;
 
 import java.util.TreeMap;
 
-public class RepositoryItem implements Id<String> {
+public class RepositoryItem extends EHT implements Id<String> {
 
   private transient final String id;
   private final String selector;

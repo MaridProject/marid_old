@@ -26,10 +26,13 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.STATIC;
 import static java.lang.reflect.Modifier.TRANSIENT;
+import static java.util.Arrays.deepToString;
+import static org.marid.misc.StringUtils.stripBrackets;
 
 public class Reflections {
 
@@ -75,7 +78,7 @@ public class Reflections {
         .toArray();
   }
 
-  public static int hashCode(Object bean) {
+  public static int hashCode(@Nullable Object bean) {
     if (bean == null) {
       return 0;
     } else {
@@ -83,7 +86,7 @@ public class Reflections {
     }
   }
 
-  public static boolean equals(Object v1, Object v2) {
+  public static boolean equals(@Nullable Object v1, @Nullable Object v2) {
     if (v1 == v2) {
       return true;
     } else if (v1 == null || v2 == null) {
@@ -93,5 +96,13 @@ public class Reflections {
     } else {
       return Arrays.deepEquals(serializedValues(v1), serializedValues(v2));
     }
+  }
+
+  public static String toString(@NotNull Object bean) {
+    final var name = bean.getClass().getSimpleName();
+    return fields(bean)
+        .filter(f -> (f.getModifiers() & (STATIC | TRANSIENT)) == 0)
+        .map(f -> f.getName() + "=" + stripBrackets(deepToString(new Object[] {get(f, bean)})))
+        .collect(Collectors.joining(",", name + "(", ")"));
   }
 }

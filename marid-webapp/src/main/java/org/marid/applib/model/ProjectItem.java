@@ -14,8 +14,9 @@
 package org.marid.applib.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.marid.misc.EHT;
 
-public final class ProjectItem implements Id<String> {
+public final class ProjectItem extends EHT implements Id<String> {
 
   private final String id;
 
@@ -26,28 +27,6 @@ public final class ProjectItem implements Id<String> {
   @NotNull
   @Override
   public String getId() {
-    return id;
-  }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    } else if (obj == null || obj.getClass() != ProjectItem.class) {
-      return false;
-    } else {
-      final var that = (ProjectItem) obj;
-      return id.equals(that.id);
-    }
-  }
-
-  @Override
-  public String toString() {
     return id;
   }
 }
