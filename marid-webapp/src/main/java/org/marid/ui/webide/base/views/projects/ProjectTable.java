@@ -57,7 +57,7 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
         .setTitle(s("addProject"))
         .setValue("project")
         .setValidator(inputs(fileName(), input(o -> o.filter(manager::contains).map(id -> m("duplicateItem", id)))))
-        .setCallback(v -> v.ifPresent(txt -> manager.add(List.of(new ProjectItem(txt, 0L)))))
+        .setCallback(v -> v.ifPresent(txt -> manager.add(List.of(new ProjectItem(txt)))))
         .open()
     );
   }
@@ -77,7 +77,7 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
 
   @Override
   protected String[] getRow(ProjectItem item) {
-    return new String[]{item.getId(), sizeBinary(RWT.getLocale(), item.getSize(), 2)};
+    return new String[]{item.getId(), sizeBinary(RWT.getLocale(), manager.getSize(item.getId()), 2)};
   }
 
   @Override

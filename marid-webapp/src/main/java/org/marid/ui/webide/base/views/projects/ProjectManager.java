@@ -14,8 +14,8 @@
 package org.marid.ui.webide.base.views.projects;
 
 import org.marid.applib.dao.SortedListManager;
-import org.marid.ui.webide.base.dao.ProjectDao;
 import org.marid.applib.model.ProjectItem;
+import org.marid.ui.webide.base.dao.ProjectDao;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,5 +23,9 @@ public class ProjectManager extends SortedListManager<String, ProjectItem, Proje
 
   public ProjectManager(ProjectDao dao) {
     super(dao);
+  }
+
+  public long getSize(String id) {
+    return dao.getSize(id);
   }
 }

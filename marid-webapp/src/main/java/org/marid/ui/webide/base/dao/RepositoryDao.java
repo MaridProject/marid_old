@@ -15,7 +15,6 @@ package org.marid.ui.webide.base.dao;
 
 import org.marid.applib.dao.ListDao;
 import org.marid.applib.model.RepositoryItem;
-import org.marid.applib.model.RepositoryProperty;
 import org.marid.applib.repository.RepositoryProvider;
 import org.marid.collections.MaridIterators;
 import org.marid.ui.webide.base.UserDirectories;
@@ -50,7 +49,7 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
     try {
       final var file = directory.resolve(repositoryItem.getId() + ".properties");
       final var props = new Properties(repositoryItem.getProperties().size());
-      repositoryItem.getProperties().forEach(p -> props.setProperty(p.getKey(), p.getValue()));
+      repositoryItem.getProperties().forEach(props::setProperty);
       props.setProperty("selector", repositoryItem.getSelector());
       try (final var stream = new PrintStream(Files.newOutputStream(file), false, StandardCharsets.UTF_8)) {
         props.list(stream);
@@ -90,7 +89,7 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
           final var name = StringUtils.stripFilenameExtension(paths[i].getFileName().toString());
           final var repo = new RepositoryItem(selector, name);
           for (final var k : props.stringPropertyNames()) {
-            repo.getProperties().add(new RepositoryProperty(k, props.getProperty(k)));
+            repo.getProperties().put(k, props.getProperty(k));
           }
           repositories[i] = repo;
         }

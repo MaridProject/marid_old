@@ -13,44 +13,40 @@
  */
 package org.marid.applib.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jetbrains.annotations.NotNull;
 import org.marid.applib.repository.Repository;
 import org.marid.applib.repository.RepositoryProvider;
 
-import java.util.ArrayList;
 import java.util.TreeMap;
-
-import static org.marid.function.Suppliers.reduce;
 
 public class RepositoryItem implements Id<String> {
 
+  private transient final String id;
   private final String selector;
-  private final String name;
-  private final ArrayList<RepositoryProperty> properties = new ArrayList<>();
+  private final TreeMap<String, String> properties = new TreeMap<>();
 
-  public RepositoryItem(String selector, String name) {
+  @JsonCreator
+  public RepositoryItem(String id, String selector) {
     this.selector = selector;
-    this.name = name;
+    this.id = id;
   }
 
   public String getSelector() {
     return selector;
   }
 
-  public ArrayList<RepositoryProperty> getProperties() {
+  public TreeMap<String, String> getProperties() {
     return properties;
   }
 
   @NotNull
   @Override
   public String getId() {
-    return name;
+    return id;
   }
 
   public Repository repository(RepositoryProvider provider) {
-    return provider.getRepository(
-        name,
-        reduce(properties.stream(), new TreeMap<>(), (a, e) -> a.put(e.getKey(), e.getValue()))
-    );
+    return provider.getRepository(id, properties);
   }
 }

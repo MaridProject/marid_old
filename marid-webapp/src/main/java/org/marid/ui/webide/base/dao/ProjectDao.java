@@ -14,9 +14,9 @@
 package org.marid.ui.webide.base.dao;
 
 import org.marid.applib.dao.ListDao;
+import org.marid.applib.model.ProjectItem;
 import org.marid.io.MaridFiles;
 import org.marid.ui.webide.base.UserDirectories;
-import org.marid.applib.model.ProjectItem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 
@@ -70,7 +70,7 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
     try {
       return Files.list(directory)
           .filter(Files::isDirectory)
-          .map(p -> new ProjectItem(p.getFileName().toString(), MaridFiles.size(p)))
+          .map(p -> new ProjectItem(p.getFileName().toString()))
           .collect(Collectors.toUnmodifiableList());
     } catch (NoSuchFileException x) {
       return List.of();
@@ -98,6 +98,10 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
     final Path dir = directory.resolve(name);
     return Optional.of(dir)
         .filter(Files::isDirectory)
-        .map(d -> new ProjectItem(d.getFileName().toString(), MaridFiles.size(d)));
+        .map(d -> new ProjectItem(d.getFileName().toString()));
+  }
+
+  public long getSize(String id) {
+    return MaridFiles.size(directory.resolve(id));
   }
 }

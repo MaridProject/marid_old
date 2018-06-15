@@ -17,27 +17,21 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ProjectItem implements Id<String> {
 
-  private final String name;
-  private final long size;
+  private final String id;
 
-  public ProjectItem(String name, long size) {
-    this.name = name;
-    this.size = size;
+  public ProjectItem(String id) {
+    this.id = id;
   }
 
   @NotNull
   @Override
   public String getId() {
-    return name;
-  }
-
-  public long getSize() {
-    return size;
+    return id;
   }
 
   @Override
   public int hashCode() {
-    return name.hashCode();
+    return id.hashCode();
   }
 
   @Override
@@ -48,12 +42,12 @@ public final class ProjectItem implements Id<String> {
       return false;
     } else {
       final var that = (ProjectItem) obj;
-      return name.equals(that.name) && size == that.size;
+      return id.equals(that.id);
     }
   }
 
   @Override
   public String toString() {
-    return name;
+    return id;
   }
 }
