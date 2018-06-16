@@ -21,6 +21,7 @@ import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
+import org.springframework.beans.factory.ObjectFactory;
 
 import java.util.function.Consumer;
 
@@ -51,6 +52,13 @@ public class RepositoryTablePane extends TablePane {
     store.addListener(REMOVE, e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));
     store.addListener(UPDATE, e -> e.update.forEach((index, v) -> itemSetup.accept((Item) table.getItem(index))));
     store.refresh();
+  }
+
+  @Init
+  public void addAddButton(ObjectFactory<RepositoryDialog> dialog) {
+    final var item = new ToolItem(toolbar, SWT.PUSH);
+    item.setImage(image(ToolIcon.ADD));
+    item.addListener(Selection, e -> dialog.getObject().open());
   }
 
   @Init

@@ -76,7 +76,7 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void addRemoveButton(ProjectStore store) {
+  public void removeButton(ProjectStore store) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.REMOVE));
     item.addListener(Selection, e -> store.remove(selectionManager.getSelected()));
@@ -84,7 +84,7 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void addRefreshButtons(ProjectStore store) {
+  public void refreshButtons(ProjectStore store) {
     addSeparator();
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.REFRESH));
@@ -92,7 +92,7 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void initStdButtons() {
+  public void stdButtons() {
     addSeparator();
     addSelectAllButton();
     addDeselectAllButton();

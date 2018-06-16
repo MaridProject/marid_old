@@ -13,38 +13,19 @@
  */
 package org.marid.ui.webide.base.views.repositories;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
+import org.marid.applib.dialogs.MaridDialog;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.ui.webide.base.UI;
 import org.springframework.stereotype.Component;
 
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.PROCEED_ID;
-import static org.eclipse.swt.SWT.NONE;
-import static org.marid.applib.utils.Locales.s;
 
 @Component
 @PrototypeScoped
-public class RepositoryDialog extends Dialog {
+public class RepositoryDialog extends MaridDialog {
 
   public RepositoryDialog(UI ui) {
-    super(ui.shell);
-    setBlockOnOpen(false);
-  }
-
-  @Override
-  protected Composite createDialogArea(Composite parent) {
-    final var panel = new Composite(parent, NONE);
-    panel.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-    return panel;
-  }
-
-  @Override
-  protected void createButtonsForButtonBar(Composite parent) {
-    createButton(parent, CANCEL_ID, s("cancel"), false);
-    createButton(parent, PROCEED_ID, s("apply"), true);
+    super(ui.shell, CANCEL_ID, PROCEED_ID);
   }
 }
