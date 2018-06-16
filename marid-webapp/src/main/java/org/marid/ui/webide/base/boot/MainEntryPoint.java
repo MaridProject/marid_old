@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.marid.app.common.Images;
-import org.marid.applib.image.UserImages;
 import org.marid.spring.ContextUtils;
 import org.marid.ui.webide.base.UI;
 import org.springframework.context.support.GenericApplicationContext;
@@ -46,10 +45,10 @@ public class MainEntryPoint implements EntryPoint {
     final var child = ContextUtils.context(parent, c -> {
       c.setId("mainUI");
       c.setDisplayName("mainUI");
-      final var userImages = new UserImages(parent.getBean(Images.class), display);
       c.registerBean(UI.class, () -> new UI(display, shell));
+
       display.setData(CONTEXT_KEY, c);
-      display.setData(USER_IMAGES, userImages);
+      display.setData(USER_IMAGES, parent.getBean(Images.class));
     });
     child.refresh();
     child.start();

@@ -14,50 +14,28 @@
 package org.marid.applib.image;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 import org.marid.app.common.Images;
+import org.marid.ui.webide.base.boot.MainEntryPoint;
 
 import java.awt.*;
 
-import static org.marid.ui.webide.base.boot.MainEntryPoint.USER_IMAGES;
-
 public class UserImages {
 
-  private final Images images;
-  private final Display display;
-
-  public UserImages(Images images, Display display) {
-    this.images = images;
-    this.display = display;
-  }
-
-  public Image image(AppImage image) {
-    return images.image(display, image);
-  }
-
-  public Image maridIcon(int size, Color color) {
-    return images.maridIcon(display, size, color);
-  }
-
-  public Image maridIcon(int size) {
-    return images.maridIcon(display, size);
-  }
-
-  public static UserImages images(Widget widget) {
+  private static Images images(Widget widget) {
     final var display = widget.getDisplay();
-    return (UserImages) display.getData(USER_IMAGES);
+    return (Images) display.getData(MainEntryPoint.USER_IMAGES);
   }
 
   public static Image image(Widget widget, AppImage image) {
-    return images(widget).image(image);
+    return images(widget).image(widget.getDisplay(), image);
   }
 
   public static Image maridIcon(Widget widget, int size, Color color) {
-    return images(widget).maridIcon(size, color);
+    return images(widget).maridIcon(widget.getDisplay(), size, color);
   }
 
   public static Image maridIcon(Widget widget, int size) {
-    return images(widget).maridIcon(size);
+    return images(widget).maridIcon(widget.getDisplay(), size);
   }
 }
