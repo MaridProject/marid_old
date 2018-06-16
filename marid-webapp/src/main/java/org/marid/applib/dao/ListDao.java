@@ -13,29 +13,29 @@
  */
 package org.marid.applib.dao;
 
-import org.marid.applib.model.Id;
+import org.marid.applib.model.Elem;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ListDao<I, T extends Id<I>> {
+public interface ListDao<I, E extends Elem<I>> {
 
-  void add(T item);
+  void add(E item);
 
-  default void remove(T item) {
+  default void remove(E item) {
     remove(item.getId());
   }
 
   void remove(I id);
 
-  void update(T item);
+  void update(E item);
 
-  List<T> get();
+  List<E> get();
 
   Set<I> getIds();
 
-  default Optional<T> get(I id) {
+  default Optional<E> get(I id) {
     return get().stream().filter(e -> id.equals(e.getId())).findAny();
   }
 

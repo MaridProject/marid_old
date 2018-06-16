@@ -11,21 +11,12 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.projects;
+package org.marid.applib.model;
 
-import org.marid.applib.dao.SortedListStore;
-import org.marid.applib.model.ProjectItem;
-import org.marid.ui.webide.base.dao.ProjectDao;
-import org.springframework.stereotype.Component;
+import org.jetbrains.annotations.NotNull;
 
-@Component
-public class ProjectManager extends SortedListStore<String, ProjectItem, ProjectDao> {
+public interface Elem<I> {
 
-  public ProjectManager(ProjectDao dao) {
-    super(dao);
-  }
-
-  public long getSize(String id) {
-    return dao.getSize(id);
-  }
+  @NotNull
+  I getId();
 }

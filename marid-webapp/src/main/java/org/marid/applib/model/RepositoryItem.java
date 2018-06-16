@@ -20,7 +20,7 @@ import org.marid.misc.EHT;
 
 import java.util.TreeMap;
 
-public class RepositoryItem extends EHT implements Id<String> {
+public class RepositoryItem extends EHT implements Elem<String> {
 
   private transient final String id;
 

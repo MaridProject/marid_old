@@ -11,7 +11,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.controls;
+package org.marid.applib.controls.toolbar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;

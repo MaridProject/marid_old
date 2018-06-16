@@ -13,9 +13,9 @@
  */
 package org.marid.applib.dao;
 
-import org.marid.applib.model.Id;
+import org.marid.applib.model.Elem;
 
-public class SortedListStore<I extends Comparable<? super I>, T extends Id<I>, D extends ListDao<I, T>>
+public class SortedListStore<I extends Comparable<? super I>, T extends Elem<I>, D extends ListDao<I, T>>
     extends ListStore<I, T, D> {
 
   public SortedListStore(D dao) {

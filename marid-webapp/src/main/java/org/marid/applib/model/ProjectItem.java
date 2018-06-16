@@ -16,7 +16,7 @@ package org.marid.applib.model;
 import org.jetbrains.annotations.NotNull;
 import org.marid.misc.EHT;
 
-public final class ProjectItem extends EHT implements Id<String> {
+public final class ProjectItem extends EHT implements Elem<String> {
 
   private final String id;
 

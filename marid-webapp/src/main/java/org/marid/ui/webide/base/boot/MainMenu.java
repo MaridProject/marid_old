@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
-import org.marid.applib.controls.DropDownToolItem;
+import org.marid.applib.controls.toolbar.DropDownToolItem;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.applib.utils.Locales;

@@ -13,7 +13,7 @@
  */
 package org.marid.applib.dao;
 
-import org.marid.applib.model.Id;
+import org.marid.applib.model.Elem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +24,11 @@ import java.util.function.Consumer;
 import static java.util.Collections.emptyList;
 import static org.marid.applib.dao.ListStore.EventType.*;
 
-public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
+public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
 
   protected final D dao;
   protected final Logger logger;
-  protected final ArrayList<T> list = new ArrayList<>();
+  protected final ArrayList<E> list = new ArrayList<>();
   protected final EnumMap<EventType, Collection<Consumer<Event>>> listeners = new EnumMap<>(EventType.class);
 
   public ListStore(D dao) {
@@ -38,7 +38,7 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
 
   public void refresh() {
     final var newList = dao.get();
-    final var remove = new TreeMap<Integer, T>();
+    final var remove = new TreeMap<Integer, E>();
 
     for (int i = list.size() - 1; i >= 0; i--) {
       final var e = list.get(i);
@@ -65,9 +65,9 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
     return -list.size() - 1;
   }
 
-  public void add(List<T> added) {
-    final var addOrdered = new LinkedList<Map.Entry<Integer, T>>();
-    final var update = new TreeMap<Integer, T>();
+  public void add(List<E> added) {
+    final var addOrdered = new LinkedList<Map.Entry<Integer, E>>();
+    final var update = new TreeMap<Integer, E>();
     for (final var e : added) {
       final int index = locateIndex(e.getId());
       if (index < 0) {
@@ -76,13 +76,13 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
         list.add(pos, e);
         dao.add(e);
       } else if (!e.equals(list.get(index))) {
+        list.set(index, e);
         update.put(index, e);
-        dao.update(e);
       }
     }
     if (!addOrdered.isEmpty()) {
       final var add = addOrdered.stream().reduce(
-          new TreeMap<Integer, T>(),
+          new TreeMap<Integer, E>(),
           (a, e) -> {
             if (a.isEmpty()) {
               a.put(e.getKey(), e.getValue());
@@ -106,24 +106,8 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
     }
   }
 
-  public void remove(List<I> removed) {
-    final var remove = new TreeMap<Integer, T>();
-    for (final var id : removed) {
-      final int index = locateIndex(id);
-      if (index >= 0) {
-        final var e = get(index);
-        remove.put(index, e);
-        dao.remove(e);
-      }
-    }
-    if (!remove.isEmpty()) {
-      remove.descendingKeySet().stream().mapToInt(Integer::intValue).forEach(list::remove);
-      listeners.getOrDefault(REMOVE, emptyList()).forEach(new Event(remove)::fire);
-    }
-  }
-
   public void remove(int... indices) {
-    final TreeMap<Integer, T> remove = new TreeMap<>();
+    final TreeMap<Integer, E> remove = new TreeMap<>();
     for (final int i : indices) {
       if (i >= 0 && i < list.size()) {
         final var e = list.get(i);
@@ -138,30 +122,13 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
   }
 
   public void update(int... indices) {
-    final TreeMap<Integer, T> update = new TreeMap<>();
+    final TreeMap<Integer, E> update = new TreeMap<>();
     for (final int i : indices) {
       if (i >= 0 && i < list.size()) {
         final var e = list.get(i);
         update.put(i, e);
         dao.update(e);
       }
-    }
-    if (!update.isEmpty()) {
-      listeners.getOrDefault(UPDATE, emptyList()).forEach(new Event(update)::fire);
-    }
-  }
-
-  @SafeVarargs
-  public final void update(T... items) {
-    final TreeMap<Integer, T> update = new TreeMap<>();
-    for (final var item : items) {
-      final int i = locateIndex(item.getId());
-      if (i < 0) {
-        continue;
-      }
-      update.put(i, item);
-      list.set(i, item);
-      dao.update(item);
     }
     if (!update.isEmpty()) {
       listeners.getOrDefault(UPDATE, emptyList()).forEach(new Event(update)::fire);
@@ -177,7 +144,7 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
     listeners.computeIfPresent(type, (k, old) -> old.remove(listener) && old.isEmpty() ? null : old);
   }
 
-  public T get(int index) {
+  public E get(int index) {
     return list.get(index);
   }
 
@@ -191,13 +158,13 @@ public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
 
   public class Event {
 
-    public final TreeMap<Integer, T> update;
+    public final TreeMap<Integer, E> update;
 
-    public Event(TreeMap<Integer, T> update) {
+    public Event(TreeMap<Integer, E> update) {
       this.update = update;
     }
 
-    public ListStore<I, T, D> getSource() {
+    public ListStore<I, E, D> getSource() {
       return ListStore.this;
     }
 

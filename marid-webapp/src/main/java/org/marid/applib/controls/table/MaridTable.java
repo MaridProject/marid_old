@@ -11,8 +11,9 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.controls;
+package org.marid.applib.controls.table;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -25,8 +26,8 @@ import java.util.function.Consumer;
 import static java.util.Collections.emptyList;
 import static java.util.stream.IntStream.of;
 import static java.util.stream.IntStream.rangeClosed;
-import static org.marid.applib.controls.MaridTable.EventType.ADD;
-import static org.marid.applib.controls.MaridTable.EventType.REMOVE;
+import static org.marid.applib.controls.table.MaridTable.EventType.ADD;
+import static org.marid.applib.controls.table.MaridTable.EventType.REMOVE;
 
 public class MaridTable extends Table {
 
@@ -86,6 +87,14 @@ public class MaridTable extends Table {
     public MaridTable getTable() {
       return MaridTable.this;
     }
+
+    public void setTexts(String... values) {
+      setText(values);
+    }
+
+    public void setImages(Image... images) {
+      setImage(images);
+    }
   }
 
   public enum EventType {
@@ -99,10 +108,6 @@ public class MaridTable extends Table {
 
     private Event(int... indices) {
       this.indices = indices;
-    }
-
-    public MaridTable getTable() {
-      return MaridTable.this;
     }
 
     public int[] getIndices() {

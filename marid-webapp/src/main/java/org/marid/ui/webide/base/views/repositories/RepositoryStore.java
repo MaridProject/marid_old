@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class RepositoryManager extends SortedListStore<String, RepositoryItem, RepositoryDao> {
+public class RepositoryStore extends SortedListStore<String, RepositoryItem, RepositoryDao> {
 
-  public RepositoryManager(RepositoryDao dao) {
+  public RepositoryStore(RepositoryDao dao) {
     super(dao);
   }
 

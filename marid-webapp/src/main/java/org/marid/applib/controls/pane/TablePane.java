@@ -11,25 +11,25 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.applib.controls;
+package org.marid.applib.controls.pane;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
+import org.marid.applib.controls.table.MaridTable;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.selection.SelectionManager;
 import org.marid.applib.utils.Tables;
 
 import java.util.function.Consumer;
 
-import static org.eclipse.swt.SWT.NONE;
-import static org.eclipse.swt.SWT.Selection;
-import static org.marid.applib.controls.MaridTable.EventType.ADD;
-import static org.marid.applib.controls.MaridTable.EventType.REMOVE;
+import static org.eclipse.swt.SWT.*;
+import static org.marid.applib.controls.table.MaridTable.EventType.ADD;
+import static org.marid.applib.controls.table.MaridTable.EventType.REMOVE;
 
-public class TablePane extends Pane {
+public abstract class TablePane extends Pane {
 
   protected final MaridTable table;
   protected final SelectionManager selectionManager;
@@ -43,6 +43,10 @@ public class TablePane extends Pane {
     selectionManager = new SelectionManager(table);
 
     Tables.autoResizeColumns(table);
+  }
+
+  public TablePane(Composite parent) {
+    this(parent, NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
   }
 
   @SafeVarargs
