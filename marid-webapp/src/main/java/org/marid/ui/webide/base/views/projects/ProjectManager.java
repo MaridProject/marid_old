@@ -13,13 +13,13 @@
  */
 package org.marid.ui.webide.base.views.projects;
 
-import org.marid.applib.dao.SortedListManager;
+import org.marid.applib.dao.SortedListStore;
 import org.marid.applib.model.ProjectItem;
 import org.marid.ui.webide.base.dao.ProjectDao;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProjectManager extends SortedListManager<String, ProjectItem, ProjectDao> {
+public class ProjectManager extends SortedListStore<String, ProjectItem, ProjectDao> {
 
   public ProjectManager(ProjectDao dao) {
     super(dao);

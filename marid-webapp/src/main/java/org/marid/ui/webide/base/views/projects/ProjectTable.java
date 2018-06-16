@@ -24,11 +24,11 @@ import org.marid.applib.image.ToolIcon;
 import org.marid.applib.model.ProjectItem;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
-import org.marid.ui.webide.base.common.UserImages;
 
 import java.util.List;
 
 import static org.eclipse.swt.SWT.*;
+import static org.marid.applib.image.UserImages.image;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
 import static org.marid.applib.validators.InputValidators.*;
@@ -37,8 +37,8 @@ import static org.marid.misc.StringUtils.sizeBinary;
 @SpringComponent
 public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager> {
 
-  public ProjectTable(ProjectTab tab, UserImages images, ProjectManager manager) {
-    super(manager, images, tab.getParent(), NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
+  public ProjectTable(ProjectTab tab, ProjectManager manager) {
+    super(manager, tab.getParent(), NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
     tab.setControl(this);
     table.setLinesVisible(true);
     addColumn(s("name"), 150);
@@ -47,10 +47,10 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
   }
 
   @Init
-  public void addButton(UserImages images) {
+  public void addButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(images.image(ToolIcon.ADD));
-    item.addListener(Selection, e -> Dialogs.input(images)
+    item.setImage(image(item, ToolIcon.ADD));
+    item.addListener(Selection, e -> Dialogs.input()
         .setIcon(AppIcon.PROJECT)
         .setShell(getShell())
         .setMessage(m("newProjectName") + ":")
@@ -71,8 +71,8 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
   @Init
   public void editButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(images.image(ToolIcon.EDIT));
-    setupSelectionEnabled(item);
+    item.setImage(image(item, ToolIcon.EDIT));
+    enableOnSelection(item::setEnabled);
   }
 
   @Override
@@ -82,6 +82,6 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
 
   @Override
   protected Image[] getRowImages(ProjectItem data) {
-    return new Image[]{images.image(AppIcon.PROJECT), null};
+    return new Image[]{image(this, AppIcon.PROJECT), null};
   }
 }

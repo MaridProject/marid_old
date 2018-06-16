@@ -21,15 +21,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.marid.applib.image.AppIcon;
-import org.marid.ui.webide.base.common.UserImages;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class InputDialogBuilder {
+import static org.marid.applib.image.UserImages.image;
 
-  private final UserImages userImages;
+public class InputDialogBuilder {
 
   private AppIcon icon;
   private String title;
@@ -38,10 +37,6 @@ public class InputDialogBuilder {
   private String value;
   private IInputValidator validator;
   private Consumer<Optional<String>> callback;
-
-  InputDialogBuilder(UserImages userImages) {
-    this.userImages = userImages;
-  }
 
   public InputDialogBuilder setShell(Shell shell) {
     this.shell = shell;
@@ -97,7 +92,7 @@ public class InputDialogBuilder {
       public void create() {
         super.create();
         if (icon != null) {
-          getShell().setImage(userImages.image(icon));
+          getShell().setImage(image(getShell(), icon));
         }
       }
 

@@ -15,7 +15,7 @@ package org.marid.app.common;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.Display;
 import org.marid.applib.image.AppImage;
 import org.marid.image.MaridIcon;
 import org.slf4j.Logger;
@@ -72,11 +72,11 @@ public class Images {
     });
   }
 
-  public Image image(Widget widget, AppImage image) {
-    return new Image(widget.getDisplay(), image(image));
+  public Image image(Display display, AppImage image) {
+    return new Image(display, image(image));
   }
 
-  public Image maridIcon(Widget widget, int size, Color color) {
+  public Image maridIcon(Display display, int size, Color color) {
     final var data = maridIcons.computeIfAbsent(size, s -> {
       final var img = MaridIcon.getImage(size, color);
       final var buf = new ByteArrayOutputStream(size * size * 64);
@@ -87,10 +87,10 @@ public class Images {
       }
       return new ImageData(new ByteArrayInputStream(buf.toByteArray()));
     });
-    return new Image(widget.getDisplay(), data);
+    return new Image(display, data);
   }
 
-  public Image maridIcon(Widget widget, int size) {
-    return maridIcon(widget, size, Color.GREEN);
+  public Image maridIcon(Display display, int size) {
+    return maridIcon(display, size, Color.GREEN);
   }
 }

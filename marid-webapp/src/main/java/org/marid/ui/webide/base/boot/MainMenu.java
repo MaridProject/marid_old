@@ -25,29 +25,30 @@ import org.marid.applib.utils.Locales;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.UI;
-import org.marid.ui.webide.base.common.UserImages;
 
 import static org.eclipse.swt.SWT.*;
 import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
+import static org.marid.applib.image.UserImages.image;
+import static org.marid.applib.image.UserImages.maridIcon;
 
 @SpringComponent
 public class MainMenu extends ToolBar {
 
   private final DropDownToolItem sessionItem;
 
-  public MainMenu(UI ui, UserImages images) {
+  public MainMenu(UI ui) {
     super(ui.shell, BORDER | WRAP | SHADOW_OUT);
     setLayoutData(new GridData(FILL_HORIZONTAL));
 
     sessionItem = new DropDownToolItem(this);
-    sessionItem.setImage(images.maridIcon(24));
+    sessionItem.setImage(maridIcon(this, 24));
   }
 
   @Init
-  public void closeSessionItem(UserImages images) {
+  public void closeSessionItem() {
     final MenuItem item = new MenuItem(sessionItem.menu, SWT.PUSH);
     item.setText(Locales.s("closeSession"));
-    item.setImage(images.image(AppIcon.CLOSE));
+    item.setImage(image(item, AppIcon.CLOSE));
     item.addListener(SWT.Selection, e -> {
       final var jsExecutor = RWT.getClient().getService(JavaScriptExecutor.class);
       jsExecutor.execute("window.location.replace('/logout')");

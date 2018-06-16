@@ -15,10 +15,10 @@ package org.marid.applib.dao;
 
 import org.marid.applib.model.Id;
 
-public class SortedListManager<I extends Comparable<? super I>, T extends Id<I>, D extends ListDao<I, T>>
-    extends ListManager<I, T, D> {
+public class SortedListStore<I extends Comparable<? super I>, T extends Id<I>, D extends ListDao<I, T>>
+    extends ListStore<I, T, D> {
 
-  public SortedListManager(D dao) {
+  public SortedListStore(D dao) {
     super(dao);
   }
 

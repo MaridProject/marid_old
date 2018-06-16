@@ -13,25 +13,31 @@
  */
 package org.marid.applib.controls;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.ToolItem;
+import org.marid.applib.image.ToolIcon;
 import org.marid.applib.selection.SelectionManager;
 import org.marid.applib.utils.Tables;
 
 import java.util.function.Consumer;
 
 import static org.eclipse.swt.SWT.NONE;
+import static org.eclipse.swt.SWT.Selection;
+import static org.marid.applib.controls.MaridTable.EventType.ADD;
+import static org.marid.applib.controls.MaridTable.EventType.REMOVE;
+import static org.marid.applib.image.UserImages.image;
 
 public class TablePane extends Pane {
 
-  protected final Table table;
+  protected final MaridTable table;
   protected final SelectionManager selectionManager;
 
   public TablePane(Composite parent, int style, int toolbarStyle, int tableStyle) {
     super(parent, style, toolbarStyle);
-    table = new Table(this, tableStyle);
+    table = new MaridTable(this, tableStyle);
     table.setHeaderVisible(true);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
     selectionManager = new SelectionManager(table);
@@ -47,5 +53,31 @@ public class TablePane extends Pane {
     for (final var consumer : consumers) {
       consumer.accept(column);
     }
+  }
+
+  protected void addSelectAllButton() {
+    final var item = new ToolItem(toolbar, SWT.PUSH);
+    item.setImage(image(item, ToolIcon.SELECT_ALL));
+    item.addListener(Selection, e -> selectionManager.selectAll());
+    setupTableEmpty(item::setEnabled);
+  }
+
+  protected void addDeselectAllButton() {
+    final var item = new ToolItem(toolbar, SWT.PUSH);
+    item.setImage(image(item, ToolIcon.DESELECT_ALL));
+    item.addListener(Selection, e -> selectionManager.deselectAll());
+    setupTableEmpty(item::setEnabled);
+  }
+
+  protected void enableOnSelection(Consumer<Boolean> enabled) {
+    table.addListener(Selection, e -> enabled.accept(selectionManager.isSelected()));
+    table.addListener(REMOVE, e -> enabled.accept(selectionManager.isSelected()));
+    enabled.accept(selectionManager.isSelected());
+  }
+
+  protected void setupTableEmpty(Consumer<Boolean> enabled) {
+    enabled.accept(table.getItemCount() > 0);
+    table.addListener(REMOVE, e -> enabled.accept(table.getItemCount() > 0));
+    table.addListener(ADD, e -> enabled.accept(true));
   }
 }

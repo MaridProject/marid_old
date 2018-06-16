@@ -13,7 +13,7 @@
  */
 package org.marid.ui.webide.base.views.repositories;
 
-import org.marid.applib.dao.SortedListManager;
+import org.marid.applib.dao.SortedListStore;
 import org.marid.applib.model.RepositoryItem;
 import org.marid.applib.repository.Repository;
 import org.marid.ui.webide.base.dao.RepositoryDao;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class RepositoryManager extends SortedListManager<String, RepositoryItem, RepositoryDao> {
+public class RepositoryManager extends SortedListStore<String, RepositoryItem, RepositoryDao> {
 
   public RepositoryManager(RepositoryDao dao) {
     super(dao);

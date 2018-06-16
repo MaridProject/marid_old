@@ -22,16 +22,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
-import static org.marid.applib.dao.ListManager.EventType.*;
+import static org.marid.applib.dao.ListStore.EventType.*;
 
-public class ListManager<I, T extends Id<I>, D extends ListDao<I, T>> {
+public class ListStore<I, T extends Id<I>, D extends ListDao<I, T>> {
 
   protected final D dao;
   protected final Logger logger;
   protected final ArrayList<T> list = new ArrayList<>();
   protected final EnumMap<EventType, Collection<Consumer<Event>>> listeners = new EnumMap<>(EventType.class);
 
-  public ListManager(D dao) {
+  public ListStore(D dao) {
     this.dao = dao;
     this.logger = LoggerFactory.getLogger(getClass());
   }
@@ -197,8 +197,8 @@ public class ListManager<I, T extends Id<I>, D extends ListDao<I, T>> {
       this.update = update;
     }
 
-    public ListManager<I, T, D> getSource() {
-      return ListManager.this;
+    public ListStore<I, T, D> getSource() {
+      return ListStore.this;
     }
 
     public void fire(Consumer<Event> listener) {
