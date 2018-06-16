@@ -35,6 +35,11 @@ public class RepositoryItem extends EHT implements Elem<String> {
     return selector;
   }
 
+  public RepositoryItem setSelector(String selector) {
+    this.selector = selector;
+    return this;
+  }
+
   public TreeMap<String, String> getProperties() {
     return properties;
   }

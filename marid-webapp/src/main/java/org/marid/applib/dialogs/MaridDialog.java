@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.intellij.lang.annotations.MagicConstant;
@@ -85,7 +86,7 @@ public abstract class MaridDialog extends Dialog {
       switch (buttonId) {
         case OK_ID: createButton(parent, buttonId, s("ok"), true); break;
         case CANCEL_ID: createButton(parent, buttonId, s("cancel"), true); break;
-        case PROCEED_ID: createButton(parent, buttonId, s("proceed"), false); break;
+        case PROCEED_ID: createButton(parent, buttonId, s("proceed"), true); break;
         case ABORT_ID: createButton(parent, buttonId, s("abort"), false); break;
         case NEXT_ID: createButton(parent, buttonId, s("next"), false); break;
         case BACK_ID: createButton(parent, buttonId, s("back"), false); break;
@@ -95,5 +96,9 @@ public abstract class MaridDialog extends Dialog {
         case NO_ID: createButton(parent, buttonId, s("no"), true); break;
       }
     }
+  }
+
+  public Display getDisplay() {
+    return getShell().getDisplay();
   }
 }

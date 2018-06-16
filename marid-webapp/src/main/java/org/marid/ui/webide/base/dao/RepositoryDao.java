@@ -59,7 +59,7 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
   @Override
   public void remove(String id) {
     try {
-      Files.deleteIfExists(directory.resolve(id + ".properties"));
+      Files.delete(directory.resolve(id + ".repo"));
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
@@ -114,11 +114,5 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
     return ServiceLoader.load(RepositoryProvider.class).stream()
         .map(Provider::get)
         .collect(toMap(RepositoryProvider::getName, p -> p, (v1, v2) -> v2, TreeMap::new));
-  }
-
-  public TreeMap<String, String> selectorsMap() {
-    return ServiceLoader.load(RepositoryProvider.class).stream()
-        .map(Provider::get)
-        .collect(toMap(RepositoryProvider::getName, RepositoryProvider::getDescription, (v1, v2) -> v2, TreeMap::new));
   }
 }

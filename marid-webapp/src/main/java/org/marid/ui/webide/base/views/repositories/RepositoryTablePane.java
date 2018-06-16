@@ -55,14 +55,14 @@ public class RepositoryTablePane extends TablePane {
   }
 
   @Init
-  public void addAddButton(ObjectFactory<RepositoryDialog> dialog) {
+  public void addButton(ObjectFactory<RepositoryAddDialog> dialog) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.ADD));
     item.addListener(Selection, e -> dialog.getObject().open());
   }
 
   @Init
-  public void addRemoveButton(RepositoryStore store) {
+  public void removeButton(RepositoryStore store) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.REMOVE));
     item.addListener(Selection, e -> store.remove(selectionManager.getSelected()));
@@ -70,7 +70,7 @@ public class RepositoryTablePane extends TablePane {
   }
 
   @Init
-  public void addRefreshButtons(RepositoryStore store) {
+  public void refreshButtons(RepositoryStore store) {
     addSeparator();
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.REFRESH));
@@ -78,7 +78,7 @@ public class RepositoryTablePane extends TablePane {
   }
 
   @Init
-  public void initStdButtons() {
+  public void stdButtons() {
     addSeparator();
     addSelectAllButton();
     addDeselectAllButton();
