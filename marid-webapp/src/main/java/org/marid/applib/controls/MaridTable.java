@@ -58,7 +58,9 @@ public class MaridTable extends Table {
 
   @Override
   public void removeAll() {
-    remove(0, getItemCount());
+    if (getItemCount() > 0) {
+      remove(0, getItemCount() - 1);
+    }
   }
 
   public Consumer<Event> addListener(EventType eventType, Consumer<Event> listener) {
