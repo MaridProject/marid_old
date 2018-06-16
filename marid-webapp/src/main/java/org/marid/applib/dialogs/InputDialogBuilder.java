@@ -16,17 +16,13 @@ package org.marid.applib.dialogs;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.marid.applib.image.AppIcon;
+import org.marid.applib.image.WithImages;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import static org.marid.applib.image.UserImages.image;
 
 public class InputDialogBuilder {
 
@@ -87,43 +83,55 @@ public class InputDialogBuilder {
   }
 
   public void open() {
-    final var dialog = new InputDialog(shell, title, message, value, validator) {
-      @Override
-      public void create() {
-        super.create();
-        if (icon != null) {
-          getShell().setImage(image(getShell(), icon));
-        }
-      }
-
-      @Override
-      protected Control createDialogArea(Composite parent) {
-        final var composite = (Composite) super.createDialogArea(parent);
-        Stream.of(composite.getChildren())
-            .filter(Text.class::isInstance)
-            .filter(c -> (c.getStyle() & SWT.READ_ONLY) != 0)
-            .findFirst()
-            .ifPresent(c -> c.setForeground(c.getDisplay().getSystemColor(SWT.COLOR_RED)));
-        return composite;
-      }
-
-      @Override
-      public boolean close() {
-        final boolean result = super.close();
-        if (callback != null) {
-          switch (getReturnCode()) {
-            case OK:
-              callback.accept(Optional.ofNullable(getValue()));
-              break;
-            default:
-              callback.accept(Optional.empty());
-              break;
-          }
-        }
-        return result;
-      }
-    };
+    final var dialog = new Dialog();
     dialog.setBlockOnOpen(false);
     dialog.open();
+  }
+
+  protected class Dialog extends InputDialog implements WithImages {
+
+    protected Dialog() {
+      super(shell, title, message, value, validator);
+    }
+
+    @Override
+    public void create() {
+      super.create();
+      if (icon != null) {
+        getShell().setImage(image(icon));
+      }
+    }
+
+    @Override
+    public Display getDisplay() {
+      return getShell().getDisplay();
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+      final var composite = (Composite) super.createDialogArea(parent);
+      Stream.of(composite.getChildren())
+          .filter(Text.class::isInstance)
+          .filter(c -> (c.getStyle() & SWT.READ_ONLY) != 0)
+          .findFirst()
+          .ifPresent(c -> c.setForeground(c.getDisplay().getSystemColor(SWT.COLOR_RED)));
+      return composite;
+    }
+
+    @Override
+    public boolean close() {
+      final boolean result = super.close();
+      if (callback != null) {
+        switch (getReturnCode()) {
+          case OK:
+            callback.accept(Optional.ofNullable(getValue()));
+            break;
+          default:
+            callback.accept(Optional.empty());
+            break;
+        }
+      }
+      return result;
+    }
   }
 }

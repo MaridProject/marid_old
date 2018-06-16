@@ -15,20 +15,20 @@ package org.marid.ui.webide.base.views.projects;
 
 import org.eclipse.swt.widgets.TabItem;
 import org.marid.applib.image.AppIcon;
+import org.marid.applib.image.WithImages;
 import org.marid.applib.utils.Locales;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.boot.MainTabs;
 
 import static org.eclipse.swt.SWT.NONE;
-import static org.marid.applib.image.UserImages.image;
 
 @SpringComponent
-public class ProjectTab extends TabItem {
+public class ProjectTab extends TabItem implements WithImages {
 
   public ProjectTab(MainTabs mainTabs) {
     super(mainTabs, NONE);
 
     setText(Locales.s("projects"));
-    setImage(image(this, AppIcon.PROJECT));
+    setImage(image(AppIcon.PROJECT));
   }
 }

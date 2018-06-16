@@ -13,6 +13,7 @@
  */
 package org.marid.app.common;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
@@ -22,7 +23,6 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -76,9 +76,9 @@ public class Images {
     return new Image(display, image(image));
   }
 
-  public Image maridIcon(Display display, int size, Color color) {
+  public Image maridIcon(Display display, int size, int r, int g, int b, int a) {
     final var data = maridIcons.computeIfAbsent(size, s -> {
-      final var img = MaridIcon.getImage(size, color);
+      final var img = MaridIcon.getImage(size, r, g, b, a);
       final var buf = new ByteArrayOutputStream(size * size * 64);
       try {
         ImageIO.write(img, "gif", buf);
@@ -90,7 +90,7 @@ public class Images {
     return new Image(display, data);
   }
 
-  public Image maridIcon(Display display, int size) {
-    return maridIcon(display, size, Color.GREEN);
+  public Image maridIcon(Display display, int size, Color color) {
+    return maridIcon(display, size, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
   }
 }

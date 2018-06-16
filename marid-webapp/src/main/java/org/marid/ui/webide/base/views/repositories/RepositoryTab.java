@@ -15,19 +15,19 @@ package org.marid.ui.webide.base.views.repositories;
 
 import org.eclipse.swt.widgets.TabItem;
 import org.marid.applib.image.AppIcon;
+import org.marid.applib.image.WithImages;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.views.projects.ProjectTab;
 
 import static org.eclipse.swt.SWT.NONE;
-import static org.marid.applib.image.UserImages.image;
 import static org.marid.applib.utils.Locales.s;
 
 @SpringComponent
-public class RepositoryTab extends TabItem {
+public class RepositoryTab extends TabItem implements WithImages {
 
   public RepositoryTab(ProjectTab tab) {
     super(tab.getParent(), NONE);
     setText(s("repositories"));
-    setImage(image(this, AppIcon.REPOSITORY));
+    setImage(image(AppIcon.REPOSITORY));
   }
 }

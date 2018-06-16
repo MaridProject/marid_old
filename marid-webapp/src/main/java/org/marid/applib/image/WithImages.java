@@ -13,18 +13,37 @@
  */
 package org.marid.applib.image;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.marid.app.common.Images;
 import org.marid.ui.webide.base.boot.MainEntryPoint;
 
+@FunctionalInterface
 public interface WithImages {
 
   Display getDisplay();
+
+  static WithImages images(WithImages images) {
+    return images;
+  }
 
   default Image image(AppImage image) {
     final var display = getDisplay();
     final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
     return images.image(display, image);
+  }
+
+  default Image maridIcon(int size, Color color) {
+    final var display = getDisplay();
+    final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
+    return images.maridIcon(display, size, color);
+  }
+
+  default Image maridIcon(int size) {
+    final var display = getDisplay();
+    final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
+    return images.maridIcon(display, size, display.getSystemColor(SWT.COLOR_GREEN));
   }
 }
