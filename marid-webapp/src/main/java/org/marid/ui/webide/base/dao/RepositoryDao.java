@@ -23,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -72,11 +71,11 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
 
   @Override
   public List<RepositoryItem> get() {
-    try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.repo")) {
-      final LinkedList<RepositoryItem> list = new LinkedList<>();
+    try (final var files = Files.newDirectoryStream(directory, "*.repo")) {
+      final var list = new LinkedList<RepositoryItem>();
       for (final var file : files) {
         final var id = StringUtils.stripFilenameExtension(file.getFileName().toString());
-        final RepositoryItem item = new RepositoryItem(id);
+        final var item = new RepositoryItem(id);
         final var objectReader = MAPPER.readerForUpdating(item);
         try (final var reader = Files.newBufferedReader(file, UTF_8)) {
           objectReader.readValue(reader);
@@ -97,7 +96,7 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
 
   @Override
   public Set<String> getIds() {
-    try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties")) {
+    try (final var files = Files.newDirectoryStream(directory, "*.properties")) {
       return MaridIterators.stream(files)
           .map(Path::getFileName)
           .map(Path::toString)
