@@ -59,14 +59,14 @@ public class TablePane extends Pane {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(item, ToolIcon.SELECT_ALL));
     item.addListener(Selection, e -> selectionManager.selectAll());
-    setupTableEmpty(item::setEnabled);
+    enableOnNonEmpty(item::setEnabled);
   }
 
   protected void addDeselectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(item, ToolIcon.DESELECT_ALL));
     item.addListener(Selection, e -> selectionManager.deselectAll());
-    setupTableEmpty(item::setEnabled);
+    enableOnNonEmpty(item::setEnabled);
   }
 
   protected void enableOnSelection(Consumer<Boolean> enabled) {
@@ -75,7 +75,7 @@ public class TablePane extends Pane {
     enabled.accept(selectionManager.isSelected());
   }
 
-  protected void setupTableEmpty(Consumer<Boolean> enabled) {
+  protected void enableOnNonEmpty(Consumer<Boolean> enabled) {
     enabled.accept(table.getItemCount() > 0);
     table.addListener(REMOVE, e -> enabled.accept(table.getItemCount() > 0));
     table.addListener(ADD, e -> enabled.accept(true));
