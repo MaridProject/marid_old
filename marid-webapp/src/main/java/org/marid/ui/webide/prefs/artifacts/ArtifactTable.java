@@ -11,18 +11,15 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.boot;
+package org.marid.ui.webide.prefs.artifacts;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.layout.GridData;
+import org.marid.applib.controls.pane.TablePane;
 import org.marid.spring.annotation.SpringComponent;
 
 @SpringComponent
-public class MainTabs extends CTabFolder {
+public class ArtifactTable extends TablePane {
 
-  public MainTabs(MainMenu menu) {
-    super(menu.getShell(), SWT.TOP | SWT.FLAT | SWT.BORDER);
-    setLayoutData(new GridData(GridData.FILL_BOTH));
+  public ArtifactTable(ArtifactTab tab) {
+    super(tab.getParent());
   }
 }

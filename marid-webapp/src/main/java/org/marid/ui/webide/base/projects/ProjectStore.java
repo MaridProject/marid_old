@@ -11,18 +11,21 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.boot;
+package org.marid.ui.webide.base.projects;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.layout.GridData;
-import org.marid.spring.annotation.SpringComponent;
+import org.marid.applib.dao.SortedListStore;
+import org.marid.applib.model.ProjectItem;
+import org.marid.ui.webide.base.dao.ProjectDao;
+import org.springframework.stereotype.Component;
 
-@SpringComponent
-public class MainTabs extends CTabFolder {
+@Component
+public class ProjectStore extends SortedListStore<String, ProjectItem, ProjectDao> {
 
-  public MainTabs(MainMenu menu) {
-    super(menu.getShell(), SWT.TOP | SWT.FLAT | SWT.BORDER);
-    setLayoutData(new GridData(GridData.FILL_BOTH));
+  public ProjectStore(ProjectDao dao) {
+    super(dao);
+  }
+
+  public long getSize(String id) {
+    return dao.getSize(id);
   }
 }

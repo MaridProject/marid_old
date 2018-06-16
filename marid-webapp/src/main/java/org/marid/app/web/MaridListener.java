@@ -17,25 +17,30 @@ import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.application.ApplicationRunner;
 import org.marid.app.common.Directories;
-import org.marid.ui.webide.base.boot.MainEntryPoint;
+import org.marid.app.web.entrypoints.EntryPointConfigurer;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Map;
+import java.util.List;
 
 @Component
 public class MaridListener implements ServletContextListener, ApplicationConfiguration {
 
   private final GenericApplicationContext context;
   private final String directory;
+  private final ObjectProvider<List<? extends EntryPointConfigurer>> entryPointConfigurers;
 
   private ApplicationRunner runner;
 
-  public MaridListener(GenericApplicationContext context, Directories directories) {
+  public MaridListener(GenericApplicationContext context,
+                       Directories directories,
+                       ObjectProvider<List<? extends EntryPointConfigurer>> entryPointConfigurers) {
     this.context = context;
     this.directory = directories.getRwtDir().toString();
+    this.entryPointConfigurers = entryPointConfigurers;
   }
 
   @Override
@@ -56,6 +61,8 @@ public class MaridListener implements ServletContextListener, ApplicationConfigu
 
   @Override
   public void configure(Application application) {
-    application.addEntryPoint("/main.marid", () -> new MainEntryPoint(context), Map.of());
+    for (final var configurer : entryPointConfigurers.getObject()) {
+      configurer.configure(application, context);
+    }
   }
 }

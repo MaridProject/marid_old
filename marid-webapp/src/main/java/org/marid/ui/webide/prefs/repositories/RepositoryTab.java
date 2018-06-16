@@ -11,13 +11,13 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.repositories;
+package org.marid.ui.webide.prefs.repositories;
 
 import org.eclipse.swt.widgets.TabItem;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.spring.annotation.SpringComponent;
-import org.marid.ui.webide.base.views.projects.ProjectTab;
+import org.marid.ui.webide.prefs.PrefTabs;
 
 import static org.eclipse.swt.SWT.NONE;
 import static org.marid.applib.utils.Locales.s;
@@ -25,8 +25,8 @@ import static org.marid.applib.utils.Locales.s;
 @SpringComponent
 public class RepositoryTab extends TabItem implements WithImages {
 
-  public RepositoryTab(ProjectTab tab) {
-    super(tab.getParent(), NONE);
+  public RepositoryTab(PrefTabs tabs) {
+    super(tabs, NONE);
     setText(s("repositories"));
     setImage(image(AppIcon.REPOSITORY));
   }

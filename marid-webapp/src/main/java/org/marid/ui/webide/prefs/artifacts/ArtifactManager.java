@@ -11,7 +11,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.artifacts;
+package org.marid.ui.webide.prefs.artifacts;
 
 import org.marid.applib.repository.Artifact;
 import org.marid.ui.webide.base.dao.ArtifactDao;
@@ -32,8 +32,7 @@ public class ArtifactManager {
   }
 
   public void addArtifacts(Collection<Artifact> artifacts) {
-    if (this.artifacts.addAll(artifacts)) {
-    }
+    this.artifacts.addAll(artifacts);
   }
 
   public void save() {

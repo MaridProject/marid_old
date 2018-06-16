@@ -11,21 +11,12 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.projects;
+package org.marid.app.web.entrypoints;
 
-import org.marid.applib.dao.SortedListStore;
-import org.marid.applib.model.ProjectItem;
-import org.marid.ui.webide.base.dao.ProjectDao;
-import org.springframework.stereotype.Component;
+import org.eclipse.rap.rwt.application.Application;
+import org.springframework.context.support.GenericApplicationContext;
 
-@Component
-public class ProjectStore extends SortedListStore<String, ProjectItem, ProjectDao> {
+public interface EntryPointConfigurer {
 
-  public ProjectStore(ProjectDao dao) {
-    super(dao);
-  }
-
-  public long getSize(String id) {
-    return dao.getSize(id);
-  }
+  void configure(Application application, GenericApplicationContext context);
 }

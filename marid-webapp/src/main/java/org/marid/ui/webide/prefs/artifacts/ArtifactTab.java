@@ -11,12 +11,12 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.artifacts;
+package org.marid.ui.webide.prefs.artifacts;
 
 import org.eclipse.swt.widgets.TabItem;
 import org.marid.applib.image.WithImages;
 import org.marid.spring.annotation.SpringComponent;
-import org.marid.ui.webide.base.views.repositories.RepositoryTab;
+import org.marid.ui.webide.prefs.repositories.RepositoryTab;
 
 import static org.eclipse.swt.SWT.NONE;
 import static org.marid.applib.image.AppIcon.ARTIFACT;
@@ -25,8 +25,8 @@ import static org.marid.applib.utils.Locales.s;
 @SpringComponent
 public class ArtifactTab extends TabItem implements WithImages {
 
-  public ArtifactTab(RepositoryTab tab) {
-    super(tab.getParent(), NONE);
+  public ArtifactTab(RepositoryTab repositoryTab) {
+    super(repositoryTab.getParent(), NONE);
     setText(s("artifacts"));
     setImage(image(ARTIFACT));
   }

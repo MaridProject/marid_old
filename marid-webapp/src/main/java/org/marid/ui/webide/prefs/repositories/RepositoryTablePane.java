@@ -11,47 +11,42 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.projects;
+package org.marid.ui.webide.prefs.repositories;
 
-import org.eclipse.rap.rwt.RWT;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.controls.table.MaridTable.Item;
-import org.marid.applib.dialogs.Dialogs;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
-import org.marid.applib.model.ProjectItem;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
+import org.springframework.beans.factory.ObjectFactory;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static org.eclipse.swt.SWT.NONE;
 import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.dao.ListStore.EventType.*;
-import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
-import static org.marid.applib.validators.InputValidators.*;
-import static org.marid.misc.StringUtils.sizeBinary;
 
 @SpringComponent
-public class ProjectTablePane extends TablePane {
+public class RepositoryTablePane extends TablePane {
 
-  public ProjectTablePane(ProjectTab tab) {
+  public RepositoryTablePane(RepositoryTab tab) {
     super(tab.getParent());
     tab.setControl(this);
-    addColumn(s("name"), 200);
-    addColumn(s("size"), 100);
+    addColumn(s("name"), 100);
+    addColumn(s("selector"), 100);
+    addColumn(s("parameters"), 100);
   }
 
   @Init
-  public void initStore(ProjectStore store) {
+  public void initStore(RepositoryStore store) {
     final Consumer<Item> itemSetup = item -> {
       final var e = store.get(table.indexOf(item));
-      item.setTexts(e.getId(), sizeBinary(RWT.getLocale(), store.getSize(e.getId()), 2));
-      item.setImages(image(AppIcon.PROJECT), null);
+      item.setTexts(e.getId(), e.getSelector());
+      item.setImages(image(AppIcon.REPOSITORY), null);
     };
     store.addListener(ADD, e -> e.update.forEach((index, v) -> itemSetup.accept(table.new Item(NONE, index))));
     store.addListener(REMOVE, e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));
@@ -60,23 +55,14 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void addButton(ProjectStore store) {
+  public void addButton(ObjectFactory<RepositoryAddDialog> dialog) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.ADD));
-    item.addListener(Selection, e -> Dialogs.input()
-        .setIcon(AppIcon.PROJECT)
-        .setShell(getShell())
-        .setMessage(m("newProjectName") + ":")
-        .setTitle(s("addProject"))
-        .setValue("project")
-        .setValidator(inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id)))))
-        .setCallback(v -> v.ifPresent(txt -> store.add(List.of(new ProjectItem(txt)))))
-        .open()
-    );
+    item.addListener(Selection, e -> dialog.getObject().open());
   }
 
   @Init
-  public void removeButton(ProjectStore store) {
+  public void removeButton(RepositoryStore store) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.REMOVE));
     item.addListener(Selection, e -> store.remove(selectionManager.getSelected()));
@@ -84,7 +70,7 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void refreshButtons(ProjectStore store) {
+  public void refreshButtons(RepositoryStore store) {
     addSeparator();
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.REFRESH));

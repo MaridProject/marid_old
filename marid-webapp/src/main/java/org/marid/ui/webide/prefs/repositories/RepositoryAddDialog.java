@@ -11,7 +11,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.repositories;
+package org.marid.ui.webide.prefs.repositories;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -64,7 +64,7 @@ public class RepositoryAddDialog extends MaridDialog implements WithImages {
     onInit.add(p -> {
       final var text = new Text(p, SWT.BORDER);
       text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      text.setText("repository");
+      text.setText(name);
       text.addListener(SWT.Modify, e -> name = text.getText());
     });
   }

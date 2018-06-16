@@ -13,19 +13,18 @@
  */
 package org.marid.ui.webide.base.boot;
 
-import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.client.service.JavaScriptExecutor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
-import org.marid.applib.controls.toolbar.DropDownToolItem;
-import org.marid.applib.image.AppIcon;
+import org.eclipse.swt.widgets.ToolItem;
+import org.marid.applib.image.ToolIcon;
 import org.marid.applib.image.WithImages;
-import org.marid.applib.utils.Locales;
+import org.marid.spring.ContextUtils;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.UI;
+import org.marid.ui.webide.prefs.PrefShell;
+import org.springframework.context.support.GenericApplicationContext;
 
 import static org.eclipse.swt.SWT.*;
 import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
@@ -33,24 +32,19 @@ import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
 @SpringComponent
 public class MainMenu extends ToolBar implements WithImages {
 
-  private final DropDownToolItem sessionItem;
-
   public MainMenu(UI ui) {
     super(ui.shell, BORDER | WRAP | SHADOW_OUT);
     setLayoutData(new GridData(FILL_HORIZONTAL));
-
-    sessionItem = new DropDownToolItem(this);
-    sessionItem.setImage(maridIcon(24));
   }
 
   @Init
-  public void closeSessionItem() {
-    final MenuItem item = new MenuItem(sessionItem.menu, SWT.PUSH);
-    item.setText(Locales.s("closeSession"));
-    item.setImage(image(AppIcon.CLOSE));
-    item.addListener(SWT.Selection, e -> {
-      final var jsExecutor = RWT.getClient().getService(JavaScriptExecutor.class);
-      jsExecutor.execute("window.location.replace('/logout')");
-    });
+  public void prefItem(GenericApplicationContext parent) {
+    final ToolItem item = new ToolItem(this, SWT.PUSH);
+    item.setImage(image(ToolIcon.PREFERENCES));
+    item.addListener(Selection, e -> ContextUtils.context(parent, c -> {
+      c.register(PrefShell.class);
+      c.refresh();
+      c.start();
+    }));
   }
 }

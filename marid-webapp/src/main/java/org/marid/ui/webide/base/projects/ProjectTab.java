@@ -11,18 +11,26 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.boot;
+package org.marid.ui.webide.base.projects;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.custom.CTabItem;
+import org.marid.applib.image.AppIcon;
+import org.marid.applib.image.WithImages;
+import org.marid.applib.utils.Locales;
 import org.marid.spring.annotation.SpringComponent;
+import org.marid.ui.webide.base.boot.MainTabs;
+
+import static org.eclipse.swt.SWT.NONE;
 
 @SpringComponent
-public class MainTabs extends CTabFolder {
+public class ProjectTab extends CTabItem implements WithImages {
 
-  public MainTabs(MainMenu menu) {
-    super(menu.getShell(), SWT.TOP | SWT.FLAT | SWT.BORDER);
-    setLayoutData(new GridData(GridData.FILL_BOTH));
+  public ProjectTab(MainTabs mainTabs) {
+    super(mainTabs, NONE);
+
+    mainTabs.setSelection(this);
+    setShowClose(false);
+    setText(Locales.s("projects"));
+    setImage(image(AppIcon.PROJECT));
   }
 }

@@ -11,7 +11,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.base.views.repositories;
+package org.marid.ui.webide.prefs.repositories;
 
 import org.marid.applib.dao.SortedListStore;
 import org.marid.applib.model.RepositoryItem;
