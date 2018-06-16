@@ -26,8 +26,8 @@ import org.marid.applib.validators.InputValidators;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
-import org.marid.ui.webide.base.UI;
 import org.marid.ui.webide.base.dao.RepositoryDao;
+import org.marid.ui.webide.prefs.PrefShell;
 
 import java.util.List;
 
@@ -44,8 +44,8 @@ public class RepositoryAddDialog extends MaridDialog implements WithImages {
   private String name = "repository";
   private String selector;
 
-  public RepositoryAddDialog(UI ui) {
-    super(ui.shell, CANCEL_ID, PROCEED_ID);
+  public RepositoryAddDialog(PrefShell shell) {
+    super(shell, CANCEL_ID, PROCEED_ID);
   }
 
   @Override

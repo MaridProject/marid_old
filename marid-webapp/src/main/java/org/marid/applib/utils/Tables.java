@@ -23,7 +23,7 @@ public interface Tables {
   static void autoResizeColumns(Table table) {
     table.addListener(SWT.Resize, e -> {
       final int sum = IntStream.range(0, table.getColumnCount()).map(i -> table.getColumn(i).getWidth()).sum();
-      final int width = Math.max(0, table.getBounds().width - 16);
+      final int width = table.getBounds().width;
       for (int i = 0; i < table.getColumnCount(); i++) {
         final var column = table.getColumn(i);
         column.setWidth((width * column.getWidth()) / sum);
