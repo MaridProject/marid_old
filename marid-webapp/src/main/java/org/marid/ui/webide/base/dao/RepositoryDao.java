@@ -22,9 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -33,7 +31,9 @@ import java.util.*;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toMap;
+import static org.marid.applib.json.MaridJackson.MAPPER;
 
 @Component
 public class RepositoryDao implements ListDao<String, RepositoryItem> {
@@ -47,12 +47,9 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
   @Override
   public void add(RepositoryItem repositoryItem) {
     try {
-      final var file = directory.resolve(repositoryItem.getId() + ".properties");
-      final var props = new Properties(repositoryItem.getProperties().size());
-      repositoryItem.getProperties().forEach(props::setProperty);
-      props.setProperty("selector", repositoryItem.getSelector());
-      try (final var stream = new PrintStream(Files.newOutputStream(file), false, StandardCharsets.UTF_8)) {
-        props.list(stream);
+      final var file = directory.resolve(repositoryItem.getId() + ".repo");
+      try (final var writer = Files.newBufferedWriter(file, UTF_8)) {
+        MAPPER.writeValue(writer, repositoryItem);
       }
     } catch (IOException x) {
       throw new UncheckedIOException(x);
@@ -75,26 +72,22 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
 
   @Override
   public List<RepositoryItem> get() {
-    try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.properties")) {
-      final var paths = MaridIterators.array(Path.class, files);
-      final var repositories = new RepositoryItem[paths.length];
-      for (int i = 0; i < paths.length; i++) {
-        try (final var inputStream = Files.newInputStream(paths[i])) {
-          final var props = new Properties();
-          props.load(inputStream);
-          final var selector = (String) props.remove("selector");
-          if (selector == null) {
-            continue;
-          }
-          final var name = StringUtils.stripFilenameExtension(paths[i].getFileName().toString());
-          final var repo = new RepositoryItem(selector, name);
-          for (final var k : props.stringPropertyNames()) {
-            repo.getProperties().put(k, props.getProperty(k));
-          }
-          repositories[i] = repo;
+    try (final DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.repo")) {
+      final LinkedList<RepositoryItem> list = new LinkedList<>();
+      for (final var file : files) {
+        final var id = StringUtils.stripFilenameExtension(file.getFileName().toString());
+        final RepositoryItem item = new RepositoryItem(id);
+        final var objectReader = MAPPER.readerForUpdating(item);
+        try (final var reader = Files.newBufferedReader(file, UTF_8)) {
+          objectReader.readValue(reader);
+        } catch (NoSuchFileException x) {
+          continue;
+        } catch (IOException x) {
+          throw new UncheckedIOException(x);
         }
+        list.add(item);
       }
-      return List.of(repositories);
+      return List.copyOf(list);
     } catch (NoSuchFileException x) {
       return List.of();
     } catch (IOException x) {

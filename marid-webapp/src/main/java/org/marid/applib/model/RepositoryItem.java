@@ -13,7 +13,6 @@
  */
 package org.marid.applib.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jetbrains.annotations.NotNull;
 import org.marid.applib.repository.Repository;
 import org.marid.applib.repository.RepositoryProvider;
@@ -24,12 +23,11 @@ import java.util.TreeMap;
 public class RepositoryItem extends EHT implements Id<String> {
 
   private transient final String id;
-  private final String selector;
-  private final TreeMap<String, String> properties = new TreeMap<>();
 
-  @JsonCreator
-  public RepositoryItem(String id, String selector) {
-    this.selector = selector;
+  private String selector;
+  private TreeMap<String, String> properties = new TreeMap<>();
+
+  public RepositoryItem(String id) {
     this.id = id;
   }
 

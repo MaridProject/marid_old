@@ -14,29 +14,17 @@
 package org.marid.applib.image;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.Display;
 import org.marid.app.common.Images;
 import org.marid.ui.webide.base.boot.MainEntryPoint;
 
-import java.awt.*;
+public interface WithImages {
 
-public class UserImages {
+  Display getDisplay();
 
-  public static Image image(Widget widget, AppImage image) {
-    final var display = widget.getDisplay();
+  default Image image(AppImage image) {
+    final var display = getDisplay();
     final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
     return images.image(display, image);
-  }
-
-  public static Image maridIcon(Widget widget, int size, Color color) {
-    final var display = widget.getDisplay();
-    final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
-    return images.maridIcon(display, size, color);
-  }
-
-  public static Image maridIcon(Widget widget, int size) {
-    final var display = widget.getDisplay();
-    final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
-    return images.maridIcon(widget.getDisplay(), size);
   }
 }

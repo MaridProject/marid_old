@@ -19,8 +19,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.marid.applib.image.WithImages;
 
-public class Pane extends Composite {
+public class Pane extends Composite implements WithImages {
 
   protected final ToolBar toolbar;
 

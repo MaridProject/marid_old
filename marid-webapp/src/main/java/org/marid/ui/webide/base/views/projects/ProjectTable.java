@@ -27,8 +27,7 @@ import org.marid.spring.init.Init;
 
 import java.util.List;
 
-import static org.eclipse.swt.SWT.*;
-import static org.marid.applib.image.UserImages.image;
+import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
 import static org.marid.applib.validators.InputValidators.*;
@@ -38,10 +37,9 @@ import static org.marid.misc.StringUtils.sizeBinary;
 public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager> {
 
   public ProjectTable(ProjectTab tab, ProjectManager manager) {
-    super(manager, tab.getParent(), NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
+    super(manager, tab.getParent());
     tab.setControl(this);
-    table.setLinesVisible(true);
-    addColumn(s("name"), 150);
+    addColumn(s("name"), 200);
     addColumn(s("size"), 100);
     manager.refresh();
   }
@@ -49,7 +47,7 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
   @Init
   public void addButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(item, ToolIcon.ADD));
+    item.setImage(image(ToolIcon.ADD));
     item.addListener(Selection, e -> Dialogs.input()
         .setIcon(AppIcon.PROJECT)
         .setShell(getShell())
@@ -71,7 +69,7 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
   @Init
   public void editButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(item, ToolIcon.EDIT));
+    item.setImage(image(ToolIcon.EDIT));
     enableOnSelection(item::setEnabled);
   }
 
@@ -82,6 +80,6 @@ public class ProjectTable extends ListTable<String, ProjectItem, ProjectManager>
 
   @Override
   protected Image[] getRowImages(ProjectItem data) {
-    return new Image[]{image(this, AppIcon.PROJECT), null};
+    return new Image[]{image(AppIcon.PROJECT), null};
   }
 }

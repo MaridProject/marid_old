@@ -22,10 +22,8 @@ import org.marid.applib.dao.ListStore;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.model.Id;
 
-import static org.eclipse.swt.SWT.NONE;
-import static org.eclipse.swt.SWT.Selection;
+import static org.eclipse.swt.SWT.*;
 import static org.marid.applib.dao.ListStore.EventType.*;
-import static org.marid.applib.image.UserImages.image;
 
 public abstract class ListTable<I, T extends Id<I>, M extends ListStore<I, T, ? extends ListDao<I, T>>> extends TablePane {
 
@@ -51,6 +49,10 @@ public abstract class ListTable<I, T extends Id<I>, M extends ListStore<I, T, ? 
     }));
   }
 
+  public ListTable(M manager, Composite parent) {
+    this(manager, parent, NONE, BORDER | WRAP | FLAT, BORDER | V_SCROLL | H_SCROLL | CHECK);
+  }
+
   protected abstract String[] getRow(T data);
 
   protected abstract Image[] getRowImages(T data);
@@ -67,14 +69,14 @@ public abstract class ListTable<I, T extends Id<I>, M extends ListStore<I, T, ? 
 
   protected void addRemoveButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(item, ToolIcon.REMOVE));
+    item.setImage(image(ToolIcon.REMOVE));
     item.addListener(Selection, e -> manager.remove(selectionManager.getSelected()));
     enableOnSelection(item::setEnabled);
   }
 
   protected void addRefreshButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(item, ToolIcon.REFRESH));
+    item.setImage(image(ToolIcon.REFRESH));
     item.addListener(Selection, e -> manager.refresh());
   }
 }

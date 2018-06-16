@@ -28,7 +28,6 @@ import static org.eclipse.swt.SWT.NONE;
 import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.controls.MaridTable.EventType.ADD;
 import static org.marid.applib.controls.MaridTable.EventType.REMOVE;
-import static org.marid.applib.image.UserImages.image;
 
 public class TablePane extends Pane {
 
@@ -39,6 +38,7 @@ public class TablePane extends Pane {
     super(parent, style, toolbarStyle);
     table = new MaridTable(this, tableStyle);
     table.setHeaderVisible(true);
+    table.setLinesVisible(true);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
     selectionManager = new SelectionManager(table);
 
@@ -57,14 +57,14 @@ public class TablePane extends Pane {
 
   protected void addSelectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(item, ToolIcon.SELECT_ALL));
+    item.setImage(image(ToolIcon.SELECT_ALL));
     item.addListener(Selection, e -> selectionManager.selectAll());
     enableOnNonEmpty(item::setEnabled);
   }
 
   protected void addDeselectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(item, ToolIcon.DESELECT_ALL));
+    item.setImage(image(ToolIcon.DESELECT_ALL));
     item.addListener(Selection, e -> selectionManager.deselectAll());
     enableOnNonEmpty(item::setEnabled);
   }
