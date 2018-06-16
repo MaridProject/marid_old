@@ -24,9 +24,14 @@ public class DeployToMaridOrg {
 
   public static void main(String... args) throws Throwable {
     {
-      final Process process = new ProcessBuilder("mvn", "-DskipTests", "-pl", "org.marid:marid-webapp", "-am", "clean", "install")
-          .inheritIO()
-          .start();
+      final Process process = new ProcessBuilder(
+          "mvn",
+          "-DskipTests",
+          "-pl", "org.marid:marid-webapp",
+          "-P", "release",
+          "-am",
+          "clean", "install"
+      ).inheritIO().start();
       final int result = process.waitFor();
       if (result != 0) {
         throw new IllegalStateException("Result: " + result);
@@ -43,6 +48,21 @@ public class DeployToMaridOrg {
           .inheritIO()
           .directory(path.toFile())
           .start();
+      final int result = process.waitFor();
+      if (result != 0) {
+        throw new IllegalStateException("Result: " + result);
+      }
+    }
+
+    {
+      final Process process = new ProcessBuilder(
+          "mvn",
+          "-DskipTests",
+          "-pl", "org.marid:marid-webapp",
+          "-P", "development",
+          "-am",
+          "clean", "install"
+      ).inheritIO().start();
       final int result = process.waitFor();
       if (result != 0) {
         throw new IllegalStateException("Result: " + result);
