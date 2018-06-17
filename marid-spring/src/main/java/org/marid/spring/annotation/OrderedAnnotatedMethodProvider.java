@@ -78,7 +78,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
               .filter(m -> m.getDeclaringClass() == c)
               .map(Method::getName)
               .collect(Collectors.toUnmodifiableSet());
-          try (final var is = type.getResourceAsStream(getClassFileName(c))) {
+          try (final var is = c.getResourceAsStream(getClassFileName(c))) {
             final var classReader = new ClassReader(is);
             classReader.accept(new ClassVisitor(ASM_VERSION) {
               @Override
