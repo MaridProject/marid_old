@@ -16,6 +16,7 @@ package org.marid.app.config;
 
 import org.marid.app.props.FacebookAuthProperties;
 import org.marid.app.props.GoogleAuthProperties;
+import org.marid.app.props.TwitterAuthProperties;
 import org.marid.app.props.UndertowProperties;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.client.Client;
@@ -23,6 +24,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.Google2Client;
+import org.pac4j.oauth.client.TwitterClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -42,8 +44,16 @@ public class AuthClientConfiguration {
   }
 
   @Bean
+  public TwitterClient twitterClient(TwitterAuthProperties properties) {
+    final var client = new TwitterClient(properties.getClientId(), properties.getSecret());
+    client.setIncludeEmail(true);
+    client.setAlwaysConfirmAuthorization(true);
+    return client;
+  }
+
+  @Bean
   public Clients authClients(Client<?, ?>[] clients, UndertowProperties properties) {
-    final String callback = String.format("https://%s:%d/callback", properties.getHost(), properties.getPort());
+    final String callback = String.format("https://%s:%d/callback", properties.getRedirectHost(), properties.getPort());
     final Clients authClients = new Clients(callback, clients);
     authClients.addAuthorizationGenerator((context, profile) -> {
       profile.addRole("ROLE_USER");

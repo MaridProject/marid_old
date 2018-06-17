@@ -17,11 +17,16 @@ package org.marid.app.props;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class UndertowProperties {
 
   @Value("${undertow.host:localhost}")
   private String host;
+
+  @Value("${undertow.redirectHost:@null}")
+  private String redirectHost;
 
   @Value("${undertow.port:8443}")
   private int port;
@@ -51,6 +56,14 @@ public class UndertowProperties {
 
   public void setHost(String host) {
     this.host = host;
+  }
+
+  public String getRedirectHost() {
+    return Optional.ofNullable(redirectHost).orElse(host);
+  }
+
+  public void setRedirectHost(String redirectHost) {
+    this.redirectHost = redirectHost;
   }
 
   @Override

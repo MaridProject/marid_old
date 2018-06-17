@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @Component
 public class UserDirectories {
@@ -30,7 +31,12 @@ public class UserDirectories {
   private final Path artifactsFile;
 
   public UserDirectories(Directories directories, CommonProfile profile) throws IOException {
-    userDirectory = directories.getUsers().resolve(profile.getEmail());
+    final String name = Optional.ofNullable(profile.getEmail())
+        .filter(s -> !s.isEmpty())
+        .orElse(profile.getUsername());
+
+
+    userDirectory = directories.getUsers().resolve(name);
     projectsDirectory = userDirectory.resolve("projects");
     repositoriesDirectory = userDirectory.resolve("repositories");
     artifactsFile = userDirectory.resolve("artifacts.lst");

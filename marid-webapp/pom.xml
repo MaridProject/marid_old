@@ -211,7 +211,7 @@
             <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
               <execution>
-                <id>add-dev-sources</id>
+                <id>add-development-sources</id>
                 <phase>generate-sources</phase>
                 <goals>
                   <goal>add-source</goal>
