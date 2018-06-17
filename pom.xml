@@ -232,6 +232,7 @@
           <configuration>
             <escapeWindowsPaths>false</escapeWindowsPaths>
             <overwrite>true</overwrite>
+            <addDefaultExcludes>false</addDefaultExcludes>
           </configuration>
         </plugin>
 
