@@ -12,7 +12,7 @@
  * #L%
  */
 
-package org.marid.app;
+package org.marid.app.build;
 
 public class BuildAll {
 

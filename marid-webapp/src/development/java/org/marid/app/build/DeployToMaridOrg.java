@@ -12,7 +12,7 @@
  * #L%
  */
 
-package org.marid.app;
+package org.marid.app.build;
 
 import java.net.URL;
 import java.nio.file.Path;
