@@ -62,7 +62,7 @@ public class RepositoryAddDialog extends MaridDialog implements WithImages {
       label.setText(s("name") + ": ");
     });
     onInit.add(p -> {
-      final var text = new Text(p, SWT.SINGLE | SWT.BORDER);
+      final var text = new Combo(p, SWT.SIMPLE | SWT.BORDER);
       text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       text.setText(name);
       text.addListener(SWT.Modify, e -> name = text.getText());
