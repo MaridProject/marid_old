@@ -25,7 +25,8 @@ public enum ToolIcon implements AppImage {
   PROJECT("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-project-development-new-template-icon.png"),
   SELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/24/layer-select-icon.png"),
   DESELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/24/select-invert-icon.png"),
-  PREFERENCES("http://icons.iconarchive.com/icons/bokehlicia/captiva/24/preferences-icon.png");
+  PREFERENCES("http://icons.iconarchive.com/icons/bokehlicia/captiva/24/preferences-icon.png"),
+  FIND("http://icons.iconarchive.com/icons/graphicloads/100-flat/24/zoom-seach-icon.png");
 
   private final String url;
 

@@ -13,13 +13,30 @@
  */
 package org.marid.ui.webide.prefs.artifacts;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
+import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.WithImages;
+import org.marid.spring.init.Init;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArtifactTable extends TablePane {
+public class ArtifactTable extends TablePane implements WithImages {
 
   public ArtifactTable(ArtifactTab tab) {
     super(tab.getParent());
+    addColumn("groupId", 100);
+    addColumn("artifactId", 100);
+    addColumn("version", 75);
+  }
+
+  @Init
+  public void findButton() {
+    final var item = new ToolItem(toolbar, SWT.PUSH);
+    item.setImage(image(ToolIcon.FIND));
+    item.addListener(SWT.Selection, e -> {
+
+    });
   }
 }
