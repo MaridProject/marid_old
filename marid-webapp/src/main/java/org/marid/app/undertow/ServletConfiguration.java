@@ -20,6 +20,7 @@ import io.undertow.servlet.util.ImmediateInstanceFactory;
 import io.undertow.servlet.util.ImmediateInstanceHandle;
 import org.marid.app.web.*;
 import org.pac4j.core.client.Clients;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -48,12 +49,15 @@ public class ServletConfiguration {
   }
 
   @Bean
-  public ServletInfo authServletInfo(AuthServlet servlet, Clients clients) {
+  public ServletInfo authServletInfo(AuthServlet servlet, Clients clients, Logger logger) {
     final var info = new ServletInfo("authServlet", AuthServlet.class, new ImmediateInstanceFactory<>(servlet));
     info.setAsyncSupported(false);
     info.setLoadOnStartup(2);
     info.setEnabled(true);
-    clients.findAllClients().forEach(c -> info.addMapping("/" + c.getName()));
+    clients.findAllClients().forEach(c -> {
+      info.addMapping("/" + c.getName());
+      logger.info("Client {}", c.getName());
+    });
     return info;
   }
 
