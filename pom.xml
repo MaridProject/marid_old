@@ -472,29 +472,12 @@
       </activation>
 
       <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>add-binary-resources</id>
-                <goals>
-                  <goal>add-resource</goal>
-                </goals>
-                <phase>generate-resources</phase>
-                <configuration>
-                  <resources>
-                    <resource>
-                      <directory>src/main/binary-resources</directory>
-                      <filtering>false</filtering>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
+        <resources>
+          <resource>
+            <directory>src/main/binary-resources</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
       </build>
     </profile>
 
@@ -512,32 +495,23 @@
       </activation>
 
       <build>
+        <resources>
+          <resource>
+            <directory>src/release/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+
+          <resource>
+            <directory>src/release/binary-resources</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
-              <execution>
-                <id>add-release-resources</id>
-                <goals>
-                  <goal>add-resource</goal>
-                </goals>
-                <phase>generate-resources</phase>
-                <configuration>
-                  <resources>
-                    <resource>
-                      <directory>src/release/resources</directory>
-                      <filtering>true</filtering>
-                    </resource>
-
-                    <resource>
-                      <directory>src/release/binary-resources</directory>
-                      <filtering>false</filtering>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-
               <execution>
                 <id>add-release-sources</id>
                 <phase>generate-sources</phase>
@@ -570,32 +544,23 @@
       </activation>
 
       <build>
+        <resources>
+          <resource>
+            <directory>src/development/resources</directory>
+            <filtering>true</filtering>
+          </resource>
+
+          <resource>
+            <directory>src/development/binary-resources</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
-              <execution>
-                <id>add-development-resources</id>
-                <goals>
-                  <goal>add-resource</goal>
-                </goals>
-                <phase>generate-resources</phase>
-                <configuration>
-                  <resources>
-                    <resource>
-                      <directory>src/development/resources</directory>
-                      <filtering>true</filtering>
-                    </resource>
-
-                    <resource>
-                      <directory>src/development/binary-resources</directory>
-                      <filtering>false</filtering>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-
               <execution>
                 <id>add-development-sources</id>
                 <phase>generate-sources</phase>
