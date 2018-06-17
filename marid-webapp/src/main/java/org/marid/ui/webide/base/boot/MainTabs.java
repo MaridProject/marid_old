@@ -16,9 +16,9 @@ package org.marid.ui.webide.base.boot;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.GridData;
-import org.marid.spring.annotation.SpringComponent;
+import org.springframework.stereotype.Component;
 
-@SpringComponent
+@Component
 public class MainTabs extends CTabFolder {
 
   public MainTabs(MainMenu menu) {

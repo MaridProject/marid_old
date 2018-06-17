@@ -20,16 +20,16 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.spring.ContextUtils;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.UI;
 import org.marid.ui.webide.prefs.PrefShell;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.stereotype.Component;
 
 import static org.eclipse.swt.SWT.*;
 import static org.eclipse.swt.layout.GridData.FILL_HORIZONTAL;
 
-@SpringComponent
+@Component
 public class MainMenu extends ToolBar implements WithImages {
 
   public MainMenu(UI ui) {

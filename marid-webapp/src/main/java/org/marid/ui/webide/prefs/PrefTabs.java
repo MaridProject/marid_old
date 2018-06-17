@@ -16,9 +16,9 @@ package org.marid.ui.webide.prefs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.TabFolder;
-import org.marid.spring.annotation.SpringComponent;
+import org.springframework.stereotype.Component;
 
-@SpringComponent
+@Component
 public class PrefTabs extends TabFolder {
 
   public PrefTabs(PrefShell shell) {

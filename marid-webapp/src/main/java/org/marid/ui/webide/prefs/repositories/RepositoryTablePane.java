@@ -19,9 +19,9 @@ import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.controls.table.MaridTable.Item;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
@@ -30,7 +30,7 @@ import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.dao.ListStore.EventType.*;
 import static org.marid.applib.utils.Locales.s;
 
-@SpringComponent
+@Component
 public class RepositoryTablePane extends TablePane {
 
   public RepositoryTablePane(RepositoryTab tab) {

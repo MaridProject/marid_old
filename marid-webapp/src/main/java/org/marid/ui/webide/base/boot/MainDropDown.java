@@ -22,10 +22,10 @@ import org.marid.applib.controls.toolbar.DropDownToolItem;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.applib.utils.Locales;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
+import org.springframework.stereotype.Component;
 
-@SpringComponent
+@Component
 public class MainDropDown extends DropDownToolItem implements WithImages {
 
   public MainDropDown(MainMenu mainMenu) {

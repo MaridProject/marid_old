@@ -18,17 +18,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.image.WithImages;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.UI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.stereotype.Component;
 
 import static org.marid.applib.utils.Locales.s;
 
-@SpringComponent
+@Component
 @ComponentScan
 public class PrefShell extends Shell implements WithImages {
 

@@ -17,12 +17,12 @@ import org.eclipse.swt.custom.CTabItem;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.applib.utils.Locales;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.base.boot.MainTabs;
+import org.springframework.stereotype.Component;
 
 import static org.eclipse.swt.SWT.NONE;
 
-@SpringComponent
+@Component
 public class ProjectTab extends CTabItem implements WithImages {
 
   public ProjectTab(MainTabs mainTabs) {

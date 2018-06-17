@@ -22,8 +22,8 @@ import org.marid.applib.dialogs.Dialogs;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.model.ProjectItem;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -36,7 +36,7 @@ import static org.marid.applib.utils.Locales.s;
 import static org.marid.applib.validators.InputValidators.*;
 import static org.marid.misc.StringUtils.sizeBinary;
 
-@SpringComponent
+@Component
 public class ProjectTablePane extends TablePane {
 
   public ProjectTablePane(ProjectTab tab) {

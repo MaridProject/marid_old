@@ -14,9 +14,9 @@
 package org.marid.ui.webide.prefs.artifacts;
 
 import org.marid.applib.controls.pane.TablePane;
-import org.marid.spring.annotation.SpringComponent;
+import org.springframework.stereotype.Component;
 
-@SpringComponent
+@Component
 public class ArtifactTable extends TablePane {
 
   public ArtifactTable(ArtifactTab tab) {

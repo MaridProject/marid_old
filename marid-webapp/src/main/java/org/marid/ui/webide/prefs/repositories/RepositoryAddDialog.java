@@ -24,10 +24,10 @@ import org.marid.applib.image.WithImages;
 import org.marid.applib.model.RepositoryItem;
 import org.marid.applib.validators.InputValidators;
 import org.marid.spring.annotation.PrototypeScoped;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.dao.RepositoryDao;
 import org.marid.ui.webide.prefs.PrefShell;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.PROCEED_ID;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
 
-@SpringComponent
+@Component
 @PrototypeScoped
 public class RepositoryAddDialog extends MaridDialog implements WithImages {
 

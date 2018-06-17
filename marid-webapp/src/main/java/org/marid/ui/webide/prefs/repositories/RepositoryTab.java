@@ -16,13 +16,13 @@ package org.marid.ui.webide.prefs.repositories;
 import org.eclipse.swt.widgets.TabItem;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.WithImages;
-import org.marid.spring.annotation.SpringComponent;
 import org.marid.ui.webide.prefs.PrefTabs;
+import org.springframework.stereotype.Component;
 
 import static org.eclipse.swt.SWT.NONE;
 import static org.marid.applib.utils.Locales.s;
 
-@SpringComponent
+@Component
 public class RepositoryTab extends TabItem implements WithImages {
 
   public RepositoryTab(PrefTabs tabs) {
