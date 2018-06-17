@@ -20,6 +20,7 @@
  */
 package org.marid.spring.annotation;
 
+import org.marid.logging.Log;
 import org.springframework.asm.ClassReader;
 import org.springframework.asm.ClassVisitor;
 import org.springframework.asm.Label;
@@ -31,6 +32,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -135,6 +138,8 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
       }
       formatter.format("%s%n", String.valueOf(line));
     }
+
+    Log.log(Logger.getLogger(type.getName()), Level.INFO, "Method order: {0}", infoBuilder);
 
     return methods;
   }
