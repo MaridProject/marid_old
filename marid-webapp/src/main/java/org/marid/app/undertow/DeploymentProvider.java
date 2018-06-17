@@ -35,7 +35,7 @@ public class DeploymentProvider {
       .setSecurityDisabled(true)
       .setContextPath("/")
       .setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()))
-      .addWelcomePage("/app")
+      .addWelcomePage("/main.marid")
       .setDefaultSessionTimeout(3600);
 
   @Autowired
@@ -51,7 +51,7 @@ public class DeploymentProvider {
   @Autowired
   public void setFilters(FilterInfo[] filters) {
     deploymentInfo.addFilters(filters);
-    deploymentInfo.addFilterUrlMapping("securityFilter", "/app", DispatcherType.REQUEST);
+    deploymentInfo.addFilterUrlMapping("securityFilter", "*.marid", DispatcherType.REQUEST);
   }
 
   @Autowired

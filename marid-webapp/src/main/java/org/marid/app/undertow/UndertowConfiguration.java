@@ -48,7 +48,7 @@ public class UndertowConfiguration {
     return new CanonicalPathHandler(exchange -> {
       switch (exchange.getRelativePath()) {
         case "/":
-          new RedirectHandler("/app").handleRequest(exchange);
+          new RedirectHandler("/main.marid").handleRequest(exchange);
           break;
         default:
           servletHandler.handleRequest(exchange);
