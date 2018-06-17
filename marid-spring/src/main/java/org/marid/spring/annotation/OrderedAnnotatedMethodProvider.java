@@ -34,9 +34,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Logger.getLogger;
-import static org.marid.logging.Log.log;
 import static org.springframework.asm.ClassReader.SKIP_FRAMES;
 import static org.springframework.asm.SpringAsmInfo.ASM_VERSION;
 import static org.springframework.util.ClassUtils.getClassFileName;
@@ -106,9 +103,10 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
 
     final Comparator<Method> comparator = (m1, m2) -> {
       if (m1.getDeclaringClass() == m2.getDeclaringClass()) {
-        final int l1 = linesMap.get(m1.getDeclaringClass()).getOrDefault(m1.getName(), Integer.MAX_VALUE);
-        final int l2 = linesMap.get(m2.getDeclaringClass()).getOrDefault(m2.getName(), Integer.MAX_VALUE);
-        return Integer.compare(l1, l2);
+        final var map = linesMap.get(m1.getDeclaringClass());
+        final var l1 = map.getOrDefault(m1.getName(), Integer.MAX_VALUE);
+        final var l2 = map.getOrDefault(m2.getName(), Integer.MAX_VALUE);
+        return l1.compareTo(l2);
       } else if (m1.getDeclaringClass().isAssignableFrom(m2.getDeclaringClass())) {
         return -1;
       } else {
@@ -138,7 +136,6 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
       formatter.format("%s%n", String.valueOf(line));
     }
 
-    log(getLogger(type.getName()), INFO, "Method order: {0}", infoBuilder);
     return methods;
   }
 }
