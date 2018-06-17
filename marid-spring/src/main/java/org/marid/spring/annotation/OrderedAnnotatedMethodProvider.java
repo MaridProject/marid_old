@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Logger.getLogger;
-import static java.util.stream.Stream.of;
 import static org.marid.logging.Log.log;
 import static org.springframework.asm.ClassReader.SKIP_FRAMES;
 import static org.springframework.asm.SpringAsmInfo.ASM_VERSION;
@@ -53,7 +52,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
 
   @Override
   protected Method[] computeValue(Class<?> type) {
-    final Method[] methods = of(type.getMethods())
+    final Method[] methods = Stream.of(type.getMethods())
         .filter(m -> Stream.of(annotations).anyMatch(m::isAnnotationPresent))
         .toArray(Method[]::new);
     if (methods.length == 0) {
