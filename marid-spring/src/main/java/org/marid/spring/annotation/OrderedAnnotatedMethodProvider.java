@@ -73,14 +73,13 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
         .map(Method::getDeclaringClass)
         .distinct()
         .collect(Collectors.toMap(c -> c, c -> {
-          final var map = new LinkedHashMap<String, Integer>();
           final var methodNames = Stream.of(methods)
               .filter(m -> m.getDeclaringClass() == c)
               .map(Method::getName)
               .collect(Collectors.toUnmodifiableSet());
+          final var map = new LinkedHashMap<String, Integer>(methodNames.size());
           try (final var is = c.getResourceAsStream(getClassFileName(c))) {
-            final var classReader = new ClassReader(is);
-            classReader.accept(new ClassVisitor(ASM_VERSION) {
+            new ClassReader(is).accept(new ClassVisitor(ASM_VERSION) {
               @Override
               public MethodVisitor visitMethod(int acc, String name, String desc, String signature, String[] xs) {
                 if (!methodNames.contains(name)) {
