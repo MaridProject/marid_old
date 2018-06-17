@@ -39,15 +39,14 @@ import org.springframework.lang.Nullable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicStampedReference;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.binarySearch;
-import static java.util.Comparator.comparingInt;
 import static java.util.logging.Level.INFO;
+import static java.util.stream.Stream.of;
 import static org.marid.logging.Log.log;
 import static org.springframework.asm.ClassReader.SKIP_FRAMES;
 import static org.springframework.asm.SpringAsmInfo.ASM_VERSION;
@@ -58,36 +57,48 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
   private static final ClassValue<Method[]> INIT_METHODS = new ClassValue<>() {
     @Override
     protected Method[] computeValue(Class<?> type) {
-      final Method[] methods = Stream.of(type.getMethods())
+      final Method[] methods = of(type.getMethods())
           .filter(m -> m.isAnnotationPresent(Init.class))
           .toArray(Method[]::new);
       if (methods.length == 0) {
         return null;
       }
 
-      final String[] methodNames = Stream.of(methods).map(Method::getName).distinct().sorted().toArray(String[]::new);
-      final int[] lines = new int[methodNames.length];
-      Arrays.fill(lines, Integer.MAX_VALUE);
+      final var maxClass = new AtomicInteger();
+      final var maxMethod = new AtomicInteger();
+      final var maxLine = new AtomicInteger("unknown".length());
 
-      Stream.of(methods)
+      final IdentityHashMap<Class<?>, LinkedHashMap<String, Integer>> linesMap = Stream.of(methods)
+          .peek(m -> {
+            final var className = m.getDeclaringClass().getName().length();
+            final var name = m.getName().length();
+            maxClass.updateAndGet(v -> className > v ? className : v);
+            maxMethod.updateAndGet(v -> name > v ? name : v);
+          })
           .map(Method::getDeclaringClass)
           .distinct()
-          .forEach(declaringClass -> {
-            try (final var is = type.getResourceAsStream(getClassFileName(declaringClass))) {
+          .collect(Collectors.toMap(c -> c, c -> {
+            final var map = new LinkedHashMap<String, Integer>();
+            final var methodNames = Stream.of(methods)
+                .filter(m -> m.getDeclaringClass() == c)
+                .map(Method::getName)
+                .collect(Collectors.toUnmodifiableSet());
+            try (final var is = type.getResourceAsStream(getClassFileName(c))) {
               final var classReader = new ClassReader(is);
               classReader.accept(new ClassVisitor(ASM_VERSION) {
                 @Override
                 public MethodVisitor visitMethod(int acc, String name, String desc, String signature, String[] xs) {
-                  final int index = binarySearch(methodNames, name);
-                  if (index < 0) {
+                  if (!methodNames.contains(name)) {
                     return null;
                   }
                   return new MethodVisitor(ASM_VERSION) {
                     @Override
                     public void visitLineNumber(int line, Label start) {
-                      if (line < lines[index]) {
-                        lines[index] = line;
-                      }
+                      map.computeIfAbsent(name, k -> {
+                        final int len = Integer.toString(line).length();
+                        maxLine.updateAndGet(v -> len > v ? len : v);
+                        return line;
+                      });
                     }
                   };
                 }
@@ -95,17 +106,44 @@ public class InitBeanPostProcessor implements BeanPostProcessor {
             } catch (IOException x) {
               throw new UncheckedIOException(x);
             }
-          });
+            return map;
+          }, (v1, v2) -> v2, IdentityHashMap::new));
 
-      final var methodInfo = IntStream.range(0, lines.length)
-          .mapToObj(i -> new AtomicStampedReference<>(methodNames[i], lines[i]))
-          .sorted(comparingInt(AtomicStampedReference::getStamp))
-          .map(r -> r.getReference() + ":" + r.getStamp())
-          .collect(Collectors.joining(", "));
-      log(INFO, "{0} method order: {1}", type.getName(), methodInfo);
+      final Comparator<Method> comparator = (m1, m2) -> {
+        if (m1.getDeclaringClass() == m2.getDeclaringClass()) {
+          final int l1 = linesMap.get(m1.getDeclaringClass()).getOrDefault(m1.getName(), Integer.MAX_VALUE);
+          final int l2 = linesMap.get(m2.getDeclaringClass()).getOrDefault(m2.getName(), Integer.MAX_VALUE);
+          return Integer.compare(l1, l2);
+        } else if (m1.getDeclaringClass().isAssignableFrom(m2.getDeclaringClass())) {
+          return -1;
+        } else {
+          return 1;
+        }
+      };
+      Arrays.sort(methods, comparator);
 
-      Arrays.sort(methods, comparingInt(m -> lines[binarySearch(methodNames, m.getName())]));
+      final String format = String.format("| %%-%ss | %%-%ss | %%%ss |%n", maxClass, maxMethod, maxLine);
 
+      final var infoBuilder = new StringBuilder();
+      final var line = new char[maxClass.get() + maxMethod.get() + maxLine.get() + 10];
+      Arrays.fill(line, '-');
+      try (final var formatter = new Formatter(infoBuilder)) {
+        formatter.format("%n");
+        formatter.format("%s%n", String.valueOf(line));
+
+        for (final var method : methods) {
+          final var className = method.getDeclaringClass().getName();
+          final var name = method.getName();
+          final var lineNumber = Optional.ofNullable(linesMap.get(method.getDeclaringClass()).get(name))
+              .map(Object::toString)
+              .orElse("unknown");
+
+          formatter.format(format, className, name, lineNumber);
+        }
+        formatter.format("%s%n", String.valueOf(line));
+      }
+
+      log(INFO, "{0} method order: {1}", type.getName(), infoBuilder);
       return methods;
     }
   };
