@@ -14,6 +14,7 @@
 package org.marid.ui.webide.prefs.repositories;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
@@ -62,7 +63,7 @@ public class RepositoryAddDialog extends MaridDialog implements WithImages {
       label.setText(s("name") + ": ");
     });
     onInit.add(p -> {
-      final var text = new Combo(p, SWT.SIMPLE | SWT.BORDER);
+      final var text = new Text(p, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
       text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       text.setText(name);
       text.addListener(SWT.Modify, e -> name = text.getText());
