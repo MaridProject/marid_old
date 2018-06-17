@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.logging.Level.INFO;
+import static java.util.logging.Logger.getLogger;
 import static java.util.stream.Stream.of;
 import static org.marid.logging.Log.log;
 import static org.springframework.asm.ClassReader.SKIP_FRAMES;
@@ -138,7 +139,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
       formatter.format("%s%n", String.valueOf(line));
     }
 
-    log(INFO, "{0} method order: {1}", type.getName(), infoBuilder);
+    log(getLogger(type.getName()), INFO, "Method order: {0}", infoBuilder);
     return methods;
   }
 }
