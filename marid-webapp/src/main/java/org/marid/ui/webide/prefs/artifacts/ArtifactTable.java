@@ -19,6 +19,7 @@ import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.spring.init.Init;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,17 +27,16 @@ public class ArtifactTable extends TablePane implements WithImages {
 
   public ArtifactTable(ArtifactTab tab) {
     super(tab.getParent());
+    tab.setControl(this);
     addColumn("groupId", 100);
     addColumn("artifactId", 100);
     addColumn("version", 75);
   }
 
   @Init
-  public void findButton() {
+  public void findButton(ObjectFactory<ArtifactFindDialog> dialogFactory) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.FIND));
-    item.addListener(SWT.Selection, e -> {
-
-    });
+    item.addListener(SWT.Selection, e -> dialogFactory.getObject().show(0.5f));
   }
 }
