@@ -13,13 +13,14 @@
  */
 package org.marid.applib.dialogs;
 
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.intellij.lang.annotations.MagicConstant;
-import org.marid.applib.controls.Controls;
 import org.marid.applib.image.AppImage;
 import org.marid.applib.image.WithImages;
 import org.marid.misc.ListenableValue;
@@ -27,6 +28,11 @@ import org.marid.misc.ListenableValue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static org.eclipse.core.runtime.IStatus.ERROR;
+import static org.eclipse.swt.SWT.MouseDown;
+import static org.eclipse.swt.SWT.NONE;
+import static org.marid.applib.controls.Controls.control;
 
 public abstract class ShellDialog extends Shell implements WithImages {
 
@@ -46,7 +52,7 @@ public abstract class ShellDialog extends Shell implements WithImages {
   }
 
   protected int formStyle() {
-    return SWT.NONE;
+    return NONE;
   }
 
   @SafeVarargs
@@ -81,10 +87,10 @@ public abstract class ShellDialog extends Shell implements WithImages {
           return c;
         });
 
-    final var imgButton = new Label(form, SWT.NONE);
+    final var imgButton = new Label(form, NONE);
     imgButton.setImage(image(image));
 
-    final var label = new Label(form, SWT.NONE);
+    final var label = new Label(form, NONE);
     label.setText(text + ": ");
 
     final var control = supplier.apply(form);
@@ -164,7 +170,7 @@ public abstract class ShellDialog extends Shell implements WithImages {
 
   public void bindValidation(ListenableValue<? extends String> message, Control control) {
     final Consumer<String> consumer = n -> {
-      Controls.control(this, Label.class, l -> control == l.getData("labelFor")).ifPresent(label -> {
+      control(this, Label.class, l -> control == l.getData("labelFor")).ifPresent(label -> {
         if (n != null) {
           label.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
           label.setToolTipText(n);
@@ -175,6 +181,14 @@ public abstract class ShellDialog extends Shell implements WithImages {
       });
     };
     message.addListener((o, n) -> consumer.accept(n));
+    control(this, Label.class, l -> control == l.getData("imageFor")).ifPresent(img -> img.addListener(MouseDown, e -> {
+      final String text = message.get();
+      if (text != null) {
+        final var dialog = new ErrorDialog(this, null, null, new Status(ERROR, "dialog", text), ERROR);
+        dialog.setBlockOnOpen(false);
+        dialog.open();
+      }
+    }));
     consumer.accept(message.get());
   }
 
