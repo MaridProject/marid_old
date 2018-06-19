@@ -17,18 +17,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.intellij.lang.annotations.MagicConstant;
+import org.marid.applib.controls.Controls;
 import org.marid.applib.image.AppImage;
 import org.marid.applib.image.WithImages;
+import org.marid.misc.ListenableValue;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class ShellDialog extends Shell implements WithImages {
+public abstract class ShellDialog extends Shell implements WithImages {
 
   public ShellDialog(Shell parent, @MagicConstant(flagsFromClass = SWT.class) int style) {
     super(parent, style);
@@ -41,8 +41,70 @@ public class ShellDialog extends Shell implements WithImages {
     setLayout(layout);
   }
 
+  public ShellDialog(Shell parent) {
+    this(parent, SWT.CLOSE | SWT.TITLE | SWT.APPLICATION_MODAL);
+  }
+
+  protected int formStyle() {
+    return SWT.NONE;
+  }
+
   @SafeVarargs
-  public final void addButton(String text, AppImage image, Listener listener, Consumer<Button>... buttonConsumers) {
+  public final <C extends Control> C addField(String text,
+                                              AppImage image,
+                                              Function<Composite, C> supplier,
+                                              Consumer<C>... controlConsumers) {
+    return addField(this, text, image, supplier, controlConsumers);
+  }
+
+  @SafeVarargs
+  public final <C extends Control> C addField(Composite parent,
+                                              String text,
+                                              AppImage image,
+                                              Function<Composite, C> supplier,
+                                              Consumer<C>... controlConsumers) {
+    final var form = Stream.of(parent.getChildren())
+        .filter(Composite.class::isInstance)
+        .map(Composite.class::cast)
+        .filter(c -> "form".equals(c.getData("dialogControlType")))
+        .findFirst()
+        .orElseGet(() -> {
+          final var c = new Composite(this, formStyle());
+          final var l = new GridLayout(3, false);
+
+          l.marginWidth = l.marginHeight = 10;
+
+          c.setLayout(l);
+          c.setLayoutData(new GridData(GridData.FILL_BOTH));
+          c.setData("dialogControlType", "form");
+
+          return c;
+        });
+
+    final var imgButton = new Label(form, SWT.NONE);
+    imgButton.setImage(image(image));
+
+    final var label = new Label(form, SWT.NONE);
+    label.setText(text + ": ");
+
+    final var control = supplier.apply(form);
+
+    imgButton.setData("imageFor", control);
+    label.setData("labelFor", control);
+
+    for (final var controlConsumer : controlConsumers) {
+      controlConsumer.accept(control);
+    }
+
+    if (control.getLayoutData() == null) {
+      control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    }
+
+    return control;
+  }
+
+  @SafeVarargs
+  public final Button addButton(String text, AppImage image, Listener listener, Consumer<Button>... buttonConsumers) {
     final var buttons = Stream.of(getChildren())
         .filter(Composite.class::isInstance)
         .map(Composite.class::cast)
@@ -70,6 +132,8 @@ public class ShellDialog extends Shell implements WithImages {
 
     final var layout = (GridLayout) buttons.getLayout();
     layout.numColumns++;
+
+    return button;
   }
 
   protected void justify(Composite parent, float sizeHint) {
@@ -96,6 +160,22 @@ public class ShellDialog extends Shell implements WithImages {
         preferredSize.x,
         preferredSize.y
     );
+  }
+
+  public void bindValidation(ListenableValue<? extends String> message, Control control) {
+    final Consumer<String> consumer = n -> {
+      Controls.control(this, Label.class, l -> control == l.getData("labelFor")).ifPresent(label -> {
+        if (n != null) {
+          label.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
+          label.setToolTipText(n);
+        } else {
+          label.setForeground(null);
+          label.setToolTipText(null);
+        }
+      });
+    };
+    message.addListener((o, n) -> consumer.accept(n));
+    consumer.accept(message.get());
   }
 
   public void show(float sizeHint) {

@@ -18,22 +18,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.controls.table.MaridTable.Item;
-import org.marid.applib.dialogs.Dialogs;
 import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
-import org.marid.applib.model.ProjectItem;
 import org.marid.spring.init.Init;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static org.eclipse.swt.SWT.NONE;
 import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.dao.ListStore.EventType.*;
-import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
-import static org.marid.applib.validators.InputValidators.*;
 import static org.marid.misc.StringUtils.sizeBinary;
 
 @Component
@@ -60,19 +56,10 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void addButton(ProjectStore store) {
+  public void addButton(ObjectFactory<ProjectAddDialog> dialogFactory) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.ADD));
-    item.addListener(Selection, e -> Dialogs.input()
-        .setIcon(AppIcon.PROJECT)
-        .setShell(getShell())
-        .setMessage(m("newProjectName") + ":")
-        .setTitle(s("addProject"))
-        .setValue("project")
-        .setValidator(inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id)))))
-        .setCallback(v -> v.ifPresent(txt -> store.add(List.of(new ProjectItem(txt)))))
-        .open()
-    );
+    item.addListener(Selection, e -> dialogFactory.getObject().show(0.5f));
   }
 
   @Init
