@@ -15,13 +15,11 @@ package org.marid.app.undertow;
 
 import io.undertow.server.session.SslSessionConfig;
 import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.ListenerInfo;
-import io.undertow.servlet.api.ServletInfo;
+import io.undertow.servlet.util.ImmediateInstanceFactory;
+import org.marid.app.web.MaridListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.DispatcherType;
 
 @Component
 public class DeploymentProvider {
@@ -44,19 +42,9 @@ public class DeploymentProvider {
   }
 
   @Autowired
-  public void setServlets(ServletInfo[] servlets) {
-    deploymentInfo.addServlets(servlets);
-  }
-
-  @Autowired
-  public void setFilters(FilterInfo[] filters) {
-    deploymentInfo.addFilters(filters);
-    deploymentInfo.addFilterUrlMapping("securityFilter", "*.marid", DispatcherType.REQUEST);
-  }
-
-  @Autowired
-  public void setListeners(ListenerInfo[] listeners) {
-    deploymentInfo.addListeners(listeners);
+  public void setListeners(MaridListener listener) {
+    final var info = new ListenerInfo(MaridListener.class, new ImmediateInstanceFactory<>(listener), false);
+    deploymentInfo.addListener(info);
   }
 
   public DeploymentInfo getDeploymentInfo() {

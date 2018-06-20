@@ -13,56 +13,43 @@
  */
 package org.marid.app.web;
 
-import org.eclipse.rap.rwt.application.Application;
-import org.eclipse.rap.rwt.application.ApplicationConfiguration;
-import org.eclipse.rap.rwt.application.ApplicationRunner;
-import org.marid.app.common.Directories;
-import org.marid.app.web.entrypoints.EntryPointConfigurer;
+import org.marid.app.web.initializer.ServletContextConfigurer;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class MaridListener implements ServletContextListener, ApplicationConfiguration {
+public class MaridListener implements ServletContextListener {
 
-  private final GenericApplicationContext context;
-  private final String directory;
-  private final ObjectProvider<List<? extends EntryPointConfigurer>> entryPointConfigurers;
+  private final ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider;
+  private final Logger logger;
+  private final List<ServletContextConfigurer> configurers = new LinkedList<>();
 
-  private ApplicationRunner runner;
-
-  public MaridListener(GenericApplicationContext context,
-                       Directories directories,
-                       ObjectProvider<List<? extends EntryPointConfigurer>> entryPointConfigurers) {
-    this.context = context;
-    this.directory = directories.getRwtDir().toString();
-    this.entryPointConfigurers = entryPointConfigurers;
+  public MaridListener(ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider, Logger logger) {
+    this.configurersProvider = configurersProvider;
+    this.logger = logger;
   }
 
   @Override
   public void contextInitialized(ServletContextEvent sce) {
-    sce.getServletContext().setAttribute(ApplicationConfiguration.RESOURCE_ROOT_LOCATION, directory);
-    runner = new ApplicationRunner(this, sce.getServletContext());
-    runner.start();
-  }
-
-  @Override
-  public void contextDestroyed(ServletContextEvent sce) {
-    try {
-      runner.stop();
-    } finally {
-      runner = null;
+    for (final var configurer : configurersProvider.getObject()) {
+      logger.info("Configuring {}", configurer.getClass().getName());
+      configurer.start(sce.getServletContext());
+      if (configurer.isStopNeeded()) {
+        configurers.add(configurer);
+      }
     }
   }
 
   @Override
-  public void configure(Application application) {
-    for (final var configurer : entryPointConfigurers.getObject()) {
-      configurer.configure(application, context);
+  public void contextDestroyed(ServletContextEvent sce) {
+    for (final var configurer : configurers) {
+      configurer.stop(sce.getServletContext());
     }
   }
 }
