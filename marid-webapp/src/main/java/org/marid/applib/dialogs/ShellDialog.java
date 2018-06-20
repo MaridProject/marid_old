@@ -16,7 +16,6 @@ package org.marid.applib.dialogs;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -94,16 +93,13 @@ public abstract class ShellDialog extends Shell implements WithImages {
     label.setText(text + ": ");
 
     final var control = supplier.apply(form);
+    control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     imgButton.setData("imageFor", control);
     label.setData("labelFor", control);
 
     for (final var controlConsumer : controlConsumers) {
       controlConsumer.accept(control);
-    }
-
-    if (control.getLayoutData() == null) {
-      control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     return control;
@@ -142,16 +138,15 @@ public abstract class ShellDialog extends Shell implements WithImages {
     return button;
   }
 
-  protected void justify(Composite parent, float sizeHint) {
+  protected void justify(Composite parent) {
     final var preferredSize = computeSize(SWT.DEFAULT, SWT.DEFAULT);
     final var displaySize = parent.getBounds();
-    final var hintSize = new Point((int) (displaySize.width * sizeHint), (int) (displaySize.height * sizeHint));
 
-    if (preferredSize.x < hintSize.x) {
-      preferredSize.x = hintSize.x;
+    if (preferredSize.x < 400) {
+      preferredSize.x = 400;
     }
-    if (preferredSize.y < hintSize.y) {
-      preferredSize.y = hintSize.y;
+    if (preferredSize.y < 400) {
+      preferredSize.y = 400;
     }
     if (preferredSize.x > displaySize.width) {
       preferredSize.x = displaySize.width;
@@ -192,14 +187,14 @@ public abstract class ShellDialog extends Shell implements WithImages {
     consumer.accept(message.get());
   }
 
-  public void show(float sizeHint) {
+  @Override
+  public void open() {
     if (!getMaximized()) {
-      final Composite parent = getParent();
-      justify(parent, sizeHint);
-      final Listener listener = e -> justify(parent, sizeHint);
-      parent.addListener(SWT.Resize, listener);
-      addListener(SWT.Dispose, e -> parent.removeListener(SWT.Resize, listener));
+      pack();
+      final var parent = getParent();
+      justify(parent);
+      parent.addListener(SWT.Resize, e -> justify(parent));
     }
-    open();
+    super.open();
   }
 }

@@ -14,6 +14,7 @@
 package org.marid.ui.webide.base.projects;
 
 import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 import org.marid.applib.dialogs.ShellDialog;
 import org.marid.applib.image.AppIcon;
@@ -51,10 +52,12 @@ public class ProjectAddDialog extends ShellDialog {
   @Init
   public void nameField() {
     final var field = addField(s("name"), ToolIcon.PROJECT, c -> new Text(c, BORDER | SINGLE));
+    field.setText(name.get());
     field.addModifyListener(e -> {
       valid.accept(validator.isValid(field.getText()));
       name.accept(field.getText());
     });
+    ((GridData) field.getLayoutData()).minimumWidth = 100;
     bindValidation(valid, field);
   }
 

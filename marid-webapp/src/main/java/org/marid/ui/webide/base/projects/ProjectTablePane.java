@@ -59,7 +59,7 @@ public class ProjectTablePane extends TablePane {
   public void addButton(ObjectFactory<ProjectAddDialog> dialogFactory) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.ADD));
-    item.addListener(Selection, e -> dialogFactory.getObject().show(0.5f));
+    item.addListener(Selection, e -> dialogFactory.getObject().open());
   }
 
   @Init

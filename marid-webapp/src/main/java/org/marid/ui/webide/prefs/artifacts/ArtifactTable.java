@@ -37,6 +37,6 @@ public class ArtifactTable extends TablePane implements WithImages {
   public void findButton(ObjectFactory<ArtifactFindDialog> dialogFactory) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(ToolIcon.FIND));
-    item.addListener(SWT.Selection, e -> dialogFactory.getObject().show(0.5f));
+    item.addListener(SWT.Selection, e -> dialogFactory.getObject().open());
   }
 }
