@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletException;
 
-import static io.undertow.UndertowOptions.ENABLE_HTTP2;
-import static io.undertow.UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH;
+import static io.undertow.UndertowOptions.*;
 
 @Component
 public class UndertowConfiguration {
@@ -60,6 +59,8 @@ public class UndertowConfiguration {
   @Bean(initMethod = "start", destroyMethod = "stop")
   public Undertow undertow(SSLContext sslContext, UndertowProperties properties, HttpHandler rootHandler) {
     return Undertow.builder()
+        .setServerOption(ALWAYS_SET_KEEP_ALIVE, true)
+        .setServerOption(ALWAYS_SET_DATE, true)
         .setServerOption(ENABLE_HTTP2, true)
         .setServerOption(HTTP2_SETTINGS_ENABLE_PUSH, true)
         .addListener(new Undertow.ListenerBuilder()
