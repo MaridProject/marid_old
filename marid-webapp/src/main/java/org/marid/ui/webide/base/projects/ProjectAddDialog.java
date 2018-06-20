@@ -39,12 +39,13 @@ import static org.marid.applib.validators.InputValidators.*;
 public class ProjectAddDialog extends ShellDialog {
 
   private final IInputValidator validator;
-  private final ListenableValue<String> valid = new ListenableValue<>();
+  private final ListenableValue<String> valid;
   private final ListenableValue<String> name = new ListenableValue<>("project");
 
   public ProjectAddDialog(UI ui, ProjectStore store) {
     super(ui.shell);
     validator = inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id))));
+    valid = new ListenableValue<>(validator.isValid(name.get()));
     setImage(image(AppIcon.PROJECT));
     setText(s("addProject"));
   }
