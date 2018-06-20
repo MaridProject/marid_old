@@ -20,18 +20,18 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class UndertowProperties {
+public class WebProperties {
 
-  @Value("${undertow.host:localhost}")
+  @Value("${web.host:localhost}")
   private String host;
 
-  @Value("${undertow.redirectHost:@null}")
+  @Value("${web.redirectHost:@null}")
   private String redirectHost;
 
-  @Value("${undertow.port:8443}")
+  @Value("${web.port:8443}")
   private int port;
 
-  @Value("${undertow.session-timeout:1800}")
+  @Value("${web.session-timeout:1800}")
   private int sessionTimeout;
 
   public int getSessionTimeout() {

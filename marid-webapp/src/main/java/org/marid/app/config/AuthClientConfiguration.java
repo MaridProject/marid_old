@@ -17,7 +17,7 @@ package org.marid.app.config;
 import org.marid.app.props.FacebookAuthProperties;
 import org.marid.app.props.GoogleAuthProperties;
 import org.marid.app.props.TwitterAuthProperties;
-import org.marid.app.props.UndertowProperties;
+import org.marid.app.props.WebProperties;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -52,7 +52,7 @@ public class AuthClientConfiguration {
   }
 
   @Bean
-  public Clients authClients(Client<?, ?>[] clients, UndertowProperties properties) {
+  public Clients authClients(Client<?, ?>[] clients, WebProperties properties) {
     final String callback = String.format("https://%s:%d/callback", properties.getRedirectHost(), properties.getPort());
     final Clients authClients = new Clients(callback, clients);
     authClients.addAuthorizationGenerator((context, profile) -> {

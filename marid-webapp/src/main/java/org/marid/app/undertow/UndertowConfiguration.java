@@ -20,7 +20,7 @@ import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentManager;
-import org.marid.app.props.UndertowProperties;
+import org.marid.app.props.WebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +57,7 @@ public class UndertowConfiguration {
   }
 
   @Bean(initMethod = "start", destroyMethod = "stop")
-  public Undertow undertow(SSLContext sslContext, UndertowProperties properties, HttpHandler rootHandler) {
+  public Undertow undertow(SSLContext sslContext, WebProperties properties, HttpHandler rootHandler) {
     return Undertow.builder()
         .setServerOption(ALWAYS_SET_KEEP_ALIVE, true)
         .setServerOption(ALWAYS_SET_DATE, true)
