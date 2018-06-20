@@ -33,8 +33,8 @@ import static io.undertow.UndertowOptions.*;
 public class UndertowConfiguration {
 
   @Bean(initMethod = "deploy", destroyMethod = "stop")
-  public DeploymentManager deploymentManager(DeploymentProvider deploymentProvider) {
-    return Servlets.defaultContainer().addDeployment(deploymentProvider.getDeploymentInfo());
+  public DeploymentManager deploymentManager(MaridDeploymentInfo deploymentInfo) {
+    return Servlets.defaultContainer().addDeployment(deploymentInfo);
   }
 
   @Bean

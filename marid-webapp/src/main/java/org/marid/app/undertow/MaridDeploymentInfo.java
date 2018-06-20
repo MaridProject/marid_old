@@ -22,32 +22,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DeploymentProvider {
+public class MaridDeploymentInfo extends DeploymentInfo {
 
-  private final DeploymentInfo deploymentInfo = new DeploymentInfo()
-      .setDeploymentName("marid")
-      .setClassLoader(Thread.currentThread().getContextClassLoader())
-      .setDefaultEncoding("UTF-8")
-      .setDisableCachingForSecuredPages(true)
-      .setInvalidateSessionOnLogout(true)
-      .setSecurityDisabled(true)
-      .setContextPath("/")
-      .setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()))
-      .addWelcomePage("/main.marid")
-      .setDefaultSessionTimeout(3600);
+  public MaridDeploymentInfo() {
+    setDeploymentName("marid")
+        .setClassLoader(Thread.currentThread().getContextClassLoader())
+        .setDefaultEncoding("UTF-8")
+        .setDisableCachingForSecuredPages(true)
+        .setInvalidateSessionOnLogout(true)
+        .setSecurityDisabled(true)
+        .setContextPath("/")
+        .setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()))
+        .addWelcomePage("/main.marid")
+        .setDefaultSessionTimeout(3600);
+  }
 
   @Autowired
   public void setResourseManager(MaridResourceManager resourseManager) {
-    deploymentInfo.setResourceManager(resourseManager);
+    setResourceManager(resourseManager);
   }
 
   @Autowired
   public void setListeners(MaridListener listener) {
-    final var info = new ListenerInfo(MaridListener.class, new ImmediateInstanceFactory<>(listener), false);
-    deploymentInfo.addListener(info);
-  }
-
-  public DeploymentInfo getDeploymentInfo() {
-    return deploymentInfo;
+    addListener(new ListenerInfo(MaridListener.class, new ImmediateInstanceFactory<>(listener), false));
   }
 }
