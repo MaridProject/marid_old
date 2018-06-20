@@ -23,9 +23,7 @@ import org.pac4j.core.engine.decision.AlwaysUseSessionProfileStorageDecision;
 import org.pac4j.core.exception.HttpAction;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpFilter;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,7 +31,7 @@ import java.util.List;
 
 @Component
 @PrototypeScoped
-public class SecurityFilter extends HttpFilter {
+public class SecurityFilter implements Filter {
 
   private final Config config;
   private final DefaultSecurityLogic<Boolean, J2EContext> logic = new DefaultSecurityLogic<>() {
@@ -50,11 +48,11 @@ public class SecurityFilter extends HttpFilter {
   }
 
   @Override
-  protected void doFilter(HttpServletRequest q, HttpServletResponse r, FilterChain c) throws IOException, ServletException {
-    final var context = new J2EContext(q, r);
+  public void doFilter(ServletRequest q, ServletResponse r, FilterChain c) throws IOException, ServletException {
+    final var context = new J2EContext((HttpServletRequest) q, (HttpServletResponse) r);
     final var result = logic.perform(context, config, authorize, (code, ctx) -> false, null, "user", null, false);
     if (result) {
-      super.doFilter(q, r, c);
+      c.doFilter(q, r);
     }
   }
 }
