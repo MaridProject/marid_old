@@ -18,8 +18,6 @@ import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
-import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentManager;
 import org.marid.app.props.WebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -32,14 +30,9 @@ import static io.undertow.UndertowOptions.*;
 @Component
 public class UndertowConfiguration {
 
-  @Bean(initMethod = "deploy", destroyMethod = "stop")
-  public DeploymentManager deploymentManager(MaridDeploymentInfo deploymentInfo) {
-    return Servlets.defaultContainer().addDeployment(deploymentInfo);
-  }
-
   @Bean
-  public HttpHandler servletHandler(DeploymentManager deploymentManager) throws ServletException {
-    return deploymentManager.start();
+  public HttpHandler servletHandler(DeploymentManagerProvider deploymentManagerProvider) throws ServletException {
+    return deploymentManagerProvider.start();
   }
 
   @Bean
@@ -59,6 +52,8 @@ public class UndertowConfiguration {
   @Bean(initMethod = "start", destroyMethod = "stop")
   public Undertow undertow(SSLContext sslContext, WebProperties properties, HttpHandler rootHandler) {
     return Undertow.builder()
+        .setIoThreads(4)
+        .setWorkerThreads(8)
         .setServerOption(ALWAYS_SET_KEEP_ALIVE, true)
         .setServerOption(ALWAYS_SET_DATE, true)
         .setServerOption(ENABLE_HTTP2, true)
