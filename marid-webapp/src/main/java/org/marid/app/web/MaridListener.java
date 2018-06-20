@@ -49,6 +49,7 @@ public class MaridListener implements ServletContextListener {
   @Override
   public void contextDestroyed(ServletContextEvent sce) {
     for (final var configurer : configurers) {
+      logger.info("Stopping {}", configurer.getClass().getName());
       configurer.stop(sce.getServletContext());
     }
   }
