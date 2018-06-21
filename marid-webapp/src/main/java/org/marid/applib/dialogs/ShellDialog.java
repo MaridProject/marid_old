@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.*;
 import org.intellij.lang.annotations.MagicConstant;
 import org.marid.applib.image.AppImage;
 import org.marid.applib.image.WithImages;
+import org.marid.misc.Condition;
 import org.marid.misc.ListenableValue;
 
 import java.util.function.Consumer;
@@ -70,7 +71,7 @@ public abstract class ShellDialog extends Shell implements WithImages {
         .filter(c -> "form".equals(c.getData("dialogControlType")))
         .findFirst()
         .orElseGet(() -> {
-          final var c = new Composite(this, formStyle());
+          final var c = new Composite(parent, formStyle());
           final var l = new GridLayout(3, false);
 
           l.marginWidth = l.marginHeight = 10;
@@ -178,10 +179,9 @@ public abstract class ShellDialog extends Shell implements WithImages {
     consumer.accept(message.get());
   }
 
-  public void bindEnabled(ListenableValue<? extends String> message, Control control) {
-    final Consumer<String> consumer = n -> control.setEnabled(n == null);
-    message.addListener((o, n) -> consumer.accept(n));
-    consumer.accept(message.get());
+  public void bindEnabled(Control control, Condition condition) {
+    condition.addListener(control::setEnabled);
+    control.setEnabled(condition.isTrue());
   }
 
   @Override

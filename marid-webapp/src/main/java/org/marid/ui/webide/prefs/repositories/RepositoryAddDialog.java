@@ -29,6 +29,7 @@ import org.marid.ui.webide.prefs.PrefShell;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.eclipse.swt.SWT.*;
@@ -58,8 +59,8 @@ public class RepositoryAddDialog extends ShellDialog {
     final var field = addField(s("name"), ToolIcon.REPOSITORY, c -> new Text(c, BORDER));
     field.setText(name.get());
     field.addListener(SWT.Modify, e -> {
-      valid.accept(validator.isValid(field.getText()));
-      name.accept(field.getText());
+      valid.set(validator.isValid(field.getText()));
+      name.set(field.getText());
     });
     ((GridData) field.getLayoutData()).minimumWidth = 100;
     bindValidation(valid, field);
@@ -71,10 +72,10 @@ public class RepositoryAddDialog extends ShellDialog {
     final var entries = dao.selectors().entrySet().stream()
         .peek(e -> field.add(e.getValue().getName() + ": " + e.getValue().getDescription()))
         .collect(toUnmodifiableList());
-    field.addListener(SWT.Selection, e -> selector.accept(entries.get(field.getSelectionIndex()).getKey()));
+    field.addListener(SWT.Selection, e -> selector.set(entries.get(field.getSelectionIndex()).getKey()));
     if (field.getItemCount() > 0) {
       field.select(0);
-      selector.accept(entries.get(0).getKey());
+      selector.set(entries.get(0).getKey());
     }
   }
 
@@ -89,6 +90,6 @@ public class RepositoryAddDialog extends ShellDialog {
       store.add(List.of(new RepositoryItem(name.get()).setSelector(selector.get())));
       close();
     });
-    bindEnabled(valid, button);
+    bindEnabled(button, valid.condition(Objects::isNull));
   }
 }

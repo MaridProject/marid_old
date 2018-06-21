@@ -30,7 +30,9 @@ public enum ToolIcon implements AppImage {
   CANCEL("http://icons.iconarchive.com/icons/rafiqul-hassan/blogger/%d/Close-icon.png"),
   ARTIFACT("http://icons.iconarchive.com/icons/artdesigner/my-secret/%d/diamond-icon.png"),
   REPOSITORY("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/%d/Places-repository-icon.png"),
-  SELECTOR("http://icons.iconarchive.com/icons/papirus-team/papirus-apps/%d/chromium-app-list-icon.png");
+  SELECTOR("http://icons.iconarchive.com/icons/papirus-team/papirus-apps/%d/chromium-app-list-icon.png"),
+  GROUP("http://icons.iconarchive.com/icons/fatcow/farm-fresh/%d/radiobutton-group-icon.png"),
+  CLASS("http://icons.iconarchive.com/icons/fatcow/farm-fresh/%d/ip-class-icon.png");
 
   private final String url;
 

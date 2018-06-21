@@ -27,6 +27,7 @@ import org.marid.ui.webide.base.UI;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.eclipse.swt.SWT.BORDER;
 import static org.eclipse.swt.SWT.SINGLE;
@@ -55,8 +56,8 @@ public class ProjectAddDialog extends ShellDialog {
     final var field = addField(s("name"), ToolIcon.PROJECT, c -> new Text(c, BORDER | SINGLE));
     field.setText(name.get());
     field.addListener(SWT.Modify, e -> {
-      valid.accept(validator.isValid(field.getText()));
-      name.accept(field.getText());
+      valid.set(validator.isValid(field.getText()));
+      name.set(field.getText());
     });
     ((GridData) field.getLayoutData()).minimumWidth = 100;
     bindValidation(valid, field);
@@ -73,6 +74,6 @@ public class ProjectAddDialog extends ShellDialog {
       store.add(List.of(new ProjectItem(name.get())));
       close();
     });
-    bindEnabled(valid, button);
+    bindEnabled(button, valid.condition(Objects::isNull));
   }
 }

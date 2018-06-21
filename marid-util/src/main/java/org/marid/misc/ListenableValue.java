@@ -23,12 +23,12 @@ package org.marid.misc;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.deepEquals;
 
-public class ListenableValue<V> implements Supplier<V>, Consumer<V> {
+public class ListenableValue<V> {
 
   private final ConcurrentLinkedQueue<BiConsumer<V, V>> listeners = new ConcurrentLinkedQueue<>();
 
@@ -41,8 +41,7 @@ public class ListenableValue<V> implements Supplier<V>, Consumer<V> {
     this.value = value;
   }
 
-  @Override
-  public void accept(V v) {
+  public void set(V v) {
     final V o = value;
     if (o != v) {
       if (o == null || v == null) {
@@ -62,7 +61,6 @@ public class ListenableValue<V> implements Supplier<V>, Consumer<V> {
     }
   }
 
-  @Override
   public V get() {
     return value;
   }
@@ -82,6 +80,15 @@ public class ListenableValue<V> implements Supplier<V>, Consumer<V> {
 
   public boolean removeListener(BiConsumer<V, V> listener) {
     return listeners.removeIf(listener::equals);
+  }
+
+  public Condition condition(Predicate<V> predicate) {
+    return new ConditionImpl(this, predicate);
+  }
+
+  @SafeVarargs
+  public static <V> Condition[] conditions(Predicate<V> predicate, ListenableValue<V>... values) {
+    return Stream.of(values).map(v -> v.condition(predicate)).toArray(Condition[]::new);
   }
 
   @Override
