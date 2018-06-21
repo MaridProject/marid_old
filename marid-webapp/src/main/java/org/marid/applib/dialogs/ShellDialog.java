@@ -175,6 +175,12 @@ public abstract class ShellDialog extends Shell implements WithImages {
     consumer.accept(message.get());
   }
 
+  public void bindEnabled(ListenableValue<? extends String> message, Control control) {
+    final Consumer<String> consumer = n -> control.setEnabled(n == null);
+    message.addListener((o, n) -> consumer.accept(n));
+    consumer.accept(message.get());
+  }
+
   @Override
   public void open() {
     if (!getMaximized()) {

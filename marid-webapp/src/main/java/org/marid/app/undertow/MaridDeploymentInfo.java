@@ -25,16 +25,17 @@ import org.springframework.stereotype.Component;
 public class MaridDeploymentInfo extends DeploymentInfo {
 
   public MaridDeploymentInfo() {
-    setDeploymentName("marid")
-        .setClassLoader(Thread.currentThread().getContextClassLoader())
-        .setDefaultEncoding("UTF-8")
-        .setDisableCachingForSecuredPages(true)
-        .setInvalidateSessionOnLogout(true)
-        .setSecurityDisabled(true)
-        .setContextPath("/")
-        .setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()))
-        .addWelcomePage("/main.marid")
-        .setDefaultSessionTimeout(3600);
+    setDeploymentName("marid");
+    setClassLoader(Thread.currentThread().getContextClassLoader());
+    setDefaultEncoding("UTF-8");
+    setDisableCachingForSecuredPages(true);
+    setInvalidateSessionOnLogout(true);
+    setSecurityDisabled(true);
+    setContextPath("/");
+    setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()));
+    addWelcomePage("/main.marid");
+    setDefaultSessionTimeout(3600);
+    setCheckOtherSessionManagers(false);
   }
 
   @Autowired

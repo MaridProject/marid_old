@@ -69,7 +69,10 @@ public class ProjectAddDialog extends ShellDialog {
 
   @Init
   public void addButton(ProjectStore store) {
-    final var button = addButton(s("add"), ToolIcon.ADD, e -> store.add(List.of(new ProjectItem(name.get()))));
-    valid.addListener((o, n) -> button.setEnabled(n == null));
+    final var button = addButton(s("add"), ToolIcon.ADD, e -> {
+      store.add(List.of(new ProjectItem(name.get())));
+      close();
+    });
+    bindEnabled(valid, button);
   }
 }
