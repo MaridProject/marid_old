@@ -109,13 +109,16 @@ public abstract class ShellDialog extends Shell implements WithImages {
         .findFirst()
         .orElseGet(() -> {
           final var c = new Composite(this, SWT.BORDER);
-          final var l = new GridLayout();
+          final var l = new GridLayout(1, false);
 
           l.horizontalSpacing = 10;
 
           c.setLayout(l);
           c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
           c.setData("dialogControlType", "buttons");
+
+          final var spring = new Label(c, SWT.NONE);
+          spring.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
           return c;
         });
 

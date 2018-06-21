@@ -37,6 +37,8 @@ public class ArtifactFindDialog extends ShellDialog {
     tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
   }
 
+
+
   @Init
   public void addButton() {
     addButton(s("add"), ToolIcon.ADD, e -> {
