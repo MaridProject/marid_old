@@ -30,9 +30,13 @@ public interface WithImages {
   }
 
   default Image image(AppImage image) {
+    return image(image, 24);
+  }
+
+  default Image image(AppImage image, int size) {
     final var display = getDisplay();
     final var images = (Images) display.getData(MainEntryPoint.USER_IMAGES);
-    return images.image(display, image);
+    return images.image(display, image, size);
   }
 
   default Image maridIcon(int size, Color color) {

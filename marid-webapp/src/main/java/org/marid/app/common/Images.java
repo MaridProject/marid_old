@@ -57,8 +57,8 @@ public class Images {
     Files.createDirectory(imageDirectory);
   }
 
-  public String image(AppImage image) {
-    return fileMap.computeIfAbsent(image.getImageUrl(), url -> {
+  public String image(AppImage image, int size) {
+    return fileMap.computeIfAbsent(image.getImageUrl(size), url -> {
       final int lastDotIndex = url.lastIndexOf('.');
       final var suffix = lastDotIndex >= 0 ? url.substring(lastDotIndex) : ".tmp";
       try (final var stream = new URL(url).openStream()) {
@@ -72,8 +72,8 @@ public class Images {
     });
   }
 
-  public Image image(Display display, AppImage image) {
-    return new Image(display, image(image));
+  public Image image(Display display, AppImage image, int size) {
+    return new Image(display, image(image, size));
   }
 
   public Image maridIcon(Display display, int size, int r, int g, int b, int a) {

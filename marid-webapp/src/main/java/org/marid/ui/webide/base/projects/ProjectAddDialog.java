@@ -14,10 +14,10 @@
 package org.marid.ui.webide.base.projects;
 
 import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 import org.marid.applib.dialogs.ShellDialog;
-import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
 import org.marid.applib.model.ProjectItem;
 import org.marid.misc.ListenableValue;
@@ -46,7 +46,7 @@ public class ProjectAddDialog extends ShellDialog {
     super(ui.shell);
     validator = inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id))));
     valid = new ListenableValue<>(validator.isValid(name.get()));
-    setImage(image(AppIcon.PROJECT));
+    setImage(image(ToolIcon.PROJECT, 16));
     setText(s("addProject"));
   }
 
@@ -54,7 +54,7 @@ public class ProjectAddDialog extends ShellDialog {
   public void nameField() {
     final var field = addField(s("name"), ToolIcon.PROJECT, c -> new Text(c, BORDER | SINGLE));
     field.setText(name.get());
-    field.addModifyListener(e -> {
+    field.addListener(SWT.Modify, e -> {
       valid.accept(validator.isValid(field.getText()));
       name.accept(field.getText());
     });

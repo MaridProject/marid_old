@@ -14,7 +14,7 @@
 package org.marid.ui.webide.base.projects;
 
 import org.eclipse.swt.custom.CTabItem;
-import org.marid.applib.image.AppIcon;
+import org.marid.applib.image.ToolIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.applib.utils.Locales;
 import org.marid.ui.webide.base.boot.MainTabs;
@@ -31,6 +31,6 @@ public class ProjectTab extends CTabItem implements WithImages {
     mainTabs.setSelection(this);
     setShowClose(false);
     setText(Locales.s("projects"));
-    setImage(image(AppIcon.PROJECT));
+    setImage(image(ToolIcon.PROJECT, 16));
   }
 }

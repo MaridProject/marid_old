@@ -13,17 +13,15 @@
  */
 package org.marid.ui.webide.prefs.repositories;
 
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.marid.applib.dialogs.MaridDialog;
-import org.marid.applib.image.AppIcon;
-import org.marid.applib.image.WithImages;
+import org.marid.applib.dialogs.ShellDialog;
+import org.marid.applib.image.ToolIcon;
 import org.marid.applib.model.RepositoryItem;
-import org.marid.applib.validators.InputValidators;
+import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.base.dao.RepositoryDao;
@@ -33,77 +31,64 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
-import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
-import static org.eclipse.jface.dialogs.IDialogConstants.PROCEED_ID;
+import static org.eclipse.swt.SWT.*;
 import static org.marid.applib.utils.Locales.m;
 import static org.marid.applib.utils.Locales.s;
+import static org.marid.applib.validators.InputValidators.*;
 
 @Component
 @PrototypeScoped
-public class RepositoryAddDialog extends MaridDialog implements WithImages {
+public class RepositoryAddDialog extends ShellDialog {
 
-  private String name = "repository";
-  private String selector;
+  private final IInputValidator validator;
+  private final ListenableValue<String> valid;
+  private final ListenableValue<String> name = new ListenableValue<>("repository");
+  private final ListenableValue<String> selector = new ListenableValue<>();
 
-  public RepositoryAddDialog(PrefShell shell) {
-    super(shell, CANCEL_ID, PROCEED_ID);
-  }
-
-  @Override
-  public void create() {
-    super.create();
-    getShell().setText(s("addRepository"));
-    getShell().setImage(image(AppIcon.REPOSITORY));
+  public RepositoryAddDialog(PrefShell shell, RepositoryStore store) {
+    super(shell);
+    setText(s("addRepository"));
+    setImage(image(ToolIcon.REPOSITORY, 16));
+    validator = inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id))));
+    valid = new ListenableValue<>(validator.isValid(name.get()));
   }
 
   @Init
   public void name() {
-    onInit.add(p -> {
-      final var label = new Label(p, SWT.NONE);
-      label.setText(s("name") + ": ");
+    final var field = addField(s("name"), ToolIcon.REPOSITORY, c -> new Text(c, BORDER));
+    field.setText(name.get());
+    field.addListener(SWT.Modify, e -> {
+      valid.accept(validator.isValid(field.getText()));
+      name.accept(field.getText());
     });
-    onInit.add(p -> {
-      final var text = new Text(p, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
-      text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      text.setText(name);
-      text.addListener(SWT.Modify, e -> name = text.getText());
-    });
+    ((GridData) field.getLayoutData()).minimumWidth = 100;
+    bindValidation(valid, field);
   }
 
   @Init
-  public void selector(RepositoryDao dao, RepositoryStore store) {
-    onInit.add(p -> {
-      final var label = new Label(p, SWT.NONE);
-      label.setText(s("selector") + ": ");
+  public void selector(RepositoryDao dao) {
+    final var field = addField(s("selector"), ToolIcon.SELECTOR, c -> new Combo(c, BORDER | DROP_DOWN | READ_ONLY));
+    final var entries = dao.selectors().entrySet().stream()
+        .peek(e -> field.add(e.getValue().getName() + ": " + e.getValue().getDescription()))
+        .collect(toUnmodifiableList());
+    field.addListener(SWT.Selection, e -> selector.accept(entries.get(field.getSelectionIndex()).getKey()));
+    if (field.getItemCount() > 0) {
+      field.select(0);
+      selector.accept(entries.get(0).getKey());
+    }
+  }
+
+  @Init
+  public void cancelButton() {
+    addButton(s("cancel"), ToolIcon.CANCEL, e -> close());
+  }
+
+  @Init
+  public void addButton(RepositoryStore store) {
+    final var button = addButton(s("add"), ToolIcon.ADD, e -> {
+      store.add(List.of(new RepositoryItem(name.get()).setSelector(selector.get())));
+      close();
     });
-    onInit.add(p -> {
-      final var combo = new Combo(p, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-      final var entries = dao.selectors().entrySet().stream()
-          .peek(e -> combo.add(e.getValue().getName() + ": " + e.getValue().getDescription()))
-          .collect(toUnmodifiableList());
-      combo.addListener(SWT.Selection, e -> selector = entries.get(combo.getSelectionIndex()).getKey());
-      if (combo.getItemCount() > 0) {
-        combo.select(0);
-        selector = entries.get(0).getKey();
-      }
-      onPressed.add(id -> {
-        switch (id) {
-          case PROCEED_ID: {
-            final var validator = InputValidators.inputs(
-                InputValidators.fileName(),
-                InputValidators.input(v -> v.filter(store::contains).map(e -> m("duplicateItem", e)))
-            );
-            final var message = validator.isValid(name);
-            if (message != null) {
-              throw new IllegalStateException(message);
-            }
-            final var item = new RepositoryItem(name);
-            item.setSelector(selector);
-            store.add(List.of(item));
-            break;
-          }
-        }
-      });
-    });
+    bindEnabled(valid, button);
   }
 }

@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.toolbar.DropDownToolItem;
-import org.marid.applib.image.AppIcon;
+import org.marid.applib.image.ToolIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.applib.utils.Locales;
 import org.marid.spring.init.Init;
@@ -38,7 +38,7 @@ public class MainDropDown extends DropDownToolItem implements WithImages {
   public void closeSessionItem() {
     final MenuItem item = new MenuItem(menu, SWT.PUSH);
     item.setText(Locales.s("closeSession"));
-    item.setImage(image(AppIcon.CLOSE));
+    item.setImage(image(ToolIcon.CANCEL, 16));
     item.addListener(SWT.Selection, e -> {
       final var jsExecutor = RWT.getClient().getService(JavaScriptExecutor.class);
       jsExecutor.execute("window.location.replace('/logout')");

@@ -17,17 +17,20 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ToolIcon implements AppImage {
 
-  ADD("http://icons.iconarchive.com/icons/awicons/vista-artistic/24/add-icon.png"),
-  REMOVE("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-list-remove-icon.png"),
-  REFRESH("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-view-refresh-icon.png"),
-  UPDATE("http://icons.iconarchive.com/icons/visualpharm/must-have/24/Refresh-icon.png"),
-  EDIT("http://icons.iconarchive.com/icons/turbomilk/livejournal-10/24/pencil-icon.png"),
-  PROJECT("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/24/Actions-project-development-new-template-icon.png"),
-  SELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/24/layer-select-icon.png"),
-  DESELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/24/select-invert-icon.png"),
-  PREFERENCES("http://icons.iconarchive.com/icons/bokehlicia/captiva/24/preferences-icon.png"),
-  FIND("http://icons.iconarchive.com/icons/graphicloads/100-flat/24/zoom-seach-icon.png"),
-  CANCEL("http://icons.iconarchive.com/icons/rafiqul-hassan/blogger/24/Close-icon.png");
+  ADD("http://icons.iconarchive.com/icons/awicons/vista-artistic/%d/add-icon.png"),
+  REMOVE("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/%d/Actions-list-remove-icon.png"),
+  REFRESH("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/%d/Actions-view-refresh-icon.png"),
+  UPDATE("http://icons.iconarchive.com/icons/visualpharm/must-have/%d/Refresh-icon.png"),
+  EDIT("http://icons.iconarchive.com/icons/turbomilk/livejournal-10/%d/pencil-icon.png"),
+  PROJECT("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/%d/Actions-project-development-new-template-icon.png"),
+  SELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/%d/layer-select-icon.png"),
+  DESELECT_ALL("http://icons.iconarchive.com/icons/fatcow/farm-fresh/%d/select-invert-icon.png"),
+  PREFERENCES("http://icons.iconarchive.com/icons/bokehlicia/captiva/%d/preferences-icon.png"),
+  FIND("http://icons.iconarchive.com/icons/graphicloads/100-flat/%d/zoom-seach-icon.png"),
+  CANCEL("http://icons.iconarchive.com/icons/rafiqul-hassan/blogger/%d/Close-icon.png"),
+  ARTIFACT("http://icons.iconarchive.com/icons/artdesigner/my-secret/%d/diamond-icon.png"),
+  REPOSITORY("http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/%d/Places-repository-icon.png"),
+  SELECTOR("http://icons.iconarchive.com/icons/papirus-team/papirus-apps/%d/chromium-app-list-icon.png");
 
   private final String url;
 
@@ -35,9 +38,8 @@ public enum ToolIcon implements AppImage {
     this.url = url;
   }
 
-  @NotNull
   @Override
-  public String getImageUrl() {
-    return url;
+  public @NotNull String getImageUrl(int size) {
+    return String.format(url, size);
   }
 }

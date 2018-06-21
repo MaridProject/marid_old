@@ -18,7 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.controls.table.MaridTable.Item;
-import org.marid.applib.image.AppIcon;
 import org.marid.applib.image.ToolIcon;
 import org.marid.spring.init.Init;
 import org.springframework.beans.factory.ObjectFactory;
@@ -47,7 +46,7 @@ public class ProjectTablePane extends TablePane {
     final Consumer<Item> itemSetup = item -> {
       final var e = store.get(table.indexOf(item));
       item.setTexts(e.getId(), sizeBinary(RWT.getLocale(), store.getSize(e.getId()), 2));
-      item.setImages(image(AppIcon.PROJECT), null);
+      item.setImages(image(ToolIcon.PROJECT, 16), null);
     };
     store.addListener(ADD, e -> e.update.forEach((index, v) -> itemSetup.accept(table.new Item(NONE, index))));
     store.addListener(REMOVE, e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));

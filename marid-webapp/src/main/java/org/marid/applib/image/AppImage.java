@@ -18,5 +18,5 @@ import org.jetbrains.annotations.NotNull;
 public interface AppImage {
 
   @NotNull
-  String getImageUrl();
+  String getImageUrl(int size);
 }
