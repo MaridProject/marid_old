@@ -53,7 +53,7 @@ public class AuthClientConfiguration {
 
   @Bean
   public Clients authClients(Client<?, ?>[] clients, WebProperties properties) {
-    final String callback = String.format("https://%s:%d/callback", properties.getRedirectHost(), properties.getPort());
+    final String callback = String.format("https://%s:%d/callback", properties.getHost(), properties.getPort());
     final Clients authClients = new Clients(callback, clients);
     authClients.addAuthorizationGenerator((context, profile) -> {
       profile.addRole("ROLE_USER");

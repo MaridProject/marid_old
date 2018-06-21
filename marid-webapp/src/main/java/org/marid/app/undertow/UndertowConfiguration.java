@@ -39,13 +39,14 @@ public class UndertowConfiguration {
 
   @Bean
   public HttpHandler rootHandler(HttpHandler servletHandler) {
-    return new CanonicalPathHandler(exchange -> {
-      switch (exchange.getRelativePath()) {
+    final var redirect = new RedirectHandler("/main.marid");
+    return new CanonicalPathHandler(e -> {
+      switch (e.getRelativePath()) {
         case "/":
-          new RedirectHandler("/main.marid").handleRequest(exchange);
+          redirect.handleRequest(e);
           break;
         default:
-          servletHandler.handleRequest(exchange);
+          servletHandler.handleRequest(e);
           break;
       }
     });
@@ -66,11 +67,11 @@ public class UndertowConfiguration {
         .setServerOption(NO_REQUEST_TIMEOUT, 600_000)
         .setSocketOption(KEEP_ALIVE, true)
         .setWorkerOption(BALANCING_TOKENS, 0)
+        .setHandler(rootHandler)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())
             .setPort(properties.getPort())
-            .setRootHandler(rootHandler)
             .setSslContext(sslContext)
         )
         .build();
