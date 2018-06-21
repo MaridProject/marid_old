@@ -13,43 +13,33 @@
  */
 package org.marid.app.undertow;
 
-import io.undertow.server.handlers.resource.Resource;
-import io.undertow.server.handlers.resource.ResourceChangeListener;
-import io.undertow.server.handlers.resource.ResourceManager;
-import io.undertow.server.handlers.resource.URLResource;
+import io.undertow.server.handlers.resource.*;
 import org.marid.app.common.Directories;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Component
 public class MaridResourceManager implements ResourceManager {
 
-  private final Path rwtDir;
   private final Logger logger;
+  private final PathResourceManager fileManager;
 
   public MaridResourceManager(Directories directories, Logger logger) {
-    this.rwtDir = directories.getRwtDir();
     this.logger = logger;
+    this.fileManager = new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
   }
 
   @Override
-  public Resource getResource(String path) throws IOException {
+  public Resource getResource(String path) {
     final Resource resource;
     if (path.startsWith("/public/")) {
       final var classLoader = Thread.currentThread().getContextClassLoader();
       final var url = classLoader.getResource(path.substring(1));
       resource = url == null ? null : new URLResource(url, path);
     } else {
-      final Path p = rwtDir.resolve(path.substring(1));
-      if (p.startsWith(rwtDir) && Files.isRegularFile(p)) {
-        resource = new URLResource(p.toUri().toURL(), path);
-      } else {
-        resource = null;
-      }
+      resource = fileManager.getResource(path);
     }
     if (resource == null) {
       logger.warn("Not found {}", path);
@@ -64,15 +54,14 @@ public class MaridResourceManager implements ResourceManager {
 
   @Override
   public void registerResourceChangeListener(ResourceChangeListener listener) {
-
   }
 
   @Override
   public void removeResourceChangeListener(ResourceChangeListener listener) {
-
   }
 
   @Override
-  public void close() {
+  public void close() throws IOException {
+    fileManager.close();
   }
 }
