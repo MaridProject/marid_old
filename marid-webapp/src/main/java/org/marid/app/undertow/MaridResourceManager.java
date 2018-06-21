@@ -49,15 +49,17 @@ public class MaridResourceManager implements ResourceManager {
 
   @Override
   public boolean isResourceChangeListenerSupported() {
-    return false;
+    return fileManager.isResourceChangeListenerSupported();
   }
 
   @Override
   public void registerResourceChangeListener(ResourceChangeListener listener) {
+    fileManager.registerResourceChangeListener(listener);
   }
 
   @Override
   public void removeResourceChangeListener(ResourceChangeListener listener) {
+    fileManager.removeResourceChangeListener(listener);
   }
 
   @Override
