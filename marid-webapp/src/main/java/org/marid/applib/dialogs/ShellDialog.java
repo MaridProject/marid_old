@@ -109,7 +109,7 @@ public abstract class ShellDialog extends Shell implements WithImages {
         .filter(c -> "buttons".equals(c.getData("dialogControlType")))
         .findFirst()
         .orElseGet(() -> {
-          final var c = new Composite(this, SWT.BORDER);
+          final var c = new Composite(this, SWT.NONE);
           final var l = new GridLayout(1, false);
 
           l.horizontalSpacing = 10;
@@ -125,7 +125,7 @@ public abstract class ShellDialog extends Shell implements WithImages {
 
     final var button = new Button(buttons, SWT.PUSH);
     button.setText(text);
-    button.setImage(image(image));
+    button.setImage(image(image, 16));
     button.addListener(SWT.Selection, listener);
     for (final var buttonConsumer : buttonConsumers) {
       buttonConsumer.accept(button);

@@ -31,10 +31,10 @@ public class MainEntryPointConfigurer implements EntryPointConfigurer {
     final var classLoader = Thread.currentThread().getContextClassLoader();
     final var params = Map.of(
         WebClient.PAGE_TITLE, "Marid IDE",
-        WebClient.FAVICON, "/favicon.png"
+        WebClient.FAVICON, "favicon.png"
     );
 
-    application.addResource("/favicon.png", resourceName -> classLoader.getResourceAsStream("public/marid32.png"));
+    application.addResource("favicon.png", resourceName -> classLoader.getResourceAsStream("public/marid32.png"));
     application.addEntryPoint("/main.marid", () -> new MainEntryPoint(context), params);
   }
 }
