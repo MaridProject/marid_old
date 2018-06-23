@@ -13,16 +13,15 @@
  */
 package org.marid.ui.webide.prefs.artifacts;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.marid.applib.dialogs.ShellDialog;
 import org.marid.applib.image.IaIcon;
 import org.marid.applib.repository.Artifact;
 import org.marid.applib.repository.Repository;
+import org.marid.applib.utils.Tables;
 import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.init.Init;
@@ -60,6 +59,9 @@ public class ArtifactFindDialog extends ShellDialog {
 
   public ArtifactFindDialog(PrefShell shell) {
     super(shell, TITLE | CLOSE | APPLICATION_MODAL);
+    setText(s("findArtifacts"));
+    setImage(image(IaIcon.ARTIFACT));
+
     tabs = new TabFolder(this, TOP);
     tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
     findTab = new Composite(tabs, NONE);
@@ -81,15 +83,15 @@ public class ArtifactFindDialog extends ShellDialog {
   }
 
   @Init
-  public void artifact() {
-    final var field = addField(findTab, "artifactId", IaIcon.ARTIFACT, c -> new Text(c, BORDER));
-    field.addListener(Modify, e -> artifact.set(field.getText()));
-  }
-
-  @Init
   public void groupId() {
     final var field = addField(findTab, "groupId", IaIcon.GROUP, c -> new Text(c, BORDER));
     field.addListener(Modify, e -> group.set(field.getText()));
+  }
+
+  @Init
+  public void artifact() {
+    final var field = addField(findTab, "artifactId", IaIcon.ARTIFACT, c -> new Text(c, BORDER));
+    field.addListener(Modify, e -> artifact.set(field.getText()));
   }
 
   @Init
@@ -100,7 +102,40 @@ public class ArtifactFindDialog extends ShellDialog {
 
   @Init
   public void artifacts() {
-    final var form = form(resultTab);
+    final var table = new Table(resultTab, SWT.BORDER | SWT.CHECK | SWT.MULTI);
+    table.setLayoutData(new GridData(GridData.FILL_BOTH));
+    table.setHeaderVisible(true);
+    table.setLinesVisible(true);
+    {
+      final var groupCol = new TableColumn(table, SWT.NONE);
+      groupCol.setText("groupId");
+      groupCol.setWidth(100);
+    }
+    {
+      final var artifactCol = new TableColumn(table, SWT.NONE);
+      artifactCol.setText("artifactId");
+      artifactCol.setWidth(100);
+    }
+    {
+      final var versionCol = new TableColumn(table, SWT.NONE);
+      versionCol.setText("version");
+      versionCol.setWidth(100);
+    }
+    Tables.autoResizeColumns(table);
+    artifacts.addListener((o, n) -> {
+      table.clearAll();
+      for (final var artifact : n) {
+        final var item = new TableItem(table, SWT.NONE);
+        item.setText(new String[] {artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()});
+      }
+    });
+  }
+
+  @Init
+  public void backButton() {
+    final var button = addButton(s("back"), IaIcon.BACK, e -> tabs.setSelection(findTabItem));
+    button.setEnabled(false);
+    tabs.addListener(SWT.Selection, e -> button.setEnabled(tabs.getSelectionIndex() == 1));
   }
 
   @Init

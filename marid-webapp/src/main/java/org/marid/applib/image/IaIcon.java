@@ -27,6 +27,7 @@ public enum IaIcon implements AppImage {
   PREFERENCES("bokehlicia", "captiva", "preferences-icon"),
   // graphicloads
   FIND("graphicloads", "100-flat", "zoom-seach-icon"),
+  BACK("graphicloads", "100-flat-2", "arrow-back-icon"),
   // rafigul-hassan
   CANCEL("rafiqul-hassan", "blogger", "Close-icon"),
   // artdesigner
@@ -42,7 +43,7 @@ public enum IaIcon implements AppImage {
   GROUP("fatcow", "farm-fresh", "radiobutton-group-icon"),
   CLASS("fatcow", "farm-fresh", "ip-class-icon"),
   SELECT_ALL("fatcow", "farm-fresh", "layer-select-icon"),
-  DESELECT_ALL("fatcow", "farm-fresh", "select-invert-icon"),;
+  DESELECT_ALL("fatcow", "farm-fresh", "select-invert-icon");
 
   private final String author;
   private final String type;
