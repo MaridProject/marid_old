@@ -88,7 +88,7 @@ public class ArtifactFindDialog extends ShellDialog {
   @Init
   public void className() {
     final var field = addField(findTab, "class", IaIcon.CLASS, c -> new Text(c, BORDER));
-    field.addListener(Modify, e -> group.set(field.getText()));
+    field.addListener(Modify, e -> className.set(field.getText()));
   }
 
   @Init

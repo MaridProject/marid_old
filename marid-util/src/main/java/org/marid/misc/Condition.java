@@ -51,6 +51,7 @@ class ConditionImpl implements Condition {
   private boolean condition;
 
   <V> ConditionImpl(ListenableValue<V> value, Predicate<V> predicate) {
+    condition = predicate.test(value.get());
     value.addListener((o, n) -> setCondition(predicate.test(value.get())));
   }
 
@@ -109,8 +110,7 @@ interface ArrayCondition extends Condition {
     final AtomicBoolean value = new AtomicBoolean(isTrue());
     final Consumer<Boolean> consumer = v -> {
       final boolean newValue = isTrue();
-      if (value.get() != newValue) {
-        value.set(newValue);
+      if (value.compareAndSet(!newValue, newValue)) {
         listener.accept(newValue);
       }
     };

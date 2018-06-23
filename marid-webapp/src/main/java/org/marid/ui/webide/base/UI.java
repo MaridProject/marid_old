@@ -14,7 +14,6 @@
 package org.marid.ui.webide.base;
 
 import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.service.UISession;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.pac4j.core.context.Pac4jConstants;
@@ -42,18 +41,14 @@ public class UI {
   }
 
   @Bean
-  public Locale locale(UISession session) {
-    return session.getLocale();
+  public Locale locale() {
+    return RWT.getUISession().getLocale();
   }
 
   @Bean
-  public CommonProfile userProfile(UISession session) {
-    final LinkedHashMap map = (LinkedHashMap) session.getHttpSession().getAttribute(Pac4jConstants.USER_PROFILES);
+  public CommonProfile userProfile() {
+    final var session = RWT.getUISession();
+    final var map = (LinkedHashMap) session.getHttpSession().getAttribute(Pac4jConstants.USER_PROFILES);
     return (CommonProfile) map.values().iterator().next();
-  }
-
-  @Bean(destroyMethod = "")
-  public UISession uiSession() {
-    return RWT.getUISession();
   }
 }
