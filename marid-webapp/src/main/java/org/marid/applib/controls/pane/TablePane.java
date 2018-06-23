@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.table.MaridTable;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.selection.SelectionManager;
 import org.marid.applib.utils.Tables;
 
@@ -61,14 +61,14 @@ public abstract class TablePane extends Pane {
 
   protected void addSelectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.SELECT_ALL));
+    item.setImage(image(IaIcon.SELECT_ALL));
     item.addListener(Selection, e -> selectionManager.selectAll());
     enableOnNonEmpty(item::setEnabled);
   }
 
   protected void addDeselectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.DESELECT_ALL));
+    item.setImage(image(IaIcon.DESELECT_ALL));
     item.addListener(Selection, e -> selectionManager.deselectAll());
     enableOnNonEmpty(item::setEnabled);
   }

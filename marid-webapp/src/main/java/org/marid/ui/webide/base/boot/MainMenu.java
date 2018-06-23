@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.spring.ContextUtils;
 import org.marid.spring.init.Init;
@@ -40,7 +40,7 @@ public class MainMenu extends ToolBar implements WithImages {
   @Init
   public void prefItem(GenericApplicationContext parent) {
     final ToolItem item = new ToolItem(this, SWT.PUSH);
-    item.setImage(image(ToolIcon.PREFERENCES));
+    item.setImage(image(IaIcon.PREFERENCES));
     item.addListener(Selection, e -> ContextUtils.context(parent, c -> {
       c.register(PrefShell.class);
       c.refresh();

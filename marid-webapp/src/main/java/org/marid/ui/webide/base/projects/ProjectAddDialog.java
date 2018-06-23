@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 import org.marid.applib.dialogs.ShellDialog;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.model.ProjectItem;
 import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
@@ -47,13 +47,13 @@ public class ProjectAddDialog extends ShellDialog {
     super(ui.shell);
     validator = inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id))));
     valid = new ListenableValue<>(validator.isValid(name.get()));
-    setImage(image(ToolIcon.PROJECT, 16));
+    setImage(image(IaIcon.PROJECT, 16));
     setText(s("addProject"));
   }
 
   @Init
   public void nameField() {
-    final var field = addField(s("name"), ToolIcon.PROJECT, c -> new Text(c, BORDER | SINGLE));
+    final var field = addField(s("name"), IaIcon.PROJECT, c -> new Text(c, BORDER | SINGLE));
     field.setText(name.get());
     field.addListener(SWT.Modify, e -> {
       valid.set(validator.isValid(field.getText()));
@@ -65,12 +65,12 @@ public class ProjectAddDialog extends ShellDialog {
 
   @Init
   public void cancelButton() {
-    addButton(s("cancel"), ToolIcon.CANCEL, e -> close());
+    addButton(s("cancel"), IaIcon.CANCEL, e -> close());
   }
 
   @Init
   public void addButton(ProjectStore store) {
-    final var button = addButton(s("add"), ToolIcon.ADD, e -> {
+    final var button = addButton(s("add"), IaIcon.ADD, e -> {
       store.add(List.of(new ProjectItem(name.get())));
       close();
     });

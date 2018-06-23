@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.marid.applib.dialogs.ShellDialog;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.init.Init;
@@ -65,35 +65,35 @@ public class ArtifactFindDialog extends ShellDialog {
     findTabItem = new TabItem(tabs, NONE);
     findTabItem.setControl(findTab);
     findTabItem.setText(s("find"));
-    findTabItem.setImage(image(ToolIcon.FIND, 16));
+    findTabItem.setImage(image(IaIcon.FIND, 16));
 
     resultTabItem = new TabItem(tabs, NONE);
     resultTabItem.setControl(resultTab);
     resultTabItem.setText(s("artifacts"));
-    resultTabItem.setImage(image(ToolIcon.ARTIFACT, 16));
+    resultTabItem.setImage(image(IaIcon.ARTIFACT, 16));
   }
 
   @Init
   public void artifact() {
-    final var field = addField(findTab, "artifactId", ToolIcon.ARTIFACT, c -> new Text(c, BORDER));
+    final var field = addField(findTab, "artifactId", IaIcon.ARTIFACT, c -> new Text(c, BORDER));
     field.addListener(Modify, e -> artifact.set(field.getText()));
   }
 
   @Init
   public void groupId() {
-    final var field = addField(findTab, "groupId", ToolIcon.GROUP, c -> new Text(c, BORDER));
+    final var field = addField(findTab, "groupId", IaIcon.GROUP, c -> new Text(c, BORDER));
     field.addListener(Modify, e -> group.set(field.getText()));
   }
 
   @Init
   public void className() {
-    final var field = addField(findTab, "class", ToolIcon.CLASS, c -> new Text(c, BORDER));
+    final var field = addField(findTab, "class", IaIcon.CLASS, c -> new Text(c, BORDER));
     field.addListener(Modify, e -> group.set(field.getText()));
   }
 
   @Init
   public void findButton() {
-    final var button = addButton(s("find"), ToolIcon.ADD, e -> {
+    final var button = addButton(s("find"), IaIcon.ADD, e -> {
     });
     final var validFields = and(conditions(Objects::isNull, validArtifact, validGroup, validClassName));
     final var atLeastOneNonEmptyField = or(conditions(s -> !s.isEmpty(), artifact, group, className));

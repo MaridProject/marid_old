@@ -16,7 +16,7 @@ package org.marid.ui.webide.prefs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.ui.webide.base.UI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class PrefShell extends Shell implements WithImages {
     setMaximized(true);
     setLayout(new GridLayout(1, false));
     setText(s("preferences"));
-    setImage(image(ToolIcon.PREFERENCES));
+    setImage(image(IaIcon.PREFERENCES));
   }
 
   @Autowired

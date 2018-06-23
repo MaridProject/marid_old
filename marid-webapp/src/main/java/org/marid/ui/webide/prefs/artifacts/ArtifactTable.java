@@ -16,7 +16,7 @@ package org.marid.ui.webide.prefs.artifacts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.spring.init.Init;
 import org.springframework.beans.factory.ObjectFactory;
@@ -36,7 +36,7 @@ public class ArtifactTable extends TablePane implements WithImages {
   @Init
   public void findButton(ObjectFactory<ArtifactFindDialog> dialogFactory) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.FIND));
+    item.setImage(image(IaIcon.FIND));
     item.addListener(SWT.Selection, e -> dialogFactory.getObject().open());
   }
 }

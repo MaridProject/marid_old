@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 import org.marid.applib.dialogs.ShellDialog;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.model.RepositoryItem;
 import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
@@ -49,14 +49,14 @@ public class RepositoryAddDialog extends ShellDialog {
   public RepositoryAddDialog(PrefShell shell, RepositoryStore store) {
     super(shell);
     setText(s("addRepository"));
-    setImage(image(ToolIcon.REPOSITORY, 16));
+    setImage(image(IaIcon.REPOSITORY, 16));
     validator = inputs(fileName(), input(o -> o.filter(store::contains).map(id -> m("duplicateItem", id))));
     valid = new ListenableValue<>(validator.isValid(name.get()));
   }
 
   @Init
   public void name() {
-    final var field = addField(s("name"), ToolIcon.REPOSITORY, c -> new Text(c, BORDER));
+    final var field = addField(s("name"), IaIcon.REPOSITORY, c -> new Text(c, BORDER));
     field.setText(name.get());
     field.addListener(SWT.Modify, e -> {
       valid.set(validator.isValid(field.getText()));
@@ -68,7 +68,7 @@ public class RepositoryAddDialog extends ShellDialog {
 
   @Init
   public void selector(RepositoryDao dao) {
-    final var field = addField(s("selector"), ToolIcon.SELECTOR, c -> new Combo(c, BORDER | DROP_DOWN | READ_ONLY));
+    final var field = addField(s("selector"), IaIcon.SELECTOR, c -> new Combo(c, BORDER | DROP_DOWN | READ_ONLY));
     final var entries = dao.selectors().entrySet().stream()
         .peek(e -> field.add(e.getValue().getName() + ": " + e.getValue().getDescription()))
         .collect(toUnmodifiableList());
@@ -81,12 +81,12 @@ public class RepositoryAddDialog extends ShellDialog {
 
   @Init
   public void cancelButton() {
-    addButton(s("cancel"), ToolIcon.CANCEL, e -> close());
+    addButton(s("cancel"), IaIcon.CANCEL, e -> close());
   }
 
   @Init
   public void addButton(RepositoryStore store) {
-    final var button = addButton(s("add"), ToolIcon.ADD, e -> {
+    final var button = addButton(s("add"), IaIcon.ADD, e -> {
       store.add(List.of(new RepositoryItem(name.get()).setSelector(selector.get())));
       close();
     });

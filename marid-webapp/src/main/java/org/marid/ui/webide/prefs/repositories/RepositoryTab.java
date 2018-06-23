@@ -14,7 +14,7 @@
 package org.marid.ui.webide.prefs.repositories;
 
 import org.eclipse.swt.widgets.TabItem;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.ui.webide.prefs.PrefTabs;
 import org.springframework.stereotype.Component;
@@ -28,6 +28,6 @@ public class RepositoryTab extends TabItem implements WithImages {
   public RepositoryTab(PrefTabs tabs) {
     super(tabs, NONE);
     setText(s("repositories"));
-    setImage(image(ToolIcon.REPOSITORY, 16));
+    setImage(image(IaIcon.REPOSITORY, 16));
   }
 }

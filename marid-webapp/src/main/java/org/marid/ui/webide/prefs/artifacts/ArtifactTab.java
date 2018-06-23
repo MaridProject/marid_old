@@ -14,7 +14,7 @@
 package org.marid.ui.webide.prefs.artifacts;
 
 import org.eclipse.swt.widgets.TabItem;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.applib.image.WithImages;
 import org.marid.ui.webide.prefs.repositories.RepositoryTab;
 import org.springframework.stereotype.Component;
@@ -28,6 +28,6 @@ public class ArtifactTab extends TabItem implements WithImages {
   public ArtifactTab(RepositoryTab repositoryTab) {
     super(repositoryTab.getParent(), NONE);
     setText(s("artifacts"));
-    setImage(image(ToolIcon.ARTIFACT, 16));
+    setImage(image(IaIcon.ARTIFACT, 16));
   }
 }

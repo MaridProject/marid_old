@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.controls.table.MaridTable.Item;
-import org.marid.applib.image.ToolIcon;
+import org.marid.applib.image.IaIcon;
 import org.marid.spring.init.Init;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class ProjectTablePane extends TablePane {
     final Consumer<Item> itemSetup = item -> {
       final var e = store.get(table.indexOf(item));
       item.setTexts(e.getId(), sizeBinary(RWT.getLocale(), store.getSize(e.getId()), 2));
-      item.setImages(image(ToolIcon.PROJECT, 16), null);
+      item.setImages(image(IaIcon.PROJECT, 16), null);
     };
     store.addListener(ADD, e -> e.update.forEach((index, v) -> itemSetup.accept(table.new Item(NONE, index))));
     store.addListener(REMOVE, e -> e.update.descendingMap().forEach((index, v) -> table.remove(index)));
@@ -57,14 +57,14 @@ public class ProjectTablePane extends TablePane {
   @Init
   public void addButton(ObjectFactory<ProjectAddDialog> dialogFactory) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.ADD));
+    item.setImage(image(IaIcon.ADD));
     item.addListener(Selection, e -> dialogFactory.getObject().open());
   }
 
   @Init
   public void removeButton(ProjectStore store) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.REMOVE));
+    item.setImage(image(IaIcon.REMOVE));
     item.addListener(Selection, e -> store.remove(selectionManager.getSelected()));
     enableOnSelection(item::setEnabled);
   }
@@ -73,7 +73,7 @@ public class ProjectTablePane extends TablePane {
   public void refreshButtons(ProjectStore store) {
     addSeparator();
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.REFRESH));
+    item.setImage(image(IaIcon.REFRESH));
     item.addListener(Selection, e -> store.refresh());
   }
 
@@ -88,7 +88,7 @@ public class ProjectTablePane extends TablePane {
   @Init
   public void editButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
-    item.setImage(image(ToolIcon.EDIT));
+    item.setImage(image(IaIcon.EDIT));
     enableOnSelection(item::setEnabled);
   }
 }
