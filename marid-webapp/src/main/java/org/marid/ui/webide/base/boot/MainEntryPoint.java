@@ -23,6 +23,8 @@ import org.marid.spring.ContextUtils;
 import org.marid.ui.webide.base.UI;
 import org.springframework.context.support.GenericApplicationContext;
 
+import java.util.Map;
+
 public class MainEntryPoint implements EntryPoint {
 
   public static final String CONTEXT_KEY = "applicationContext";
@@ -45,7 +47,7 @@ public class MainEntryPoint implements EntryPoint {
     final var child = ContextUtils.context(parent, c -> {
       c.setId("mainUI");
       c.setDisplayName("mainUI");
-      c.registerBean(UI.class, () -> new UI(display, shell));
+      c.registerBean(UI.class, () -> new UI(Map.entry(display, shell)));
 
       display.setData(CONTEXT_KEY, c);
       display.setData(USER_IMAGES, parent.getBean(Images.class));

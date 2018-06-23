@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 @Component
 @ComponentScan
@@ -35,9 +36,9 @@ public class UI {
   public final Shell shell;
 
   @Autowired(required = false)
-  public UI(Display display, Shell shell) {
-    this.display = display;
-    this.shell = shell;
+  public UI(Map.Entry<Display, Shell>  arg) {
+    this.display = arg.getKey();
+    this.shell = arg.getValue();
   }
 
   @Bean
