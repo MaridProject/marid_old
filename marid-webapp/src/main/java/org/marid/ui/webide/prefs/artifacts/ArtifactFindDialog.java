@@ -29,10 +29,10 @@ import org.marid.ui.webide.prefs.PrefShell;
 import org.marid.ui.webide.prefs.repositories.RepositoryStore;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.eclipse.swt.SWT.*;
 import static org.marid.applib.utils.Locales.s;
@@ -56,6 +56,8 @@ public class ArtifactFindDialog extends ShellDialog {
   private final ListenableValue<String> validGroup = new ListenableValue<>();
   private final ListenableValue<String> validClassName = new ListenableValue<>();
   private final ListenableValue<List<Artifact>> artifacts = new ListenableValue<>(List.of());
+  private final ListenableValue<List<Artifact>> selectedArtifacts = new ListenableValue<>(List.of());
+  private final ListenableValue<Integer> selectedTab = new ListenableValue<>(0);
 
   public ArtifactFindDialog(PrefShell shell) {
     super(shell, TITLE | CLOSE | APPLICATION_MODAL);
@@ -80,6 +82,8 @@ public class ArtifactFindDialog extends ShellDialog {
     resultTabItem.setControl(resultTab);
     resultTabItem.setText(s("artifacts"));
     resultTabItem.setImage(image(IaIcon.ARTIFACT, 16));
+
+    tabs.addListener(SWT.Selection, e -> selectedTab.set(tabs.getSelectionIndex()));
   }
 
   @Init
@@ -129,33 +133,56 @@ public class ArtifactFindDialog extends ShellDialog {
         item.setText(new String[] {artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion()});
       }
     });
+    table.addListener(SWT.Selection, e -> {
+      final int itemCount = table.getItemCount();
+      selectedArtifacts.set(IntStream.range(0, itemCount)
+          .filter(i -> table.getItem(i).getChecked())
+          .mapToObj(i -> artifacts.get().get(i))
+          .collect(Collectors.toUnmodifiableList()));
+    });
   }
 
   @Init
   public void backButton() {
-    final var button = addButton(s("back"), IaIcon.BACK, e -> tabs.setSelection(findTabItem));
+    final var button = addButton(s("back"), IaIcon.BACK, e -> {
+      tabs.setSelection(findTabItem);
+      tabs.notifyListeners(SWT.Selection, new Event());
+    });
     button.setEnabled(false);
     tabs.addListener(SWT.Selection, e -> button.setEnabled(tabs.getSelectionIndex() == 1));
   }
 
   @Init
   public void findButton(RepositoryStore repositoryStore) {
-    final var button = addButton(s("find"), IaIcon.ADD, e -> {
+    final var button = addButton(s("find"), IaIcon.FIND, e -> {
       tabs.setSelection(resultTabItem);
+      tabs.notifyListeners(SWT.Selection, new Event());
 
       final var finders = repositoryStore.repositories().stream()
           .map(Repository::getArtifactFinder)
           .collect(Collectors.toUnmodifiableList());
 
       final var artifacts = finders.stream()
-          .map(f -> f.find(group.get(), artifact.get(), className.get()))
-          .flatMap(Collection::stream)
+          .flatMap(f -> f.find(group.get(), artifact.get(), className.get()).stream())
+          .filter(a -> "jar".equals(a.getPackaging()) && "".equals(a.getClassifier()))
+          .distinct()
           .collect(Collectors.toUnmodifiableList());
 
       this.artifacts.set(artifacts);
     });
     final var validFields = and(conditions(Objects::isNull, validArtifact, validGroup, validClassName));
     final var atLeastOneNonEmptyField = or(conditions(s -> !s.isEmpty(), artifact, group, className));
-    bindEnabled(button, validFields.and(atLeastOneNonEmptyField));
+    final var firstTab = selectedTab.condition(v -> v == 0);
+    bindEnabled(button, validFields.and(atLeastOneNonEmptyField).and(firstTab));
+  }
+
+  @Init
+  public void addButton() {
+    final var button = addButton(s("add"), IaIcon.ADD, e -> {
+
+    });
+    final var notEmpty = selectedArtifacts.condition(l -> !l.isEmpty());
+    final var lastSelected = selectedTab.condition(v -> v == 1);
+    bindEnabled(button, notEmpty.and(lastSelected));
   }
 }

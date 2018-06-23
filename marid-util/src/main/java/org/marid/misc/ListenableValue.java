@@ -83,7 +83,7 @@ public class ListenableValue<V> {
   }
 
   public Condition condition(Predicate<V> predicate) {
-    return new ConditionImpl(this, predicate);
+    return new ValueCondition(this, predicate);
   }
 
   @SafeVarargs
