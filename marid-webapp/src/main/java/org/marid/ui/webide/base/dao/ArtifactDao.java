@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -38,7 +37,7 @@ public class ArtifactDao {
   }
 
   public List<Artifact> loadArtifacts() {
-    final Path artifacts = directory.resolve("artifacts.list");
+    final var artifacts = directory.resolve("artifacts.list");
     try (final var reader = Files.newBufferedReader(artifacts, UTF_8)) {
       final var parser = MAPPER.getFactory().createParser(reader);
       return MAPPER.readValues(parser, Artifact.class).readAll();
@@ -50,8 +49,8 @@ public class ArtifactDao {
   }
 
   public void save(Iterable<Artifact> artifacts) {
-    final Path file = directory.resolve("artifacts.list");
-    try (final Writer writer = Files.newBufferedWriter(file, UTF_8)) {
+    final var file = directory.resolve("artifacts.list");
+    try (final var writer = Files.newBufferedWriter(file, UTF_8)) {
       MAPPER.writerFor(Artifact.class).writeValues(writer).writeAll(artifacts);
     } catch (IOException x) {
       throw new UncheckedIOException(x);

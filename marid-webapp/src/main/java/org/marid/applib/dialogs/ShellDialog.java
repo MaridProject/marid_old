@@ -51,21 +51,8 @@ public abstract class ShellDialog extends Shell implements WithImages {
     return NONE;
   }
 
-  @SafeVarargs
-  public final <C extends Control> C addField(String text,
-                                              AppImage image,
-                                              Function<Composite, C> supplier,
-                                              Consumer<C>... controlConsumers) {
-    return addField(this, text, image, supplier, controlConsumers);
-  }
-
-  @SafeVarargs
-  public final <C extends Control> C addField(Composite parent,
-                                              String text,
-                                              AppImage image,
-                                              Function<Composite, C> supplier,
-                                              Consumer<C>... controlConsumers) {
-    final var form = Stream.of(parent.getChildren())
+  protected Composite form(Composite parent) {
+    return Stream.of(parent.getChildren())
         .filter(Composite.class::isInstance)
         .map(Composite.class::cast)
         .filter(c -> "form".equals(c.getData("dialogControlType")))
@@ -82,6 +69,23 @@ public abstract class ShellDialog extends Shell implements WithImages {
 
           return c;
         });
+  }
+
+  @SafeVarargs
+  public final <C extends Control> C addField(String text,
+                                              AppImage image,
+                                              Function<Composite, C> supplier,
+                                              Consumer<C>... controlConsumers) {
+    return addField(this, text, image, supplier, controlConsumers);
+  }
+
+  @SafeVarargs
+  public final <C extends Control> C addField(Composite parent,
+                                              String text,
+                                              AppImage image,
+                                              Function<Composite, C> supplier,
+                                              Consumer<C>... controlConsumers) {
+    final var form = form(parent);
 
     final var imgButton = new Label(form, NONE);
     imgButton.setImage(image(image));
