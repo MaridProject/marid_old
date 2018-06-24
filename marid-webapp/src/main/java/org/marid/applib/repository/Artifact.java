@@ -14,6 +14,7 @@
 package org.marid.applib.repository;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
 import org.marid.applib.model.Elem;
 
@@ -60,6 +61,7 @@ public class Artifact implements Comparable<Artifact>, Elem<Artifact> {
 
   @NotNull
   @Override
+  @JsonIgnore
   public Artifact getId() {
     return this;
   }

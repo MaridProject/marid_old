@@ -14,6 +14,7 @@
 package org.marid.ui.webide.prefs.artifacts;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.image.IaIcon;
@@ -24,6 +25,8 @@ import org.marid.ui.webide.base.dao.ArtifactStore;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
+import static org.marid.applib.image.IaIcon.*;
+
 @Component
 public class ArtifactTable extends TablePane implements WithImages {
 
@@ -33,6 +36,14 @@ public class ArtifactTable extends TablePane implements WithImages {
     addColumn("groupId", 100);
     addColumn("artifactId", 100);
     addColumn("version", 75);
+  }
+
+  @Init
+  public void init(ArtifactStore store) {
+    Tables.init(this, store, (item, e) -> {
+      item.setText(new String[] {e.getGroupId(), e.getArtifactId(), e.getVersion()});
+      item.setImage(new Image[] {image(GROUP, 16), image(ARTIFACT, 16), image(SELECTOR, 16)});
+    });
   }
 
   @Init
