@@ -15,12 +15,13 @@ package org.marid.applib.repository;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jetbrains.annotations.NotNull;
+import org.marid.applib.model.Elem;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
-public class Artifact implements Comparable<Artifact> {
+public class Artifact implements Comparable<Artifact>, Elem<Artifact> {
 
   private final String groupId;
   private final String artifactId;
@@ -55,6 +56,12 @@ public class Artifact implements Comparable<Artifact> {
 
   public String getPackaging() {
     return packaging;
+  }
+
+  @NotNull
+  @Override
+  public Artifact getId() {
+    return this;
   }
 
   @Override

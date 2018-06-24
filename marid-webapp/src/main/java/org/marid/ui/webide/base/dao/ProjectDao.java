@@ -18,17 +18,21 @@ import org.marid.applib.model.ProjectItem;
 import org.marid.io.MaridFiles;
 import org.marid.ui.webide.base.UserDirectories;
 import org.springframework.stereotype.Component;
-import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.logging.Level.WARNING;
+import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.toUnmodifiableSet;
+import static java.util.stream.StreamSupport.stream;
+import static org.marid.logging.Log.log;
 
 @Component
 public class ProjectDao implements ListDao<String, ProjectItem> {
@@ -39,39 +43,35 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
     this.directory = userDirectories.getProjectsDirectory();
   }
 
-  @Override
-  public void add(ProjectItem item) {
-    try {
-      final Path path = directory.resolve(item.getId());
-      Files.createDirectories(path);
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
+  private String name(Path file) {
+    return file.getFileName().toString();
   }
 
   @Override
-  public void remove(String id) {
-    try {
-      final Path path = directory.resolve(id);
-      if (Files.isDirectory(path)) {
-        FileSystemUtils.deleteRecursively(path);
+  public void save(Collection<? extends ProjectItem> data) {
+    try (final var files = Files.newDirectoryStream(directory, Files::isDirectory)) {
+      for (final var file : files) {
+        final var name = name(file);
+        if (data.stream().map(ProjectItem::getId).noneMatch(name::equals)) {
+          MaridFiles.delete(file);
+        }
       }
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
+    for (final var item : data) {
+      try {
+        Files.createDirectories(directory.resolve(item.getId()));
+      } catch (IOException x) {
+        log(WARNING, "Unable to create {0}", x, item);
+      }
+    }
   }
 
   @Override
-  public void update(ProjectItem item) {
-  }
-
-  @Override
-  public List<ProjectItem> get() {
-    try {
-      return Files.list(directory)
-          .filter(Files::isDirectory)
-          .map(p -> new ProjectItem(p.getFileName().toString()))
-          .collect(Collectors.toUnmodifiableList());
+  public List<ProjectItem> load() {
+    try (final var files = Files.newDirectoryStream(directory, Files::isDirectory)) {
+      return stream(files.spliterator(), false).map(e -> new ProjectItem(name(e))).collect(toUnmodifiableList());
     } catch (NoSuchFileException x) {
       return List.of();
     } catch (IOException x) {
@@ -81,24 +81,13 @@ public class ProjectDao implements ListDao<String, ProjectItem> {
 
   @Override
   public Set<String> getIds() {
-    try {
-      return Files.list(directory)
-          .filter(Files::isDirectory)
-          .map(p -> p.getFileName().toString())
-          .collect(Collectors.toUnmodifiableSet());
+    try (final var files = Files.newDirectoryStream(directory, Files::isDirectory)) {
+      return stream(files.spliterator(), false).map(this::name).collect(toUnmodifiableSet());
     } catch (NoSuchFileException x) {
       return Set.of();
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }
-  }
-
-  @Override
-  public Optional<ProjectItem> get(String name) {
-    final Path dir = directory.resolve(name);
-    return Optional.of(dir)
-        .filter(Files::isDirectory)
-        .map(d -> new ProjectItem(d.getFileName().toString()));
   }
 
   public long getSize(String id) {

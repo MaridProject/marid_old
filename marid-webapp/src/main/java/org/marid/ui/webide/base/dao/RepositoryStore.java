@@ -11,12 +11,11 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.webide.prefs.repositories;
+package org.marid.ui.webide.base.dao;
 
 import org.marid.applib.dao.SortedListStore;
 import org.marid.applib.model.RepositoryItem;
 import org.marid.applib.repository.Repository;
-import org.marid.ui.webide.base.dao.RepositoryDao;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

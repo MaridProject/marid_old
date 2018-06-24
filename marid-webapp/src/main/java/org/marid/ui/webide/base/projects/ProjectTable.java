@@ -32,9 +32,9 @@ import static org.marid.applib.utils.Locales.s;
 import static org.marid.misc.StringUtils.sizeBinary;
 
 @Component
-public class ProjectTablePane extends TablePane {
+public class ProjectTable extends TablePane {
 
-  public ProjectTablePane(ProjectTab tab) {
+  public ProjectTable(ProjectTab tab) {
     super(tab.getParent());
     tab.setControl(this);
     addColumn(s("name"), 200);
@@ -70,11 +70,18 @@ public class ProjectTablePane extends TablePane {
   }
 
   @Init
-  public void refreshButtons(ProjectStore store) {
+  public void refreshButton(ProjectStore store) {
     addSeparator();
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(IaIcon.REFRESH));
     item.addListener(Selection, e -> store.refresh());
+  }
+
+  @Init
+  public void saveButton(ProjectStore store) {
+    final var item = new ToolItem(toolbar, SWT.PUSH);
+    item.setImage(image(IaIcon.SAVE));
+    item.addListener(Selection, e -> store.save());
   }
 
   @Init

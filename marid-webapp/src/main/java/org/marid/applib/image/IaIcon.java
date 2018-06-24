@@ -37,6 +37,7 @@ public enum IaIcon implements AppImage {
   PROJECT("oxygen-icons.org", "oxygen", "Actions-project-development-new-template-icon"),
   REMOVE("oxygen-icons.org", "oxygen", "Actions-list-remove-icon"),
   REFRESH("oxygen-icons.org", "oxygen", "Actions-view-refresh-icon"),
+  SAVE("oxygen-icons.org", "oxygen", "Actions-document-save-icon"),
   // papirus-team
   SELECTOR("papirus-team", "papirus-apps", "chromium-app-list-icon"),
   // fatcow

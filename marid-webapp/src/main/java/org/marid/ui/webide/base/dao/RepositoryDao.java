@@ -43,39 +43,40 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
     directory = directories.getRepositoriesDirectory();
   }
 
+  private String name(Path file) {
+    return StringUtils.stripFilenameExtension(file.getFileName().toString());
+  }
+
   @Override
-  public void add(RepositoryItem repositoryItem) {
-    try {
-      final var file = directory.resolve(repositoryItem.getId() + ".repo");
-      try (final var writer = Files.newBufferedWriter(file, UTF_8)) {
-        MAPPER.writeValue(writer, repositoryItem);
+  public void save(Collection<? extends RepositoryItem> data) {
+    try (final var files = Files.newDirectoryStream(directory, "*.repo")) {
+      for (final var file : files) {
+        final var name = name(file);
+        if (data.stream().map(RepositoryItem::getId).noneMatch(name::equals)) {
+          Files.deleteIfExists(file);
+        }
       }
+    } catch (NoSuchFileException x) {
+      // nop
     } catch (IOException x) {
       throw new UncheckedIOException(x);
+    }
+    for (final var item : data) {
+      final var path = directory.resolve(item.getId() + ".repo");
+      try (final var writer = Files.newBufferedWriter(path, UTF_8)) {
+        MAPPER.writeValue(writer, item);
+      } catch (IOException x) {
+        throw new UncheckedIOException(x);
+      }
     }
   }
 
   @Override
-  public void remove(String id) {
-    try {
-      Files.delete(directory.resolve(id + ".repo"));
-    } catch (IOException x) {
-      throw new UncheckedIOException(x);
-    }
-  }
-
-  @Override
-  public void update(RepositoryItem item) {
-    add(item);
-  }
-
-  @Override
-  public List<RepositoryItem> get() {
+  public List<RepositoryItem> load() {
     try (final var files = Files.newDirectoryStream(directory, "*.repo")) {
       final var list = new LinkedList<RepositoryItem>();
       for (final var file : files) {
-        final var id = StringUtils.stripFilenameExtension(file.getFileName().toString());
-        final var item = new RepositoryItem(id);
+        final var item = new RepositoryItem(StringUtils.stripFilenameExtension(file.getFileName().toString()));
         final var objectReader = MAPPER.readerForUpdating(item);
         try (final var reader = Files.newBufferedReader(file, UTF_8)) {
           objectReader.readValue(reader);
@@ -96,7 +97,7 @@ public class RepositoryDao implements ListDao<String, RepositoryItem> {
 
   @Override
   public Set<String> getIds() {
-    try (final var files = Files.newDirectoryStream(directory, "*.properties")) {
+    try (final var files = Files.newDirectoryStream(directory, "*.repo")) {
       return MaridIterators.stream(files)
           .map(Path::getFileName)
           .map(Path::toString)

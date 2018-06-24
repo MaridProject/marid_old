@@ -19,6 +19,7 @@ import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.controls.table.MaridTable.Item;
 import org.marid.applib.image.IaIcon;
 import org.marid.spring.init.Init;
+import org.marid.ui.webide.base.dao.RepositoryStore;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +31,9 @@ import static org.marid.applib.dao.ListStore.EventType.*;
 import static org.marid.applib.utils.Locales.s;
 
 @Component
-public class RepositoryTablePane extends TablePane {
+public class RepositoryTable extends TablePane {
 
-  public RepositoryTablePane(RepositoryTab tab) {
+  public RepositoryTable(RepositoryTab tab) {
     super(tab.getParent());
     tab.setControl(this);
     addColumn(s("name"), 100);
@@ -69,11 +70,18 @@ public class RepositoryTablePane extends TablePane {
   }
 
   @Init
-  public void refreshButtons(RepositoryStore store) {
+  public void refreshButton(RepositoryStore store) {
     addSeparator();
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(IaIcon.REFRESH));
     item.addListener(Selection, e -> store.refresh());
+  }
+
+  @Init
+  public void saveButton(RepositoryStore store) {
+    final var item = new ToolItem(toolbar, SWT.PUSH);
+    item.setImage(image(IaIcon.SAVE));
+    item.addListener(Selection, e -> store.save());
   }
 
   @Init

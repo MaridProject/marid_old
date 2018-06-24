@@ -36,7 +36,7 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
   }
 
   public void refresh() {
-    final var newList = dao.get();
+    final var newList = dao.load();
     final var remove = new TreeMap<Integer, E>();
 
     for (int i = list.size() - 1; i >= 0; i--) {
@@ -52,6 +52,10 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
     }
 
     add(newList);
+  }
+
+  public void save() {
+    dao.save(list);
   }
 
   protected int locateIndex(I key) {
@@ -73,7 +77,6 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
         final int pos = -(index + 1);
         addOrdered.add(Map.entry(pos, e));
         list.add(pos, e);
-        dao.add(e);
       } else if (!e.equals(list.get(index))) {
         list.set(index, e);
         update.put(index, e);
@@ -111,7 +114,6 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
       if (i >= 0 && i < list.size()) {
         final var e = list.get(i);
         remove.put(i, e);
-        dao.remove(e);
       }
     }
     if (!remove.isEmpty()) {
@@ -126,7 +128,6 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
       if (i >= 0 && i < list.size()) {
         final var e = list.get(i);
         update.put(i, e);
-        dao.update(e);
       }
     }
     if (!update.isEmpty()) {

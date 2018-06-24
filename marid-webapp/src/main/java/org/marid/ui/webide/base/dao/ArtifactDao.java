@@ -13,6 +13,7 @@
  */
 package org.marid.ui.webide.base.dao;
 
+import org.marid.applib.dao.ListDao;
 import org.marid.applib.repository.Artifact;
 import org.marid.ui.webide.base.UserDirectories;
 import org.springframework.stereotype.Component;
@@ -22,23 +23,26 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.marid.applib.json.MaridJackson.MAPPER;
 
 @Component
-public class ArtifactDao {
+public class ArtifactDao implements ListDao<Artifact, Artifact> {
 
-  private final Path directory;
+  private final Path file;
 
   public ArtifactDao(UserDirectories userDirectories) {
-    this.directory = userDirectories.getRepositoriesDirectory();
+    this.file = userDirectories.getRepositoriesDirectory().resolve("artifacts.list");
   }
 
-  public List<Artifact> loadArtifacts() {
-    final var artifacts = directory.resolve("artifacts.list");
-    try (final var reader = Files.newBufferedReader(artifacts, UTF_8)) {
+  @Override
+  public List<Artifact> load() {
+    try (final var reader = Files.newBufferedReader(file, UTF_8)) {
       final var parser = MAPPER.getFactory().createParser(reader);
       return MAPPER.readValues(parser, Artifact.class).readAll();
     } catch (NoSuchFileException x) {
@@ -48,10 +52,15 @@ public class ArtifactDao {
     }
   }
 
-  public void save(Iterable<Artifact> artifacts) {
-    final var file = directory.resolve("artifacts.list");
+  @Override
+  public Set<Artifact> getIds() {
+    return load().stream().collect(Collectors.toUnmodifiableSet());
+  }
+
+  @Override
+  public void save(Collection<? extends Artifact> data) {
     try (final var writer = Files.newBufferedWriter(file, UTF_8)) {
-      MAPPER.writerFor(Artifact.class).writeValues(writer).writeAll(artifacts);
+      MAPPER.writerFor(Artifact.class).writeValues(writer).writeAll(data);
     } catch (IOException x) {
       throw new UncheckedIOException(x);
     }

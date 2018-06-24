@@ -26,7 +26,7 @@ import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.init.Init;
 import org.marid.ui.webide.prefs.PrefShell;
-import org.marid.ui.webide.prefs.repositories.RepositoryStore;
+import org.marid.ui.webide.base.dao.RepositoryStore;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -53,4 +53,17 @@ public interface MaridFiles {
       return 0L;
     }
   }
+
+  static void delete(Path path) throws IOException {
+    try {
+      Files.deleteIfExists(path);
+    } catch (DirectoryNotEmptyException x) {
+      try (final var files = Files.newDirectoryStream(path)) {
+        for (final var file : files) {
+          delete(file);
+        }
+      }
+      delete(path);
+    }
+  }
 }
