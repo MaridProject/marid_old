@@ -16,27 +16,27 @@ package org.marid.applib.controls.pane;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
-import org.marid.applib.controls.table.MaridTable;
 import org.marid.applib.image.IaIcon;
 import org.marid.applib.selection.SelectionManager;
 import org.marid.applib.utils.Tables;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 import static org.eclipse.swt.SWT.*;
-import static org.marid.applib.controls.table.MaridTable.EventType.ADD;
-import static org.marid.applib.controls.table.MaridTable.EventType.REMOVE;
 
 public abstract class TablePane extends Pane {
 
-  protected final MaridTable table;
+  protected final Table table;
   protected final SelectionManager selectionManager;
+  protected final ConcurrentLinkedQueue<Runnable> dataListeners = new ConcurrentLinkedQueue<>();
 
   public TablePane(Composite parent, int style, int toolbarStyle, int tableStyle) {
     super(parent, style, toolbarStyle);
-    table = new MaridTable(this, tableStyle);
+    table = new Table(this, tableStyle);
     table.setHeaderVisible(true);
     table.setLinesVisible(true);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -59,29 +59,40 @@ public abstract class TablePane extends Pane {
     }
   }
 
-  protected void addSelectAllButton() {
+  public void markDirty() {
+    dataListeners.forEach(Runnable::run);
+  }
+
+  public void addSelectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(IaIcon.SELECT_ALL));
     item.addListener(Selection, e -> selectionManager.selectAll());
     enableOnNonEmpty(item::setEnabled);
   }
 
-  protected void addDeselectAllButton() {
+  public void addDeselectAllButton() {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(IaIcon.DESELECT_ALL));
     item.addListener(Selection, e -> selectionManager.deselectAll());
     enableOnNonEmpty(item::setEnabled);
   }
 
-  protected void enableOnSelection(Consumer<Boolean> enabled) {
+  public void enableOnSelection(Consumer<Boolean> enabled) {
     table.addListener(Selection, e -> enabled.accept(selectionManager.isSelected()));
-    table.addListener(REMOVE, e -> enabled.accept(selectionManager.isSelected()));
+    dataListeners.add(() -> enabled.accept(selectionManager.isSelected()));
     enabled.accept(selectionManager.isSelected());
   }
 
-  protected void enableOnNonEmpty(Consumer<Boolean> enabled) {
+  public void enableOnNonEmpty(Consumer<Boolean> enabled) {
     enabled.accept(table.getItemCount() > 0);
-    table.addListener(REMOVE, e -> enabled.accept(table.getItemCount() > 0));
-    table.addListener(ADD, e -> enabled.accept(true));
+    dataListeners.add(() -> enabled.accept(table.getItemCount() > 0));
+  }
+
+  public SelectionManager getSelectionManager() {
+    return selectionManager;
+  }
+
+  public Table getTable() {
+    return table;
   }
 }

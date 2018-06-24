@@ -25,8 +25,9 @@ import org.marid.applib.utils.Tables;
 import org.marid.misc.ListenableValue;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.marid.spring.init.Init;
-import org.marid.ui.webide.prefs.PrefShell;
+import org.marid.ui.webide.base.dao.ArtifactStore;
 import org.marid.ui.webide.base.dao.RepositoryStore;
+import org.marid.ui.webide.prefs.PrefShell;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -177,10 +178,8 @@ public class ArtifactFindDialog extends ShellDialog {
   }
 
   @Init
-  public void addButton() {
-    final var button = addButton(s("add"), IaIcon.ADD, e -> {
-
-    });
+  public void addButton(ArtifactStore store) {
+    final var button = addButton(s("add"), IaIcon.ADD, e -> store.add(selectedArtifacts.get()));
     final var notEmpty = selectedArtifacts.condition(l -> !l.isEmpty());
     final var lastSelected = selectedTab.condition(v -> v == 1);
     bindEnabled(button, notEmpty.and(lastSelected));

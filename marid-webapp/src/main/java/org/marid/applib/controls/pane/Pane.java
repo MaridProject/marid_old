@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.image.WithImages;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 public class Pane extends Composite implements WithImages {
 
   protected final ToolBar toolbar;
@@ -32,7 +35,16 @@ public class Pane extends Composite implements WithImages {
     toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
 
-  protected void addSeparator() {
+  public void addSeparator() {
     new ToolItem(toolbar, SWT.SEPARATOR);
+  }
+
+  @SafeVarargs
+  public final <C extends ToolItem> C addItem(Function<ToolBar, C> function, Consumer<C>... consumers) {
+    final var item = function.apply(toolbar);
+    for (final var consumer : consumers) {
+      consumer.accept(item);
+    }
+    return item;
   }
 }

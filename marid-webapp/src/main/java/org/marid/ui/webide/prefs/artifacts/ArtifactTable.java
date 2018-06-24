@@ -18,7 +18,9 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.image.IaIcon;
 import org.marid.applib.image.WithImages;
+import org.marid.applib.utils.Tables;
 import org.marid.spring.init.Init;
+import org.marid.ui.webide.base.dao.ArtifactStore;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
@@ -38,5 +40,10 @@ public class ArtifactTable extends TablePane implements WithImages {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(IaIcon.FIND));
     item.addListener(SWT.Selection, e -> dialogFactory.getObject().open());
+  }
+
+  @Init
+  public void stdButtons(ArtifactStore store) {
+    Tables.addStdButtons(this, store);
   }
 }
