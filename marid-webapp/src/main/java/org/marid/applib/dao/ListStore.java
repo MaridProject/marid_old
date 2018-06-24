@@ -14,26 +14,25 @@
 package org.marid.applib.dao;
 
 import org.marid.applib.model.Elem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import static org.marid.applib.dao.ListStore.EventType.*;
+import static org.marid.logging.Log.log;
 
 public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
 
   protected final D dao;
-  protected final Logger logger;
   protected final ArrayList<E> list = new ArrayList<>();
   protected final EnumMap<EventType, Collection<Consumer<Event>>> listeners = new EnumMap<>(EventType.class);
 
   public ListStore(D dao) {
     this.dao = dao;
-    this.logger = LoggerFactory.getLogger(getClass());
   }
 
   public void refresh() {
@@ -172,9 +171,9 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
       try {
         listener.accept(this);
       } catch (Exception x) {
-        logger.warn("Unable to invoke listener of {}", this, x);
+        log(WARNING, "Unable to invoke listener of {0}", x, this);
       } catch (Throwable x) {
-        logger.error("Unexpected error of {}", this, x);
+        log(SEVERE, "Unexpected error of {0}", x, this);
       }
     }
   }
