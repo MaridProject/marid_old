@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class ProjectStore extends SortedListStore<String, ProjectItem, ProjectDao> {
 
   public ProjectStore(ProjectDao dao) {
-    super(dao);
+    super(dao, String::compareTo);
   }
 
   public long getSize(String id) {

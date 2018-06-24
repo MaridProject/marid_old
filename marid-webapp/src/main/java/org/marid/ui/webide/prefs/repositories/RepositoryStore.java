@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 public class RepositoryStore extends SortedListStore<String, RepositoryItem, RepositoryDao> {
 
   public RepositoryStore(RepositoryDao dao) {
-    super(dao);
+    super(dao, String::compareTo);
   }
 
   public List<Repository> repositories() {

@@ -15,11 +15,15 @@ package org.marid.applib.dao;
 
 import org.marid.applib.model.Elem;
 
-public class SortedListStore<I extends Comparable<? super I>, T extends Elem<I>, D extends ListDao<I, T>>
-    extends ListStore<I, T, D> {
+import java.util.Comparator;
 
-  public SortedListStore(D dao) {
+public class SortedListStore<I, T extends Elem<I>, D extends ListDao<I, T>> extends ListStore<I, T, D> {
+
+  private final Comparator<? super I> comparator;
+
+  public SortedListStore(D dao, Comparator<? super I> comparator) {
     super(dao);
+    this.comparator = comparator;
   }
 
   @Override
@@ -30,7 +34,7 @@ public class SortedListStore<I extends Comparable<? super I>, T extends Elem<I>,
     while (low <= high) {
       final int mid = (low + high) >>> 1;
       final T midVal = list.get(mid);
-      final int cmp = midVal.getId().compareTo(key);
+      final int cmp = comparator.compare(midVal.getId(), key);
 
       if (cmp < 0) {
         low = mid + 1;
