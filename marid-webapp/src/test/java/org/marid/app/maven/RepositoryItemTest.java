@@ -25,6 +25,9 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.retrieve.RetrieveReport;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.app.ivy.IvyCommonConfiguration;
 import org.marid.app.ivy.IvySlfLoggerAdapter;
 import org.marid.spring.LoggingPostProcessor;
@@ -35,23 +38,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.Test;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.marid.test.TestGroups.MANUAL;
-
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-public class RepositoryItemTest extends AbstractTestNGSpringContextTests {
+@Tag("manual")
+public class RepositoryItemTest {
 
   @Autowired
   private Ivy ivy;
 
-  @Test(groups = {MANUAL})
-  public void testResolve() throws Exception {
+  @Test
+  void testResolve() throws Exception {
     final ResolveOptions resolveOptions = new ResolveOptions();
     resolveOptions.setTransitive(true);
     resolveOptions.setDownload(true);

@@ -20,23 +20,25 @@
  */
 package org.marid.misc;
 
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.marid.misc.Builder.build;
-import static org.marid.test.TestGroups.NORMAL;
-import static org.testng.Assert.assertEquals;
 
-public class ReflectionsTest {
+@Tag("normal")
+class ReflectionsTest {
 
   private int x;
   private short[] y;
   private String[] z;
 
-  @Test(groups = {NORMAL})
-  public void testHashCode() {
+  @Test
+  void testHashCode() {
     x = 1;
     y = new short[]{1, 2};
     z = new String[]{"a", "b"};
@@ -44,11 +46,10 @@ public class ReflectionsTest {
     final int expected = Arrays.deepHashCode(new Object[]{x, y, z});
     final int actual = Reflections.hashCode(this);
 
-    assertEquals(actual, expected);
+    assertEquals(expected, actual);
   }
 
-  @DataProvider
-  public Object[][] equalsData() {
+  static Object[][] equalsData() {
     return new Object[][]{
         {
             build(new ReflectionsTest(), t -> t.x = 1, t -> t.y = new short[]{1}, t -> t.z = new String[]{"p"}),
@@ -63,8 +64,9 @@ public class ReflectionsTest {
     };
   }
 
-  @Test(groups = {NORMAL}, dataProvider = "equalsData")
-  public void testEquals(ReflectionsTest v1, ReflectionsTest v2, boolean equals) {
+  @ParameterizedTest
+  @MethodSource("equalsData")
+  void testEquals(ReflectionsTest v1, ReflectionsTest v2, boolean equals) {
     assertEquals(Reflections.equals(v1, v2), equals);
   }
 }

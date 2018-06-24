@@ -13,22 +13,23 @@
  */
 package org.marid.applib.repository;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Parameter;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
-import static org.marid.test.TestGroups.NORMAL;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArtifactTest {
+@Tag("normal")
+class ArtifactTest {
 
-  @Test(groups = {NORMAL})
-  public void checkParameters() {
+  @Test
+  void checkParameters() {
     final var parameters = Artifact.class.getConstructors()[0].getParameters();
     final var names = Stream.of(parameters).map(Parameter::getName).collect(toUnmodifiableList());
 
-    Assert.assertTrue(names.contains("groupId"));
+    assertTrue(names.contains("groupId"));
   }
 }
