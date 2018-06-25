@@ -17,7 +17,13 @@ package org.marid.app.build;
 public class BuildAll {
 
   public static void main(String... args) throws Throwable {
-    final Process process = new ProcessBuilder("mvn", "-B", "-DskipTests", "clean", "install")
+    final Process process = new ProcessBuilder(
+        "mvn",
+        "-B", "-T8",
+        "-DskipTests",
+        "-Pdevelopment",
+        "clean", "install"
+    )
         .inheritIO()
         .start();
     final int result = process.waitFor();

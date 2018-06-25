@@ -67,9 +67,11 @@ public class ArtifactFindDialog extends ShellDialog {
 
     tabs = new TabFolder(this, TOP);
     tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
+
     findTab = new Composite(tabs, NONE);
     findTab.setLayoutData(new GridData(GridData.FILL_BOTH));
     findTab.setLayout(new GridLayout(1, false));
+
     resultTab = new Composite(tabs, NONE);
     resultTab.setLayoutData(new GridData(GridData.FILL_BOTH));
     resultTab.setLayout(new GridLayout(1, false));
