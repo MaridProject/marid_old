@@ -179,7 +179,10 @@ public class ArtifactFindDialog extends ShellDialog {
 
   @Init
   public void addButton(ArtifactStore store) {
-    final var button = addButton(s("add"), IaIcon.ADD, e -> store.add(selectedArtifacts.get()));
+    final var button = addButton(s("add"), IaIcon.ADD, e -> {
+      store.add(selectedArtifacts.get());
+      close();
+    });
     final var notEmpty = selectedArtifacts.condition(l -> !l.isEmpty());
     final var lastSelected = selectedTab.condition(v -> v == 1);
     bindEnabled(button, notEmpty.and(lastSelected));
