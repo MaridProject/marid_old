@@ -24,20 +24,8 @@
 
     <dependency>
       <groupId>org.eclipse.rap</groupId>
-      <artifactId>org.eclipse.rap.nebula.jface.gridviewer</artifactId>
+      <artifactId>org.eclipse.rap.rwt</artifactId>
       <version>3.4.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.platform</groupId>
-      <artifactId>org.eclipse.core.commands</artifactId>
-      <version>3.9.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.platform</groupId>
-      <artifactId>org.eclipse.core.runtime</artifactId>
-      <version>3.13.0</version>
     </dependency>
 
     <dependency>

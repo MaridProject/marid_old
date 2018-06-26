@@ -13,10 +13,9 @@
  */
 package org.marid.applib.validators;
 
-import org.eclipse.jface.dialogs.IInputValidator;
-
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -24,7 +23,7 @@ import static org.marid.applib.utils.Locales.m;
 
 public interface InputValidators {
 
-  static IInputValidator fileName() {
+  static Function<String, String> fileName() {
     return value -> {
       if (value == null) {
         return m("nullValue");
@@ -42,13 +41,14 @@ public interface InputValidators {
     };
   }
 
-  static IInputValidator input(UnaryOperator<Optional<String>> predicate) {
+  static Function<String, String> input(UnaryOperator<Optional<String>> predicate) {
     return value -> predicate.apply(Optional.ofNullable(value)).orElse(null);
   }
 
-  static IInputValidator inputs(IInputValidator... validators) {
+  @SafeVarargs
+  static Function<String, String> inputs(Function<String, String>... validators) {
     return v -> Stream.of(validators)
-        .map(validator -> validator.isValid(v))
+        .map(validator -> validator.apply(v))
         .filter(Objects::nonNull)
         .findFirst()
         .orElse(null);

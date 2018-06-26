@@ -20,10 +20,17 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.marid.applib.controls.pane.TablePane;
 import org.marid.applib.image.IaIcon;
 import org.marid.applib.utils.Tables;
+import org.marid.spring.ContextUtils;
 import org.marid.spring.init.Init;
+import org.marid.ui.webide.base.boot.MainTabs;
 import org.marid.ui.webide.base.dao.ProjectStore;
+import org.marid.ui.webide.project.ProjectTreeConfiguration;
+import org.marid.ui.webide.project.ProjectTreeTab;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Stream;
 
 import static org.eclipse.swt.SWT.Selection;
 import static org.marid.applib.utils.Locales.s;
@@ -42,8 +49,8 @@ public class ProjectTable extends TablePane {
   @Init
   public void initStore(ProjectStore store) {
     Tables.init(this, store, (item, e) -> {
-      item.setText(new String[] {e.getId(), sizeBinary(RWT.getLocale(), store.getSize(e.getId()), 2)});
-      item.setImage(new Image[] {image(IaIcon.PROJECT, 16), null});
+      item.setText(new String[]{e.getId(), sizeBinary(RWT.getLocale(), store.getSize(e.getId()), 2)});
+      item.setImage(new Image[]{image(IaIcon.PROJECT, 16), null});
     });
   }
 
@@ -60,9 +67,23 @@ public class ProjectTable extends TablePane {
   }
 
   @Init
-  public void editButton() {
+  public void editButton(ProjectStore store, GenericApplicationContext context, MainTabs tabs) {
     final var item = new ToolItem(toolbar, SWT.PUSH);
     item.setImage(image(IaIcon.EDIT));
+    item.addListener(SWT.Selection, e -> {
+      final var project = store.get(getTable().getSelectionIndex());
+      final var tabItem = Stream.of(tabs.getItems())
+          .filter(ti -> project == ti.getData())
+          .findFirst()
+          .orElseGet(() -> ContextUtils.context(context, c -> {
+            c.setId(project.getId());
+            c.setDisplayName(project.getId());
+            c.registerBean(ProjectTreeConfiguration.class, () -> new ProjectTreeConfiguration(project));
+            c.refresh();
+            c.start();
+          }).getBean(ProjectTreeTab.class));
+      tabs.setSelection(tabItem);
+    });
     enableOnSelection(item::setEnabled);
   }
 }
