@@ -18,8 +18,13 @@ import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.PathResourceManager;
+import org.marid.app.common.Directories;
 import org.marid.app.props.WebProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
@@ -75,5 +80,19 @@ public class UndertowConfiguration {
             .setSslContext(sslContext)
         )
         .build();
+  }
+
+  @Bean
+  @Qualifier("resourceManager")
+  @Order(1)
+  public ClassPathResourceManager metaInfResources() {
+    return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources");
+  }
+
+  @Bean
+  @Qualifier("resourceManager")
+  @Order(2)
+  public PathResourceManager rwtResources(Directories directories) {
+    return new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
   }
 }

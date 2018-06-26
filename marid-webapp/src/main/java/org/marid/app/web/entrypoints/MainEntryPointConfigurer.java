@@ -34,7 +34,7 @@ public class MainEntryPointConfigurer implements EntryPointConfigurer {
         WebClient.FAVICON, "favicon.png"
     );
 
-    application.addResource("favicon.png", resourceName -> classLoader.getResourceAsStream("public/marid32.png"));
+    application.addResource("favicon.png", resourceName -> classLoader.getResourceAsStream("META-INF/resources/public/marid32.png"));
     application.addEntryPoint("/main.marid", () -> new MainEntryPoint(context), params);
   }
 }

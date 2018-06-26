@@ -13,57 +13,59 @@
  */
 package org.marid.app.undertow;
 
-import io.undertow.server.handlers.resource.*;
-import org.marid.app.common.Directories;
-import org.slf4j.Logger;
+import io.undertow.server.handlers.resource.Resource;
+import io.undertow.server.handlers.resource.ResourceChangeListener;
+import io.undertow.server.handlers.resource.ResourceManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.stream.Stream;
+
+import static java.util.logging.Level.WARNING;
+import static org.marid.logging.Log.log;
 
 @Component
 public class MaridResourceManager implements ResourceManager {
 
-  private final Logger logger;
-  private final PathResourceManager fileManager;
+  private final ResourceManager[] resourceManagers;
 
-  public MaridResourceManager(Directories directories, Logger logger) {
-    this.logger = logger;
-    this.fileManager = new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
+  public MaridResourceManager(@Qualifier("resourceManager") ResourceManager[] resourceManagers) {
+    this.resourceManagers = resourceManagers;
   }
 
   @Override
-  public Resource getResource(String path) {
-    final Resource resource;
-    if (path.startsWith("/public/")) {
-      final var classLoader = Thread.currentThread().getContextClassLoader();
-      final var url = classLoader.getResource(path.substring(1));
-      resource = url == null ? null : new URLResource(url, path);
-    } else {
-      resource = fileManager.getResource(path);
+  public Resource getResource(String path) throws IOException {
+    for (final var resourceManager : resourceManagers) {
+      final var resource = resourceManager.getResource(path);
+      if (resource != null) {
+        return resource;
+      }
     }
-    if (resource == null) {
-      logger.warn("Not found {}", path);
-    }
-    return resource;
+    log(WARNING, "Not found: {0}", path);
+    return null;
   }
 
   @Override
   public boolean isResourceChangeListenerSupported() {
-    return fileManager.isResourceChangeListenerSupported();
+    return Stream.of(resourceManagers).anyMatch(ResourceManager::isResourceChangeListenerSupported);
   }
 
   @Override
   public void registerResourceChangeListener(ResourceChangeListener listener) {
-    fileManager.registerResourceChangeListener(listener);
+    Stream.of(resourceManagers)
+        .filter(ResourceManager::isResourceChangeListenerSupported)
+        .forEach(m -> m.registerResourceChangeListener(listener));
   }
 
   @Override
   public void removeResourceChangeListener(ResourceChangeListener listener) {
-    fileManager.removeResourceChangeListener(listener);
+    Stream.of(resourceManagers)
+        .filter(ResourceManager::isResourceChangeListenerSupported)
+        .forEach(m -> m.removeResourceChangeListener(listener));
   }
 
   @Override
-  public void close() throws IOException {
-    fileManager.close();
+  public void close() {
   }
 }
