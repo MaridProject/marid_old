@@ -13,13 +13,15 @@
  */
 package org.marid.app.web;
 
+import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.DeploymentConfiguration;
 import com.vaadin.flow.server.InvalidRouteConfigurationException;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletService;
-import org.marid.ui.ide.MainComponent;
-import org.marid.ui.ide.MainUI;
+import org.marid.app.web.vaadin.IdeInstantiator;
+import org.marid.ui.ide.base.MainComponent;
+import org.marid.ui.ide.base.MainUI;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
@@ -29,6 +31,12 @@ import static com.vaadin.flow.server.VaadinSession.UI_PARAMETER;
 
 @Component
 public class IdeServlet extends VaadinServlet {
+
+  private final IdeInstantiator instantiator;
+
+  public IdeServlet(IdeInstantiator instantiator) {
+    this.instantiator = instantiator;
+  }
 
   @Override
   protected DeploymentConfiguration createDeploymentConfiguration() {
@@ -41,7 +49,13 @@ public class IdeServlet extends VaadinServlet {
 
   @Override
   protected VaadinServletService createServletService(DeploymentConfiguration configuration) throws ServiceException {
-    final var service = super.createServletService(configuration);
+    final var service = new VaadinServletService(this, configuration) {
+      @Override
+      public Instantiator getInstantiator() {
+        return instantiator;
+      }
+    };
+    service.init();
     try {
       service.getRouter().getRegistry().setNavigationTargets(Set.of(MainComponent.class));
     } catch (InvalidRouteConfigurationException x) {

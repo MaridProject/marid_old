@@ -11,16 +11,9 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.ide;
+package org.marid.ui.ide.base;
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.UI;
 
-@Route("")
-public class MainComponent extends VerticalLayout {
-
-  public MainComponent() {
-    add(new TextField("xxx", "xxx"));
-  }
+public class MainUI extends UI {
 }

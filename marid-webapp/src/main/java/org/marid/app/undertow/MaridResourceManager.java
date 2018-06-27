@@ -22,9 +22,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import static java.util.logging.Level.WARNING;
-import static org.marid.logging.Log.log;
-
 @Component
 public class MaridResourceManager implements ResourceManager {
 
@@ -42,7 +39,6 @@ public class MaridResourceManager implements ResourceManager {
         return resource;
       }
     }
-    log(WARNING, "Not found: {0}", path);
     return null;
   }
 
