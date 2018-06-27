@@ -16,10 +16,15 @@ package org.marid.app.undertow;
 import io.undertow.server.session.SslSessionConfig;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.ListenerInfo;
+import io.undertow.servlet.api.ServletSessionConfig;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
 import org.marid.app.web.MaridListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.EnumSet;
+
+import static javax.servlet.SessionTrackingMode.SSL;
 
 @Component
 public class MaridDeploymentInfo extends DeploymentInfo {
@@ -33,9 +38,9 @@ public class MaridDeploymentInfo extends DeploymentInfo {
     setSecurityDisabled(true);
     setContextPath("/");
     setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()));
-    addWelcomePage("/main.marid");
     setDefaultSessionTimeout(3600);
     setCheckOtherSessionManagers(false);
+    setServletSessionConfig(new ServletSessionConfig().setSessionTrackingModes(EnumSet.of(SSL)));
   }
 
   @Autowired

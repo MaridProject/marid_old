@@ -26,8 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 
-import static com.vaadin.flow.server.Constants.SERVLET_PARAMETER_HEARTBEAT_INTERVAL;
-import static com.vaadin.flow.server.Constants.SERVLET_PARAMETER_PUSH_MODE;
+import static com.vaadin.flow.server.Constants.*;
 import static com.vaadin.flow.server.VaadinSession.UI_PARAMETER;
 
 @Component
@@ -46,6 +45,8 @@ public class IdeServlet extends VaadinServlet {
     properties.setProperty(UI_PARAMETER, MainUI.class.getName());
     properties.setProperty(SERVLET_PARAMETER_HEARTBEAT_INTERVAL, "60");
     properties.setProperty(SERVLET_PARAMETER_PUSH_MODE, PushMode.AUTOMATIC.name());
+    properties.setProperty(SERVLET_PARAMETER_PRODUCTION_MODE, "true");
+    properties.setProperty(USE_ORIGINAL_FRONTEND_RESOURCES, "true");
 
     return createDeploymentConfiguration(properties);
   }

@@ -14,10 +14,16 @@
 package org.marid.ui.ide.base;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.shared.communication.PushMode;
 import com.vaadin.flow.shared.ui.Transport;
 
-@Push(value = PushMode.AUTOMATIC, transport = Transport.LONG_POLLING)
 public class MainUI extends UI {
+
+  @Override
+  protected void init(VaadinRequest request) {
+    super.init(request);
+    getPushConfiguration().setTransport(Transport.LONG_POLLING);
+    getPushConfiguration().setPushMode(PushMode.AUTOMATIC);
+  }
 }

@@ -31,7 +31,6 @@ import javax.net.ssl.SSLContext;
 import javax.servlet.ServletException;
 
 import static io.undertow.UndertowOptions.*;
-import static org.xnio.Options.BALANCING_TOKENS;
 import static org.xnio.Options.KEEP_ALIVE;
 
 @Component
@@ -71,7 +70,6 @@ public class UndertowConfiguration {
         .setServerOption(ENABLE_RFC6265_COOKIE_VALIDATION, true)
         .setServerOption(NO_REQUEST_TIMEOUT, 600_000)
         .setSocketOption(KEEP_ALIVE, true)
-        .setWorkerOption(BALANCING_TOKENS, 0)
         .setHandler(rootHandler)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
