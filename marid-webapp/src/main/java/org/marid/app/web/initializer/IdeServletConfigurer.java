@@ -13,7 +13,7 @@
  */
 package org.marid.app.web.initializer;
 
-import org.marid.app.web.SecondServlet;
+import org.marid.app.web.IdeServlet;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,17 +23,17 @@ import javax.servlet.ServletContext;
 @Component
 @PrototypeScoped
 @Order(6)
-public class SecondServletConfigurer implements ServletContextConfigurer {
+public class IdeServletConfigurer implements ServletContextConfigurer {
 
-  private final SecondServlet servlet;
+  private final IdeServlet servlet;
 
-  public SecondServletConfigurer(SecondServlet servlet) {
+  public IdeServletConfigurer(IdeServlet servlet) {
     this.servlet = servlet;
   }
 
   @Override
   public void start(ServletContext context) {
-    final var r = context.addServlet("secondServlet", servlet);
+    final var r = context.addServlet("ideServlet", servlet);
     r.setLoadOnStartup(4);
     r.setAsyncSupported(true);
     r.addMapping("/app/*", "/VAADIN/*", "/frontend/*");

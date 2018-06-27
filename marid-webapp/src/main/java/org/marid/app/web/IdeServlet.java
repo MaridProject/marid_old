@@ -28,7 +28,7 @@ import java.util.Set;
 import static com.vaadin.flow.server.VaadinSession.UI_PARAMETER;
 
 @Component
-public class SecondServlet extends VaadinServlet {
+public class IdeServlet extends VaadinServlet {
 
   @Override
   protected DeploymentConfiguration createDeploymentConfiguration() {
