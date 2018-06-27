@@ -11,7 +11,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.app.web;
+package org.marid.app.web.vaadin;
 
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.function.DeploymentConfiguration;
@@ -19,14 +19,15 @@ import com.vaadin.flow.server.InvalidRouteConfigurationException;
 import com.vaadin.flow.server.ServiceException;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletService;
-import org.marid.app.web.vaadin.IdeInstantiator;
-import org.marid.ui.ide.base.MainComponent;
+import com.vaadin.flow.shared.communication.PushMode;
+import org.marid.ui.ide.Routes;
 import org.marid.ui.ide.base.MainUI;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
-import java.util.Set;
 
+import static com.vaadin.flow.server.Constants.SERVLET_PARAMETER_HEARTBEAT_INTERVAL;
+import static com.vaadin.flow.server.Constants.SERVLET_PARAMETER_PUSH_MODE;
 import static com.vaadin.flow.server.VaadinSession.UI_PARAMETER;
 
 @Component
@@ -43,6 +44,8 @@ public class IdeServlet extends VaadinServlet {
     final var properties = new Properties();
 
     properties.setProperty(UI_PARAMETER, MainUI.class.getName());
+    properties.setProperty(SERVLET_PARAMETER_HEARTBEAT_INTERVAL, "60");
+    properties.setProperty(SERVLET_PARAMETER_PUSH_MODE, PushMode.AUTOMATIC.name());
 
     return createDeploymentConfiguration(properties);
   }
@@ -57,7 +60,7 @@ public class IdeServlet extends VaadinServlet {
     };
     service.init();
     try {
-      service.getRouter().getRegistry().setNavigationTargets(Set.of(MainComponent.class));
+      service.getRouter().getRegistry().setNavigationTargets(Routes.allNavigationTargets());
     } catch (InvalidRouteConfigurationException x) {
       throw new ServiceException(x);
     }

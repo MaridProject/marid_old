@@ -14,7 +14,6 @@
 package org.marid.app.web;
 
 import org.marid.app.web.initializer.ServletContextConfigurer;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -23,22 +22,23 @@ import javax.servlet.ServletContextListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.logging.Level.INFO;
+import static org.marid.logging.Log.log;
+
 @Component
 public class MaridListener implements ServletContextListener {
 
   private final ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider;
-  private final Logger logger;
   private final List<ServletContextConfigurer> configurers = new LinkedList<>();
 
-  public MaridListener(ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider, Logger logger) {
+  public MaridListener(ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider) {
     this.configurersProvider = configurersProvider;
-    this.logger = logger;
   }
 
   @Override
   public void contextInitialized(ServletContextEvent sce) {
     for (final var configurer : configurersProvider.getObject()) {
-      logger.info("Configuring {}", configurer.getClass().getName());
+      log(INFO, "Configuring {0}", configurer.getClass().getName());
       configurer.start(sce.getServletContext());
       if (configurer.isStopNeeded()) {
         configurers.add(configurer);
@@ -49,7 +49,7 @@ public class MaridListener implements ServletContextListener {
   @Override
   public void contextDestroyed(ServletContextEvent sce) {
     for (final var configurer : configurers) {
-      logger.info("Stopping {}", configurer.getClass().getName());
+      log(INFO, "Stopping {0}", configurer.getClass().getName());
       configurer.stop(sce.getServletContext());
     }
   }

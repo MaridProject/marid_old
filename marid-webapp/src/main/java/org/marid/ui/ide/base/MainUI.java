@@ -14,6 +14,10 @@
 package org.marid.ui.ide.base;
 
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.shared.communication.PushMode;
+import com.vaadin.flow.shared.ui.Transport;
 
+@Push(value = PushMode.AUTOMATIC, transport = Transport.LONG_POLLING)
 public class MainUI extends UI {
 }

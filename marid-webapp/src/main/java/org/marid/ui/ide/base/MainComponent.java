@@ -13,9 +13,11 @@
  */
 package org.marid.ui.ide.base;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import org.marid.spring.init.Init;
 import org.springframework.stereotype.Component;
 
 @Route("")
@@ -24,5 +26,14 @@ public class MainComponent extends VerticalLayout {
 
   public MainComponent() {
     add(new TextField("xxx", "xxx"));
+  }
+
+  @Init
+  public void addButton() {
+    final var button = new Button("XXX");
+    button.addClickListener(e -> {
+      add(new Button("X", ex -> remove(ex.getSource())));
+    });
+    add(button);
   }
 }

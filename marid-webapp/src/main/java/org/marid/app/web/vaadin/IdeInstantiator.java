@@ -22,16 +22,17 @@ import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.marid.spring.ContextUtils;
 import org.marid.ui.ide.base.BaseConfiguration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-@Repository
-@Scope(proxyMode = ScopedProxyMode.NO)
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+import static org.marid.logging.Log.log;
+
+@Component
 public class IdeInstantiator implements Instantiator {
 
   private final GenericApplicationContext parent;
@@ -61,7 +62,8 @@ public class IdeInstantiator implements Instantiator {
       return contexts.computeIfAbsent(ui, u -> ContextUtils.context(parent, c -> {
         c.setId(type.getName());
         c.setDisplayName(type.getName());
-        c.registerBean(BaseConfiguration.class, () -> new BaseConfiguration(ui, event));
+        u.addDetachListener(e -> close(u));
+        c.registerBean(BaseConfiguration.class, () -> new BaseConfiguration(u, event));
         c.refresh();
         c.start();
       })).getBean(type);
@@ -81,5 +83,15 @@ public class IdeInstantiator implements Instantiator {
   @Override
   public I18NProvider getI18NProvider() {
     return ideI18nProvider;
+  }
+
+  public void close(UI ui) {
+    try (final var context = contexts.remove(ui)) {
+      if (context != null) {
+        log(FINE, "Closing {0}", context);
+      }
+    } catch (Exception x) {
+      log(WARNING, "Unable to close ui context {0}", x, ui.getUIId());
+    }
   }
 }
