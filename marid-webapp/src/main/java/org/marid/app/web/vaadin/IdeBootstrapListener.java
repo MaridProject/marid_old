@@ -27,8 +27,8 @@ public class IdeBootstrapListener implements BootstrapListener {
 
     head.appendChild(document.createElement("link")
         .attr("rel", "icon")
-        .attr("type", "image/png")
-        .attr("href", "/public/marid32.png")
+        .attr("type", "image/gif")
+        .attr("href", "/dyn/icon.gif?size=24")
     );
   }
 }

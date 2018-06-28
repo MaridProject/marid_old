@@ -17,18 +17,17 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.marid.spring.init.Init;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MainMenu extends HorizontalLayout {
 
   @Init
-  public void addMainButton() {
-    final var button = new Button(new Image("/public/marid32.png", "Marid"));
+  public void addMainButton(ObjectFactory<MainMenuDialog> mainMenuDialogFactory) {
+    final var button = new Button(new Image("/dyn/icon.gif?size=24", "Marid"));
     button.setAutofocus(false);
-    button.addClickListener(e -> {
-
-    });
+    button.addClickListener(e -> mainMenuDialogFactory.getObject().open());
     add(button);
   }
 }
