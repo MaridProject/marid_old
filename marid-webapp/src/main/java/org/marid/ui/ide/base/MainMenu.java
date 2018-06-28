@@ -14,25 +14,20 @@
 package org.marid.ui.ide.base;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.marid.spring.init.Init;
 import org.springframework.stereotype.Component;
 
-@Route("")
 @Component
-public class MainComponent extends VerticalLayout {
-
-  public MainComponent() {
-    add(new TextField("xxx", "xxx"));
-  }
+public class MainMenu extends HorizontalLayout {
 
   @Init
-  public void addButton() {
-    final var button = new Button("XXX");
+  public void addMainButton() {
+    final var button = new Button(new Image("/public/marid32.png", "Marid"));
+    button.setAutofocus(false);
     button.addClickListener(e -> {
-      add(new Button("X", ex -> remove(ex.getSource())));
+
     });
     add(button);
   }

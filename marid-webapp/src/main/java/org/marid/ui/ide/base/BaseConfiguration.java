@@ -15,10 +15,15 @@ package org.marid.ui.ide.base;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.NavigationEvent;
+import com.vaadin.flow.server.VaadinSession;
+import org.pac4j.core.context.Pac4jConstants;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
 
 @Component
 @ComponentScan
@@ -41,5 +46,12 @@ public class BaseConfiguration {
   @Bean
   public NavigationEvent navigationEvent() {
     return navigationEvent;
+  }
+
+  @Bean
+  public CommonProfile userProfile() {
+    final var session = VaadinSession.getCurrent().getSession();
+    final var map = (LinkedHashMap) session.getAttribute(Pac4jConstants.USER_PROFILES);
+    return (CommonProfile) map.values().iterator().next();
   }
 }

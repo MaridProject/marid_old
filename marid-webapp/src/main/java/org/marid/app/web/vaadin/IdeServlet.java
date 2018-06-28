@@ -55,7 +55,7 @@ public class IdeServlet extends VaadinServlet {
   protected VaadinServletService createServletService(DeploymentConfiguration configuration) throws ServiceException {
     final var service = new VaadinServletService(this, configuration) {
       @Override
-      public Instantiator getInstantiator() {
+      protected Instantiator createInstantiator() {
         return instantiator;
       }
     };

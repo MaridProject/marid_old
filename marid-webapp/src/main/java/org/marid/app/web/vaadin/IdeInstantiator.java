@@ -18,6 +18,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.Instantiator;
 import com.vaadin.flow.i18n.I18NProvider;
 import com.vaadin.flow.router.NavigationEvent;
+import com.vaadin.flow.server.BootstrapListener;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import org.marid.spring.ContextUtils;
@@ -51,8 +52,7 @@ public class IdeInstantiator implements Instantiator {
 
   @Override
   public Stream<VaadinServiceInitListener> getServiceInitListeners() {
-    final String[] beanNames = parent.getBeanNamesForType(VaadinServiceInitListener.class);
-    return Stream.of(beanNames).map(name -> parent.getBean(name, VaadinServiceInitListener.class));
+    return parent.getBeansOfType(VaadinServiceInitListener.class).values().stream();
   }
 
   private <T> T get(Class<T> type, UI ui, NavigationEvent event) {
@@ -83,6 +83,14 @@ public class IdeInstantiator implements Instantiator {
   @Override
   public I18NProvider getI18NProvider() {
     return ideI18nProvider;
+  }
+
+  @Override
+  public Stream<BootstrapListener> getBootstrapListeners(Stream<BootstrapListener> serviceInitListeners) {
+    return Stream.concat(
+        serviceInitListeners,
+        parent.getBeansOfType(BootstrapListener.class).values().stream()
+    );
   }
 
   public void close(UI ui) {
