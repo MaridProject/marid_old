@@ -20,7 +20,8 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 
 public enum MaridIcon {
 
-  CLOSE("/svg/cross.svg")
+  CLOSE("/svg/cross.svg"),
+  SESSION_CLOSE("/svg/sessionClose.svg")
   ;
 
   private final String url;

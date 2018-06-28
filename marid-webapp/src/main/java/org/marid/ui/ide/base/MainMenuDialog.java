@@ -39,13 +39,20 @@ public class MainMenuDialog extends Dialog {
   }
 
   @Init
-  public void addCloseButton() {
-    final var button = new Button(s("closeSession"), MaridIcon.CLOSE.newIcon());
+  public void addCloseSessionButton() {
+    final var button = new Button(s("closeSession"), MaridIcon.SESSION_CLOSE.newIcon());
     button.addClickListener(e -> {
       final var page = UI.getCurrent().getPage();
       page.executeJavaScript("window.location.replace('/logout')");
       VaadinSession.getCurrent().close();
     });
+    layout.add(button);
+  }
+
+  @Init
+  public void addCloseButton() {
+    final var button = new Button(s("close"), MaridIcon.CLOSE.newIcon());
+    button.addClickListener(e -> close());
     layout.add(button);
   }
 }
