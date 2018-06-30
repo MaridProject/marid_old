@@ -13,26 +13,16 @@
  */
 package org.marid.idelib;
 
-public enum MaridIcon {
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.HtmlImport;
 
-  CLOSE("/svg/cross.svg"),
-  SESSION_CLOSE("/svg/sessionClose.svg"),
-  PROJECT("/svg/project.svg")
-  ;
+@Tag("iron-icon")
+@HtmlImport("frontend://bower_components/vaadin-icons/vaadin-icons.html")
+public class IconImage extends Component implements HasStyle {
 
-  private final String url;
-
-  MaridIcon(String url) {
-    this.url = url;
-  }
-
-  public IconImage newIcon() {
-    return newIcon("4px");
-  }
-
-  public IconImage newIcon(String margin) {
-    final var image = new IconImage(url);
-    image.getStyle().set("margin-right", margin);
-    return image;
+  public IconImage(String src) {
+    getElement().setAttribute("src", src);
   }
 }

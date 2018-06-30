@@ -36,7 +36,7 @@ public class IdeServletConfigurer implements ServletContextConfigurer {
     final var r = context.addServlet("ideServlet", servlet);
     r.setLoadOnStartup(4);
     r.setAsyncSupported(true);
-    r.addMapping("/app/*", "/VAADIN/*", "/frontend/*");
+    r.addMapping("/app/*", "/VAADIN/*", "/frontend/*", "/frontend-es5/*", "/frontend-es6/*");
   }
 
   @Override

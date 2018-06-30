@@ -13,29 +13,18 @@
  */
 package org.marid.ui.ide.base;
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
+import org.marid.idelib.MaridIcon;
+import org.marid.idelib.TabPane;
 import org.marid.spring.init.Init;
+import org.marid.ui.ide.I18N;
+import org.marid.ui.ide.base.projects.ProjectTable;
 import org.springframework.stereotype.Component;
 
-@Route("")
 @Component
-public class MainPage extends VerticalLayout {
-
-  public MainPage() {
-    setPadding(false);
-    setSpacing(false);
-    setAlignItems(Alignment.STRETCH);
-    setJustifyContentMode(JustifyContentMode.AROUND);
-  }
+public class MainTabs extends TabPane {
 
   @Init
-  public void addMenu(MainMenu mainMenu) {
-    add(mainMenu);
-  }
-
-  @Init
-  public void addTabs(MainTabs tabs) {
-    add(tabs);
+  public void addProject(ProjectTable projectTable) {
+    addTab(MaridIcon.PROJECT, I18N.s("projects"), projectTable, true);
   }
 }

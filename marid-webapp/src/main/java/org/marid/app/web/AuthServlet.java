@@ -49,7 +49,7 @@ public class AuthServlet extends HttpServlet {
     final var client = path.substring(1);
 
     final SecurityGrantedAccessAdapter<Void, J2EContext> granted = (ctx, profiles, params) -> {
-      r.sendRedirect("/app");
+      r.sendRedirect("/main.marid");
       return null;
     };
 

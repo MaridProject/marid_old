@@ -11,31 +11,15 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.ui.ide.base;
+package org.marid.ui.ide.base.projects;
 
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
-import org.marid.spring.init.Init;
+import com.vaadin.flow.component.grid.Grid;
+import org.marid.applib.model.ProjectItem;
 import org.springframework.stereotype.Component;
 
-@Route("")
 @Component
-public class MainPage extends VerticalLayout {
+public class ProjectTable extends Grid<ProjectItem> {
 
-  public MainPage() {
-    setPadding(false);
-    setSpacing(false);
-    setAlignItems(Alignment.STRETCH);
-    setJustifyContentMode(JustifyContentMode.AROUND);
-  }
-
-  @Init
-  public void addMenu(MainMenu mainMenu) {
-    add(mainMenu);
-  }
-
-  @Init
-  public void addTabs(MainTabs tabs) {
-    add(tabs);
+  public ProjectTable() {
   }
 }
