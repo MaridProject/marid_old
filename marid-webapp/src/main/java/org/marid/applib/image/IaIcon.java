@@ -59,6 +59,6 @@ public enum IaIcon implements AppImage {
   @NotNull
   @Override
   public String getImageUrl(int size) {
-    return "https://icons.iconarchive.com/icons/" + author + "/" + type + "/" + size + "/" + name + ".png";
+    return "http://icons.iconarchive.com/icons/" + author + "/" + type + "/" + size + "/" + name + ".png";
   }
 }
