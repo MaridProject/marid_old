@@ -25,6 +25,6 @@ public class MainTabs extends TabPane {
 
   @Init
   public void addProject(ProjectTable projectTable) {
-    addTab(MaridIcon.PROJECT, I18N.s("projects"), projectTable, true);
+    addTab(MaridIcon.PROJECT, I18N.s("projects"), projectTable);
   }
 }

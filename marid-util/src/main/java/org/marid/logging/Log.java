@@ -43,7 +43,7 @@ public class Log {
       return index < 0 ? Logger.getLogger(name) : Logger.getLogger(name.substring(0, index));
     }
   };
-  private static final StackWalker WALKER = StackWalker.getInstance(RETAIN_CLASS_REFERENCE);
+  public static final StackWalker WALKER = StackWalker.getInstance(RETAIN_CLASS_REFERENCE);
 
   public static void log(@NotNull Level level, @NotNull String message, @Nullable Throwable thrown, Object... args) {
     log(LOGGERS.get(WALKER.getCallerClass()), level, message, thrown, args);

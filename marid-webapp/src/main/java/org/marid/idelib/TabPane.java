@@ -14,8 +14,7 @@
 package org.marid.idelib;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -49,14 +48,9 @@ public class TabPane extends VerticalLayout {
     tab.addDetachListener(e -> components.remove(tab));
   }
 
-  public void addTab(MaridIcon icon, String label, Component component, boolean closeable) {
-    final var tab = new Tab(label);
-    if (closeable) {
-      final var button = new Button(VaadinIcon.CLOSE.create(), e -> tabs.remove(tab));
-      button.getElement().setAttribute("theme", "icon small");
-      tab.add(button);
-    }
-    tab.add(icon.newIcon());
+  public void addTab(MaridIcon icon, String label, Component component) {
+    final var tab = new Tab();
+    tab.add(icon.newIcon(), new Span(label));
     addTab(tab, component);
   }
 
