@@ -425,7 +425,7 @@
       <dependency>
         <groupId>org.pac4j</groupId>
         <artifactId>pac4j</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
