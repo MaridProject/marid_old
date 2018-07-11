@@ -83,14 +83,14 @@ public class UndertowConfiguration {
   @Bean
   @Qualifier("resourceManager")
   @Order(1)
-  public ClassPathResourceManager metaInfResources() {
-    return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources");
+  public PathResourceManager rwtResources(Directories directories) {
+    return new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
   }
 
   @Bean
   @Qualifier("resourceManager")
   @Order(2)
-  public PathResourceManager rwtResources(Directories directories) {
-    return new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
+  public ClassPathResourceManager metaInfResources() {
+    return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources");
   }
 }
