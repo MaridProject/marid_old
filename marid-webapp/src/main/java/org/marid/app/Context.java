@@ -30,7 +30,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Component;
 
-import java.io.InputStream;
 import java.lang.ref.Cleaner;
 import java.util.logging.LogManager;
 
@@ -49,7 +48,7 @@ public class Context {
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-    final PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+    final var configurer = new PropertySourcesPlaceholderConfigurer();
     configurer.setFileEncoding("UTF-8");
     configurer.setNullValue("@null");
     configurer.setIgnoreResourceNotFound(false);
@@ -70,12 +69,12 @@ public class Context {
   public static void main(String... args) throws Exception {
     System.setProperty("java.util.logging.manager", MaridLogManager.class.getName());
 
-    final LogManager logManager = LogManager.getLogManager();
-    try (final InputStream inputStream = Context.class.getResourceAsStream("/app/logging.properties")) {
+    final var logManager = LogManager.getLogManager();
+    try (final var inputStream = Context.class.getResourceAsStream("/app/logging.properties")) {
       logManager.readConfiguration(inputStream);
     }
 
-    final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    final var context = new AnnotationConfigApplicationContext();
 
     context.setId("marid");
     context.setDisplayName("Marid Web Application");
