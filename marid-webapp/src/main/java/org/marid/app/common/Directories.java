@@ -14,6 +14,8 @@
 
 package org.marid.app.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileSystemUtils;
 
@@ -33,8 +35,9 @@ public class Directories {
   private final Path tempDir;
   private final Path rwtDir;
 
-  public Directories() throws Exception {
-    this.userHome = Paths.get(System.getProperty("user.home"));
+  @Autowired
+  public Directories(@Value("${app.directory:${user.home}}") String appDirectory) throws Exception {
+    this.userHome = Paths.get(appDirectory);
     this.base = userHome.resolve("marid-app");
     this.users = base.resolve("users");
     this.tempDir = Files.createTempDirectory("marid");
