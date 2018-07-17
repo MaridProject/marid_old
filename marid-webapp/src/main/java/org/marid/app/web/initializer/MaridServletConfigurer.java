@@ -13,7 +13,7 @@
  */
 package org.marid.app.web.initializer;
 
-import org.marid.app.web.MaridServlet;
+import org.eclipse.rap.rwt.engine.RWTServlet;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,15 +25,9 @@ import javax.servlet.ServletContext;
 @Order(2)
 public class MaridServletConfigurer implements ServletContextConfigurer {
 
-  private final MaridServlet servlet;
-
-  public MaridServletConfigurer(MaridServlet servlet) {
-    this.servlet = servlet;
-  }
-
   @Override
   public void start(ServletContext context) {
-    final var r = context.addServlet("maridServlet", servlet);
+    final var r = context.addServlet("maridServlet", new RWTServlet());
     r.setLoadOnStartup(4);
     r.setAsyncSupported(true);
     r.addMapping("*.marid");
