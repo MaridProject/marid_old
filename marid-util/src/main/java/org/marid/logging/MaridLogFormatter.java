@@ -52,12 +52,12 @@ public class MaridLogFormatter extends Formatter {
 
   @Override
   public String format(LogRecord record) {
-    final StringWriter buf = new StringWriter(64);
+    final var buf = new StringWriter(64);
 
-    try (final PrintWriter writer = new PrintWriter(buf)) {
+    try (final var writer = new PrintWriter(buf)) {
       formatter.formatTo(record.getInstant().atZone(ZoneId.systemDefault()), writer);
       writer.append(levelSym(record.getLevel()));
-      writer.append('/');
+      writer.append(' ');
       writer.print(record.getThreadID());
       writer.print(' ');
       writer.write(record.getLoggerName());

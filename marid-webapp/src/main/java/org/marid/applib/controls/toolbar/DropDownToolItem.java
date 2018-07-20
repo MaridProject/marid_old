@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import static org.eclipse.swt.SWT.DROP_DOWN;
 import static org.eclipse.swt.SWT.POP_UP;
 
-public class DropDownToolItem extends ToolItem {
+public abstract class DropDownToolItem extends ToolItem {
 
   public final Menu menu;
 

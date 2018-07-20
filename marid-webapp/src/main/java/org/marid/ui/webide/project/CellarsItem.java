@@ -14,14 +14,22 @@
 package org.marid.ui.webide.project;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Tree;
-import org.marid.ui.webide.base.boot.MainTabs;
+import org.eclipse.swt.widgets.TreeItem;
+import org.marid.applib.image.IaIcon;
+import org.marid.applib.image.WithImages;
+import org.marid.spring.orders.Orders;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
-public class ProjectTree extends Tree {
+import static org.marid.applib.utils.Locales.s;
 
-  public ProjectTree(MainTabs tabs) {
-    super(tabs, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
+@Component
+@Order(2)
+public class CellarsItem extends TreeItem implements WithImages {
+
+  public CellarsItem(ProjectTree tree) {
+    super(tree, SWT.NONE, Orders.index(tree::getItem, tree.getItemCount()));
+    setText(s("cellars"));
+    setImage(image(IaIcon.CELLAR, 16));
   }
 }

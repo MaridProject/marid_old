@@ -19,27 +19,43 @@ public enum IaIcon implements AppImage {
 
   // awicons
   ADD("awicons", "vista-artistic", "add-icon"),
+
   // visualpharm
   UPDATE("visualpharm", "must-have", "Refresh-icon"),
+
   // turbomilk
   EDIT("turbomilk", "livejournal-10", "pencil-icon"),
+
   // bokehlicia
   PREFERENCES("bokehlicia", "captiva", "preferences-icon"),
+
   // graphicloads
   FIND("graphicloads", "100-flat", "zoom-seach-icon"),
   BACK("graphicloads", "100-flat-2", "arrow-back-icon"),
+
   // rafigul-hassan
   CANCEL("rafiqul-hassan", "blogger", "Close-icon"),
+
   // artdesigner
   ARTIFACT("artdesigner", "my-secret", "diamond-icon"),
+
   // oxygen-icons.org
   REPOSITORY("oxygen-icons.org", "oxygen", "Places-repository-icon"),
   PROJECT("oxygen-icons.org", "oxygen", "Actions-project-development-new-template-icon"),
   REMOVE("oxygen-icons.org", "oxygen", "Actions-list-remove-icon"),
   REFRESH("oxygen-icons.org", "oxygen", "Actions-view-refresh-icon"),
   SAVE("oxygen-icons.org", "oxygen", "Actions-document-save-icon"),
+
   // papirus-team
   SELECTOR("papirus-team", "papirus-apps", "chromium-app-list-icon"),
+  RACK("papirus-team", "papirus-apps", "github-mirkobrombin-bottles-icon"),
+
+  // robinweatherall
+  CELLAR("robinweatherall", "cleaning", "bottles-icon"),
+
+  //glyphish
+  BOTTLE("glyphish", "glyphish", "142-wine-bottle-icon"),
+
   // fatcow
   GROUP("fatcow", "farm-fresh", "radiobutton-group-icon"),
   CLASS("fatcow", "farm-fresh", "ip-class-icon"),

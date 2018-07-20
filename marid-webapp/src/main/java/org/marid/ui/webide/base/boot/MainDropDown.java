@@ -36,7 +36,7 @@ public class MainDropDown extends DropDownToolItem implements WithImages {
 
   @Init
   public void closeSessionItem() {
-    final MenuItem item = new MenuItem(menu, SWT.PUSH);
+    final var item = new MenuItem(menu, SWT.PUSH);
     item.setText(Locales.s("closeSession"));
     item.setImage(image(IaIcon.CANCEL, 16));
     item.addListener(SWT.Selection, e -> {

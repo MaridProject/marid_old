@@ -33,7 +33,7 @@ public class UIPinger implements Runnable {
 
   @Override
   public void run() {
-    init();
     ui.display.wake();
+    init();
   }
 }
