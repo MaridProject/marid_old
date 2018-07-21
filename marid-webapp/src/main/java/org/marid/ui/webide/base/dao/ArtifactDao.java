@@ -37,7 +37,7 @@ public class ArtifactDao implements ListDao<Artifact, Artifact> {
   private final Path file;
 
   public ArtifactDao(UserDirectories userDirectories) {
-    this.file = userDirectories.getRepositoriesDirectory().resolve("artifacts.list");
+    this.file = userDirectories.getArtifactsFile();
   }
 
   @Override

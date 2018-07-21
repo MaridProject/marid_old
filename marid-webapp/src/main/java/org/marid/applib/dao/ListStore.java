@@ -29,7 +29,7 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
 
   protected final D dao;
   protected final ArrayList<E> list = new ArrayList<>();
-  protected final EnumMap<EventType, Collection<Consumer<Event>>> listeners = new EnumMap<>(EventType.class);
+  private final EnumMap<EventType, Collection<Consumer<Event>>> listeners = new EnumMap<>(EventType.class);
 
   public ListStore(D dao) {
     this.dao = dao;
@@ -160,7 +160,7 @@ public class ListStore<I, E extends Elem<I>, D extends ListDao<I, E>> {
 
     public final TreeMap<Integer, E> update;
 
-    public Event(TreeMap<Integer, E> update) {
+    Event(TreeMap<Integer, E> update) {
       this.update = update;
     }
 

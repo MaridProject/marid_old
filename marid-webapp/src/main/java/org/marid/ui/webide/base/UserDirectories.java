@@ -44,10 +44,6 @@ public class UserDirectories {
     Files.createDirectories(userDirectory);
     Files.createDirectories(projectsDirectory);
     Files.createDirectories(repositoriesDirectory);
-
-    if (!Files.isRegularFile(artifactsFile)) {
-      Files.createFile(artifactsFile);
-    }
   }
 
   public Path getUserDirectory() {
