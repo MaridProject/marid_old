@@ -47,32 +47,15 @@ public interface Classes {
    */
   @NotNull
   static Stream<Class<?>> classes(@NotNull Class<?> type) {
-    return classes(type, false);
+    return classes(type, Stream.empty()).distinct();
   }
 
-  /**
-   * Enumerates classes from the given type (including the argument itself).
-   *
-   * @param type  type to enumerate from
-   * @param array whether take in account an array type hierarchy or not
-   * @return all subclasses (classes and interfaces).
-   */
-  @NotNull
-  static Stream<Class<?>> classes(@NotNull Class<?> type, boolean array) {
-    return classes(type, Stream.empty(), array).distinct();
-  }
-
-  private static Stream<Class<?>> classes(Class<?> type, Stream<Class<?>> classes, boolean array) {
+  private static Stream<Class<?>> classes(Class<?> type, Stream<Class<?>> classes) {
     for (Class<?> c = type; c != null; c = c.getSuperclass()) {
       classes = concat(classes, Stream.of(c));
     }
     for (Class<?> c = type; c != null; c = c.getSuperclass()) {
-      for (final Class<?> i : c.getInterfaces()) {
-        classes = classes(i, classes, array);
-      }
-    }
-    if (array && type.isArray()) {
-      classes = concat(classes, classes(type.getComponentType(), true).map(c -> Array.newInstance(c, 0).getClass()));
+      classes = concat(classes, Stream.of(c.getInterfaces()).flatMap(Classes::classes));
     }
     return classes;
   }
