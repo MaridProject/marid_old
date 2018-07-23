@@ -387,7 +387,7 @@ public interface Types {
       switch (ts.size()) {
         case 0: return Object.class;
         case 1: return ts.iterator().next();
-        default: return new MaridWildcardType(ts.toArray(new Type[ts.size()]), new Type[0]);
+        default: return new MaridWildcardType(ts.toArray(new Type[0]), new Type[0]);
       }
     }
   }
