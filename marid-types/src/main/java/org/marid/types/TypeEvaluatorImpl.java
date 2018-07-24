@@ -93,7 +93,7 @@ final class TypeEvaluatorImpl implements TypeEvaluator {
 
   @NotNull
   Type eval(@NotNull Type type) {
-    Types.resolveVars(type).forEachReversed((v, in) -> {
+    Types.resolveVars(type).forEach((v, in) -> {
       for (final Type out : map.getOrDefault(v, emptySet())) {
         bind(in, out);
       }

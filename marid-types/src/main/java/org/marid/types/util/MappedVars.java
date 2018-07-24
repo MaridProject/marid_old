@@ -29,7 +29,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -41,20 +40,16 @@ public final class MappedVars {
   private Type[] types = new Type[0];
 
   public void put(@NotNull TypeVariable<?> var, @NotNull Type type) {
-    put(var, old -> type);
-  }
-
-  public void put(@NotNull TypeVariable<?> var, @NotNull UnaryOperator<Type> mergeOp) {
     for (int i = 0; i < vars.length; i++) {
       if (vars[i].equals(var)) {
-        types[i] = mergeOp.apply(types[i]);
+        types[i] = type;
         return;
       }
     }
     vars = Arrays.copyOf(vars, vars.length + 1);
     types = Arrays.copyOf(types, types.length + 1);
     vars[vars.length - 1] = var;
-    types[types.length - 1] = mergeOp.apply(null);
+    types[types.length - 1] = type;
   }
 
   @Nullable
@@ -80,12 +75,7 @@ public final class MappedVars {
     return IntStream.range(0, vars.length).mapToObj(i -> Map.entry(vars[i], types[i]));
   }
 
-  @NotNull
-  public Stream<Map.Entry<TypeVariable<?>, Type>> reversedEntries() {
-    return IntStream.range(0, vars.length).map(i -> vars.length - i - 1).mapToObj(i -> Map.entry(vars[i], types[i]));
-  }
-
-  public void forEachReversed(@NotNull BiConsumer<TypeVariable<?>, Type> consumer) {
+  public void forEach(@NotNull BiConsumer<TypeVariable<?>, Type> consumer) {
     for (int i = vars.length - 1; i >= 0; i--) {
       consumer.accept(vars[i], types[i]);
     }
