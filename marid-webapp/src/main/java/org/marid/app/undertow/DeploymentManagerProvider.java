@@ -39,8 +39,8 @@ public class DeploymentManagerProvider {
 
   @PreDestroy
   public void stop() throws ServletException {
-    deploymentManager.undeploy();
     deploymentManager.stop();
+    deploymentManager.undeploy();
   }
 
   public HttpHandler start() throws ServletException {
