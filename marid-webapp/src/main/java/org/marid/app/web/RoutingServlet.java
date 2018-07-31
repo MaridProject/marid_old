@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-api
+ * marid-webapp
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,11 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.app.web;
 
-package org.marid.db.dao;
+import org.marid.app.web.router.Router;
+import org.springframework.stereotype.Component;
 
-/**
- * @author Dmitry Ovchinnikov.
- */
-public interface NumericWriter extends DaqWriter<Double>, NumericReader {
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@Component
+public class RoutingServlet extends HttpServlet {
+
+  private final Router router;
+
+  public RoutingServlet(Router router) {
+    this.router = router;
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    router.register(req, resp);
+    super.doGet(req, resp);
+  }
 }

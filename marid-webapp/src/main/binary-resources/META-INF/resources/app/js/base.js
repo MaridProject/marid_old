@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-api
+ * marid-webapp
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,11 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+export class WithElement {
 
-package org.marid.db.dao;
-
-/**
- * @author Dmitry Ovchinnikov.
- */
-public interface NumericWriter extends DaqWriter<Double>, NumericReader {
+  constructor(parent) {
+    this.parent = parent;
+  }
 }

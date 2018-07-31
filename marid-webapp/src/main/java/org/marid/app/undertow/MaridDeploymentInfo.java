@@ -51,8 +51,8 @@ public class MaridDeploymentInfo extends DeploymentInfo {
   }
 
   @Autowired
-  public void setResourseManager(MaridResourceManager resourseManager) {
-    setResourceManager(resourseManager);
+  public void setResourseManager(MaridResourceManager resourceManager) {
+    setResourceManager(resourceManager);
   }
 
   @Autowired

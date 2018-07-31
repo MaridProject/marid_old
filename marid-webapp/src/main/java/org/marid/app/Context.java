@@ -27,15 +27,11 @@ import org.marid.spring.annotation.PrototypeScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InjectionPoint;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.stereotype.Component;
 
 import java.lang.ref.Cleaner;
 import java.util.logging.LogManager;
@@ -43,7 +39,8 @@ import java.util.logging.LogManager;
 @EnableScheduling
 @ComponentScan
 @PropertySource(value = {"classpath:application.properties"})
-@Component
+@Configuration
+@Scope(proxyMode = ScopedProxyMode.NO)
 public class Context {
 
   @Bean

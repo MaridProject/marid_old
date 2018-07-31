@@ -20,5 +20,22 @@
  */
 package org.marid.app.web.router;
 
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@Component
 public class Router {
+
+  static final InheritableThreadLocal<HttpServletRequest> REQUEST = new InheritableThreadLocal<>();
+  static final InheritableThreadLocal<HttpServletResponse> RESPONSE = new InheritableThreadLocal<>();
+  static final InheritableThreadLocal<HttpSession> SESSION = new InheritableThreadLocal<>();
+
+  public void register(HttpServletRequest request, HttpServletResponse response) {
+    SESSION.set(request.getSession());
+    REQUEST.set(request);
+    RESPONSE.set(response);
+  }
 }

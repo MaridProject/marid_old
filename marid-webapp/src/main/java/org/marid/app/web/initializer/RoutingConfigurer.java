@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-api
+ * marid-webapp
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,11 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.app.web.initializer;
 
-package org.marid.db.dao;
+import org.marid.app.web.RoutingServlet;
+import org.springframework.stereotype.Component;
 
-/**
- * @author Dmitry Ovchinnikov.
- */
-public interface NumericWriter extends DaqWriter<Double>, NumericReader {
+import javax.servlet.ServletContext;
+
+@Component
+public class RoutingConfigurer implements ServletContextConfigurer {
+
+  private final RoutingServlet servlet;
+
+  public RoutingConfigurer(RoutingServlet servlet) {
+    this.servlet = servlet;
+  }
+
+  @Override
+  public void start(ServletContext context) {
+    final var r = context.addServlet("routingServlet", servlet);
+    r.addMapping("/rest/*");
+    r.setAsyncSupported(true);
+    r.setLoadOnStartup(4);
+  }
+
+  @Override
+  public void stop(ServletContext context) {
+  }
+
+  @Override
+  public boolean isStopNeeded() {
+    return false;
+  }
 }
