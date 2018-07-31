@@ -18,32 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.repository.maven;
+package org.marid.app.web.router;
 
-import org.marid.applib.repository.ArtifactFinder;
-import org.marid.applib.repository.Repository;
-
-import java.net.URI;
-import java.util.Properties;
-
-public class MavenRepository implements Repository {
-
-  private final String name;
-  private final Properties properties;
-
-  public MavenRepository(String name, Properties properties) {
-    this.name = name;
-    this.properties = properties;
-  }
-
-  @Override
-  public ArtifactFinder getArtifactFinder() {
-    final String searchUrl = properties.getProperty("searchUrl");
-    return new MavenArtifactFinder(URI.create(searchUrl));
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
+public class Router {
 }

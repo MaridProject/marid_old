@@ -27,8 +27,6 @@ import org.hsqldb.jdbc.JDBCSessionDataSource;
 import org.hsqldb.server.Server;
 import org.hsqldb.server.ServerConstants;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -97,7 +95,6 @@ public final class HsqldbDatabase implements Closeable {
     databaseNameToIndex.put(name, url);
   }
 
-  @PostConstruct
   public void init() throws IOException {
     outWriter = new PrintWriter(new File(directory, "output.log"));
     errWriter = new PrintWriter(new File(directory, "errors.log"));
@@ -109,11 +106,6 @@ public final class HsqldbDatabase implements Closeable {
         log(WARNING, "Unable to init DB {0}", x, e.getKey());
       }
     }
-  }
-
-  @PreDestroy
-  public void destroy() throws IOException {
-    close();
   }
 
   private void initDatabase(String name, URL url) throws SQLException, IOException {

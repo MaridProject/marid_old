@@ -4,11 +4,18 @@
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0
- * and Eclipse Distribution License v. 1.0 which accompanies this distribution.
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- * http://www.eclipse.org/org/documents/edl-v10.php.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -19,8 +26,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
-import io.undertow.server.handlers.resource.PathResourceManager;
-import org.marid.app.common.Directories;
 import org.marid.app.props.WebProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +48,7 @@ public class UndertowConfiguration {
 
   @Bean
   public HttpHandler rootHandler(HttpHandler servletHandler) {
-    final var redirect = new RedirectHandler("/main.marid");
+    final var redirect = new RedirectHandler("/app/index.html");
     return new CanonicalPathHandler(e -> {
       switch (e.getRelativePath()) {
         case "/":
@@ -83,13 +88,6 @@ public class UndertowConfiguration {
   @Bean
   @Qualifier("resourceManager")
   @Order(1)
-  public PathResourceManager rwtResources(Directories directories) {
-    return new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
-  }
-
-  @Bean
-  @Qualifier("resourceManager")
-  @Order(2)
   public ClassPathResourceManager metaInfResources() {
     return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources");
   }

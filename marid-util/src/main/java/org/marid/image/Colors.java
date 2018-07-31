@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-webapp
+ * marid-util
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,32 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.repository.maven;
+package org.marid.image;
 
-import org.marid.applib.repository.ArtifactFinder;
-import org.marid.applib.repository.Repository;
+import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-import java.util.Properties;
+import java.awt.*;
+import java.lang.invoke.MethodHandles;
 
-public class MavenRepository implements Repository {
+public interface Colors {
 
-  private final String name;
-  private final Properties properties;
-
-  public MavenRepository(String name, Properties properties) {
-    this.name = name;
-    this.properties = properties;
-  }
-
-  @Override
-  public ArtifactFinder getArtifactFinder() {
-    final String searchUrl = properties.getProperty("searchUrl");
-    return new MavenArtifactFinder(URI.create(searchUrl));
-  }
-
-  @Override
-  public String getName() {
-    return name;
+  @NotNull
+  static Color color(@NotNull String value) {
+    if (value.isEmpty()) {
+      throw new IllegalArgumentException();
+    } else {
+      final char first = value.charAt(0);
+      if (first == '#' || Character.isDigit(first)) {
+        return Color.decode(value);
+      } else {
+        final var lookup = MethodHandles.publicLookup();
+        try {
+          final var mh = lookup.findStaticGetter(Color.class, value, Color.class);
+          return (Color) mh.invokeExact();
+        } catch (Throwable x) {
+          throw new IllegalStateException(x);
+        }
+      }
+    }
   }
 }
