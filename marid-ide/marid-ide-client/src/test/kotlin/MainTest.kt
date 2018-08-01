@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-ide-server
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,19 +18,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.json;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Locale;
-import java.util.TimeZone;
-
-public interface MaridJackson {
-
-  ObjectMapper MAPPER = new ObjectMapper()
-      .setLocale(Locale.GERMANY)
-      .setTimeZone(TimeZone.getDefault())
-      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-      .findAndRegisterModules();
+class MainTest {
 }

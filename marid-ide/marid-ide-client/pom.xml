@@ -36,6 +36,15 @@
       </plugin>
 
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <roots>src/main/kotlin,src/test/kotlin</roots>
+        </configuration>
+        <inherited>true</inherited>
+      </plugin>
+
+      <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
         <version>${kotlin.version}</version>

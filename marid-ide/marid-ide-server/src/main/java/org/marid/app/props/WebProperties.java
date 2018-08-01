@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-webapp
+ * marid-ide-server
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
