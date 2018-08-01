@@ -1,5 +1,3 @@
-import { WithElement } from './base.js';
-
 /*-
  * #%L
  * marid-webapp
@@ -21,10 +19,29 @@ import { WithElement } from './base.js';
  * #L%
  */
 
-export class Menu extends WithElement {
+const data = {
+  quit: {
+    en: 'Quit',
+    es: 'Salir'
+  }
+};
 
-  constructor(parent) {
-    super(parent);
-    let x = `<div class="accordion"></div>`;
+export function S(str, langs = navigator.languages) {
+  const v = data[str];
+
+  if (v == null) {
+    return str;
+  } else {
+    for (const l of langs) {
+      const parts = l.split("-");
+      for (var i = parts.length; i > 0; i--) {
+        const lang = parts.slice(0, i).join("_");
+        const result = v[lang];
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+    return str;
   }
 }

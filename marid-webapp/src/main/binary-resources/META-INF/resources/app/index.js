@@ -21,7 +21,7 @@ import {Menu} from './js/menu.js';
  * #L%
  */
 
-const body = $('body');
+const body = document.querySelector("body");
 
-alert(body);
+const menu = new Menu(body);
 
