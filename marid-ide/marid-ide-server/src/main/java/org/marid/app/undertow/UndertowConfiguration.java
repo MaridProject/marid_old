@@ -48,7 +48,7 @@ public class UndertowConfiguration {
 
   @Bean
   public HttpHandler rootHandler(HttpHandler servletHandler) {
-    final var redirect = new RedirectHandler("/app/index.html");
+    final var redirect = new RedirectHandler("/ide/index.html");
     return new CanonicalPathHandler(e -> {
       switch (e.getRelativePath()) {
         case "/":

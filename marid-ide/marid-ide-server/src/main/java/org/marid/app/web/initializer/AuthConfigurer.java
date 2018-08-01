@@ -79,7 +79,7 @@ public class AuthConfigurer implements ServletContextConfigurer {
     {
       final var r = context.addFilter("securityFilter", securityFilter);
       r.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST), false, "maridServlet");
-      r.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/app/*", "/rest/*");
+      r.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/ide/*", "/rest/*");
       r.setAsyncSupported(true);
     }
   }

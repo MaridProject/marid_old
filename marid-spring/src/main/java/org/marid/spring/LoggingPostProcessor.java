@@ -21,9 +21,9 @@
 
 package org.marid.spring;
 
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
+import org.springframework.lang.Nullable;
 
 import static java.util.logging.Level.INFO;
 import static org.marid.logging.Log.log;

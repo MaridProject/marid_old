@@ -11,8 +11,10 @@
 
   <artifactId>marid-ide</artifactId>
   <packaging>pom</packaging>
+
   <modules>
     <module>marid-ide-client</module>
+    <module>marid-ide-server</module>
   </modules>
 
 </project>

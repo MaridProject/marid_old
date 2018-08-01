@@ -42,6 +42,6 @@ public class CallbackServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest q, HttpServletResponse r) {
-    callbackLogic.perform(new J2EContext(q, r), config, (code, ctx) -> null, "/app/index.html", true, false, null, null);
+    callbackLogic.perform(new J2EContext(q, r), config, (code, ctx) -> null, "/ide/index.html", true, false, null, null);
   }
 }
