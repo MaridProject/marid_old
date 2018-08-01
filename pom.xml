@@ -78,8 +78,8 @@
     <module>marid-util</module>
     <module>marid-types</module>
     <module>marid-runtime</module>
-    <module>marid-webapp</module>
     <module>marid-spring</module>
+    <module>marid-ide</module>
   </modules>
 
   <build>

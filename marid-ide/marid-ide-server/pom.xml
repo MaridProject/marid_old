@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>marid</artifactId>
     <groupId>org.marid</groupId>
+    <artifactId>marid-ide</artifactId>
     <version>0.9.7.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>marid-webapp</artifactId>
+  <artifactId>marid-ide-server</artifactId>
 
   <dependencies>
     <!-- web -->
@@ -124,7 +124,7 @@
             </goals>
             <phase>package</phase>
             <configuration>
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <outputDirectory>target/lib</outputDirectory>
               <includeScope>runtime</includeScope>
             </configuration>
           </execution>
@@ -162,7 +162,7 @@
               <goal>upload</goal>
             </goals>
             <configuration>
-              <fromDir>${project.build.directory}</fromDir>
+              <fromDir>target</fromDir>
               <includes>marid-webapp*.jar,lib/**</includes>
               <toDir>/home/site/app</toDir>
               <optimize>true</optimize>

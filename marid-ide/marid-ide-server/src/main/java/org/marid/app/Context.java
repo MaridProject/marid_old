@@ -38,7 +38,7 @@ import java.util.logging.LogManager;
 
 @EnableScheduling
 @ComponentScan
-@PropertySource(value = {"classpath:application.properties"})
+@PropertySource(value = {"application.properties"})
 @Configuration
 @Scope(proxyMode = ScopedProxyMode.NO)
 public class Context {
