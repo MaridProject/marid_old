@@ -25,7 +25,6 @@
 
   <build>
     <sourceDirectory>src/main/kotlin</sourceDirectory>
-    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
     <plugins>
       <plugin>
@@ -50,7 +49,6 @@
         <version>${kotlin.version}</version>
         <configuration>
           <sourceMap>true</sourceMap>
-          <outputFile>${project.build.outputDirectory}/META-INF/resources/${project.artifactId}.js</outputFile>
         </configuration>
         <executions>
           <execution>
@@ -58,14 +56,6 @@
             <phase>compile</phase>
             <goals>
               <goal>js</goal>
-            </goals>
-          </execution>
-
-          <execution>
-            <id>test-compile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>test-js</goal>
             </goals>
           </execution>
         </executions>
@@ -76,6 +66,26 @@
         <configuration>
           <skip>true</skip>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>assembly</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/js.xml</descriptor>
+              </descriptors>
+              <attach>true</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
