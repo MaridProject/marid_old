@@ -380,8 +380,8 @@ public interface Types {
       return t1;
     } else {
       final ConcurrentLinkedQueue<Type> ts = concat(typesTree(t1), typesTree(t2))
-          .filter(t -> isAssignable(t, t1) && isAssignable(t, t2))
           .distinct()
+          .filter(t -> isAssignable(t, t1) && isAssignable(t, t2))
           .collect(Collectors.toCollection(ConcurrentLinkedQueue::new));
       ts.removeIf(t -> ts.stream().anyMatch(e -> e != t && isAssignable(t, e)));
       switch (ts.size()) {

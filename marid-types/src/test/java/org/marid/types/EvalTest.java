@@ -1,6 +1,8 @@
+package org.marid.types;
+
 /*-
  * #%L
- * marid-webapp
+ * marid-types
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,9 +20,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-export class WithElement {
 
-  constructor(parent) {
-    this.parent = parent;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Tag("normal")
+class EvalTest {
+
+  @Test
+  void commonArray() {
+    final var type = Stream.of((Type) Integer[].class, String[].class).reduce(Types::common).orElseThrow();
+    assertEquals(Serializable[].class, type);
   }
 }

@@ -20,9 +20,10 @@
  */
 package org.marid.ide.client
 
+import org.w3c.dom.HTMLElement
+
 class Main {
 
-    fun x() {
-
+    fun install(el: HTMLElement) {
     }
 }

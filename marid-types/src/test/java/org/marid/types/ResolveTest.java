@@ -97,7 +97,7 @@ class ResolveTest {
 
   @ParameterizedTest
   @MethodSource("resolveMyListData")
-  public void resolveMyList(Type[] types, Type bindType) {
+  void resolveMyList(Type[] types, Type bindType) {
     final Type resolved = evaluate(e -> e.bind(types[0], bindType), getType(MyList.class));
     assertEquals(resolved, p(MyList.class, Integer.class));
   }

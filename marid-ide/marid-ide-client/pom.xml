@@ -52,7 +52,7 @@
         </configuration>
         <executions>
           <execution>
-            <id>compile</id>
+            <id>compile-js</id>
             <phase>compile</phase>
             <goals>
               <goal>js</goal>
@@ -62,30 +62,49 @@
       </plugin>
 
       <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-js</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF/resources/ide</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/js</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-deps</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF/resources/ide</outputDirectory>
+              <includeScope>runtime</includeScope>
+              <excludes>**/*.kotlin_metadata,**/*.kjsm</excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skip>true</skip>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>assembly</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/js.xml</descriptor>
-              </descriptors>
-              <attach>true</attach>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
