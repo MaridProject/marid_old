@@ -26,14 +26,14 @@ Imagine the following situation:
 4. After connecting both of your devices to that DeviceSet the type of the service becomes DeviceSet<?, Detachable & Configurable> meaning that all the devices contained in that container are detachable and configurable simultaneously.
 5. You see in the Repository a service named Detacher that can detach a set of detachable devices by a signal. It has an input ‘detachables’ of type DeviceSet<? extends Detachable, ?>. So, you can connect your service DeviceSet<?, Detachable & Configurable> to that service thanks to type compatibility and automatically inferred types
 
-The type inferring engine is more complex than in Java language. It can infer union and intersection types like Ceylon-language compiler does. Since then Java runtime generics can (surprising) express that types, there was nothing to do but to write code to resolve these generics in runtime (needed by IDE to check service I/O compatibility and by runtime to resolve one of the overriden methods to call).
+The type inferring engine is more complex than in Java language. It can infer union and intersection types like Ceylon-language compiler does. Since then Java runtime generics can (surprisingly) express that types, there was nothing to do but to write code to resolve these generics in runtime (needed by IDE to check service I/O compatibility and by runtime to resolve one of the overriden methods to call).
 
 So the creating of a typical project is something like that:
 
-(1) To find appropriate libraries from the Repository and to add them to the project
-(2) To add services from these libraries, to configure them and to connect them one to each other
-(3) To build the project resulting into a binary that can be deployed to a target server or controller
-(4) To deploy the project to the target equipment
+1. To find appropriate libraries from the Repository and to add them to the project
+2. To add services from these libraries, to configure them and to connect them one to each other
+3. To build the project resulting into a binary that can be deployed to a target server or controller
+4. To deploy the project to the target equipment
 
 Usage
 ====================
