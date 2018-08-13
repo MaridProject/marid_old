@@ -24,8 +24,10 @@ package org.marid.types;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import javax.print.attribute.standard.JobKOctetsProcessed;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.BitSet;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,5 +39,11 @@ class EvalTest {
   void commonArray() {
     final var type = Stream.of((Type) Integer[].class, String[].class).reduce(Types::common).orElseThrow();
     assertEquals(Serializable[].class, type);
+  }
+
+  @Test
+  void twoInterfaces() {
+    final var type = Stream.of((Type) JobKOctetsProcessed.class, BitSet.class).reduce(Types::common).orElseThrow();
+    assertEquals(type, new MaridWildcardType(new Type[] {Serializable.class, Cloneable.class}, new Type[0]));
   }
 }

@@ -28,6 +28,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.marid.types.AuxTypeUtils.*;
 import org.marid.types.util.MappedVars;
 
+import javax.print.attribute.Attribute;
+import javax.print.attribute.IntegerSyntax;
+import javax.print.attribute.PrintJobAttribute;
+import javax.print.attribute.standard.JobKOctetsProcessed;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Type;
@@ -36,8 +40,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.marid.types.AuxTypeUtils.*;
 import static org.marid.types.Classes.classes;
@@ -159,5 +162,20 @@ class TypesTest {
   void assignments(Type to, Type from, boolean expected) {
     final boolean actual = Types.isAssignable(to, from);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  void typesTreeInterfaces() {
+    final Set<Type> types = Types.typesTree(JobKOctetsProcessed.class).collect(toCollection(LinkedHashSet::new));
+    assertEquals(
+        Set.of(
+            JobKOctetsProcessed.class,
+            IntegerSyntax.class,
+            Object.class,
+            PrintJobAttribute.class,
+            Attribute.class,
+            Serializable.class,
+            Cloneable.class
+        ), types);
   }
 }
