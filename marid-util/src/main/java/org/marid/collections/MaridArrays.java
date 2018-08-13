@@ -1,6 +1,8 @@
+package org.marid.collections;
+
 /*-
  * #%L
- * marid-runtime
+ * marid-util
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -19,30 +21,39 @@
  * #L%
  */
 
-package org.marid.expression.generic;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.marid.cellar.BottleContext;
-import org.marid.types.MaridArrayType;
-import org.marid.types.Types;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import java.util.function.Predicate;
 
-public interface ArrayExpression extends Expression {
+public interface MaridArrays {
 
-  @NotNull
-  List<? extends Expression> getElements();
+  @SafeVarargs
+  static <E> boolean allMatch(@NotNull Predicate<E> predicate, @NotNull E... args) {
+    for (final E e : args) {
+      if (!predicate.test(e)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-  @NotNull
-  @Override
-  default Type getType(@Nullable Type owner, @NotNull BottleContext context) {
-    return getElements().stream()
-        .map(e -> e.getType(owner, context))
-        .distinct()
-        .reduce(Types::common)
-        .map(MaridArrayType::array)
-        .orElse(Object[].class);
+  @SafeVarargs
+  static <E> boolean noneMatch(@NotNull Predicate<E> predicate, @NotNull E... args) {
+    for (final E e : args) {
+      if (predicate.test(e)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @SafeVarargs
+  static <E> boolean anyMatch(@NotNull Predicate<E> predicate, @NotNull E... args) {
+    for (final E e : args) {
+      if (predicate.test(e)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

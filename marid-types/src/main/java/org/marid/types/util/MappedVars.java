@@ -26,59 +26,46 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
 public final class MappedVars {
 
-  private TypeVariable<?>[] vars = new TypeVariable<?>[0];
-  private Type[] types = new Type[0];
+  private final LinkedList<TypeVariable<?>> vars = new LinkedList<>();
+  private final LinkedHashMap<TypeVariable<?>, Type> map = new LinkedHashMap<>();
 
   public void put(@NotNull TypeVariable<?> var, @NotNull Type type) {
-    for (int i = 0; i < vars.length; i++) {
-      if (vars[i].equals(var)) {
-        types[i] = type;
-        return;
-      }
-    }
-    vars = Arrays.copyOf(vars, vars.length + 1);
-    types = Arrays.copyOf(types, types.length + 1);
-    vars[vars.length - 1] = var;
-    types[types.length - 1] = type;
+    map.computeIfAbsent(var, v -> {
+      vars.add(v);
+      return type;
+    });
   }
 
   @Nullable
   public Type get(@NotNull TypeVariable<?> var) {
-    for (int i = 0; i < vars.length; i++) {
-      if (vars[i].equals(var)) {
-        return types[i];
-      }
-    }
-    return null;
+    return map.get(var);
   }
 
   public Stream<TypeVariable<?>> vars() {
-    return Stream.of(vars);
+    return vars.stream();
   }
 
   public Stream<Type> types() {
-    return Stream.of(types);
+    return vars.stream().map(map::get);
   }
 
   @NotNull
   public Stream<Map.Entry<TypeVariable<?>, Type>> entries() {
-    return IntStream.range(0, vars.length).mapToObj(i -> Map.entry(vars[i], types[i]));
+    return map.entrySet().stream();
   }
 
   public void forEach(@NotNull BiConsumer<TypeVariable<?>, Type> consumer) {
-    for (int i = vars.length - 1; i >= 0; i--) {
-      consumer.accept(vars[i], types[i]);
-    }
+    vars.descendingIterator().forEachRemaining(v -> consumer.accept(v, map.get(v)));
   }
 
   @Override
