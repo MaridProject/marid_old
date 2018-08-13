@@ -47,7 +47,7 @@ public final class MappedVars {
   }
 
   @Nullable
-  public Type get(@NotNull TypeVariable<?> var) {
+  public Type get(@NotNull TypeVariable<?> var)  {
     return map.get(var);
   }
 
@@ -59,18 +59,13 @@ public final class MappedVars {
     return vars.stream().map(map::get);
   }
 
-  @NotNull
-  public Stream<Map.Entry<TypeVariable<?>, Type>> entries() {
-    return map.entrySet().stream();
-  }
-
   public void forEach(@NotNull BiConsumer<TypeVariable<?>, Type> consumer) {
     vars.descendingIterator().forEachRemaining(v -> consumer.accept(v, map.get(v)));
   }
 
   @Override
   public String toString() {
-    return entries().map(MappedVars::entryToString).collect(joining(",", "{", "}"));
+    return map.entrySet().stream().map(MappedVars::entryToString).collect(joining(",", "{", "}"));
   }
 
   private static String entryToString(@NotNull Map.Entry<TypeVariable<?>, Type> entry) {
