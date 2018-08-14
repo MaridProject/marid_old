@@ -33,7 +33,6 @@
       <groupId>org.marid</groupId>
       <artifactId>marid-ide-client</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
