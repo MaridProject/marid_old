@@ -23,10 +23,6 @@ package org.marid.app;
 
 import org.marid.logging.MaridLogManager;
 import org.marid.spring.LoggingPostProcessor;
-import org.marid.spring.annotation.PrototypeScoped;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
@@ -42,13 +38,6 @@ import java.util.logging.LogManager;
 @Configuration
 @Scope(proxyMode = ScopedProxyMode.NO)
 public class Context {
-
-  @Bean
-  @PrototypeScoped
-  public static Logger logger(InjectionPoint point) {
-    final Class<?> type = point.getMember().getDeclaringClass();
-    return LoggerFactory.getLogger(type);
-  }
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
