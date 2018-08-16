@@ -38,7 +38,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <roots>src/main/resources/META-INF/resources/ide</roots>
+          <roots>src/main/binary-resources/META-INF/resources/ide</roots>
         </configuration>
       </plugin>
 
