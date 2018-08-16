@@ -11,9 +11,19 @@
 
   <artifactId>marid-ide-client</artifactId>
 
-  <properties>
-    <kotlin.version>1.2.60</kotlin.version>
-  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>Semantic-UI</artifactId>
+      <version>2.3.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>jquery</artifactId>
+      <version>3.3.1-1</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -30,7 +40,6 @@
         <configuration>
           <roots>src/main/resources/META-INF/resources/ide</roots>
         </configuration>
-        <inherited>true</inherited>
       </plugin>
 
       <plugin>
