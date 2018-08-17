@@ -21,7 +21,7 @@ For example, if you have a service S<A, B>, and S has a method add(A a) and you�
 Imagine the following situation:
 
 1. You have two devices connected to a computer by different protocols and different connectors (for example USB and HDMI). These two devices are modelled in the IDE as two services with a generic type Device<P, C> where P is a protocol and C is a connector.
-2. The connector USB is modelled via a class named USB implementing interfaces Detachabe and Configurable and HDMI connector is modelled via a class named HDMI implementing Detachable and Configurable too.
+2. The connector USB is modelled via a class named USB implementing interfaces Detachable and Configurable and HDMI connector is modelled via a class named HDMI implementing Detachable and Configurable too.
 3. You see in the Repository a service named DeviceSet as a container of different devices of your project declared as DeviceSet<C, D extends Device<?, C>>
 4. After connecting both of your devices to that DeviceSet the type of the service becomes DeviceSet<?, Detachable & Configurable> meaning that all the devices contained in that container are detachable and configurable simultaneously.
 5. You see in the Repository a service named Detacher that can detach a set of detachable devices by a signal. It has an input ‘detachables’ of type DeviceSet<? extends Detachable, ?>. So, you can connect your service DeviceSet<?, Detachable & Configurable> to that service thanks to type compatibility and automatically inferred types
