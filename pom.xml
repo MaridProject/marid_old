@@ -102,12 +102,22 @@
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
+
+      <resource>
+        <directory>src/main/binary-resources</directory>
+        <filtering>false</filtering>
+      </resource>
     </resources>
 
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
         <filtering>true</filtering>
+      </testResource>
+
+      <testResource>
+        <directory>src/test/binary-resources</directory>
+        <filtering>false</filtering>
       </testResource>
     </testResources>
 
@@ -425,50 +435,9 @@
 
   <profiles>
     <profile>
-      <id>bin-files</id>
-
-      <activation>
-        <file>
-          <exists>src/main/binary-resources</exists>
-        </file>
-      </activation>
+      <id>release</id>
 
       <build>
-        <resources>
-          <resource>
-            <directory>src/main/binary-resources</directory>
-            <filtering>false</filtering>
-          </resource>
-        </resources>
-      </build>
-    </profile>
-
-    <profile>
-      <id>release-files</id>
-
-      <activation>
-        <file>
-          <exists>src/release</exists>
-        </file>
-        <property>
-          <name>marid.release</name>
-          <value>true</value>
-        </property>
-      </activation>
-
-      <build>
-        <resources>
-          <resource>
-            <directory>src/release/resources</directory>
-            <filtering>true</filtering>
-          </resource>
-
-          <resource>
-            <directory>src/release/binary-resources</directory>
-            <filtering>false</filtering>
-          </resource>
-        </resources>
-
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -486,6 +455,27 @@
                   </sources>
                 </configuration>
               </execution>
+
+              <execution>
+                <id>add-release-resources</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>src/release/resources</directory>
+                      <filtering>true</filtering>
+                    </resource>
+
+                    <resource>
+                      <directory>src/release/binary-resources</directory>
+                      <filtering>false</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
         </plugins>
@@ -493,31 +483,15 @@
     </profile>
 
     <profile>
-      <id>development-files</id>
+      <id>development</id>
 
       <activation>
-        <file>
-          <exists>src/development</exists>
-        </file>
         <property>
-          <name>marid.development</name>
-          <value>true</value>
+          <name>!release</name>
         </property>
       </activation>
 
       <build>
-        <resources>
-          <resource>
-            <directory>src/development/resources</directory>
-            <filtering>true</filtering>
-          </resource>
-
-          <resource>
-            <directory>src/development/binary-resources</directory>
-            <filtering>false</filtering>
-          </resource>
-        </resources>
-
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -533,6 +507,27 @@
                   <sources>
                     <source>src/development/java</source>
                   </sources>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>add-development-resources</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>src/development/resources</directory>
+                      <filtering>true</filtering>
+                    </resource>
+
+                    <resource>
+                      <directory>src/development/binary-resources</directory>
+                      <filtering>false</filtering>
+                    </resource>
+                  </resources>
                 </configuration>
               </execution>
             </executions>
