@@ -11,14 +11,6 @@
 
   <artifactId>marid-ide-client</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>webix</artifactId>
-      <version>5.2.0</version>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>

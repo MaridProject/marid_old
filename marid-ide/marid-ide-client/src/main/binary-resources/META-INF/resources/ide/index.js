@@ -29,6 +29,8 @@ export class Ide {
   }
 
   launch() {
-    this._root.innerHTML = `<h1>IDE</h1>`;
+    webix.ui({
+      type: "wide"
+    });
   }
 }
