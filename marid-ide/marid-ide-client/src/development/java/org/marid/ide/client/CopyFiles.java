@@ -45,10 +45,13 @@ public class CopyFiles {
           if (entry.isDirectory() || entry.getName().startsWith("samples")) {
             continue;
           }
-          final var target = dir.resolve(entry.getName());
+          final var name = entry.getName();
+          final var path = name.startsWith("codebase/") ? name.substring("codebase/".length()) : name;
+          final var target = dir.resolve(path);
           final var parent = target.getParent();
           Files.createDirectories(parent);
           Files.copy(zip, target, REPLACE_EXISTING);
+          System.out.printf("Copied %s%n", entry.getName());
         } finally {
           zip.closeEntry();
         }
