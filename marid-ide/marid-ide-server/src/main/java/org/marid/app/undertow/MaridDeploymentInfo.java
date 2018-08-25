@@ -29,7 +29,9 @@ import org.marid.app.web.MaridListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.EnumSet;
+import javax.servlet.ServletContextListener;
+import javax.servlet.http.HttpSessionListener;
+import java.util.Collections;
 
 import static javax.servlet.SessionTrackingMode.SSL;
 
@@ -47,7 +49,7 @@ public class MaridDeploymentInfo extends DeploymentInfo {
     setSessionConfigWrapper((sessionConfig, deployment) -> new SslSessionConfig(deployment.getSessionManager()));
     setDefaultSessionTimeout(3600);
     setCheckOtherSessionManagers(false);
-    setServletSessionConfig(new ServletSessionConfig().setSessionTrackingModes(EnumSet.of(SSL)));
+    setServletSessionConfig(new ServletSessionConfig().setSessionTrackingModes(Collections.singleton(SSL)));
   }
 
   @Autowired
@@ -57,6 +59,7 @@ public class MaridDeploymentInfo extends DeploymentInfo {
 
   @Autowired
   public void setListeners(MaridListener listener) {
-    addListener(new ListenerInfo(MaridListener.class, new ImmediateInstanceFactory<>(listener), false));
+    addListener(new ListenerInfo(ServletContextListener.class, new ImmediateInstanceFactory<>(listener), false));
+    addListener(new ListenerInfo(HttpSessionListener.class, new ImmediateInstanceFactory<>(listener), true));
   }
 }

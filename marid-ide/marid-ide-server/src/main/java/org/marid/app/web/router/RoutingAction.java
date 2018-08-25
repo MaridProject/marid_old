@@ -1,3 +1,5 @@
+package org.marid.app.web.router;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,36 +20,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.web.initializer;
 
-import org.marid.app.web.router.RoutingServlet;
-import org.springframework.stereotype.Component;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import javax.servlet.ServletContext;
+@FunctionalInterface
+public interface RoutingAction {
 
-@Component
-public class RoutingConfigurer implements ServletContextConfigurer {
-
-  private final RoutingServlet servlet;
-
-  public RoutingConfigurer(RoutingServlet servlet) {
-    this.servlet = servlet;
-  }
-
-  @Override
-  public void start(ServletContext context) {
-    final var r = context.addServlet("routingServlet", servlet);
-    r.addMapping("/web/*");
-    r.setAsyncSupported(true);
-    r.setLoadOnStartup(4);
-  }
-
-  @Override
-  public void stop(ServletContext context) {
-  }
-
-  @Override
-  public boolean isStopNeeded() {
-    return false;
-  }
+  void run(HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

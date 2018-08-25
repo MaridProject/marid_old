@@ -1,3 +1,14 @@
+package org.marid.dyn.web;
+
+import org.pac4j.core.profile.CommonProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.Map;
+
+import static org.pac4j.core.context.Pac4jConstants.USER_PROFILES;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,12 +29,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.model;
+@Configuration
+@Scope(proxyMode = ScopedProxyMode.NO)
+@ComponentScan
+public class WebContext {
 
-import org.jetbrains.annotations.NotNull;
+  private final CommonProfile profile;
 
-public interface Elem<I> {
+  @Autowired(required = false)
+  public WebContext(HttpSession session) {
+    profile = (CommonProfile) ((Map) session.getAttribute(USER_PROFILES)).values().iterator().next();
+  }
 
-  @NotNull
-  I getId();
+  @Bean
+  public CommonProfile profile() {
+    return profile;
+  }
 }

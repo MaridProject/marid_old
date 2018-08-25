@@ -1,3 +1,5 @@
+package org.marid.applib.spring.event;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,36 +20,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.web.initializer;
 
-import org.marid.app.web.router.RoutingServlet;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationEvent;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
-@Component
-public class RoutingConfigurer implements ServletContextConfigurer {
+public class HttpSessionCreatedEvent extends ApplicationEvent {
 
-  private final RoutingServlet servlet;
-
-  public RoutingConfigurer(RoutingServlet servlet) {
-    this.servlet = servlet;
-  }
-
-  @Override
-  public void start(ServletContext context) {
-    final var r = context.addServlet("routingServlet", servlet);
-    r.addMapping("/web/*");
-    r.setAsyncSupported(true);
-    r.setLoadOnStartup(4);
-  }
-
-  @Override
-  public void stop(ServletContext context) {
-  }
-
-  @Override
-  public boolean isStopNeeded() {
-    return false;
+  public HttpSessionCreatedEvent(HttpSession session) {
+    super(session);
   }
 }

@@ -22,59 +22,38 @@
 package org.marid.spring;
 
 import org.marid.spring.events.ContextClosedListener;
-import org.marid.spring.events.ContextStartedListener;
-import org.marid.spring.init.InitBeanPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public interface ContextUtils {
 
   @SafeVarargs
-  static AnnotationConfigApplicationContext context(AbstractApplicationContext parent,
-                                                    Consumer<AnnotationConfigApplicationContext>... configurers) {
-    final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-    context.setAllowBeanDefinitionOverriding(false);
-    context.setAllowCircularReferences(false);
-    context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
-    context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
+  static GenericApplicationContext context(AbstractApplicationContext parent,
+                                           BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext>... cs) {
+    final var context = new GenericApplicationContext();
+    final var bdReader = new AnnotatedBeanDefinitionReader(context);
 
-    context.setParent(parent);
+    final var beanFactory = context.getDefaultListableBeanFactory();
+    beanFactory.setAllowBeanDefinitionOverriding(false);
+    beanFactory.setAllowCircularReferences(false);
 
-    final var parentListener = closeListener(parent, event -> {
-      try {
-        context.close();
-      } catch (Exception x) {
-        x.printStackTrace();
-      }
-    });
+    beanFactory.addBeanPostProcessor(new LoggingPostProcessor());
+
+    // do not use context.setParent(...) due to child-to-parent event propagation
+    beanFactory.setParentBeanFactory(parent.getBeanFactory());
+
+    final var parentApplicationListeners = parent.getApplicationListeners();
+    final var parentListener = (ContextClosedListener) event -> context.close();
     parent.addApplicationListener(parentListener);
+    context.addApplicationListener((ContextClosedListener) e -> parentApplicationListeners.remove(parentListener));
 
-    final var listener = closeListener(context, e -> parent.getApplicationListeners().remove(parentListener));
-    context.addApplicationListener(listener);
-
-    for (final Consumer<AnnotationConfigApplicationContext> configurer : configurers) {
-      configurer.accept(context);
+    for (final var configurer : cs) {
+      configurer.accept(bdReader, context);
     }
 
     return context;
-  }
-
-  static ContextClosedListener closeListener(ApplicationContext context, ContextClosedListener listener) {
-    return ev -> {
-      if (ev.getApplicationContext() == context) {
-        listener.onApplicationEvent(ev);
-      }
-    };
-  }
-
-  static ContextStartedListener startListener(ApplicationContext context, ContextStartedListener listener) {
-    return ev -> {
-      if (ev.getApplicationContext() == context) {
-        listener.onApplicationEvent(ev);
-      }
-    };
   }
 }

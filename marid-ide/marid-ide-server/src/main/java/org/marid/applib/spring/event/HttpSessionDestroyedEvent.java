@@ -1,3 +1,5 @@
+package org.marid.applib.spring.event;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,40 +20,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.dao;
 
-import org.marid.applib.model.Elem;
+import org.springframework.context.ApplicationEvent;
 
-import java.util.Comparator;
+import javax.servlet.http.HttpSession;
 
-public class SortedListStore<I, T extends Elem<I>, D extends ListDao<I, T>> extends ListStore<I, T, D> {
+public class HttpSessionDestroyedEvent extends ApplicationEvent {
 
-  private final Comparator<? super I> comparator;
-
-  public SortedListStore(D dao, Comparator<? super I> comparator) {
-    super(dao);
-    this.comparator = comparator;
+  public HttpSessionDestroyedEvent(HttpSession session) {
+    super(session);
   }
 
   @Override
-  protected int locateIndex(I key) {
-    int low = 0;
-    int high = list.size() - 1;
-
-    while (low <= high) {
-      final int mid = (low + high) >>> 1;
-      final T midVal = list.get(mid);
-      final int cmp = comparator.compare(midVal.getId(), key);
-
-      if (cmp < 0) {
-        low = mid + 1;
-      } else if (cmp > 0) {
-        high = mid - 1;
-      } else {
-        return mid;
-      }
-    }
-
-    return -(low + 1);
+  public HttpSession getSource() {
+    return (HttpSession) super.getSource();
   }
 }

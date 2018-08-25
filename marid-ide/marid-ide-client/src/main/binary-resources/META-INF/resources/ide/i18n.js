@@ -1,5 +1,3 @@
-import {i18n} from './i18n.js';
-
 /*-
  * #%L
  * marid-ide-client
@@ -20,44 +18,54 @@ import {i18n} from './i18n.js';
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-export class Ide {
+
+class I18N {
 
   constructor() {
-    this._ui = webix.ui({
-      type: "space",
-      rows: [
-        {
-          type: "wide",
-          rows: [
-            {
-              view: "menu",
-              ready: function() {
-                webix.message("" + this);
-                this.parse([
-                  {
-                    id: "1",
-                    value: i18n.capd("session"),
-                    icon: "user",
-                    submenu: [
-                      "A",
-                      "B"
-                    ]
-                  }
-                ])
-              }
-            },
-            {
-              view: "template"
-            }
-          ]
-        }
-      ]
-    });
+    this._data = {
+      en: {
+        session: "session"
+      },
+      es: {
+        session: "sesión"
+      }
+    };
   }
 
-  launch() {
-    this._ui.show();
+  /**
+   * @param {string} key A key
+   * @return {string} A value
+   */
+  str(key) {
+    for (const lang of navigator.languages) {
+      const map = this._data[lang];
+      if (map) {
+        const v = map[key];
+        if (v != null) {
+          return v;
+        }
+      }
+    }
+    return key;
+  }
 
-    webix.ui.fullScreen();
+  /**
+   * @param {string} key A key
+   * @return {string} A value
+   */
+  cap(key) {
+    const v = this.str(key);
+    return v.charAt(0).toUpperCase() + v.substring(1);
+  }
+
+  /**
+   * @param {string} key A key
+   * @return {string} A value
+   */
+  capd(key) {
+    const v = this.cap(key);
+    return v + "...";
   }
 }
+
+export const i18n = new I18N();

@@ -1,6 +1,8 @@
+package org.marid.spring;
+
 /*-
  * #%L
- * marid-ide-server
+ * marid-spring
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -18,36 +20,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.web.initializer;
 
-import org.marid.app.web.router.RoutingServlet;
-import org.springframework.stereotype.Component;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.support.GenericApplicationContext;
 
-import javax.servlet.ServletContext;
+import java.io.Closeable;
+import java.io.IOException;
 
-@Component
-public class RoutingConfigurer implements ServletContextConfigurer {
+@Tag("manual")
+class ContextCloseThrowableTest {
 
-  private final RoutingServlet servlet;
-
-  public RoutingConfigurer(RoutingServlet servlet) {
-    this.servlet = servlet;
-  }
-
-  @Override
-  public void start(ServletContext context) {
-    final var r = context.addServlet("routingServlet", servlet);
-    r.addMapping("/web/*");
-    r.setAsyncSupported(true);
-    r.setLoadOnStartup(4);
-  }
-
-  @Override
-  public void stop(ServletContext context) {
-  }
-
-  @Override
-  public boolean isStopNeeded() {
-    return false;
+  @Test
+  void testContext() {
+    try (final var context = new GenericApplicationContext()) {
+      context.registerBean(Closeable.class, () -> () -> {
+        throw new IOException();
+      });
+      context.refresh();
+      context.start();
+    }
   }
 }

@@ -1,3 +1,5 @@
+package org.marid.app.web.router;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,36 +20,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.app.web.initializer;
 
-import org.marid.app.web.router.RoutingServlet;
-import org.springframework.stereotype.Component;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
-import javax.servlet.ServletContext;
+public class RoutingActions {
 
-@Component
-public class RoutingConfigurer implements ServletContextConfigurer {
+  protected final HashMap<String, RoutingAction> map = new HashMap<>();
+  protected final LinkedList<Function<String, RoutingAction>> funcs = new LinkedList<>();
 
-  private final RoutingServlet servlet;
-
-  public RoutingConfigurer(RoutingServlet servlet) {
-    this.servlet = servlet;
-  }
-
-  @Override
-  public void start(ServletContext context) {
-    final var r = context.addServlet("routingServlet", servlet);
-    r.addMapping("/web/*");
-    r.setAsyncSupported(true);
-    r.setLoadOnStartup(4);
-  }
-
-  @Override
-  public void stop(ServletContext context) {
-  }
-
-  @Override
-  public boolean isStopNeeded() {
-    return false;
+  public RoutingAction action(String name) {
+    return Optional.ofNullable(map.get(name))
+        .or(() -> funcs.stream()
+            .map(f -> f.apply(name))
+            .filter(Objects::nonNull)
+            .findFirst()
+        )
+        .orElse(null);
   }
 }

@@ -1,3 +1,5 @@
+package org.marid.app.web.router;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,19 +20,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.dao;
 
-import org.marid.applib.model.Elem;
+import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
+import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.function.BiConsumer;
 
-public interface ListDao<I, E extends Elem<I>> {
+public final class RoutingPath {
 
-  void save(Collection<? extends E> data);
+  BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> conf;
 
-  List<E> load();
-
-  Set<I> getIds();
+  public RoutingPath addConf(BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> conf) {
+    if (this.conf == null) {
+      this.conf = conf;
+    } else {
+      final var current = this.conf;
+      this.conf = (r, ctx) -> {
+        current.accept(r, ctx);
+        conf.accept(r, ctx);
+      };
+    }
+    return this;
+  }
 }

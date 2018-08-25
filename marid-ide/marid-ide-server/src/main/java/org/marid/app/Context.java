@@ -24,12 +24,12 @@ package org.marid.app;
 import org.marid.logging.MaridLogManager;
 import org.marid.spring.LoggingPostProcessor;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
-import java.lang.ref.Cleaner;
 import java.util.logging.LogManager;
 
 @EnableScheduling
@@ -54,11 +54,6 @@ public class Context {
     return new ConcurrentTaskScheduler();
   }
 
-  @Bean
-  public static Cleaner refCleaner() {
-    return Cleaner.create();
-  }
-
   public static void main(String... args) throws Exception {
     System.setProperty("java.util.logging.manager", MaridLogManager.class.getName());
 
@@ -67,7 +62,8 @@ public class Context {
       logManager.readConfiguration(inputStream);
     }
 
-    final var context = new AnnotationConfigApplicationContext();
+    final var context = new GenericApplicationContext();
+    final var reader = new AnnotatedBeanDefinitionReader(context);
 
     context.setId("marid");
     context.setDisplayName("Marid Web Application");
@@ -76,7 +72,7 @@ public class Context {
     context.getEnvironment().setDefaultProfiles("release");
     context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
     context.registerShutdownHook();
-    context.register(Context.class);
+    reader.register(Context.class);
     context.getEnvironment().getPropertySources().addFirst(new SimpleCommandLinePropertySource(args));
     context.refresh();
     context.start();

@@ -1,3 +1,5 @@
+package org.marid.app.web.router;
+
 /*-
  * #%L
  * marid-ide-server
@@ -18,22 +20,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.applib.model;
 
-import org.jetbrains.annotations.NotNull;
-import org.marid.misc.EHT;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.function.Function;
 
-public final class ProjectItem extends EHT implements Elem<String> {
+public class RoutingPaths {
 
-  private final String id;
+  protected final LinkedList<Function<String, RoutingPath>> funcs = new LinkedList<>();
 
-  public ProjectItem(String id) {
-    this.id = id;
-  }
-
-  @NotNull
-  @Override
-  public String getId() {
-    return id;
+  RoutingPath get(String name) {
+    return funcs.stream()
+        .map(f -> f.apply(name))
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null);
   }
 }
