@@ -24,22 +24,15 @@ package org.marid.app.web.router;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.function.BiConsumer;
+@FunctionalInterface
+public interface RoutingPath {
 
-public final class RoutingPath {
+  void configure(AnnotatedBeanDefinitionReader reader, GenericApplicationContext context);
 
-  BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> conf;
-
-  public RoutingPath addConf(BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> conf) {
-    if (this.conf == null) {
-      this.conf = conf;
-    } else {
-      final var current = this.conf;
-      this.conf = (r, ctx) -> {
-        current.accept(r, ctx);
-        conf.accept(r, ctx);
-      };
-    }
-    return this;
+  default RoutingPath combine(RoutingPath that) {
+    return (reader, context) -> {
+      this.configure(reader, context);
+      that.configure(reader, context);
+    };
   }
 }

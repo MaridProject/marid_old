@@ -34,8 +34,11 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.List;
+import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.WARNING;
@@ -47,6 +50,7 @@ public class Router {
   private final long idleInterval;
   private final GenericApplicationContext root;
   private final ConcurrentHashMap<String, State> tree = new ConcurrentHashMap<>();
+  private final Cleaner cleaner = newCleaner();
 
   public Router(@Value("${contextIdleInterval:600}") long idleInterval, GenericApplicationContext root) {
     this.idleInterval = idleInterval;
@@ -56,16 +60,10 @@ public class Router {
   void route(HttpServletRequest request, HttpServletResponse response) throws Exception {
     final var session = request.getSession();
     final var pathInfo = request.getPathInfo();
-    final var path = List.of(pathInfo.substring(1).split("/"));
-    final var state = tree.computeIfAbsent(session.getId(), id -> new State(session));
-    final var action = state.action(path);
+    final var path = pathInfo.substring(1).split("/");
+    final var state = tree.computeIfAbsent(session.getId(), id -> new State(session, () -> tree.remove(id)));
 
-    if (action != null) {
-      action.run(request, response);
-    } else {
-      Log.log(WARNING, "No action found: {0}", request);
-      response.sendError(404);
-    }
+    state.doAction(path, request, response);
   }
 
   @EventListener
@@ -82,77 +80,101 @@ public class Router {
     tree.forEach((k, v) -> v.expire(expirationThreshold));
   }
 
+  private static Cleaner newCleaner() {
+    final var threadGroup = new ThreadGroup("router");
+    final var threadCounter = new AtomicInteger();
+    return Cleaner.create(r -> {
+      final var thread = new Thread(threadGroup, r, "cleaner-" + threadCounter.incrementAndGet(), 64L * 1024L, false);
+      thread.setDaemon(true);
+      thread.setPriority(Thread.MIN_PRIORITY);
+      return thread;
+    });
+  }
+
   private final class State implements AutoCloseable {
 
+    private final State parent;
     private final GenericApplicationContext context;
+    private final Runnable destructor;
     private final ConcurrentHashMap<String, State> children = new ConcurrentHashMap<>();
     private volatile long lastAccess;
 
-    private State(HttpSession session) {
-      final var id = session.getId();
-      context = ContextUtils.context(root, (r, c) -> {
-        c.setId(id);
-        c.setDisplayName(id);
+    private State(HttpSession session, Runnable destructor) {
+      this(null, ContextUtils.context(root, (r, c) -> {
+        c.setId(session.getId());
+        c.setDisplayName(session.getId());
         r.registerBean(WebContext.class, () -> new WebContext(session));
-        c.addApplicationListener((ContextClosedListener) e -> tree.remove(id));
+        c.addApplicationListener((ContextClosedListener) e -> destructor.run());
         c.refresh();
         c.start();
-      });
+      }), destructor);
     }
 
-    private State(GenericApplicationContext context) {
+    private State(State parent, GenericApplicationContext context, Runnable destructor) {
+      this.parent = parent;
       this.context = context;
+      this.destructor = destructor;
+      cleaner.register(this, context::close);
     }
 
-    private RoutingAction action(List<String> path) {
-      switch (path.size()) {
+    private void doAction(String[] path, HttpServletRequest request, HttpServletResponse response) throws Exception {
+      switch (path.length) {
         case 0:
-          return null;
+          notFound(request, response);
+          return;
         case 1: {
           for (final var e : context.getBeansOfType(RoutingActions.class).entrySet()) {
             final var actions = e.getValue();
-            final var action = actions.action(path.get(0));
+            final var action = actions.action(path[0]);
             if (action != null) {
               touch();
-              log(FINE, "Processing {0} by {1}", context.getId() + "/" + path.get(0), e.getKey());
-              return action;
+              log(FINE, "Processing {0} by {1}", context.getId() + "/" + path[0], e.getKey());
+              action.run(request, response);
+              Reference.reachabilityFence(this);
+              Reference.reachabilityFence(parent);
+              return;
             }
           }
-          return null;
+          notFound(request, response);
+          return;
         }
         default: {
-          final var child = children.computeIfAbsent(path.get(0), k -> {
+          final var child = children.computeIfAbsent(path[0], k -> {
             for (final var e : context.getBeansOfType(RoutingPaths.class).entrySet()) {
               final var paths = e.getValue();
-              final var c = paths.get(path.get(0));
+              final var c = paths.get(k);
               if (c != null) {
-                return children.computeIfAbsent(path.get(0), p -> new State(ContextUtils.context(context, (r, ctx) -> {
-                  final var id = context.getId() + "/" + path.get(0);
+                return children.computeIfAbsent(k, p -> new State(this, ContextUtils.context(context, (r, ctx) -> {
+                  final var id = context.getId() + "/" + k;
                   ctx.setId(id);
                   ctx.setDisplayName(id);
-                  ctx.addApplicationListener((ContextClosedListener) ev -> children.remove(path.get(0)));
-                  c.conf.accept(r, ctx);
+                  ctx.addApplicationListener((ContextClosedListener) ev -> destructor.run());
+                  c.configure(r, ctx);
                   ctx.refresh();
                   ctx.start();
-                })));
+                }), () -> children.remove(k)));
               }
             }
             return null;
           });
           if (child == null) {
-            return null;
+            notFound(request, response);
           } else {
-            return child.action(path.subList(1, path.size()));
+            child.doAction(Arrays.copyOfRange(path, 1, path.length, String[].class), request, response);
           }
+          break;
         }
       }
     }
 
+    private void notFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
+      Log.log(WARNING, "No action found: {0}", request);
+      response.sendError(404);
+    }
+
     @Override
     public void close() {
-      if (context != null) {
-        context.close();
-      }
+      destructor.run();
     }
 
     private void touch() {
@@ -162,7 +184,7 @@ public class Router {
     private void expire(long threshold) {
       children.forEach((k, v) -> v.expire(threshold));
       if (lastAccess < threshold && children.isEmpty()) {
-        context.close();
+        close();
       }
     }
   }
