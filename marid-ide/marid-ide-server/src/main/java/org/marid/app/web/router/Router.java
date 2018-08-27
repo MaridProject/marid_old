@@ -37,12 +37,12 @@ import javax.servlet.http.HttpSession;
 import java.lang.ref.Cleaner;
 import java.lang.ref.Reference;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
-import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.WARNING;
-import static org.marid.logging.Log.log;
 
 @Component
 public class Router {
@@ -123,40 +123,36 @@ public class Router {
           notFound(request, response);
           return;
         case 1: {
-          for (final var e : context.getBeansOfType(RoutingActions.class).entrySet()) {
-            final var actions = e.getValue();
-            final var action = actions.action(path[0]);
-            if (action != null) {
-              touch();
-              log(FINE, "Processing {0} by {1}", context.getId() + "/" + path[0], e.getKey());
-              action.run(request, response);
-              Reference.reachabilityFence(this);
-              Reference.reachabilityFence(parent);
-              return;
-            }
+          final var action = beans(RoutingActions.class)
+              .map(a -> a.action(path[0]))
+              .filter(Objects::nonNull)
+              .peek(a -> lastAccess = System.currentTimeMillis())
+              .findFirst()
+              .orElse(null);
+          if (action != null) {
+            action.run(request, response);
+            Reference.reachabilityFence(this);
+            Reference.reachabilityFence(parent);
+          } else {
+            notFound(request, response);
           }
-          notFound(request, response);
-          return;
+          break;
         }
         default: {
-          final var child = children.computeIfAbsent(path[0], k -> {
-            for (final var e : context.getBeansOfType(RoutingPaths.class).entrySet()) {
-              final var paths = e.getValue();
-              final var c = paths.get(k);
-              if (c != null) {
-                return children.computeIfAbsent(k, p -> new State(this, ContextUtils.context(context, (r, ctx) -> {
-                  final var id = context.getId() + "/" + k;
-                  ctx.setId(id);
-                  ctx.setDisplayName(id);
-                  ctx.addApplicationListener((ContextClosedListener) ev -> destructor.run());
-                  c.configure(r, ctx);
-                  ctx.refresh();
-                  ctx.start();
-                }), () -> children.remove(k)));
-              }
-            }
-            return null;
-          });
+          final var child = children.computeIfAbsent(path[0], k -> beans(RoutingPaths.class)
+              .map(paths -> paths.get(k))
+              .filter(Objects::nonNull)
+              .map(c -> children.computeIfAbsent(k, p -> new State(this, ContextUtils.context(context, (r, ctx) -> {
+                final var id = context.getId() + "/" + k;
+                ctx.setId(id);
+                ctx.setDisplayName(id);
+                ctx.addApplicationListener((ContextClosedListener) ev -> destructor.run());
+                c.configure(r, ctx);
+                ctx.refresh();
+                ctx.start();
+              }), () -> children.remove(k))))
+              .findFirst()
+              .orElse(null));
           if (child == null) {
             notFound(request, response);
           } else {
@@ -167,6 +163,11 @@ public class Router {
       }
     }
 
+    private <T> Stream<T> beans(Class<T> type) {
+      return Arrays.stream(context.getDefaultListableBeanFactory().getBeanNamesForType(type))
+          .map(name -> context.getDefaultListableBeanFactory().getBean(name, type));
+    }
+
     private void notFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
       Log.log(WARNING, "No action found: {0}", request);
       response.sendError(404);
@@ -175,10 +176,6 @@ public class Router {
     @Override
     public void close() {
       destructor.run();
-    }
-
-    private void touch() {
-      lastAccess = System.currentTimeMillis();
     }
 
     private void expire(long threshold) {
