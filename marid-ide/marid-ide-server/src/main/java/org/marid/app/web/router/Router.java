@@ -142,7 +142,7 @@ public class Router {
           final var child = children.computeIfAbsent(path[0], k -> beans(RoutingPaths.class)
               .map(paths -> paths.get(k))
               .filter(Objects::nonNull)
-              .map(c -> children.computeIfAbsent(k, p -> new State(this, ContextUtils.context(context, (r, ctx) -> {
+              .map(c -> new State(this, ContextUtils.context(context, (r, ctx) -> {
                 final var id = context.getId() + "/" + k;
                 ctx.setId(id);
                 ctx.setDisplayName(id);
@@ -150,7 +150,7 @@ public class Router {
                 c.configure(r, ctx);
                 ctx.refresh();
                 ctx.start();
-              }), () -> children.remove(k))))
+              }), () -> children.remove(k)))
               .findFirst()
               .orElse(null));
           if (child == null) {
