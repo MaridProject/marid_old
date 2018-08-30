@@ -32,7 +32,7 @@ export class Ide {
             {
               view: "menu",
               ready: function() {
-                webix.message("" + this);
+                console.info("XXX");
                 this.parse([
                   {
                     id: "1",
