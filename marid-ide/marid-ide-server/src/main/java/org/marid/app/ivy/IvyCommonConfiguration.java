@@ -32,7 +32,7 @@ public class IvyCommonConfiguration {
 
   @Bean
   public IBiblioResolver iBiblioResolver() {
-    final IBiblioResolver resolver = new IBiblioResolver();
+    final var resolver = new IBiblioResolver();
     resolver.setM2compatible(true);
     resolver.setUsepoms(true);
     resolver.setName("central");
@@ -42,7 +42,7 @@ public class IvyCommonConfiguration {
   @Bean
   @Conditional({M2RepositoryExists.class})
   public FileSystemResolver localMavenResolver() {
-    final FileSystemResolver resolver = new FileSystemResolver();
+    final var resolver = new FileSystemResolver();
     resolver.setLocal(true);
     resolver.setM2compatible(true);
     resolver.setName("local");

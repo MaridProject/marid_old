@@ -36,10 +36,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.app.ivy.IvyCommonConfiguration;
-import org.marid.app.ivy.IvySlfLoggerAdapter;
+import org.marid.app.ivy.IvyLoggerAdapter;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.test.FileHolder;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +49,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.logging.Logger;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
@@ -113,8 +113,9 @@ public class RepositoryItemTest {
 
     @Bean
     public Ivy ivy(IvySettings settings) {
-      final Ivy ivy = new Ivy();
-      ivy.getLoggerEngine().setDefaultLogger(new IvySlfLoggerAdapter(LoggerFactory.getLogger("ivy")));
+      final var ivy = new Ivy();
+      final var logger = Logger.getLogger("ivy");
+      ivy.getLoggerEngine().setDefaultLogger(new IvyLoggerAdapter(logger));
       ivy.setSettings(settings);
       ivy.bind();
       return ivy;
