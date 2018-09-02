@@ -1,4 +1,4 @@
-package org.marid.app.web.router;
+package org.marid.dyn.web;
 
 /*-
  * #%L
@@ -21,20 +21,10 @@ package org.marid.app.web.router;
  * #L%
  */
 
-import java.util.*;
-import java.util.function.Function;
+import org.marid.app.web.router.RoutingActions;
+import org.springframework.stereotype.Component;
 
-public class RoutingPaths {
+@Component
+public class WebContextActions extends RoutingActions {
 
-  protected final LinkedList<Function<String, RoutingPath>> funcs = new LinkedList<>();
-  protected final HashMap<String, RoutingPath> map = new LinkedHashMap<>();
-
-  RoutingPath get(String name) {
-    return Optional.ofNullable(map.get(name))
-        .or(() -> funcs.stream()
-            .map(f -> f.apply(name))
-            .filter(Objects::nonNull)
-            .findFirst())
-        .orElse(null);
-  }
 }

@@ -15,6 +15,16 @@
   <modules>
     <module>marid-ide-client</module>
     <module>marid-ide-server</module>
+    <module>marid-html</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

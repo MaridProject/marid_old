@@ -1,8 +1,8 @@
-package org.marid.app.web.router;
+package org.marid.html;
 
 /*-
  * #%L
- * marid-ide-server
+ * marid-html
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -21,20 +21,16 @@ package org.marid.app.web.router;
  * #L%
  */
 
-import java.util.*;
-import java.util.function.Function;
+import org.w3c.dom.Node;
 
-public class RoutingPaths {
+public final class Head extends HtmlElement {
 
-  protected final LinkedList<Function<String, RoutingPath>> funcs = new LinkedList<>();
-  protected final HashMap<String, RoutingPath> map = new LinkedHashMap<>();
+  public Head(Node node) {
+    super(node.getOwnerDocument().createElement("head"));
+    node.appendChild(getNode());
+  }
 
-  RoutingPath get(String name) {
-    return Optional.ofNullable(map.get(name))
-        .or(() -> funcs.stream()
-            .map(f -> f.apply(name))
-            .filter(Objects::nonNull)
-            .findFirst())
-        .orElse(null);
+  public Head(HtmlNode<?> node) {
+    this(node.getNode());
   }
 }

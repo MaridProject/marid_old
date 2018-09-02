@@ -1,8 +1,8 @@
-package org.marid.app.web.router;
+package org.marid.test.io;
 
 /*-
  * #%L
- * marid-ide-server
+ * marid-test
  * %%
  * Copyright (C) 2012 - 2018 MARID software development group
  * %%
@@ -21,20 +21,21 @@ package org.marid.app.web.router;
  * #L%
  */
 
-import java.util.*;
-import java.util.function.Function;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-public class RoutingPaths {
+public interface Resources {
 
-  protected final LinkedList<Function<String, RoutingPath>> funcs = new LinkedList<>();
-  protected final HashMap<String, RoutingPath> map = new LinkedHashMap<>();
-
-  RoutingPath get(String name) {
-    return Optional.ofNullable(map.get(name))
-        .or(() -> funcs.stream()
-            .map(f -> f.apply(name))
-            .filter(Objects::nonNull)
-            .findFirst())
-        .orElse(null);
+  static String loadString(URL url) {
+    try (final var stream = url.openStream()) {
+      final var outputStream = new ByteArrayOutputStream();
+      stream.transferTo(outputStream);
+      return outputStream.toString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 }

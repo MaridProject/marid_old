@@ -1,0 +1,4 @@
+{
+  "bootstrap": "${bootstrap.version}",
+  "jquery": "${jquery.version}"
+}
