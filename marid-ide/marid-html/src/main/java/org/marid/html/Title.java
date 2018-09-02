@@ -21,14 +21,21 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import org.jetbrains.annotations.NotNull;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+public final class Title extends HtmlChild implements HtmlBase<Title> {
+
+  public Title(HasNode<?> parent) {
+    super(parent.getNode(), "title");
+  }
+
+  public Title title(@NotNull String title) {
+    getNode().setTextContent(title);
+    return this;
   }
 
   @Override
-  public Div getSelf() {
+  public Title getSelf() {
     return this;
   }
 }

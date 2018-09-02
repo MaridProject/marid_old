@@ -21,14 +21,27 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import org.jetbrains.annotations.NotNull;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+public final class Meta extends HtmlChild implements HtmlBase<Meta> {
+
+  public Meta(HasNode<?> node) {
+    super(node.getNode(), "meta");
+  }
+
+  public Meta charset(@NotNull String charset) {
+    getNode().setAttribute("charset", charset);
+    return this;
+  }
+
+  public Meta value(@NotNull String name, @NotNull String content) {
+    getNode().setAttribute("name", name);
+    getNode().setAttribute("content", content);
+    return this;
   }
 
   @Override
-  public Div getSelf() {
+  public Meta getSelf() {
     return this;
   }
 }

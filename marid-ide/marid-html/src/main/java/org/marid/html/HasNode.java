@@ -21,14 +21,10 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import org.w3c.dom.Node;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
-  }
+@FunctionalInterface
+public interface HasNode<N extends Node> {
 
-  @Override
-  public Div getSelf() {
-    return this;
-  }
+  N getNode();
 }

@@ -30,7 +30,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import java.util.function.Consumer;
 
-public final class Html extends HtmlElement {
+public final class Html extends HtmlElement implements HtmlBase<Html> {
 
   public Html(Document document) {
     super(document.createElement("html"));
@@ -42,8 +42,14 @@ public final class Html extends HtmlElement {
   }
 
   public Html head(Consumer<Head> headConsumer) {
-    final var head = new Head(getNode());
+    final var head = new Head(this);
     headConsumer.accept(head);
+    return this;
+  }
+
+  public Html body(Consumer<Body> bodyConsumer) {
+    final var body = new Body(this);
+    bodyConsumer.accept(body);
     return this;
   }
 
@@ -57,6 +63,11 @@ public final class Html extends HtmlElement {
     super.initTransformer(transformer);
     transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "about:legacy-compat");
     transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+  }
+
+  @Override
+  public Html getSelf() {
+    return this;
   }
 
   public static Document createDocument() {

@@ -21,14 +21,8 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+@FunctionalInterface
+public interface HasSelf<N extends HtmlNode> {
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
-  }
-
-  @Override
-  public Div getSelf() {
-    return this;
-  }
+  N getSelf();
 }

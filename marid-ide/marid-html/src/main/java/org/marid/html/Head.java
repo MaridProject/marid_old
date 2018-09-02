@@ -21,16 +21,68 @@ package org.marid.html;
  * #L%
  */
 
-import org.w3c.dom.Node;
+import org.jetbrains.annotations.NotNull;
 
-public final class Head extends HtmlElement {
+import java.util.function.Consumer;
 
-  public Head(Node node) {
-    super(node.getOwnerDocument().createElement("head"));
-    node.appendChild(getNode());
+public final class Head extends HtmlChild {
+
+  public Head(HasNode<?> node) {
+    super(node.getNode(), "head");
   }
 
-  public Head(HtmlNode<?> node) {
-    this(node.getNode());
+  public Head title(@NotNull String title) {
+    final var e = getNode().getOwnerDocument().createElement("title");
+    e.setTextContent(title);
+    getNode().appendChild(e);
+    return this;
+  }
+
+  public Head title(Consumer<Title> titleConsumer) {
+    final var title = new Title(this);
+    titleConsumer.accept(title);
+    return this;
+  }
+
+  public Head utf8() {
+    final var e = getNode().getOwnerDocument().createElement("meta");
+    e.setAttribute("charset", "utf-8");
+    getNode().appendChild(e);
+    return this;
+  }
+
+  public Head meta(Consumer<Meta> metaConsumer) {
+    final var meta = new Meta(this);
+    metaConsumer.accept(meta);
+    return this;
+  }
+
+  public Head link(@NotNull String rel, @NotNull String href) {
+    final var e = getNode().getOwnerDocument().createElement("link");
+    e.setAttribute("rel", rel);
+    e.setAttribute("href", href);
+    getNode().appendChild(e);
+    return this;
+  }
+
+  public Head icon(@NotNull String href) {
+    return link("icon", href);
+  }
+
+  public Head stylesheet(@NotNull String href) {
+    return link("stylesheet", href);
+  }
+
+  public Head script(@NotNull String src) {
+    final var e = getNode().getOwnerDocument().createElement("script");
+    e.setAttribute("src", src);
+    getNode().appendChild(e);
+    return this;
+  }
+
+  public Head script(@NotNull Consumer<Script> scriptConsumer) {
+    final var script = new Script(this);
+    scriptConsumer.accept(script);
+    return this;
   }
 }

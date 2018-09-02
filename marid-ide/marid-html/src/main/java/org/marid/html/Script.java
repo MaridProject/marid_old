@@ -21,14 +21,22 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+public final class Script extends HtmlChild {
+
+  public Script(HasNode<?> node) {
+    super(node.getNode(), "script");
   }
 
-  @Override
-  public Div getSelf() {
+  public Script content(@Language("js") @NotNull String content) {
+    getNode().setTextContent(content);
+    return this;
+  }
+
+  public Script src(@NotNull String src) {
+    getNode().setAttribute("src", src);
     return this;
   }
 }

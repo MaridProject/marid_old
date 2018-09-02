@@ -21,14 +21,14 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+public final class Body extends HtmlChild implements HtmlContainer<Body> {
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+  public Body(HasNode<?> node) {
+    super(node.getNode(), "body");
   }
 
   @Override
-  public Div getSelf() {
+  public Body getSelf() {
     return this;
   }
 }

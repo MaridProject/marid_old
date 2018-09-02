@@ -21,14 +21,31 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import java.util.function.Consumer;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+public interface HtmlContainer<E extends HtmlElement> extends HtmlBase<E>, HasSelf<E> {
+
+  default E div(Consumer<Div> divConsumer) {
+    final var div = new Div(getSelf());
+    divConsumer.accept(div);
+    return getSelf();
   }
 
-  @Override
-  public Div getSelf() {
-    return this;
+  default E script(Consumer<Script> scriptConsumer) {
+    final var script = new Script(getSelf());
+    scriptConsumer.accept(script);
+    return getSelf();
+  }
+
+  default E a(Consumer<A> aConsumer) {
+    final var a = new A(getSelf());
+    aConsumer.accept(a);
+    return getSelf();
+  }
+
+  default E nav(Consumer<Nav> navConsumer) {
+    final var nav = new Nav(getSelf());
+    navConsumer.accept(nav);
+    return getSelf();
   }
 }

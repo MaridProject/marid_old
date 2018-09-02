@@ -21,14 +21,30 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import org.jetbrains.annotations.NotNull;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+public final class Link extends HtmlChild implements HtmlBase<Link> {
+
+  public Link(HasNode<?> node) {
+    super(node.getNode(), "link");
+  }
+
+  public Link rel(@NotNull String rel, @NotNull String href) {
+    getNode().setAttribute("rel", rel);
+    getNode().setAttribute("href", href);
+    return this;
+  }
+
+  public Link icon(@NotNull String href) {
+    return rel("icon", href);
+  }
+
+  public Link stylesheet(@NotNull String href) {
+    return rel("stylesheet", href);
   }
 
   @Override
-  public Div getSelf() {
+  public Link getSelf() {
     return this;
   }
 }

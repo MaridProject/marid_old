@@ -27,7 +27,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import java.io.IOException;
 
-public abstract class HtmlNode<N extends Node> {
+public abstract class HtmlNode<N extends Node> implements HasNode<N> {
 
   private final N node;
 
@@ -35,6 +35,7 @@ public abstract class HtmlNode<N extends Node> {
     this.node = node;
   }
 
+  @Override
   public N getNode() {
     return node;
   }

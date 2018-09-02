@@ -21,14 +21,20 @@ package org.marid.html;
  * #L%
  */
 
-public final class Div extends HtmlChild implements HtmlContainer<Div> {
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-  public Div(HasNode<?> node) {
-    super(node.getNode(), "div");
+import java.util.function.Function;
+
+public abstract class HtmlChild extends HtmlElement {
+
+  public HtmlChild(Node parent, Function<Document, Element> elementFunction) {
+    super(elementFunction.apply(parent.getOwnerDocument()));
+    parent.appendChild(getNode());
   }
 
-  @Override
-  public Div getSelf() {
-    return this;
+  public HtmlChild(Node parent, String tag) {
+    this(parent, doc -> doc.createElement(tag));
   }
 }
