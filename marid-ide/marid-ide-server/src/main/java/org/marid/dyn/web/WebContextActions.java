@@ -48,13 +48,10 @@ public class WebContextActions extends RoutingActions {
               .forEach(javaScriptLibraries.libraries(), head::script)
           )
           .body(body -> body
-              .nav(nav -> nav
-                  .klass("navbar sticky-top navbar-dark bg-primary")
+              .nav(nav -> nav.klass("navbar sticky-top navbar-dark bg-primary")
                   .a(a -> a.href("#").content("Sticky Top").klass("navbar-brand"))
-                  .ul(ul -> ul
-                      .klass("navbar-nav mr-auto")
-                      .li(li -> li
-                          .klass("nav-item")
+                  .ul(ul -> ul.klass("navbar-nav mr-auto")
+                      .li(li -> li.klass("nav-item")
                           .a(a -> a.klass("nav-link").href("#").content("Home"))
                       )
                   )
