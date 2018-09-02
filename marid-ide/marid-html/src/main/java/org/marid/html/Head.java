@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public final class Head extends HtmlChild {
+public final class Head extends HtmlChild implements HtmlBase<Head> {
 
   public Head(HasNode<?> node) {
     super(node.getNode(), "head");
@@ -83,6 +83,11 @@ public final class Head extends HtmlChild {
   public Head script(@NotNull Consumer<Script> scriptConsumer) {
     final var script = new Script(this);
     scriptConsumer.accept(script);
+    return this;
+  }
+
+  @Override
+  public Head getSelf() {
     return this;
   }
 }
