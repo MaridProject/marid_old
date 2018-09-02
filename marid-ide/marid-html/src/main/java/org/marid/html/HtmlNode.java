@@ -75,6 +75,6 @@ public abstract class HtmlNode<N extends Node> implements HasNode<N> {
     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
     transformer.setOutputProperty(OutputKeys.METHOD, "html");
-    transformer.setOutputProperty(OutputKeys.VERSION, "5.0");
+    transformer.setOutputProperty(OutputKeys.VERSION, "5");
   }
 }

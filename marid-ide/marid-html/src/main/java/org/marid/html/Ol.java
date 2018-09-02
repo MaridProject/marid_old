@@ -21,31 +21,14 @@ package org.marid.html;
  * #L%
  */
 
-import org.jetbrains.annotations.NotNull;
+public final class Ol extends HtmlChild implements HtmlList<Ol> {
 
-public final class A extends HtmlChild implements HtmlBase<A> {
-
-  public A(HasNode<?> node) {
-    super(node.getNode(), "a");
-  }
-
-  public A href(@NotNull String href) {
-    getNode().setAttribute("href", href);
-    return this;
-  }
-
-  public A target(@NotNull String target) {
-    getNode().setAttribute("target", target);
-    return this;
-  }
-
-  public A content(@NotNull String content) {
-    getNode().setTextContent(content);
-    return this;
+  public Ol(HasNode<?> node) {
+    super(node.getNode(), "ol");
   }
 
   @Override
-  public A getSelf() {
+  public Ol getSelf() {
     return this;
   }
 }

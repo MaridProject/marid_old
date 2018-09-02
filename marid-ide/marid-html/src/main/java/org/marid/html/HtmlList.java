@@ -23,29 +23,13 @@ package org.marid.html;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class A extends HtmlChild implements HtmlBase<A> {
+import java.util.function.Consumer;
 
-  public A(HasNode<?> node) {
-    super(node.getNode(), "a");
-  }
+public interface HtmlList<E extends HtmlElement> extends HtmlContainer<E> {
 
-  public A href(@NotNull String href) {
-    getNode().setAttribute("href", href);
-    return this;
-  }
-
-  public A target(@NotNull String target) {
-    getNode().setAttribute("target", target);
-    return this;
-  }
-
-  public A content(@NotNull String content) {
-    getNode().setTextContent(content);
-    return this;
-  }
-
-  @Override
-  public A getSelf() {
-    return this;
+  default E li(@NotNull Consumer<Li> liConsumer) {
+    final var li = new Li(getSelf());
+    liConsumer.accept(li);
+    return getSelf();
   }
 }

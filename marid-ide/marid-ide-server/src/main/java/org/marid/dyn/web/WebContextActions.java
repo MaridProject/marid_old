@@ -43,7 +43,6 @@ public class WebContextActions extends RoutingActions {
               .title("Marid IDE")
               .meta(meta -> meta.value("google", "notranslate"))
               .meta(meta -> meta.value("viewport", "width=device-width, initial-scale=1.0"))
-              .utf8()
               .icon("/public/marid32.png")
               .stylesheet(cssLibraries.getCss("yeti"))
               .forEach(javaScriptLibraries.libraries(), head::script)
@@ -52,6 +51,13 @@ public class WebContextActions extends RoutingActions {
               .nav(nav -> nav
                   .klass("navbar sticky-top navbar-dark bg-primary")
                   .a(a -> a.href("#").content("Sticky Top").klass("navbar-brand"))
+                  .ul(ul -> ul
+                      .klass("navbar-nav mr-auto")
+                      .li(li -> li
+                          .klass("nav-item")
+                          .a(a -> a.klass("nav-link").href("#").content("Home"))
+                      )
+                  )
               )
           )
           .write(new StreamResult(response.getWriter()));

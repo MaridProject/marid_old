@@ -48,4 +48,16 @@ public interface HtmlContainer<E extends HtmlElement> extends HtmlBase<E>, HasSe
     navConsumer.accept(nav);
     return getSelf();
   }
+
+  default E ul(Consumer<Ul> ulConsumer) {
+    final var ul = new Ul(getSelf());
+    ulConsumer.accept(ul);
+    return getSelf();
+  }
+
+  default E ol(Consumer<Ol> olConsumer) {
+    final var ol = new Ol(getSelf());
+    olConsumer.accept(ol);
+    return getSelf();
+  }
 }
