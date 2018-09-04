@@ -1,11 +1,16 @@
 package org.marid.dyn.web;
 
+import org.marid.spring.annotation.PrototypeScoped;
+import org.marid.spring.events.ContextClosedListener;
 import org.pac4j.core.profile.CommonProfile;
+import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.GenericApplicationContext;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static org.pac4j.core.context.Pac4jConstants.USER_PROFILES;
 
@@ -34,15 +39,33 @@ import static org.pac4j.core.context.Pac4jConstants.USER_PROFILES;
 @ComponentScan
 public class WebContext {
 
+  private final String id;
   private final CommonProfile profile;
+  private final Logger logger;
 
   @Autowired(required = false)
   public WebContext(HttpSession session) {
+    id = session.getId();
     profile = (CommonProfile) ((Map) session.getAttribute(USER_PROFILES)).values().iterator().next();
+    logger = Logger.getLogger(id);
+  }
+
+  public Logger getLogger() {
+    return logger;
   }
 
   @Bean
   public CommonProfile profile() {
     return profile;
+  }
+
+  @PrototypeScoped
+  @Bean
+  public Logger logger(InjectionPoint injectionPoint, GenericApplicationContext context) {
+    final var name = injectionPoint.getMember().getDeclaringClass().getName();
+    final var logger = Logger.getLogger(id + ":" + name);
+    logger.setParent(this.logger);
+    context.addApplicationListener((ContextClosedListener) event -> logger.setUseParentHandlers(false));
+    return logger;
   }
 }

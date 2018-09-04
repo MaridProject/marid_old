@@ -21,7 +21,6 @@ package org.marid.dyn.web;
  * #L%
  */
 
-import org.marid.app.web.res.CssLibraries;
 import org.marid.app.web.res.JavaScriptLibraries;
 import org.marid.app.web.router.RoutingActions;
 import org.marid.html.Html;
@@ -34,7 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 public class WebContextActions extends RoutingActions {
 
   @Autowired
-  public void initIndex(JavaScriptLibraries javaScriptLibraries, CssLibraries cssLibraries) {
+  public void initIndex(JavaScriptLibraries javaScriptLibraries, ThemeManager themeManager) {
     map.put("index.html", (request, response) -> {
       response.setContentType("text/html");
       response.setCharacterEncoding("UTF-8");
@@ -44,7 +43,7 @@ public class WebContextActions extends RoutingActions {
               .meta(meta -> meta.value("google", "notranslate"))
               .meta(meta -> meta.value("viewport", "width=device-width, initial-scale=1.0"))
               .icon("/public/marid32.png")
-              .stylesheet(cssLibraries.getCss("yeti"))
+              .stylesheet(themeManager.getTheme(request))
               .forEach(javaScriptLibraries.libraries(), head::script)
           )
           .body(body -> body
@@ -57,7 +56,7 @@ public class WebContextActions extends RoutingActions {
                   )
               )
           )
-          .write(new StreamResult(response.getWriter()));
+          .write(new StreamResult(response.getOutputStream()));
     });
   }
 }
