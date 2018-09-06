@@ -63,8 +63,7 @@ public class WebContext {
   @Bean
   public Logger logger(InjectionPoint injectionPoint, GenericApplicationContext context) {
     final var name = injectionPoint.getMember().getDeclaringClass().getName();
-    final var logger = Logger.getLogger(id + ":" + name);
-    logger.setParent(this.logger);
+    final var logger = Logger.getLogger(id + "." + name);
     context.addApplicationListener((ContextClosedListener) event -> logger.setUseParentHandlers(false));
     return logger;
   }

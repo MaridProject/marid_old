@@ -117,10 +117,10 @@ public class Router {
       cleaner.register(this, context::close);
     }
 
-    private void doAction(String[] path, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void doAction(String[] path, HttpServletRequest req, HttpServletResponse resp) throws Exception {
       switch (path.length) {
         case 0:
-          notFound(request, response);
+          notFound(req, resp);
           return;
         case 1: {
           final var action = beans(RoutingActions.class)
@@ -130,11 +130,11 @@ public class Router {
               .findFirst()
               .orElse(null);
           if (action != null) {
-            action.run(request, response);
+            action.run(req, resp);
             Reference.reachabilityFence(this);
             Reference.reachabilityFence(parent);
           } else {
-            notFound(request, response);
+            notFound(req, resp);
           }
           break;
         }
@@ -154,9 +154,9 @@ public class Router {
               .findFirst()
               .orElse(null));
           if (child == null) {
-            notFound(request, response);
+            notFound(req, resp);
           } else {
-            child.doAction(Arrays.copyOfRange(path, 1, path.length, String[].class), request, response);
+            child.doAction(Arrays.copyOfRange(path, 1, path.length, String[].class), req, resp);
           }
           break;
         }
