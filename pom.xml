@@ -80,6 +80,7 @@
     <module>marid-runtime</module>
     <module>marid-spring</module>
     <module>marid-ide</module>
+    <module>marid-bom</module>
   </modules>
 
   <build>
@@ -406,6 +407,14 @@
         <artifactId>jsr305</artifactId>
         <version>3.0.2</version>
         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.3.0</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
     </dependencies>
   </dependencyManagement>

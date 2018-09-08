@@ -20,7 +20,6 @@
     <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-ide-client</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -31,7 +30,6 @@
     <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-html</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- ioc -->
@@ -80,14 +78,6 @@
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
-    </dependency>
-
-    <!-- test -->
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
