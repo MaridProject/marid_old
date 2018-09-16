@@ -62,7 +62,6 @@ public final class Html extends HtmlElement implements HtmlBase<Html> {
   protected void initTransformer(Transformer transformer) {
     super.initTransformer(transformer);
     transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "about:legacy-compat");
-    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
   }
 
   @Override
