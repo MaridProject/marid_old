@@ -39,6 +39,11 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+
     <!-- business -->
     <dependency>
       <groupId>org.marid</groupId>
