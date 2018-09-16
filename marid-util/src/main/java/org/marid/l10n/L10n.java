@@ -22,6 +22,7 @@
 package org.marid.l10n;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.text.MessageFormat;
 import java.util.Formatter;
@@ -29,25 +30,29 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.util.ResourceBundle.getBundle;
-import static org.marid.l10n.Utf8ResourceBundleControl.UTF8CTRL;
 
 /**
  * @author Dmitry Ovchinnikov
  */
 public class L10n {
 
-  public static String s(String key, Object... ps) {
+  public static String s(@NotNull @PropertyKey(resourceBundle = "res.strings") String key, Object... ps) {
     return s(Locale.getDefault(), key, ps);
   }
 
-  public static String s(@NotNull Locale locale, @NotNull String key, Object... ps) {
+  public static String s(@NotNull Locale locale,
+                         @NotNull @PropertyKey(resourceBundle = "res.strings") String key,
+                         Object... ps) {
     final StringBuilder builder = new StringBuilder(key.length());
     final Formatter formatter = new Formatter(builder);
     s(locale, key, formatter, ps);
     return builder.toString();
   }
 
-  public static void s(@NotNull Locale locale, @NotNull String key, @NotNull Formatter formatter, Object... ps) {
+  public static void s(@NotNull Locale locale,
+                       @NotNull @PropertyKey(resourceBundle = "res.strings") String key,
+                       @NotNull Formatter formatter,
+                       Object... ps) {
     final ResourceBundle b = getStringsBundle(locale);
     final String r = b.containsKey(key) ? b.getString(key) : key;
     if (ps == null || ps.length == 0) {
@@ -61,17 +66,22 @@ public class L10n {
     }
   }
 
-  public static String m(@NotNull String k, Object... v) {
+  public static String m(@NotNull @PropertyKey(resourceBundle = "res.messages") String k, Object... v) {
     return m(Locale.getDefault(), k, v);
   }
 
-  public static String m(@NotNull Locale locale, @NotNull String k, Object... v) {
+  public static String m(@NotNull Locale locale,
+                         @NotNull @PropertyKey(resourceBundle = "res.messages") String k,
+                         Object... v) {
     final StringBuffer buffer = new StringBuffer(k.length());
     m(locale, k, buffer, v);
     return buffer.toString();
   }
 
-  public static void m(@NotNull Locale locale, @NotNull String k, @NotNull StringBuffer buffer, Object... v) {
+  public static void m(@NotNull Locale locale,
+                       @NotNull @PropertyKey(resourceBundle = "res.messages") String k,
+                       @NotNull StringBuffer buffer,
+                       Object... v) {
     final ResourceBundle b = getMessagesBundle(locale);
     final String r = b.containsKey(k) ? b.getString(k) : k;
     if (v == null || v.length == 0) {
@@ -85,11 +95,11 @@ public class L10n {
     }
   }
 
-  public static ResourceBundle getMessagesBundle(Locale locale) {
-    return getBundle("res.messages", locale, Thread.currentThread().getContextClassLoader(), UTF8CTRL);
+  public static ResourceBundle getMessagesBundle(@NotNull Locale locale) {
+    return getBundle("res.messages", locale, Thread.currentThread().getContextClassLoader());
   }
 
-  public static ResourceBundle getStringsBundle(Locale locale) {
-    return getBundle("res.strings", locale, Thread.currentThread().getContextClassLoader(), UTF8CTRL);
+  public static ResourceBundle getStringsBundle(@NotNull Locale locale) {
+    return getBundle("res.strings", locale, Thread.currentThread().getContextClassLoader());
   }
 }
