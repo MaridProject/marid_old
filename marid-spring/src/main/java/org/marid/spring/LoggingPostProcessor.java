@@ -21,19 +21,20 @@
 
 package org.marid.spring;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
 import org.springframework.lang.Nullable;
 
-import static java.util.logging.Level.INFO;
-import static org.marid.logging.Log.log;
-
 public class LoggingPostProcessor implements DestructionAwareBeanPostProcessor {
+
+  private static final Log LOG = LogFactory.getLog(LoggingPostProcessor.class);
 
   @Override
   public Object postProcessBeforeInitialization(@Nullable Object bean, @Nullable String beanName) throws BeansException {
     if (beanName != null) {
-      log(INFO, "Initializing {0}", beanName);
+      LOG.info("Initializing " + beanName);
     }
     return bean;
   }
@@ -41,15 +42,15 @@ public class LoggingPostProcessor implements DestructionAwareBeanPostProcessor {
   @Override
   public Object postProcessAfterInitialization(@Nullable Object bean, @Nullable String beanName) throws BeansException {
     if (beanName != null) {
-      log(INFO, "Initialized {0} {1}", beanName, bean);
+      LOG.info("Initialized " + beanName + " " + bean);
     } else {
-      log(INFO, "Initialized {0}", bean);
+      LOG.info("Initialized " + bean);
     }
     return bean;
   }
 
   @Override
   public void postProcessBeforeDestruction(@Nullable Object bean, @Nullable String beanName) throws BeansException {
-    log(INFO, "Destroying {0} {1}", beanName, bean);
+    LOG.info("Destroying " + beanName + " " + bean);
   }
 }
