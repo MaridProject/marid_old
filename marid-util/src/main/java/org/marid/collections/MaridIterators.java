@@ -22,11 +22,8 @@
 package org.marid.collections;
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.misc.Casts;
 
-import java.lang.reflect.Array;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
@@ -78,19 +75,5 @@ public interface MaridIterators {
   @NotNull
   static <E> Iterable<E> iterable(@NotNull Iterator<E> iterator) {
     return () -> iterator;
-  }
-
-  @NotNull
-  static <T> T[] array(@NotNull Class<T> type, @NotNull Iterable<? extends T> iterable) {
-    final LinkedList<T> list = new LinkedList<>();
-    iterable.forEach(list::add);
-    return list.toArray(Casts.cast(Array.newInstance(type, list.size())));
-  }
-
-  @NotNull
-  static <T> T[] array(@NotNull Class<T> type, @NotNull Iterator<? extends T> iterator) {
-    final LinkedList<T> list = new LinkedList<>();
-    iterator.forEachRemaining(list::add);
-    return list.toArray(Casts.cast(Array.newInstance(type, list.size())));
   }
 }
