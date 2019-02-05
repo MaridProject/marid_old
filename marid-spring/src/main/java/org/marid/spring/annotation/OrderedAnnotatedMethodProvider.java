@@ -29,6 +29,7 @@ import org.springframework.asm.MethodVisitor;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,6 +53,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
   protected Method[] computeValue(Class<?> type) {
     final Method[] methods = Stream.of(type.getMethods())
         .filter(m -> Stream.of(annotations).anyMatch(m::isAnnotationPresent))
+        .filter(AccessibleObject::trySetAccessible)
         .toArray(Method[]::new);
     if (methods.length == 0) {
       return null;
