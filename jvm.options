@@ -1,3 +1,2 @@
 --add-opens java.base/java.lang=ALL-UNNAMED
 --add-opens java.base/sun.nio.ch=ALL-UNNAMED
---add-modules=java.xml.ws.annotation
