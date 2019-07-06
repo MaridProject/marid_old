@@ -158,7 +158,7 @@
             </goals>
             <configuration>
               <fromDir>target</fromDir>
-              <includes>marid-webapp*.jar,lib/**</includes>
+              <includes>marid-ide-server*.jar,lib/**</includes>
               <toDir>/home/site/app</toDir>
               <optimize>true</optimize>
             </configuration>

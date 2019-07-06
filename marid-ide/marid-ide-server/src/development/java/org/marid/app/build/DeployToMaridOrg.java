@@ -34,7 +34,7 @@ public class DeployToMaridOrg {
       final Process process = new ProcessBuilder(
           "mvn",
           "-DskipTests",
-          "-pl", "org.marid:marid-webapp",
+          "-pl", "org.marid:marid-ide-server",
           "-P", "release",
           "-am",
           "clean", "install"
@@ -65,7 +65,7 @@ public class DeployToMaridOrg {
       final Process process = new ProcessBuilder(
           "mvn",
           "-DskipTests",
-          "-pl", "org.marid:marid-webapp",
+          "-pl", "org.marid:marid-ide-server",
           "-P", "development",
           "-am",
           "clean", "install"
