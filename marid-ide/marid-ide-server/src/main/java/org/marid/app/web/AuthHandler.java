@@ -113,7 +113,7 @@ public class AuthHandler implements HttpHandler {
             mainHandler.handleRequest(exchange);
           } else {
             switch (path) {
-              case "/":
+              case "/index.html":
               case "/login":
                 unauthorizedHandler.handleRequest(exchange);
                 break;
