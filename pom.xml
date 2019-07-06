@@ -29,7 +29,7 @@
     <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
 
-    <java.version>11</java.version>
+    <java.version>12</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -88,13 +88,13 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh</artifactId>
-        <version>3.3.2</version>
+        <version>3.3.3</version>
       </extension>
 
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh-external</artifactId>
-        <version>3.3.2</version>
+        <version>3.3.3</version>
       </extension>
     </extensions>
 
@@ -197,7 +197,7 @@
 
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.1.0</version>
         </plugin>
 
         <plugin>
@@ -366,6 +366,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.9</version>
+      </dependency>
+
+      <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.6</version>
@@ -382,7 +388,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>5.1.7.RELEASE</version>
+        <version>5.1.8.RELEASE</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -390,7 +396,7 @@
       <dependency>
         <groupId>org.pac4j</groupId>
         <artifactId>pac4j</artifactId>
-        <version>3.6.1</version>
+        <version>3.7.0</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -412,7 +418,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.4.2</version>
+        <version>5.5.0</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

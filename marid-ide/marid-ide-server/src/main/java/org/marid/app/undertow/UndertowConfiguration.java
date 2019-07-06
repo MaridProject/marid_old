@@ -2,7 +2,7 @@
  * #%L
  * marid-ide-server
  * %%
- * Copyright (C) 2012 - 2018 MARID software development group
+ * Copyright (C) 2012 - 2019 MARID software development group
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,18 +22,17 @@
 package org.marid.app.undertow;
 
 import io.undertow.Undertow;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.CanonicalPathHandler;
-import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.server.session.*;
 import org.marid.app.props.WebProperties;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.marid.app.web.PublicHandler;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
-import javax.servlet.ServletException;
+import java.util.concurrent.TimeUnit;
 
 import static io.undertow.UndertowOptions.*;
 import static org.xnio.Options.KEEP_ALIVE;
@@ -42,27 +41,29 @@ import static org.xnio.Options.KEEP_ALIVE;
 public class UndertowConfiguration {
 
   @Bean
-  public HttpHandler servletHandler(DeploymentManagerProvider deploymentManagerProvider) throws ServletException {
-    return deploymentManagerProvider.start();
+  public SslSessionConfig sessionConfig(SessionManager sessionManager) {
+    return new SslSessionConfig(sessionManager);
   }
 
   @Bean
-  public HttpHandler rootHandler(HttpHandler servletHandler) {
-    final var redirect = new RedirectHandler("/web/index.html");
-    return new CanonicalPathHandler(e -> {
-      switch (e.getRelativePath()) {
-        case "/":
-          redirect.handleRequest(e);
-          break;
-        default:
-          servletHandler.handleRequest(e);
-          break;
-      }
-    });
+  public InMemorySessionManager sessionManager() {
+    final var sessionManager = new InMemorySessionManager("marid");
+    sessionManager.setDefaultSessionTimeout((int) TimeUnit.MINUTES.toSeconds(30L));
+    return sessionManager;
+  }
+
+  @Bean
+  public SessionAttachmentHandler sessionAttachmentHandler(PublicHandler publicHandler, SessionManager sessionManager, SessionConfig sessionConfig) {
+    return new SessionAttachmentHandler(publicHandler, sessionManager, sessionConfig);
+  }
+
+  @Bean
+  public CanonicalPathHandler rootHandler(SessionAttachmentHandler sessionAttachmentHandler) {
+    return new CanonicalPathHandler(sessionAttachmentHandler);
   }
 
   @Bean(initMethod = "start", destroyMethod = "stop")
-  public Undertow undertow(SSLContext sslContext, WebProperties properties, HttpHandler rootHandler) {
+  public Undertow undertow(SSLContext sslContext, WebProperties properties, CanonicalPathHandler rootHandler) {
     return Undertow.builder()
         .setIoThreads(4)
         .setWorkerThreads(8)
@@ -86,9 +87,12 @@ public class UndertowConfiguration {
   }
 
   @Bean
-  @Qualifier("resourceManager")
-  @Order(1)
   public ClassPathResourceManager metaInfResources() {
     return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources");
+  }
+
+  @Bean
+  public ResourceHandler metaInfResourcesHandler(ClassPathResourceManager metaInfResources) {
+    return new ResourceHandler(metaInfResources);
   }
 }

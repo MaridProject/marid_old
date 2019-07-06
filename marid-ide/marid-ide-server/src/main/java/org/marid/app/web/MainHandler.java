@@ -1,10 +1,10 @@
-package org.marid.html;
+package org.marid.app.web;
 
 /*-
  * #%L
- * marid-html
+ * marid-ide-server
  * %%
- * Copyright (C) 2012 - 2018 MARID software development group
+ * Copyright (C) 2012 - 2019 MARID software development group
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,22 +21,15 @@ package org.marid.html;
  * #L%
  */
 
-import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.NotNull;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.ResourceHandler;
+import org.springframework.stereotype.Component;
 
-public final class Script extends HtmlChild {
+@Component
+public class MainHandler extends PathHandler {
 
-  public Script(HasNode<?> node) {
-    super(node.getNode(), "script");
-  }
-
-  public Script content(@Language("js") @NotNull String content) {
-    getNode().setTextContent(content);
-    return this;
-  }
-
-  public Script src(@NotNull String src) {
-    getNode().setAttribute("src", src);
-    return this;
+  public MainHandler() {
+    super(new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources/")));
   }
 }
