@@ -273,7 +273,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>1.20</version>
+          <version>2.0.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -326,7 +326,7 @@
         <configuration>
           <organizeLicensesByDependencies>true</organizeLicensesByDependencies>
           <emptyLineAfterHeader>true</emptyLineAfterHeader>
-          <roots>src/main/java,src/test/java</roots>
+          <roots>src/main/java,src/test/java,src/development/java,src/release/java</roots>
           <canUpdateDescription>true</canUpdateDescription>
           <canUpdateLicense>true</canUpdateLicense>
           <canUpdateCopyright>true</canUpdateCopyright>
