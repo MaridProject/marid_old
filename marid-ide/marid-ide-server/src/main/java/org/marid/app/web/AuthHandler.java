@@ -24,17 +24,16 @@ package org.marid.app.web;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.RedirectHandler;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.engine.DefaultLogoutLogic;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.engine.decision.AlwaysUseSessionProfileStorageDecision;
-import org.pac4j.core.exception.HttpAction;
 import org.pac4j.undertow.context.UndertowWebContext;
+import org.pac4j.undertow.profile.UndertowProfileManager;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -46,12 +45,7 @@ public class AuthHandler implements HttpHandler {
   private final UnauthorizedHandler unauthorizedHandler;
   private final DefaultCallbackLogic<Void, UndertowWebContext> callbackLogic = new DefaultCallbackLogic<>();
   private final DefaultLogoutLogic<Void, UndertowWebContext> logoutLogic = new DefaultLogoutLogic<>();
-  private final DefaultSecurityLogic<Boolean, UndertowWebContext> securityLogic = new DefaultSecurityLogic<>() {
-    @Override
-    protected HttpAction unauthorized(UndertowWebContext context, List<Client> currentClients) {
-      return HttpAction.redirect(context, "/unauthorized");
-    }
-  };
+  private final DefaultSecurityLogic<Boolean, UndertowWebContext> securityLogic = new DefaultSecurityLogic<>();
   private final Map<String, HttpHandler> authHandlers;
 
   public AuthHandler(Config config, MainHandler mainHandler, UnauthorizedHandler unauthorizedHandler) {
@@ -60,9 +54,14 @@ public class AuthHandler implements HttpHandler {
     this.unauthorizedHandler = unauthorizedHandler;
 
     securityLogic.setProfileStorageDecision(new AlwaysUseSessionProfileStorageDecision());
-    callbackLogic.setErrorUrl("/callbackError");
-    logoutLogic.setErrorUrl("/logoutError");
+    securityLogic.setProfileManagerFactory(UndertowProfileManager::new);
     securityLogic.setErrorUrl("/securityError");
+
+    logoutLogic.setProfileManagerFactory(UndertowProfileManager::new);
+    logoutLogic.setErrorUrl("/logoutError");
+
+    callbackLogic.setErrorUrl("/callbackError");
+    callbackLogic.setProfileManagerFactory(UndertowProfileManager::new);
 
     authHandlers = Map.copyOf(config.getClients().getClients().stream()
         .collect(Collectors.toMap(client -> "/" + client.getName(), client -> e -> {
@@ -113,7 +112,16 @@ public class AuthHandler implements HttpHandler {
           if (check(exchange, null)) {
             mainHandler.handleRequest(exchange);
           } else {
-            System.out.println(exchange);
+            switch (path) {
+              case "/":
+              case "/login":
+                unauthorizedHandler.handleRequest(exchange);
+                break;
+              default:
+                exchange.setStatusCode(HttpURLConnection.HTTP_NOT_FOUND);
+                exchange.endExchange();
+                break;
+            }
           }
         }
 
