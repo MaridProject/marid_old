@@ -190,12 +190,6 @@
     <profile>
       <id>development</id>
 
-      <activation>
-        <property>
-          <name>!release</name>
-        </property>
-      </activation>
-
       <build>
         <resources>
           <resource>
