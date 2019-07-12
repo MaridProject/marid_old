@@ -26,11 +26,14 @@ import org.junit.jupiter.api.Test;
 
 import javax.print.attribute.standard.JobKOctetsProcessed;
 import java.io.Serializable;
+import java.lang.constant.Constable;
+import java.lang.constant.ConstantDesc;
 import java.lang.reflect.Type;
 import java.util.BitSet;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.marid.types.AuxTypeUtils.w;
 
 @Tag("normal")
 class EvalTest {
@@ -38,7 +41,7 @@ class EvalTest {
   @Test
   void commonArray() {
     final var type = Stream.of((Type) Integer[].class, String[].class).reduce(Types::common).orElseThrow();
-    assertEquals(Serializable[].class, type);
+    assertEquals(w(Constable[].class, ConstantDesc[].class, Serializable[].class), type);
   }
 
   @Test

@@ -34,6 +34,8 @@ import javax.print.attribute.PrintJobAttribute;
 import javax.print.attribute.standard.JobKOctetsProcessed;
 import java.io.Serializable;
 import java.io.Writer;
+import java.lang.constant.Constable;
+import java.lang.constant.ConstantDesc;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.math.BigInteger;
@@ -114,6 +116,8 @@ class TypesTest {
             Number[].class,
             Object[].class,
             a(p(Comparable.class, Integer.class)),
+            Constable[].class,
+            ConstantDesc[].class,
             Serializable[].class,
             Object.class,
             Cloneable.class,

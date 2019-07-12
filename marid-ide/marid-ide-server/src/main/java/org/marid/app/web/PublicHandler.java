@@ -26,13 +26,19 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
+import org.marid.app.undertow.DeploymentManagerProvider;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletException;
 
 @Component
 public class PublicHandler extends PathHandler {
 
-  public PublicHandler(AuthHandler authHandler) {
-    super(new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "public/"), authHandler));
+  public PublicHandler(DeploymentManagerProvider deploymentManagerProvider) throws ServletException {
+    super(new ResourceHandler(
+        new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "public/"),
+        deploymentManagerProvider.start()
+    ));
   }
 
   @Override

@@ -26,14 +26,12 @@ import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
-import io.undertow.server.session.*;
 import org.marid.app.props.WebProperties;
 import org.marid.app.web.PublicHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
-import java.util.concurrent.TimeUnit;
 
 import static io.undertow.UndertowOptions.*;
 import static org.xnio.Options.KEEP_ALIVE;
@@ -42,25 +40,8 @@ import static org.xnio.Options.KEEP_ALIVE;
 public class UndertowConfiguration {
 
   @Bean
-  public SslSessionConfig sessionConfig(SessionManager sessionManager) {
-    return new SslSessionConfig(sessionManager);
-  }
-
-  @Bean
-  public InMemorySessionManager sessionManager() {
-    final var sessionManager = new InMemorySessionManager("marid");
-    sessionManager.setDefaultSessionTimeout((int) TimeUnit.MINUTES.toSeconds(30L));
-    return sessionManager;
-  }
-
-  @Bean
-  public SessionAttachmentHandler sessionAttachmentHandler(PublicHandler publicHandler, SessionManager sessionManager, SessionConfig sessionConfig) {
-    return new SessionAttachmentHandler(publicHandler, sessionManager, sessionConfig);
-  }
-
-  @Bean
-  public CanonicalPathHandler rootHandler(SessionAttachmentHandler sessionAttachmentHandler) {
-    return new CanonicalPathHandler(sessionAttachmentHandler);
+  public CanonicalPathHandler rootHandler(PublicHandler publicHandler) {
+    return new CanonicalPathHandler(publicHandler);
   }
 
   @Bean(initMethod = "start", destroyMethod = "stop")
