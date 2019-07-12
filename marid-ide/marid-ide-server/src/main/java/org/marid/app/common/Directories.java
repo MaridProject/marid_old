@@ -33,6 +33,7 @@ public class Directories implements Closeable, InitializingBean {
   private final Path base;
   private final Path users;
   private final Path tempDir;
+  private final Path rwtDir;
 
   @Autowired
   public Directories(@Value("${app.directory:${user.home}}") String appDirectory) throws Exception {
@@ -40,6 +41,7 @@ public class Directories implements Closeable, InitializingBean {
     this.base = userHome.resolve("marid-app");
     this.users = base.resolve("users");
     this.tempDir = Files.createTempDirectory("marid");
+    this.rwtDir = Files.createTempDirectory("rwt");
   }
 
   public Path getUserHome() {
@@ -58,9 +60,17 @@ public class Directories implements Closeable, InitializingBean {
     return tempDir;
   }
 
+  public Path getRwtDir() {
+    return rwtDir;
+  }
+
   @Override
   public void close() throws IOException {
-    FileSystemUtils.deleteRecursively(tempDir);
+    try {
+      FileSystemUtils.deleteRecursively(tempDir);
+    } finally {
+      FileSystemUtils.deleteRecursively(rwtDir);
+    }
   }
 
   @Override
