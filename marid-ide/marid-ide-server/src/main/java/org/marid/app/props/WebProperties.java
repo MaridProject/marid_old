@@ -33,6 +33,9 @@ public class WebProperties {
   @Value("${web.port:8443}")
   private int port;
 
+  @Value("${web.insecurePort:8080}")
+  private int insecurePort;
+
   @Value("${web.session-timeout:1800}")
   private int sessionTimeout;
 
@@ -50,6 +53,14 @@ public class WebProperties {
 
   public void setPort(int port) {
     this.port = port;
+  }
+
+  public int getInsecurePort() {
+    return insecurePort;
+  }
+
+  public void setInsecurePort(int insecurePort) {
+    this.insecurePort = insecurePort;
   }
 
   public String getHost() {

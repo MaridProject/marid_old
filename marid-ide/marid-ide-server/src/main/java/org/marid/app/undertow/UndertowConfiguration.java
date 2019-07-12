@@ -23,6 +23,7 @@ package org.marid.app.undertow;
 
 import io.undertow.Undertow;
 import io.undertow.server.handlers.CanonicalPathHandler;
+import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.session.*;
@@ -76,12 +77,21 @@ public class UndertowConfiguration {
         .setServerOption(ENABLE_RFC6265_COOKIE_VALIDATION, true)
         .setServerOption(NO_REQUEST_TIMEOUT, 600_000)
         .setSocketOption(KEEP_ALIVE, true)
-        .setHandler(rootHandler)
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())
             .setPort(properties.getPort())
             .setSslContext(sslContext)
+            .setRootHandler(rootHandler)
+        )
+        .addListener(new Undertow.ListenerBuilder()
+            .setType(Undertow.ListenerType.HTTP)
+            .setHost(properties.getHost())
+            .setPort(properties.getInsecurePort())
+            .setRootHandler(e -> {
+              final var path = "https://" + e.getHostName() + ":" + properties.getPort() + e.getRelativePath();
+              new RedirectHandler(path).handleRequest(e);
+            })
         )
         .build();
   }
