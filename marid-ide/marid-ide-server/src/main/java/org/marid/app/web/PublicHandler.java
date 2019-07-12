@@ -46,7 +46,7 @@ public class PublicHandler extends PathHandler {
     final var path = exchange.getRelativePath();
     switch (path) {
       case "/": {
-        new RedirectHandler("/index.html").handleRequest(exchange);
+        new RedirectHandler("/ide").handleRequest(exchange);
         return;
       }
     }

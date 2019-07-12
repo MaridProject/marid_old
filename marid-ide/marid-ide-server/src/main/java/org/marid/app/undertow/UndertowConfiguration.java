@@ -25,7 +25,6 @@ import io.undertow.Undertow;
 import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
-import io.undertow.server.handlers.resource.ResourceHandler;
 import org.marid.app.props.WebProperties;
 import org.marid.app.web.PublicHandler;
 import org.springframework.context.annotation.Bean;
@@ -80,10 +79,5 @@ public class UndertowConfiguration {
   @Bean
   public ClassPathResourceManager metaInfResources() {
     return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources");
-  }
-
-  @Bean
-  public ResourceHandler metaInfResourcesHandler(ClassPathResourceManager metaInfResources) {
-    return new ResourceHandler(metaInfResources);
   }
 }
