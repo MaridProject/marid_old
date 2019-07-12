@@ -1,10 +1,8 @@
-package org.marid.app.config;
-
 /*-
  * #%L
  * marid-ide-server
  * %%
- * Copyright (C) 2012 - 2019 MARID software development group
+ * Copyright (C) 2012 - 2018 MARID software development group
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,17 +18,15 @@ package org.marid.app.config;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+package org.marid.app.web.initializer;
 
-import org.apache.velocity.app.VelocityEngine;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import javax.servlet.ServletContext;
 
-@Component
-public class TemplatingConfiguration {
+public interface ServletContextConfigurer {
 
-  @Bean
-  public VelocityEngine velocityEngine() {
-    final var engine = new VelocityEngine();
-    return engine;
-  }
+  void start(ServletContext context);
+
+  void stop(ServletContext context);
+
+  boolean isStopNeeded();
 }

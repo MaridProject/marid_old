@@ -1,10 +1,10 @@
-package org.marid.app.web;
+package org.marid.applib.spring.event;
 
 /*-
  * #%L
  * marid-ide-server
  * %%
- * Copyright (C) 2012 - 2019 MARID software development group
+ * Copyright (C) 2012 - 2018 MARID software development group
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,15 +21,18 @@ package org.marid.app.web;
  * #L%
  */
 
-import io.undertow.server.handlers.PathHandler;
-import io.undertow.server.handlers.resource.ClassPathResourceManager;
-import io.undertow.server.handlers.resource.ResourceHandler;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationEvent;
 
-@Component
-public class MainHandler extends PathHandler {
+import javax.servlet.http.HttpSession;
 
-  public MainHandler() {
-    super(new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources/")));
+public class HttpSessionDestroyedEvent extends ApplicationEvent {
+
+  public HttpSessionDestroyedEvent(HttpSession session) {
+    super(session);
+  }
+
+  @Override
+  public HttpSession getSource() {
+    return (HttpSession) super.getSource();
   }
 }
