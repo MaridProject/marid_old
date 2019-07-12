@@ -9,6 +9,15 @@
 
   <artifactId>marid-ide-client</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.jface</artifactId>
+      <version>3.16.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <resources>
       <resource>

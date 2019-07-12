@@ -11,7 +11,7 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.app.web.initializer;
+package org.marid.app.web;
 
 import javax.servlet.ServletContext;
 

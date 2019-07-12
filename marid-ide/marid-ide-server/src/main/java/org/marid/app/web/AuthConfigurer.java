@@ -11,12 +11,8 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  * #L%
  */
-package org.marid.app.web.initializer;
+package org.marid.app.web;
 
-import org.marid.app.web.AuthServlet;
-import org.marid.app.web.CallbackServlet;
-import org.marid.app.web.LogoutServlet;
-import org.marid.app.web.SecurityFilter;
 import org.marid.spring.annotation.PrototypeScoped;
 import org.pac4j.core.client.Clients;
 import org.springframework.core.annotation.Order;
@@ -71,6 +67,7 @@ public class AuthConfigurer implements ServletContextConfigurer {
     }
     {
       final var r = context.addFilter("securityFilter", securityFilter);
+      r.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST), false, "ideServlet");
       r.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/ide/*");
       r.setAsyncSupported(true);
     }
@@ -78,7 +75,6 @@ public class AuthConfigurer implements ServletContextConfigurer {
 
   @Override
   public void stop(ServletContext context) {
-
   }
 
   @Override

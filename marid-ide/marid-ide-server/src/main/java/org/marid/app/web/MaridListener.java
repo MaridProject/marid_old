@@ -13,7 +13,6 @@
  */
 package org.marid.app.web;
 
-import org.marid.app.web.initializer.ServletContextConfigurer;
 import org.marid.applib.spring.event.HttpSessionCreatedEvent;
 import org.marid.applib.spring.event.HttpSessionDestroyedEvent;
 import org.springframework.beans.factory.ObjectProvider;
