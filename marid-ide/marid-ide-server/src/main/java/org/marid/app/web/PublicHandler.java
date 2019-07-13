@@ -37,13 +37,11 @@ public class PublicHandler extends PathHandler {
   @Override
   public void handleRequest(HttpServerExchange exchange) throws Exception {
     final var path = exchange.getRelativePath();
-    switch (path) {
-      case "/": {
-        new RedirectHandler("/index.ide").handleRequest(exchange);
-        return;
-      }
-    }
 
-    super.handleRequest(exchange);
+    if (path.equals("/")) {
+      new RedirectHandler("/index.ide").handleRequest(exchange);
+    } else {
+      super.handleRequest(exchange);
+    }
   }
 }

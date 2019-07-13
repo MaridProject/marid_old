@@ -15,7 +15,6 @@
 package org.marid.app.undertow;
 
 import io.undertow.Undertow;
-import io.undertow.server.handlers.CanonicalPathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import org.marid.app.props.WebProperties;
 import org.marid.app.web.PublicHandler;
@@ -31,13 +30,8 @@ import static io.undertow.UndertowOptions.*;
 @Component
 public class UndertowConfiguration {
 
-  @Bean
-  public CanonicalPathHandler rootHandler(PublicHandler publicHandler) {
-    return new CanonicalPathHandler(publicHandler);
-  }
-
   @Bean(initMethod = "start", destroyMethod = "stop")
-  public Undertow undertow(SSLContext sslContext, WebProperties properties, CanonicalPathHandler rootHandler) {
+  public Undertow undertow(SSLContext sslContext, WebProperties properties, PublicHandler publicHandler) {
     return Undertow.builder()
         .setDirectBuffers(false)
 
@@ -50,7 +44,7 @@ public class UndertowConfiguration {
             .setHost(properties.getHost())
             .setPort(properties.getPort())
             .setSslContext(sslContext)
-            .setRootHandler(rootHandler)
+            .setRootHandler(publicHandler)
             .setOverrideSocketOptions(OptionMap.builder()
                 .set(Options.KEEP_ALIVE, true)
                 .set(Options.SSL_ENABLED, true)
