@@ -5,6 +5,7 @@ import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.marid.ide.IdeContext;
@@ -32,13 +33,14 @@ public class RapAppConfig implements ApplicationConfiguration {
 
   @Override
   public void configure(Application application) {
-    application.setOperationMode(Application.OperationMode.JEE_COMPATIBILITY);
+    application.setOperationMode(Application.OperationMode.SWT_COMPATIBILITY);
     application.setExceptionHandler(throwable -> LOGGER.error("Application error", throwable));
     application.addEntryPoint("/index.ide", () -> () -> {
       final var context = new AnnotationConfigApplicationContext();
 
       final var display = new Display();
       final var shell = new Shell(display, SWT.NO_TRIM);
+      shell.setLayout(new GridLayout(1, false));
       shell.setMaximized(true);
 
       display.addListener(SWT.Dispose, e -> context.close());
@@ -64,6 +66,17 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.start();
 
       shell.layout();
+      shell.open();
+
+      try (context) {
+        while (!shell.isDisposed()) {
+          if (!display.readAndDispatch()) {
+            display.sleep();
+          }
+        }
+      } finally {
+        display.close();
+      }
 
       return 0;
     }, Map.of(WebClient.PAGE_TITLE, "Marid IDE"));
