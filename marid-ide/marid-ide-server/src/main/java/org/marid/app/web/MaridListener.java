@@ -15,6 +15,8 @@ package org.marid.app.web;
 
 import org.marid.applib.spring.event.HttpSessionCreatedEvent;
 import org.marid.applib.spring.event.HttpSessionDestroyedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
@@ -32,12 +34,13 @@ import static org.marid.logging.Log.log;
 @Component
 public class MaridListener implements ServletContextListener, HttpSessionListener {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(MaridListener.class);
+
   private final ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider;
   private final List<ServletContextConfigurer> configurers = new LinkedList<>();
   private final GenericApplicationContext context;
 
-  public MaridListener(ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider,
-                       GenericApplicationContext context) {
+  public MaridListener(ObjectProvider<List<? extends ServletContextConfigurer>> configurersProvider, GenericApplicationContext context) {
     this.configurersProvider = configurersProvider;
     this.context = context;
   }
@@ -63,11 +66,13 @@ public class MaridListener implements ServletContextListener, HttpSessionListene
 
   @Override
   public void sessionCreated(HttpSessionEvent se) {
+    LOGGER.info("Created {}", se.getSession());
     context.publishEvent(new HttpSessionCreatedEvent(se.getSession()));
   }
 
   @Override
   public void sessionDestroyed(HttpSessionEvent se) {
+    LOGGER.info("Destroyed {}", se.getSession());
     context.publishEvent(new HttpSessionDestroyedEvent(se.getSession()));
   }
 }

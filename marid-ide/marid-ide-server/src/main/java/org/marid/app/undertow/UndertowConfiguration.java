@@ -15,6 +15,7 @@
 package org.marid.app.undertow;
 
 import io.undertow.Undertow;
+import io.undertow.security.handlers.SecurityInitialHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import org.marid.app.props.WebProperties;
 import org.marid.app.web.PublicHandler;
@@ -26,6 +27,7 @@ import org.xnio.Options;
 import javax.net.ssl.SSLContext;
 
 import static io.undertow.UndertowOptions.*;
+import static io.undertow.security.api.AuthenticationMode.CONSTRAINT_DRIVEN;
 
 @Component
 public class UndertowConfiguration {
@@ -38,17 +40,20 @@ public class UndertowConfiguration {
         .setServerOption(ALWAYS_SET_KEEP_ALIVE, true)
         .setServerOption(ENABLE_HTTP2, true)
         .setServerOption(HTTP2_SETTINGS_ENABLE_PUSH, true)
+        .setServerOption(NO_REQUEST_TIMEOUT, 60 * 1000)
 
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())
             .setPort(properties.getPort())
             .setSslContext(sslContext)
-            .setRootHandler(publicHandler)
+            .setRootHandler(new SecurityInitialHandler(CONSTRAINT_DRIVEN, null, "oauth2", publicHandler))
             .setOverrideSocketOptions(OptionMap.builder()
                 .set(Options.KEEP_ALIVE, true)
                 .set(Options.SSL_ENABLED, true)
                 .set(Options.SSL_PROTOCOL, "TLSv1.3")
+                .set(Options.SSL_NON_BLOCKING_KEY_MANAGER, true)
+                .set(Options.SSL_NON_BLOCKING_TRUST_MANAGER, true)
                 .getMap())
         )
         .addListener(new Undertow.ListenerBuilder()

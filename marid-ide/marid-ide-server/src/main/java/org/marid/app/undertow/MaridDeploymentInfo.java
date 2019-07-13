@@ -14,7 +14,6 @@
 package org.marid.app.undertow;
 
 import io.undertow.server.handlers.resource.ResourceManager;
-import io.undertow.servlet.api.CrawlerSessionManagerConfig;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletSessionConfig;
@@ -41,7 +40,6 @@ public class MaridDeploymentInfo extends DeploymentInfo {
     setInvalidateSessionOnLogout(true);
     setSecurityDisabled(true);
     setContextPath("/");
-    setCrawlerSessionManagerConfig(new CrawlerSessionManagerConfig());
     setEagerFilterInit(true);
     setSessionManagerFactory(new InMemorySessionManagerFactory());
     setDefaultSessionTimeout(3600);

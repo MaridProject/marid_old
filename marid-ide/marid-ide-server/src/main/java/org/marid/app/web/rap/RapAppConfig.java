@@ -1,5 +1,6 @@
 package org.marid.app.web.rap;
 
+import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
@@ -12,6 +13,7 @@ import org.marid.spring.init.InitBeanPostProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +41,11 @@ public class RapAppConfig implements ApplicationConfiguration {
       final var shell = new Shell(display, SWT.NO_TRIM);
       shell.setMaximized(true);
 
+      display.addListener(SWT.Dispose, e -> context.close());
+      display.addListener(SWT.Close, e -> context.close());
+      shell.addDisposeListener(e -> context.close());
+      RWT.getUISession().addUISessionListener(e -> context.close());
+
       context.setId("ide");
       context.setDisplayName("Marid IDE");
       context.getDefaultListableBeanFactory().setParentBeanFactory(parent.getBeanFactory());
@@ -50,6 +57,9 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.getBeanFactory().registerSingleton("mainDisplay", display);
       context.getBeanFactory().registerSingleton("mainShell", shell);
       context.register(IdeContext.class);
+
+      parent.addApplicationListener((ContextClosedEvent e) -> context.close());
+
       context.refresh();
       context.start();
 
