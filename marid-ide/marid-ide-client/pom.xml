@@ -11,10 +11,20 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.platform</groupId>
-      <artifactId>org.eclipse.jface</artifactId>
-      <version>3.16.0</version>
+      <groupId>org.eclipse.rap</groupId>
+      <artifactId>org.eclipse.rap.jface</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-spring</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
     </dependency>
   </dependencies>
 

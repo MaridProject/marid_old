@@ -24,6 +24,7 @@
     <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-ide-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -34,7 +35,6 @@
     <dependency>
       <groupId>org.eclipse.rap</groupId>
       <artifactId>org.eclipse.rap.jface</artifactId>
-      <version>3.9.0</version>
     </dependency>
 
     <!-- ioc -->

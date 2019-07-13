@@ -17,7 +17,6 @@ package org.marid.app;
 import org.marid.logging.MaridLogManager;
 import org.marid.spring.LoggingPostProcessor;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -55,8 +54,7 @@ public class Context {
       logManager.readConfiguration(inputStream);
     }
 
-    final var context = new GenericApplicationContext();
-    final var reader = new AnnotatedBeanDefinitionReader(context);
+    final var context = new AnnotationConfigApplicationContext();
 
     context.setId("marid");
     context.setDisplayName("Marid Web Application");
@@ -65,7 +63,7 @@ public class Context {
     context.getEnvironment().setDefaultProfiles("release");
     context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
     context.registerShutdownHook();
-    reader.register(Context.class);
+    context.register(Context.class);
     context.getEnvironment().getPropertySources().addFirst(new SimpleCommandLinePropertySource(args));
     context.refresh();
     context.start();

@@ -13,20 +13,15 @@
   <modules>
     <module>marid-ide-client</module>
     <module>marid-ide-server</module>
+    <module>marid-ide-desktop</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.marid</groupId>
-        <artifactId>marid-ide-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.marid</groupId>
-        <artifactId>marid-ide-server</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.eclipse.rap</groupId>
+        <artifactId>org.eclipse.rap.jface</artifactId>
+        <version>3.9.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

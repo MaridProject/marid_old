@@ -21,11 +21,12 @@ import org.marid.app.props.WebProperties;
 import org.marid.app.web.PublicHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.xnio.OptionMap;
+import org.xnio.Options;
 
 import javax.net.ssl.SSLContext;
 
 import static io.undertow.UndertowOptions.*;
-import static org.xnio.Options.KEEP_ALIVE;
 
 @Component
 public class UndertowConfiguration {
@@ -38,23 +39,23 @@ public class UndertowConfiguration {
   @Bean(initMethod = "start", destroyMethod = "stop")
   public Undertow undertow(SSLContext sslContext, WebProperties properties, CanonicalPathHandler rootHandler) {
     return Undertow.builder()
-        .setIoThreads(4)
-        .setWorkerThreads(8)
-        .setBufferSize(2048)
         .setDirectBuffers(false)
+
         .setServerOption(ALWAYS_SET_KEEP_ALIVE, true)
-        .setServerOption(ALWAYS_SET_DATE, true)
         .setServerOption(ENABLE_HTTP2, true)
         .setServerOption(HTTP2_SETTINGS_ENABLE_PUSH, true)
-        .setServerOption(ENABLE_RFC6265_COOKIE_VALIDATION, true)
-        .setServerOption(NO_REQUEST_TIMEOUT, 600_000)
-        .setSocketOption(KEEP_ALIVE, true)
+
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTPS)
             .setHost(properties.getHost())
             .setPort(properties.getPort())
             .setSslContext(sslContext)
             .setRootHandler(rootHandler)
+            .setOverrideSocketOptions(OptionMap.builder()
+                .set(Options.KEEP_ALIVE, true)
+                .set(Options.SSL_ENABLED, true)
+                .set(Options.SSL_PROTOCOL, "TLSv1.3")
+                .getMap())
         )
         .addListener(new Undertow.ListenerBuilder()
             .setType(Undertow.ListenerType.HTTP)
