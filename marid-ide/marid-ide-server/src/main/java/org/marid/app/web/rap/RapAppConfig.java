@@ -84,7 +84,12 @@ public class RapAppConfig implements ApplicationConfiguration {
           display.close();
         } finally {
           thread.interrupt();
-          httpSession.invalidate();
+
+          try {
+            RWT.getRequest().logout();
+          } catch (Exception e) {
+            httpSession.invalidate();
+          }
         }
       }
 
