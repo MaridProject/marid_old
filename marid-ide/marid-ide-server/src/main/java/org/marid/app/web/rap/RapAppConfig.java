@@ -4,11 +4,8 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.marid.ide.IdeContext;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.spring.init.InitBeanPostProcessor;
 import org.slf4j.Logger;
@@ -43,11 +40,6 @@ public class RapAppConfig implements ApplicationConfiguration {
 
       final var context = new AnnotationConfigApplicationContext();
 
-      final var display = new Display();
-      final var shell = new Shell(display, SWT.NO_TRIM);
-      shell.setLayout(new GridLayout(1, false));
-      shell.setMaximized(true);
-
       context.setId("ide");
       context.setDisplayName("Marid IDE");
       context.getDefaultListableBeanFactory().setParentBeanFactory(parent.getBeanFactory());
@@ -56,14 +48,15 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.getEnvironment().setDefaultProfiles("release");
       context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
-      context.getBeanFactory().registerSingleton("mainDisplay", display);
-      context.getBeanFactory().registerSingleton("mainShell", shell);
-      context.register(IdeContext.class);
+      context.scan("org.marid.ide");
 
       parent.addApplicationListener((ContextClosedEvent e) -> context.close());
 
       context.refresh();
       context.start();
+
+      final var display = context.getBean("mainDisplay", Display.class);
+      final var shell = context.getBean("mainShell", Shell.class);
 
       shell.layout();
       shell.open();

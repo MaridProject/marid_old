@@ -122,6 +122,7 @@
               <includeScope>provided</includeScope>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
               <excludeArtifactIds>jsr305,annotations</excludeArtifactIds>
+              <excludeGroupIds>org.eclipse.platform</excludeGroupIds>
             </configuration>
           </execution>
 
