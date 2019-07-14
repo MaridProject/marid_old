@@ -1,5 +1,7 @@
 package org.marid.desktop;
 
+import org.marid.logging.MaridConsoleLogHandler;
+import org.marid.logging.MaridLogFormatter;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.spring.init.InitBeanPostProcessor;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,6 +15,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 public class MaridDesktop {
 
   public static void main(String... args) throws Exception {
+    initLogging();
+
     try (final var classLoader = getClassLoader(Thread.currentThread().getContextClassLoader())) {
       Thread.currentThread().setContextClassLoader(classLoader);
 
@@ -42,6 +48,21 @@ public class MaridDesktop {
 
       final var eventLoop = context.getBean("ideContextFinisher", Runnable.class);
       eventLoop.run();
+    }
+  }
+
+  private static void initLogging() throws Exception {
+    LogManager.getLogManager().reset();
+
+    try (final var is = Thread.currentThread().getContextClassLoader().getResourceAsStream("logging.properties")) {
+      if (is != null) {
+        LogManager.getLogManager().readConfiguration(is);
+      } else {
+        final var logger = Logger.getLogger("");
+        final var handler = new MaridConsoleLogHandler();
+        handler.setFormatter(new MaridLogFormatter());
+        logger.addHandler(handler);
+      }
     }
   }
 

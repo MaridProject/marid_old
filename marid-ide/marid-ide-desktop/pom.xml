@@ -43,6 +43,12 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
