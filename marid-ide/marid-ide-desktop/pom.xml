@@ -11,12 +11,111 @@
 
   <artifactId>marid-ide-desktop</artifactId>
 
+  <properties>
+    <swt.version>3.111.0</swt.version>
+  </properties>
+
   <dependencies>
+    <dependency>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-ide-client</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.rap</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.eclipse.platform</groupId>
       <artifactId>org.eclipse.jface</artifactId>
       <version>3.16.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+    </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.eclipse.platform</groupId>
+        <artifactId>org.eclipse.swt</artifactId>
+        <version>${swt.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <index>false</index>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>org.marid.desktop.Context</mainClass>
+              <classpathPrefix>lib</classpathPrefix>
+            </manifest>
+            <manifestEntries>
+              <Class-Path>ext/</Class-Path>
+              <Add-Opens>java.base/java.lang java.base/sun.nio.ch</Add-Opens>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-os-resources</id>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <stripVersion>true</stripVersion>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.eclipse.platform</groupId>
+                  <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+                  <version>${swt.version}</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.eclipse.platform</groupId>
+                  <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+                  <version>${swt.version}</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.eclipse.platform</groupId>
+                  <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+                  <version>${swt.version}</version>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>copy-deps</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <outputDirectory>target/lib</outputDirectory>
+              <includeScope>runtime</includeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
