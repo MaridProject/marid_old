@@ -20,18 +20,28 @@
       <groupId>org.marid</groupId>
       <artifactId>marid-ide-client</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.eclipse.rap</groupId>
+          <groupId>org.springframework</groupId>
           <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.marid</groupId>
+          <artifactId>marid-spring</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.platform</groupId>
-      <artifactId>org.eclipse.jface</artifactId>
-      <version>3.16.0</version>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-spring</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
     </dependency>
 
     <dependency>
@@ -103,6 +113,19 @@
           </execution>
 
           <execution>
+            <id>copy-client-deps</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <includeScope>provided</includeScope>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <excludeArtifactIds>jsr305,annotations</excludeArtifactIds>
+            </configuration>
+          </execution>
+
+          <execution>
             <id>copy-deps</id>
             <goals>
               <goal>copy-dependencies</goal>
@@ -117,5 +140,64 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>linux</id>
+
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+          <version>${swt.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>mac</id>
+
+      <activation>
+        <os>
+          <name>mac</name>
+        </os>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+          <version>${swt.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>windows</id>
+
+      <activation>
+        <os>
+          <name>windows</name>
+        </os>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+          <version>${swt.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>
