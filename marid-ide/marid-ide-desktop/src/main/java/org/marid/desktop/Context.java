@@ -21,6 +21,8 @@ public class Context {
 
   public static void main(String... args) throws Exception {
     try (final var classLoader = getClassLoader(Thread.currentThread().getContextClassLoader())) {
+      Thread.currentThread().setContextClassLoader(classLoader);
+
       final var context = new AnnotationConfigApplicationContext();
 
       context.setId("ide");
@@ -29,7 +31,7 @@ public class Context {
       context.setDisplayName("Marid IDE");
       context.setAllowCircularReferences(false);
       context.setAllowBeanDefinitionOverriding(false);
-      context.getEnvironment().setDefaultProfiles("release");
+      context.getEnvironment().setDefaultProfiles("release", "desktop");
       context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
       context.register(Context.class);

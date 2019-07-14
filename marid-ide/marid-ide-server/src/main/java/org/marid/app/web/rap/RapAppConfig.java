@@ -45,7 +45,7 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.getDefaultListableBeanFactory().setParentBeanFactory(parent.getBeanFactory());
       context.setAllowCircularReferences(false);
       context.setAllowBeanDefinitionOverriding(false);
-      context.getEnvironment().setDefaultProfiles("release");
+      context.getEnvironment().setDefaultProfiles("release", "web");
       context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
       context.scan("org.marid.ide");

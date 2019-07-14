@@ -22,14 +22,6 @@ public class IdeContext {
     return new Display();
   }
 
-  @Bean(destroyMethod = "")
-  public Shell mainShell(Display mainDisplay) {
-    final var shell = new Shell(mainDisplay, SWT.NO_TRIM);
-    shell.setMaximized(true);
-    shell.setLayout(new GridLayout(1, false));
-    return shell;
-  }
-
   @Bean
   public Composite composite(ObjectFactory<Shell> mainShell) {
     final var composite = new Composite(mainShell.getObject(), SWT.NONE);
