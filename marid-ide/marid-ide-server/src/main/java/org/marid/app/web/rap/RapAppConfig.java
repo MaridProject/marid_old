@@ -4,6 +4,7 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
+import org.eclipse.rap.rwt.service.ServerPushSession;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -15,10 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RapAppConfig implements ApplicationConfiguration {
@@ -26,6 +29,7 @@ public class RapAppConfig implements ApplicationConfiguration {
   private static final Logger LOGGER = LoggerFactory.getLogger(RapAppConfig.class);
 
   private final GenericApplicationContext parent;
+  private final ConcurrentHashMap<String, GenericApplicationContext> contexts = new ConcurrentHashMap<>();
 
   public RapAppConfig(GenericApplicationContext parent) {
     this.parent = parent;
@@ -36,17 +40,17 @@ public class RapAppConfig implements ApplicationConfiguration {
     application.setOperationMode(Application.OperationMode.SWT_COMPATIBILITY);
     application.setExceptionHandler(throwable -> LOGGER.error("Application error", throwable));
     application.addEntryPoint("/index.ide", () -> () -> {
+      final var session = RWT.getUISession();
+      final var sessionId = session.getId();
+      final var httpSession = session.getHttpSession();
+      httpSession.setMaxInactiveInterval(1800);
+
       final var context = new AnnotationConfigApplicationContext();
 
       final var display = new Display();
       final var shell = new Shell(display, SWT.NO_TRIM);
       shell.setLayout(new GridLayout(1, false));
       shell.setMaximized(true);
-
-      display.addListener(SWT.Dispose, e -> context.close());
-      display.addListener(SWT.Close, e -> context.close());
-      shell.addDisposeListener(e -> context.close());
-      RWT.getUISession().addUISessionListener(e -> context.close());
 
       context.setId("ide");
       context.setDisplayName("Marid IDE");
@@ -58,9 +62,20 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
       context.getBeanFactory().registerSingleton("mainDisplay", display);
       context.getBeanFactory().registerSingleton("mainShell", shell);
+      context.registerBean("serverPushSession", ServerPushSession.class, ServerPushSession::new, bd -> {
+        bd.setInitMethodName("start");
+        bd.setDestroyMethodName("stop");
+      });
       context.register(IdeContext.class);
 
       parent.addApplicationListener((ContextClosedEvent e) -> context.close());
+      context.addApplicationListener(e -> {
+        if (e instanceof ContextStartedEvent) {
+          contexts.put(sessionId, context);
+        } else if (e instanceof ContextClosedEvent) {
+          contexts.remove(sessionId);
+        }
+      });
 
       context.refresh();
       context.start();
@@ -75,7 +90,11 @@ public class RapAppConfig implements ApplicationConfiguration {
           }
         }
       } finally {
-        display.close();
+        try {
+          display.close();
+        } finally {
+          httpSession.invalidate();
+        }
       }
 
       return 0;

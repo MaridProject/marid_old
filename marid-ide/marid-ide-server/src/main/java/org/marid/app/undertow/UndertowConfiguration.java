@@ -17,6 +17,9 @@ package org.marid.app.undertow;
 import io.undertow.Undertow;
 import io.undertow.security.handlers.SecurityInitialHandler;
 import io.undertow.server.handlers.RedirectHandler;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.PathResourceManager;
+import org.marid.app.common.Directories;
 import org.marid.app.props.WebProperties;
 import org.marid.app.web.PublicHandler;
 import org.springframework.context.annotation.Bean;
@@ -66,5 +69,20 @@ public class UndertowConfiguration {
             })
         )
         .build();
+  }
+
+  @Bean
+  public ClassPathResourceManager metaInfResourceManager() {
+    return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "META-INF/resources/");
+  }
+
+  @Bean
+  public ClassPathResourceManager publicResourceManager() {
+    return new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "public/");
+  }
+
+  @Bean
+  public PathResourceManager rwtResourceManager(Directories directories) {
+    return new PathResourceManager(directories.getRwtDir(), 1024, true, false, false);
   }
 }

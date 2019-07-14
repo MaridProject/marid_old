@@ -18,6 +18,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.RedirectHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.PathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import org.marid.app.undertow.DeploymentManagerProvider;
 import org.springframework.stereotype.Component;
@@ -27,11 +28,10 @@ import javax.servlet.ServletException;
 @Component
 public class PublicHandler extends PathHandler {
 
-  public PublicHandler(DeploymentManagerProvider deploymentManagerProvider) throws ServletException {
-    super(new ResourceHandler(
-        new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "public/"),
-        deploymentManagerProvider.start()
-    ));
+  public PublicHandler(DeploymentManagerProvider deploymentManagerProvider,
+                       ClassPathResourceManager publicResourceManager,
+                       PathResourceManager rwtResourceManager) throws ServletException {
+    super(new ResourceHandler(publicResourceManager, new ResourceHandler(rwtResourceManager, deploymentManagerProvider.start())));
   }
 
   @Override

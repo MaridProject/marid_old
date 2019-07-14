@@ -13,7 +13,7 @@
  */
 package org.marid.app.undertow;
 
-import io.undertow.server.handlers.resource.ResourceManager;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletSessionConfig;
@@ -32,7 +32,7 @@ import static javax.servlet.SessionTrackingMode.SSL;
 @Component
 public class MaridDeploymentInfo extends DeploymentInfo {
 
-  public MaridDeploymentInfo(ResourceManager resourceManager) {
+  public MaridDeploymentInfo(ClassPathResourceManager metaInfResourceManager) {
     setDeploymentName("marid");
     setClassLoader(Thread.currentThread().getContextClassLoader());
     setDefaultEncoding("UTF-8");
@@ -45,7 +45,7 @@ public class MaridDeploymentInfo extends DeploymentInfo {
     setDefaultSessionTimeout(3600);
     setCheckOtherSessionManagers(false);
     setServletSessionConfig(new ServletSessionConfig().setSessionTrackingModes(Collections.singleton(SSL)));
-    setResourceManager(resourceManager);
+    setResourceManager(metaInfResourceManager);
   }
 
   @Autowired
