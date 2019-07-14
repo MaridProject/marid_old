@@ -43,11 +43,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -69,7 +64,7 @@
             <index>false</index>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>org.marid.desktop.Context</mainClass>
+              <mainClass>org.marid.desktop.MaridDesktop</mainClass>
               <classpathPrefix>lib</classpathPrefix>
             </manifest>
             <manifestEntries>

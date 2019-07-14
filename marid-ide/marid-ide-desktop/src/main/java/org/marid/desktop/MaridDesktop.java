@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @ComponentScan
-public class Context {
+public class MaridDesktop {
 
   public static void main(String... args) throws Exception {
     try (final var classLoader = getClassLoader(Thread.currentThread().getContextClassLoader())) {
@@ -34,7 +34,7 @@ public class Context {
       context.getEnvironment().setDefaultProfiles("release", "desktop");
       context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
-      context.register(Context.class);
+      context.register(MaridDesktop.class);
       context.scan("org.marid.ide");
 
       context.refresh();
