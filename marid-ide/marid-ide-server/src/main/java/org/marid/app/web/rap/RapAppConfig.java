@@ -4,7 +4,6 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.Application;
 import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
-import org.eclipse.rap.rwt.service.ServerPushSession;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -59,10 +58,6 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
       context.getBeanFactory().registerSingleton("mainDisplay", display);
       context.getBeanFactory().registerSingleton("mainShell", shell);
-      context.registerBean("serverPushSession", ServerPushSession.class, ServerPushSession::new, bd -> {
-        bd.setInitMethodName("start");
-        bd.setDestroyMethodName("stop");
-      });
       context.register(IdeContext.class);
 
       parent.addApplicationListener((ContextClosedEvent e) -> context.close());

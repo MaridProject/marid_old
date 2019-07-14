@@ -54,7 +54,6 @@ public class UndertowConfiguration {
             .setOverrideSocketOptions(OptionMap.builder()
                 .set(Options.KEEP_ALIVE, true)
                 .set(Options.SSL_ENABLED, true)
-                .set(Options.SSL_PROTOCOL, "TLSv1.3")
                 .set(Options.SSL_NON_BLOCKING_KEY_MANAGER, true)
                 .set(Options.SSL_NON_BLOCKING_TRUST_MANAGER, true)
                 .getMap())
