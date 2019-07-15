@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -40,10 +41,10 @@ public class MenuBarContext {
   }
 
   @Bean
-  public MenuItem exitItem(Menu projectMenu, Shell mainShell) {
+  public MenuItem exitItem(Menu projectMenu, ObjectFactory<Runnable> exitCommand) {
     final var item = new MenuItem(projectMenu, SWT.PUSH);
     item.setText("E&xit");
-    item.addListener(SWT.Selection, e -> mainShell.close());
+    item.addListener(SWT.Selection, e -> exitCommand.getObject().run());
     return item;
   }
 }
