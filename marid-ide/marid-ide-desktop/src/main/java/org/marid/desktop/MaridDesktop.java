@@ -8,10 +8,14 @@ import org.marid.logging.MaridLogFormatter;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.spring.init.InitBeanPostProcessor;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+@Configuration
+@ComponentScan
 public class MaridDesktop {
 
   public static void main(String... args) throws Exception {
@@ -25,7 +29,7 @@ public class MaridDesktop {
       context.getEnvironment().setDefaultProfiles("release", "desktop");
       context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
-      context.register(IdeContext.class);
+      context.register(IdeContext.class, MaridDesktop.class);
 
       context.refresh();
       context.start();

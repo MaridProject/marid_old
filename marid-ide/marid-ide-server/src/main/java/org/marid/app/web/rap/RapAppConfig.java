@@ -35,9 +35,8 @@ public class RapAppConfig implements ApplicationConfiguration {
     application.setExceptionHandler(throwable -> LOGGER.error("Application error", throwable));
     application.addEntryPoint("/index.ide", () -> () -> {
       final var session = RWT.getUISession();
-      final var thread = Thread.currentThread();
       final var httpSession = session.getHttpSession();
-      httpSession.setMaxInactiveInterval(60);
+      httpSession.setMaxInactiveInterval(600);
 
       final var context = new AnnotationConfigApplicationContext();
 
@@ -69,17 +68,7 @@ public class RapAppConfig implements ApplicationConfiguration {
           }
         }
       } finally {
-        try {
-          display.close();
-        } finally {
-          try {
-            RWT.getRequest().logout();
-          } catch (Exception e) {
-            httpSession.invalidate();
-          } finally {
-            thread.interrupt();
-          }
-        }
+        display.close();
       }
 
       return 0;

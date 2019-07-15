@@ -1,12 +1,12 @@
 package org.marid.ide;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +23,10 @@ public class IdeContext {
   }
 
   @Bean
-  public Composite composite(ObjectFactory<Shell> mainShell) {
-    final var composite = new Composite(mainShell.getObject(), SWT.NONE);
+  public Composite composite(Shell mainShell) {
+    final var composite = new Composite(mainShell, SWT.NONE);
     composite.setLayout(new GridLayout(1, false));
+    composite.setLayoutData(new GridData(GridData.FILL_BOTH));
     return composite;
   }
 
