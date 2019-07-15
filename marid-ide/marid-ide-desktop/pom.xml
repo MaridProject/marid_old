@@ -11,31 +11,10 @@
 
   <artifactId>marid-ide-desktop</artifactId>
 
-  <properties>
-    <swt.version>3.111.0</swt.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-ide-client</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.marid</groupId>
-          <artifactId>marid-spring</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-spring</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -43,23 +22,7 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.eclipse.platform</groupId>
-        <artifactId>org.eclipse.swt</artifactId>
-        <version>${swt.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <plugins>
@@ -67,7 +30,6 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
-            <index>false</index>
             <manifest>
               <addClasspath>true</addClasspath>
               <mainClass>org.marid.desktop.MaridDesktop</mainClass>
@@ -85,56 +47,13 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-os-resources</id>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <phase>process-resources</phase>
-            <configuration>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.eclipse.platform</groupId>
-                  <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
-                  <version>${swt.version}</version>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.eclipse.platform</groupId>
-                  <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-                  <version>${swt.version}</version>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.eclipse.platform</groupId>
-                  <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
-                  <version>${swt.version}</version>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>copy-client-deps</id>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <phase>process-resources</phase>
-            <configuration>
-              <includeScope>provided</includeScope>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <excludeArtifactIds>jsr305,annotations</excludeArtifactIds>
-              <excludeGroupIds>org.eclipse.platform</excludeGroupIds>
-            </configuration>
-          </execution>
-
-          <execution>
             <id>copy-deps</id>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
             <phase>package</phase>
             <configuration>
-              <outputDirectory>target/lib</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
               <includeScope>runtime</includeScope>
             </configuration>
           </execution>
@@ -158,7 +77,6 @@
           <groupId>org.eclipse.platform</groupId>
           <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
           <version>${swt.version}</version>
-          <scope>provided</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -177,7 +95,6 @@
           <groupId>org.eclipse.platform</groupId>
           <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
           <version>${swt.version}</version>
-          <scope>provided</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -196,7 +113,6 @@
           <groupId>org.eclipse.platform</groupId>
           <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
           <version>${swt.version}</version>
-          <scope>provided</scope>
         </dependency>
       </dependencies>
     </profile>

@@ -16,12 +16,22 @@
     <module>marid-ide-desktop</module>
   </modules>
 
+  <properties>
+    <swt.version>3.111.0</swt.version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.eclipse.rap</groupId>
         <artifactId>org.eclipse.rap.jface</artifactId>
         <version>3.9.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.platform</groupId>
+        <artifactId>org.eclipse.swt</artifactId>
+        <version>${swt.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

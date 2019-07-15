@@ -6,6 +6,7 @@ import org.eclipse.rap.rwt.application.ApplicationConfiguration;
 import org.eclipse.rap.rwt.client.WebClient;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.marid.ide.IdeContext;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.spring.init.InitBeanPostProcessor;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class RapAppConfig implements ApplicationConfiguration {
       context.getEnvironment().setDefaultProfiles("release", "web");
       context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
       context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
-      context.scan("org.marid.ide");
+      context.register(IdeContext.class);
 
       parent.addApplicationListener((ContextClosedEvent e) -> context.close());
 
