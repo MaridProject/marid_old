@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 @Component
 public class RapAppConfig implements ApplicationConfiguration {
 
@@ -33,7 +35,9 @@ public class RapAppConfig implements ApplicationConfiguration {
   public void configure(Application application) {
     application.setOperationMode(Application.OperationMode.SWT_COMPATIBILITY);
     application.setExceptionHandler(throwable -> LOGGER.error("Application error", throwable));
-    application.addResource("/marid.png", resourceName -> Thread.currentThread().getContextClassLoader().getResourceAsStream("public/marid32.png"));
+
+    setupResources(application);
+
     application.addEntryPoint("/index.ide", () -> {
       LOGGER.info("Adding /index.ide");
       return () -> {
@@ -76,9 +80,15 @@ public class RapAppConfig implements ApplicationConfiguration {
 
         return 0;
       };
-    }, Map.of(
-        WebClient.PAGE_TITLE, "Marid IDE",
-        WebClient.FAVICON, "/marid.png"
+    }, Map.ofEntries(
+        entry(WebClient.PAGE_TITLE, "Marid IDE"),
+        entry(WebClient.FAVICON, "/marid.png")
     ));
+  }
+
+  private void setupResources(Application application) {
+    final var classLoader = Thread.currentThread().getContextClassLoader();
+
+    application.addResource("/marid.png", resourceName -> classLoader.getResourceAsStream("public/marid32.png"));
   }
 }
