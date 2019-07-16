@@ -3,10 +3,7 @@ package org.marid.ide;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +17,13 @@ public class IdeContext {
   @Bean(destroyMethod = "")
   public Display mainDisplay() {
     return new Display();
+  }
+
+  @Bean
+  public ToolBar toolBar(Shell mainShell) {
+    final var toolBar = new ToolBar(mainShell, SWT.HORIZONTAL);
+    toolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    return toolBar;
   }
 
   @Bean
