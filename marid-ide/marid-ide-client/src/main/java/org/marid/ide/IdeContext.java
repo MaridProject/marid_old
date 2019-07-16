@@ -2,8 +2,10 @@ package org.marid.ide;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -27,18 +29,12 @@ public class IdeContext {
   }
 
   @Bean
-  public Composite composite(Shell mainShell) {
-    final var composite = new Composite(mainShell, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-    return composite;
-  }
-
-  @Bean
-  public Button button(Composite composite) {
-    final var button = new Button(composite, SWT.PUSH);
-    button.setText("xxx");
-    return button;
+  public Canvas composite(Shell mainShell) {
+    final var canvas = new Canvas(mainShell, SWT.NONE);
+    canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
+    final var display = mainShell.getDisplay();
+    canvas.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+    return canvas;
   }
 
   @EventListener

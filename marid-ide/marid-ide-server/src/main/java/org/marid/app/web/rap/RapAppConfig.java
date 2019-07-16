@@ -33,45 +33,52 @@ public class RapAppConfig implements ApplicationConfiguration {
   public void configure(Application application) {
     application.setOperationMode(Application.OperationMode.SWT_COMPATIBILITY);
     application.setExceptionHandler(throwable -> LOGGER.error("Application error", throwable));
-    application.addEntryPoint("/index.ide", () -> () -> {
-      final var session = RWT.getUISession();
-      final var httpSession = session.getHttpSession();
-      httpSession.setMaxInactiveInterval(600);
+    application.addResource("/marid.png", resourceName -> Thread.currentThread().getContextClassLoader().getResourceAsStream("public/marid32.png"));
+    application.addEntryPoint("/index.ide", () -> {
+      LOGGER.info("Adding /index.ide");
+      return () -> {
+        final var session = RWT.getUISession();
+        final var httpSession = session.getHttpSession();
+        httpSession.setMaxInactiveInterval(600);
 
-      final var context = new AnnotationConfigApplicationContext();
+        final var context = new AnnotationConfigApplicationContext();
 
-      context.setId("ide");
-      context.setDisplayName("Marid IDE");
-      context.getDefaultListableBeanFactory().setParentBeanFactory(parent.getBeanFactory());
-      context.setAllowCircularReferences(false);
-      context.setAllowBeanDefinitionOverriding(false);
-      context.getEnvironment().setDefaultProfiles("release", "web");
-      context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
-      context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
-      context.register(IdeContext.class);
+        context.setId("ide");
+        context.setDisplayName("Marid IDE");
+        context.getDefaultListableBeanFactory().setParentBeanFactory(parent.getBeanFactory());
+        context.setAllowCircularReferences(false);
+        context.setAllowBeanDefinitionOverriding(false);
+        context.getEnvironment().setDefaultProfiles("release", "web");
+        context.getBeanFactory().addBeanPostProcessor(new LoggingPostProcessor());
+        context.getBeanFactory().addBeanPostProcessor(new InitBeanPostProcessor(context));
+        context.register(IdeContext.class);
 
-      parent.addApplicationListener((ContextClosedEvent e) -> context.close());
+        parent.addApplicationListener((ContextClosedEvent e) -> context.close());
 
-      context.refresh();
-      context.start();
+        context.refresh();
+        context.start();
 
-      final var display = context.getBean("mainDisplay", Display.class);
-      final var shell = context.getBean("mainShell", Shell.class);
+        final var display = context.getBean("mainDisplay", Display.class);
+        final var shell = context.getBean("mainShell", Shell.class);
 
-      shell.layout();
-      shell.open();
+        shell.layout();
+        shell.open();
 
-      try (context) {
-        while (!shell.isDisposed()) {
-          if (!display.readAndDispatch()) {
-            display.sleep();
+        try (context) {
+          while (!shell.isDisposed()) {
+            if (!display.readAndDispatch()) {
+              display.sleep();
+            }
           }
+        } finally {
+          display.close();
         }
-      } finally {
-        display.close();
-      }
 
-      return 0;
-    }, Map.of(WebClient.PAGE_TITLE, "Marid IDE"));
+        return 0;
+      };
+    }, Map.of(
+        WebClient.PAGE_TITLE, "Marid IDE",
+        WebClient.FAVICON, "/marid.png"
+    ));
   }
 }
