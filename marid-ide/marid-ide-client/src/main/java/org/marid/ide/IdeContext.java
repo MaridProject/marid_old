@@ -2,7 +2,6 @@ package org.marid.ide;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -26,15 +25,6 @@ public class IdeContext {
     final var toolBar = new ToolBar(mainShell, SWT.HORIZONTAL);
     toolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     return toolBar;
-  }
-
-  @Bean
-  public Canvas composite(Shell mainShell) {
-    final var canvas = new Canvas(mainShell, SWT.NONE);
-    canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
-    final var display = mainShell.getDisplay();
-    canvas.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-    return canvas;
   }
 
   @EventListener

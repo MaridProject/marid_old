@@ -18,6 +18,7 @@ public class DesktopContext {
   @Bean(destroyMethod = "")
   public Shell mainShell(Display mainDisplay, ImageCache imageCache) {
     final var shell = new Shell(mainDisplay, SWT.SHELL_TRIM);
+    shell.setSize(800, 600);
     shell.setMaximized(true);
     shell.setLayout(new GridLayout(1, false));
     shell.setImages(new Image[] {

@@ -26,14 +26,12 @@ public class ImageCache {
   }
 
   public Image image(BufferedImage image) {
-    final var bos = new ByteArrayOutputStream();
-
+    final var bos = new ByteArrayOutputStream(8192);
     try {
       ImageIO.write(image, "PNG", bos);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
-
     return new Image(mainDisplay, new ByteArrayInputStream(bos.toByteArray()));
   }
 
