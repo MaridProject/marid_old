@@ -8,7 +8,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 @Component
-@DependsOn("library")
+@DependsOn("libraryPane")
 public class IdeCanvas extends Canvas {
 
   public IdeCanvas(MainPane mainPane) {
