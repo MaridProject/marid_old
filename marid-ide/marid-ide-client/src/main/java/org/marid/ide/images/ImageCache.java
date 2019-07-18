@@ -27,7 +27,7 @@ public class ImageCache {
   }
 
   private ImageData imageData(BufferedImage image) {
-    final var bos = new ByteArrayOutputStream(8192);
+    final var bos = new ByteArrayOutputStream(image.getWidth() * image.getHeight() * 32 + 512);
     try {
       ImageIO.write(image, "PNG", bos);
     } catch (IOException e) {
@@ -44,9 +44,9 @@ public class ImageCache {
     return icon(size, Color.GREEN);
   }
 
-  public Image image(@Language(value = "groovy", prefix = "Thread.currentThread().getContextClassLoader().getResourceAsStream(\"images/", suffix = "\")") String resourcePath) {
+  public Image image(@Language(value = "java", prefix = "class X {void x() {getClass().getResource(\"/images/", suffix = "\")") String resourcePath) {
     return new Image(mainDisplay, images.computeIfAbsent(resourcePath, p -> {
-      try (final var is = Thread.currentThread().getContextClassLoader().getResourceAsStream(p)) {
+      try (final var is = Thread.currentThread().getContextClassLoader().getResourceAsStream("images/" + p)) {
         return new ImageData(is);
       } catch (IOException e) {
         throw new UncheckedIOException(e);
