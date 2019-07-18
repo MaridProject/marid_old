@@ -21,8 +21,8 @@ public class IdeToolbar extends ToolBar {
   @Init
   public void addCreateButton(ImageCache imageCache) {
     final var button = new ToolItem(this, SWT.PUSH);
-    button.setImage(imageCache.image("create24.png"));
-    button.setToolTipText("Create a new cellar");
+    button.setImage(imageCache.image("create.png"));
+    button.setToolTipText("Create a new project");
 
     new ToolItem(this, SWT.SEPARATOR);
   }
@@ -30,15 +30,15 @@ public class IdeToolbar extends ToolBar {
   @Init
   public void addOpenButton(ImageCache imageCache) {
     final var button = new ToolItem(this, SWT.PUSH);
-    button.setImage(imageCache.image("open24.png"));
-    button.setToolTipText("Open an existing cellar");
+    button.setImage(imageCache.image("open.png"));
+    button.setToolTipText("Open an existing project");
   }
 
   @Init
   public void addSaveButton(ImageCache imageCache) {
     final var button = new ToolItem(this, SWT.PUSH);
-    button.setImage(imageCache.image("save24.png"));
-    button.setToolTipText("Save the current cellar");
+    button.setImage(imageCache.image("save.png"));
+    button.setToolTipText("Save the current project");
   }
 
   @Override
