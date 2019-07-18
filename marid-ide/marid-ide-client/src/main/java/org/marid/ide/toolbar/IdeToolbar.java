@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class IdeToolbar extends ToolBar {
 
   public IdeToolbar(Shell mainShell) {
-    super(mainShell, SWT.HORIZONTAL);
+    super(mainShell, SWT.HORIZONTAL | SWT.BORDER);
 
     setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }

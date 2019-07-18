@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class MenuBar extends Menu {
 
   public MenuBar(Shell mainShell) {
-    super(mainShell, SWT.BAR);
+    super(mainShell, SWT.BAR | SWT.BORDER);
 
     mainShell.setMenuBar(this);
   }
