@@ -18,7 +18,7 @@ public class ProjectMenu implements Supplier<Menu> {
   public ProjectMenu(Shell mainShell, MenuBar menuBar) {
     menu = new Menu(mainShell, SWT.DROP_DOWN);
     final var menuItem = new MenuItem(menuBar, SWT.CASCADE);
-    menuItem.setText("&Project");
+    menuItem.setText("Project");
     menuItem.setMenu(menu);
   }
 
@@ -33,7 +33,7 @@ public class ProjectMenu implements Supplier<Menu> {
   @Init
   public void initExitItem(ObjectFactory<Runnable> exitCommand) {
     final var item = new MenuItem(menu, SWT.PUSH);
-    item.setText("E&xit");
+    item.setText("Exit");
     item.addListener(SWT.Selection, e -> exitCommand.getObject().run());
   }
 

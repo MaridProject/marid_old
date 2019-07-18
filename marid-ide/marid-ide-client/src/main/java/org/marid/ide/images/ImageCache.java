@@ -44,7 +44,7 @@ public class ImageCache {
     return icon(size, Color.GREEN);
   }
 
-  public Image image(@Language(value = "java", prefix = "class X {void x() {getClass().getResource(\"/images/", suffix = "\")") String resourcePath) {
+  public Image image(@Language(value = "java", prefix = "class X {void x() {getClass().getResource(\"/images/", suffix = "\");}}") String resourcePath) {
     return new Image(mainDisplay, images.computeIfAbsent(resourcePath, p -> {
       try (final var is = Thread.currentThread().getContextClassLoader().getResourceAsStream("images/" + p)) {
         return new ImageData(is);
