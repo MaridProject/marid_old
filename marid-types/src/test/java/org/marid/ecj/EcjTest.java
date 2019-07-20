@@ -163,13 +163,15 @@ class EcjTest {
     @Bean
     public CompilerOptions compilerOptions() {
       final var compilerOptions = new CompilerOptions();
-      compilerOptions.complianceLevel = compilerOptions.originalComplianceLevel = ClassFileConstants.JDK11;
-      compilerOptions.sourceLevel = compilerOptions.originalSourceLevel = ClassFileConstants.JDK11;
-      compilerOptions.targetJDK = ClassFileConstants.JDK11;
-      compilerOptions.produceReferenceInfo = true;
+      compilerOptions.complianceLevel = compilerOptions.originalComplianceLevel = ClassFileConstants.JDK12;
+      compilerOptions.sourceLevel = compilerOptions.originalSourceLevel = ClassFileConstants.JDK12;
+      compilerOptions.targetJDK = ClassFileConstants.JDK12;
+      compilerOptions.produceReferenceInfo = false;
       compilerOptions.preserveAllLocalVariables = true;
       compilerOptions.produceMethodParameters = true;
       compilerOptions.generateClassFiles = false;
+      compilerOptions.processAnnotations = false;
+      compilerOptions.enablePreviewFeatures = true;
       return compilerOptions;
     }
 
