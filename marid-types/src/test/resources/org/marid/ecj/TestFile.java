@@ -1,9 +1,18 @@
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.List;
 
 public class TestFile {
 
-  public void test1() {
-    var v = Arrays.asList("a", 1);
+  @SafeVarargs
+  public final <E> E elements(E... args) {
+    return null;
   }
 
+  public void test1() {
+    var v = elements("a", x());
+  }
+
+  public List<Integer> & Serializable & CharSequence x() {
+    return null;
+  }
 }

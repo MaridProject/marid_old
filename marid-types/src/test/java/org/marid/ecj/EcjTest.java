@@ -26,6 +26,7 @@ import org.eclipse.jdt.internal.compiler.Compiler;
 import org.eclipse.jdt.internal.compiler.IErrorHandlingPolicy;
 import org.eclipse.jdt.internal.compiler.IProblemFactory;
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
+import org.eclipse.jdt.internal.compiler.ast.LocalDeclaration;
 import org.eclipse.jdt.internal.compiler.batch.ClasspathJrt;
 import org.eclipse.jdt.internal.compiler.batch.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.batch.FileSystem;
@@ -57,6 +58,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Tag("manual")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
@@ -65,12 +69,31 @@ class EcjTest {
   @Autowired
   private ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> resultMap;
 
+  @Autowired
+  private StringWriter output;
+
+  @Autowired
+  private Compiler compiler;
+
   @Test
   void testCompilation() {
-    resultMap.forEach((unit, decl) -> {
-      System.out.println(unit);
-      System.out.println(decl);
-    });
+    assertEquals("", output.getBuffer().toString());
+  }
+
+  @Test
+  void testTypeInferring() {
+    assertEquals(1, resultMap.size());
+    final var unitDeclaration = resultMap.values().iterator().next();
+    assertEquals(1, unitDeclaration.types.length);
+    final var method = Arrays.stream(unitDeclaration.types[0].methods)
+        .filter(m -> String.valueOf(m.binding.constantPoolName()).equals("test1"))
+        .findFirst()
+        .orElseThrow();
+    assertEquals(1, method.statements.length);
+    assertTrue(method.statements[0] instanceof LocalDeclaration);
+    final var localDeclaration = (LocalDeclaration) method.statements[0];
+    final var localBinding = localDeclaration.binding;
+    System.out.println(localBinding);
   }
 
   @Configuration
