@@ -101,4 +101,14 @@ class ResolveTest {
     final Type resolved = evaluate(e -> e.bind(types[0], bindType), getType(MyList.class));
     assertEquals(resolved, p(MyList.class, Integer.class));
   }
+
+  @Test
+  void resolveHighOrder() throws Exception {
+    final var types = List.class.getMethod("add", Object.class).getGenericParameterTypes();
+    final var type = evaluate(e -> {
+      e.bind(types[0], p(List.class, Integer.class));
+      e.bind(types[0], p(List.class, Long.class));
+    }, getType(List.class));
+    System.out.println(type);
+  }
 }

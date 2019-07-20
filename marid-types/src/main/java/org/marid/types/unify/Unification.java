@@ -1,8 +1,8 @@
-package org.marid.ide.library;
+package org.marid.types.unify;
 
 /*-
  * #%L
- * marid-ide-client
+ * marid-types
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,20 +21,9 @@ package org.marid.ide.library;
  * #L%
  */
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
-import org.springframework.stereotype.Component;
+import java.lang.reflect.Type;
 
-@Component
-public class LibrarySelector extends Combo {
+public interface Unification {
 
-  public LibrarySelector(LibraryPane libraryPane) {
-    super(libraryPane, SWT.DROP_DOWN | SWT.BORDER);
-    setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-  }
 
-  @Override
-  protected void checkSubclass() {
-  }
 }
