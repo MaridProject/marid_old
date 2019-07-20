@@ -102,12 +102,14 @@ class EcjTest {
   @Test
   @Order(3)
   void testHugeMethod() {
-    final String code = "class X {\n  public void m() {\n"
-        + "    var x = java.util.Arrays.asList(1, 'a'); \n".repeat(10_000)
-        + "  }\n"
-        + "}";
+    final var builder = new StringBuilder("class X {\n  public void m() {\n");
+    for (int i = 0; i < 10_000; i++) {
+      builder.append(String.format("    var x%d = java.util.Arrays.asList(1, 'a'); \n", i));
+    }
+    builder.append("  }\n");
+    builder.append("}\n");
     compiler.compile(new ICompilationUnit[]{
-        new CompilationUnit(code.toCharArray(), "X.java", "UTF-8", null, false, null)
+        new CompilationUnit(builder.toString().toCharArray(), "X.java", "UTF-8", null, false, null)
     });
     assertEquals("", output.toString());
   }
