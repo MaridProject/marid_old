@@ -21,10 +21,8 @@ package org.marid.ecj;
  * #L%
  */
 
-import org.eclipse.jdt.internal.compiler.CompilationResult;
 import org.eclipse.jdt.internal.compiler.Compiler;
-import org.eclipse.jdt.internal.compiler.IErrorHandlingPolicy;
-import org.eclipse.jdt.internal.compiler.IProblemFactory;
+import org.eclipse.jdt.internal.compiler.*;
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.LocalDeclaration;
 import org.eclipse.jdt.internal.compiler.batch.ClasspathJrt;
@@ -35,6 +33,7 @@ import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.lookup.IntersectionTypeBinding18;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
+import org.eclipse.jdt.internal.compiler.util.Util;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.test.spring.TempFolder;
@@ -44,14 +43,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -74,10 +75,10 @@ class EcjTest {
   private StringWriter output;
 
   @Autowired
-  private Compiler compiler;
+  private Path targetFolder;
 
   @Autowired
-  private Path targetFolder;
+  private Supplier<Stream<Path>> javaFiles;
 
   @Test
   @Order(1)
@@ -104,18 +105,19 @@ class EcjTest {
 
   @Test
   @Order(3)
-  void testHugeMethod() {
-    final var builder = new StringBuilder("class X {\n  public void m() {\n");
-    for (int i = 0; i < 10_000; i++) {
-      builder.append(String.format("    var x%d = java.util.Arrays.asList(1, 'a'); \n", i));
-    }
-    builder.append("  }\n");
-    builder.append("}\n");
-    compiler.compile(new ICompilationUnit[]{
-        new CompilationUnit(builder.toString().toCharArray(), "X.java", "UTF-8", targetFolder.toString(), false, null)
-    });
-    assertEquals("", output.toString());
-    assertEquals(2, resultMap.size());
+  void testTypeInferring2() throws IOException {
+    final var compiler = ToolProvider.getSystemJavaCompiler();
+    final var diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
+    final var fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.US, StandardCharsets.UTF_8);
+    fileManager.setLocation(StandardLocation.CLASS_OUTPUT, List.of(targetFolder.toFile()));
+
+    final var writer = new StringWriter();
+    final var files = javaFiles.get().toArray(Path[]::new);
+    final var units = fileManager.getJavaFileObjects(files);
+    final var task = compiler.getTask(writer, fileManager, diagnosticCollector, List.of(), List.of(), units);
+    final var result = task.call();
+
+    System.out.println(result);
   }
 
   @Configuration
@@ -123,7 +125,7 @@ class EcjTest {
 
     @Bean
     public Path sourceFolder() throws Exception {
-      return Path.of(EcjTest.class.getResource("TestFile.java").toURI());
+      return Path.of(EcjTest.class.getResource("TestFile.java").toURI()).getParent();
     }
 
     @Bean
@@ -169,7 +171,7 @@ class EcjTest {
       compilerOptions.produceReferenceInfo = false;
       compilerOptions.preserveAllLocalVariables = true;
       compilerOptions.produceMethodParameters = true;
-      compilerOptions.generateClassFiles = false;
+      compilerOptions.generateClassFiles = true;
       compilerOptions.processAnnotations = false;
       compilerOptions.enablePreviewFeatures = true;
       return compilerOptions;
@@ -216,14 +218,32 @@ class EcjTest {
     }
 
     @Bean
+    public ICompilerRequestor requestor(ConcurrentLinkedQueue<CompilationResult> compilationResults) {
+      return result -> {
+        compilationResults.add(result);
+        for (final var classFile: result.getClassFiles()) {
+          if (result.compilationUnit.getDestinationPath() != null) {
+            try {
+              final var dest = result.compilationUnit.getDestinationPath();
+              final var name = String.valueOf(classFile.fileName()) + ".class";
+              Util.writeToDisk(true, dest, name, classFile);
+            } catch (IOException e) {
+              throw new UncheckedIOException(e);
+            }
+          }
+        }
+      };
+    }
+
+    @Bean
     public Compiler compiler(FileSystem fileSystem,
                              CompilerOptions compilerOptions,
                              IErrorHandlingPolicy errorHandlingPolicy,
                              IProblemFactory problemFactory,
-                             ConcurrentLinkedQueue<CompilationResult> results,
+                             ICompilerRequestor compilerRequestor,
                              StringWriter output,
                              ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> resultMap) {
-      return new Compiler(fileSystem, errorHandlingPolicy, compilerOptions, results::add, problemFactory, new PrintWriter(output), null) {
+      return new Compiler(fileSystem, errorHandlingPolicy, compilerOptions, compilerRequestor, problemFactory, new PrintWriter(output), null) {
         @Override
         protected synchronized void addCompilationUnit(ICompilationUnit sourceUnit, CompilationUnitDeclaration parsedUnit) {
           resultMap.put(sourceUnit, parsedUnit);

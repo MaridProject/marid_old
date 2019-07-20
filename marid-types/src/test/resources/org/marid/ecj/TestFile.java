@@ -1,6 +1,4 @@
-import java.io.Serializable;
 import java.lang.constant.Constable;
-import java.util.List;
 
 public class TestFile {
 
@@ -11,5 +9,9 @@ public class TestFile {
 
   public void test1() {
     var v = elements("a", 1);
+  }
+
+  public void test2() {
+    var v = elements("a", (Comparable<String> & Constable) null);
   }
 }
