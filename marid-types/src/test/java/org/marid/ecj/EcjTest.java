@@ -76,6 +76,9 @@ class EcjTest {
   @Autowired
   private Compiler compiler;
 
+  @Autowired
+  private Path targetFolder;
+
   @Test
   @Order(1)
   void testCompilation() {
@@ -109,9 +112,10 @@ class EcjTest {
     builder.append("  }\n");
     builder.append("}\n");
     compiler.compile(new ICompilationUnit[]{
-        new CompilationUnit(builder.toString().toCharArray(), "X.java", "UTF-8", null, false, null)
+        new CompilationUnit(builder.toString().toCharArray(), "X.java", "UTF-8", targetFolder.toString(), false, null)
     });
     assertEquals("", output.toString());
+    assertEquals(2, resultMap.size());
   }
 
   @Configuration
