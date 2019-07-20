@@ -10,45 +10,51 @@ package org.marid.ecj;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import org.eclipse.jdt.core.compiler.CompilationProgress;
 import org.eclipse.jdt.internal.compiler.CompilationResult;
 import org.eclipse.jdt.internal.compiler.Compiler;
 import org.eclipse.jdt.internal.compiler.IErrorHandlingPolicy;
 import org.eclipse.jdt.internal.compiler.IProblemFactory;
+import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
+import org.eclipse.jdt.internal.compiler.batch.ClasspathJrt;
+import org.eclipse.jdt.internal.compiler.batch.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.batch.FileSystem;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.test.spring.TempFolder;
-import org.mockito.Mockito;
-import org.mockito.internal.creation.MockSettingsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Tag("manual")
@@ -57,10 +63,14 @@ import java.util.stream.Stream;
 class EcjTest {
 
   @Autowired
-  private ArrayList<CompilationResult> results;
+  private ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> resultMap;
 
   @Test
   void testCompilation() {
+    resultMap.forEach((unit, decl) -> {
+      System.out.println(unit);
+      System.out.println(decl);
+    });
   }
 
   @Configuration
@@ -77,20 +87,32 @@ class EcjTest {
     }
 
     @Bean
-    public Path[] javaFiles(Path sourceFolder) throws Exception {
-      return Files.find(sourceFolder, 3, (p, a) -> p.getFileName().toString().endsWith(".java")).toArray(Path[]::new);
+    public Supplier<Stream<Path>> javaFiles(Path sourceFolder) throws Exception {
+      final var files = Files.find(sourceFolder, 3, (p, a) -> p.getFileName().toString().endsWith(".java")).toArray(Path[]::new);
+      return () -> Arrays.stream(files);
+    }
+
+    @Bean
+    public Supplier<Stream<ICompilationUnit>> compilationUnits(Supplier<Stream<Path>> javaFiles, Path targetFolder) throws IOException {
+      final var files = javaFiles.get().toArray(Path[]::new);
+      final var units = new ICompilationUnit[files.length];
+      for (int i = 0; i < files.length; i++) {
+        final var contents = Files.readString(files[i], StandardCharsets.UTF_8).toCharArray();
+        final var name = files[i].getFileName().toString();
+        final var target = targetFolder.toString();
+
+        units[i] = new CompilationUnit(contents, name, "UTF-8", target, false, null);
+      }
+      return () -> Arrays.stream(units);
     }
 
     @Bean
     public FileSystem fileSystem(Path[] javaFiles) {
-      return new FileSystem(new String[0], Stream.of(javaFiles).map(p -> p.getFileName().toString()).toArray(String[]::new), "UTF-8");
-    }
-
-    @Bean
-    public IErrorHandlingPolicy errorHandlingPolicy() {
-      final var handlingPolicy = Mockito.mock(IErrorHandlingPolicy.class, new MockSettingsImpl<>().stubOnly());
-      Mockito.when(handlingPolicy.stopOnFirstError()).thenReturn(true);
-      return handlingPolicy;
+      final var classpath = new FileSystem.Classpath[]{
+          new ClasspathJrt(new File(System.getProperty("java.home")), true, null, null)
+      };
+      return new FileSystem(classpath, Stream.of(javaFiles).map(p -> p.getFileName().toString()).toArray(String[]::new), true) {
+      };
     }
 
     @Bean
@@ -107,13 +129,18 @@ class EcjTest {
     }
 
     @Bean
-    public ArrayList<CompilationResult> compilationResults() {
-      return new ArrayList<>();
+    public IProblemFactory problemFactory() {
+      return new DefaultProblemFactory(Locale.US);
     }
 
     @Bean
-    public IProblemFactory problemFactory() {
-      return new DefaultProblemFactory(Locale.US);
+    public ConcurrentLinkedQueue<CompilationResult> compilationResults() {
+      return new ConcurrentLinkedQueue<>();
+    }
+
+    @Bean
+    public ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> resultsMap() {
+      return new ConcurrentHashMap<>();
     }
 
     @Bean
@@ -122,28 +149,45 @@ class EcjTest {
     }
 
     @Bean
-    public Compiler compiler(FileSystem fileSystem,
-                             IErrorHandlingPolicy errorHandlingPolicy,
-                             CompilerOptions compilerOptions,
-                             ArrayList<CompilationResult> compilationResults,
-                             IProblemFactory problemFactory,
-                             StringWriter output) {
+    public IErrorHandlingPolicy errorHandlingPolicy() {
+      return new IErrorHandlingPolicy() {
+        @Override
+        public boolean proceedOnErrors() {
+          return false;
+        }
 
-      return new Compiler(
-          fileSystem,
-          errorHandlingPolicy,
-          compilerOptions,
-          compilationResults::add,
-          problemFactory,
-          new PrintWriter(output),
-          Mockito.mock(CompilationProgress.class, new MockSettingsImpl<>().stubOnly())
-      );
+        @Override
+        public boolean stopOnFirstError() {
+          return false;
+        }
+
+        @Override
+        public boolean ignoreAllErrors() {
+          return false;
+        }
+      };
+    }
+
+    @Bean
+    public Compiler compiler(FileSystem fileSystem,
+                             CompilerOptions compilerOptions,
+                             IErrorHandlingPolicy errorHandlingPolicy,
+                             IProblemFactory problemFactory,
+                             ConcurrentLinkedQueue<CompilationResult> results,
+                             StringWriter output,
+                             ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> resultMap) {
+      return new Compiler(fileSystem, errorHandlingPolicy, compilerOptions, results::add, problemFactory, new PrintWriter(output), null) {
+        @Override
+        protected synchronized void addCompilationUnit(ICompilationUnit sourceUnit, CompilationUnitDeclaration parsedUnit) {
+          resultMap.put(sourceUnit, parsedUnit);
+          super.addCompilationUnit(sourceUnit, parsedUnit);
+        }
+      };
     }
 
     @Bean(initMethod = "run")
-    public Runnable compilationTask(Compiler compiler, Path targetFolder) throws IOException {
-      return () -> {
-      };
+    public Runnable compilationTask(Compiler compiler, Supplier<Stream<ICompilationUnit>> units) {
+      return () -> compiler.compile(units.get().toArray(ICompilationUnit[]::new));
     }
   }
 }
