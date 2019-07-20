@@ -33,9 +33,9 @@ import org.eclipse.jdt.internal.compiler.batch.FileSystem;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.internal.compiler.lookup.IntersectionTypeBinding18;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.test.spring.TempFolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("manual")
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration
 class EcjTest {
 
@@ -76,11 +77,13 @@ class EcjTest {
   private Compiler compiler;
 
   @Test
+  @Order(1)
   void testCompilation() {
     assertEquals("", output.getBuffer().toString());
   }
 
   @Test
+  @Order(2)
   void testTypeInferring() {
     assertEquals(1, resultMap.size());
     final var unitDeclaration = resultMap.values().iterator().next();
@@ -93,7 +96,20 @@ class EcjTest {
     assertTrue(method.statements[0] instanceof LocalDeclaration);
     final var localDeclaration = (LocalDeclaration) method.statements[0];
     final var localBinding = localDeclaration.binding;
-    System.out.println(localBinding);
+    assertTrue(localBinding.type instanceof IntersectionTypeBinding18);
+  }
+
+  @Test
+  @Order(3)
+  void testHugeMethod() {
+    final String code = "class X {\n  public void m() {\n"
+        + "    var x = java.util.Arrays.asList(1, 'a'); \n".repeat(10_000)
+        + "  }\n"
+        + "}";
+    compiler.compile(new ICompilationUnit[]{
+        new CompilationUnit(code.toCharArray(), "X.java", "UTF-8", null, false, null)
+    });
+    assertEquals("", output.toString());
   }
 
   @Configuration
