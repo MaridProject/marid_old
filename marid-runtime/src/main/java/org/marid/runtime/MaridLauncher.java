@@ -21,7 +21,6 @@
 
 package org.marid.runtime;
 
-
 import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,6 +73,7 @@ public class MaridLauncher {
       }
     }, "repl", 96L * 1024L);
     daemon.setDaemon(true);
+
     return daemon;
   }
 }

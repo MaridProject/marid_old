@@ -76,7 +76,6 @@
     <module>marid-test</module>
     <module>marid-services</module>
     <module>marid-util</module>
-    <module>marid-types</module>
     <module>marid-runtime</module>
     <module>marid-spring</module>
     <module>marid-ide</module>

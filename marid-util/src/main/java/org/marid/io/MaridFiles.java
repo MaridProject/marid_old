@@ -23,6 +23,7 @@ package org.marid.io;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public interface MaridFiles {
 
@@ -55,15 +56,18 @@ public interface MaridFiles {
   }
 
   static void delete(Path path) throws IOException {
-    try {
-      Files.deleteIfExists(path);
-    } catch (DirectoryNotEmptyException x) {
-      try (final var files = Files.newDirectoryStream(path)) {
-        for (final var file : files) {
-          delete(file);
-        }
+    Files.walkFileTree(path, new SimpleFileVisitor<>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.deleteIfExists(file);
+        return super.visitFile(file, attrs);
       }
-      delete(path);
-    }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        Files.deleteIfExists(dir);
+        return super.postVisitDirectory(dir, exc);
+      }
+    });
   }
 }
