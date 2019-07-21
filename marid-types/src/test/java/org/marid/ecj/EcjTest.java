@@ -28,6 +28,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.Trees;
 import org.eclipse.jdt.internal.compiler.Compiler;
 import org.eclipse.jdt.internal.compiler.*;
+import org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.LocalDeclaration;
 import org.eclipse.jdt.internal.compiler.batch.ClasspathJrt;
@@ -55,6 +56,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,15 +115,27 @@ class EcjTest {
     assertEquals(1, resultMap.size());
     final var unitDeclaration = resultMap.values().iterator().next();
     assertEquals(1, unitDeclaration.types.length);
-    final var method = Arrays.stream(unitDeclaration.types[0].methods)
-        .filter(m -> String.valueOf(m.binding.constantPoolName()).equals("test1"))
-        .findFirst()
-        .orElseThrow();
-    assertEquals(1, method.statements.length);
-    assertTrue(method.statements[0] instanceof LocalDeclaration);
-    final var localDeclaration = (LocalDeclaration) method.statements[0];
-    final var localBinding = localDeclaration.binding;
-    assertTrue(localBinding.type instanceof IntersectionTypeBinding18);
+    final var methods = Arrays.stream(unitDeclaration.types[0].methods)
+        .filter(m -> String.valueOf(m.binding.constantPoolName()).startsWith("test"))
+        .sorted(Comparator.comparing(m -> String.valueOf(m.binding.constantPoolName())))
+        .toArray(AbstractMethodDeclaration[]::new);
+
+    {
+      assertEquals(1, methods[0].statements.length);
+      assertTrue(methods[0].statements[0] instanceof LocalDeclaration);
+      final var localDeclaration = (LocalDeclaration) methods[0].statements[0];
+      final var localBinding = localDeclaration.binding;
+      assertTrue(localBinding.type instanceof IntersectionTypeBinding18);
+    }
+
+    {
+      assertEquals(1, methods[2].statements.length);
+      assertTrue(methods[2].statements[0] instanceof LocalDeclaration);
+      final var localDeclaration = (LocalDeclaration) methods[2].statements[0];
+      final var localBinding = localDeclaration.binding;
+      System.out.println(localBinding);
+      assertTrue(localBinding.type instanceof IntersectionTypeBinding18);
+    }
   }
 
   @Test
@@ -197,7 +211,7 @@ class EcjTest {
       compilerOptions.complianceLevel = compilerOptions.originalComplianceLevel = ClassFileConstants.JDK12;
       compilerOptions.sourceLevel = compilerOptions.originalSourceLevel = ClassFileConstants.JDK12;
       compilerOptions.targetJDK = ClassFileConstants.JDK12;
-      compilerOptions.produceReferenceInfo = false;
+      compilerOptions.produceReferenceInfo = true;
       compilerOptions.preserveAllLocalVariables = true;
       compilerOptions.produceMethodParameters = true;
       compilerOptions.generateClassFiles = true;
