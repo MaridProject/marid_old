@@ -117,7 +117,7 @@ public class EcjBug {
 
   private static void checkEcj(Path target) {
     COMPILER.compile(new ICompilationUnit[] {
-        new CompilationUnit(CODE.toCharArray(), "Test", "UTF-8", target.toString(), false, null)
+        new CompilationUnit(CODE.toCharArray(), "TestFile", "UTF-8", target.toString(), false, null)
     });
     final var unitDeclaration = RESULTS.values().iterator().next();
 
