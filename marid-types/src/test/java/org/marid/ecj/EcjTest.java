@@ -21,6 +21,11 @@ package org.marid.ecj;
  * #L%
  */
 
+import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.VariableTree;
+import com.sun.source.util.JavacTask;
+import com.sun.source.util.Trees;
 import org.eclipse.jdt.internal.compiler.Compiler;
 import org.eclipse.jdt.internal.compiler.*;
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
@@ -43,10 +48,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
-import javax.tools.ToolProvider;
+import javax.lang.model.type.IntersectionType;
+import javax.tools.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -80,15 +83,33 @@ class EcjTest {
   @Autowired
   private Supplier<Stream<Path>> javaFiles;
 
-  @Test
-  @Order(1)
-  void testCompilation() {
-    assertEquals("", output.getBuffer().toString());
-  }
+  @Autowired
+  private Compiler compiler;
+
+  @Autowired
+  private JavaCompiler systemCompiler;
+
+  @Autowired
+  private StandardJavaFileManager fileManager;
+
+  @Autowired
+  private DiagnosticCollector<JavaFileObject> collector;
 
   @Test
   @Order(2)
-  void testTypeInferring() {
+  void testTypeInferring() throws IOException {
+    final var files = javaFiles.get().toArray(Path[]::new);
+    final var units = new ICompilationUnit[files.length];
+    for (int i = 0; i < files.length; i++) {
+      final var contents = Files.readString(files[i], StandardCharsets.UTF_8).toCharArray();
+      final var name = files[i].getFileName().toString();
+      final var target = targetFolder.toString();
+
+      units[i] = new CompilationUnit(contents, name, "UTF-8", target, false, null);
+    }
+
+    compiler.compile(units);
+
     assertEquals(1, resultMap.size());
     final var unitDeclaration = resultMap.values().iterator().next();
     assertEquals(1, unitDeclaration.types.length);
@@ -106,18 +127,35 @@ class EcjTest {
   @Test
   @Order(3)
   void testTypeInferring2() throws IOException {
-    final var compiler = ToolProvider.getSystemJavaCompiler();
-    final var diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
-    final var fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.US, StandardCharsets.UTF_8);
-    fileManager.setLocation(StandardLocation.CLASS_OUTPUT, List.of(targetFolder.toFile()));
-
-    final var writer = new StringWriter();
     final var files = javaFiles.get().toArray(Path[]::new);
     final var units = fileManager.getJavaFileObjects(files);
-    final var task = compiler.getTask(writer, fileManager, diagnosticCollector, List.of(), List.of(), units);
-    final var result = task.call();
+    final var task = (JavacTask) systemCompiler.getTask(output, fileManager, collector, List.of(), List.of(), units);
 
-    System.out.println(result);
+    final var parsed = task.parse();
+    final var unit = parsed.iterator().next();
+
+    task.analyze();
+
+    final var trees = Trees.instance(task);
+
+    assertEquals(1, unit.getTypeDecls().size());
+    final var classTree = (ClassTree) unit.getTypeDecls().get(0);
+
+    final var method = classTree.getMembers().stream()
+        .filter(MethodTree.class::isInstance)
+        .map(MethodTree.class::cast)
+        .filter(m -> m.getName().contentEquals("test2"))
+        .findFirst()
+        .orElseThrow();
+
+    final var stats = method.getBody().getStatements();
+    assertEquals(1, stats.size());
+    assertTrue(stats.get(0) instanceof VariableTree);
+
+    final var varTree = (VariableTree) stats.get(0);
+
+    final var type = trees.getTypeMirror(trees.getPath(unit, varTree));
+    assertTrue(type instanceof IntersectionType);
   }
 
   @Configuration
@@ -134,23 +172,14 @@ class EcjTest {
     }
 
     @Bean
-    public Supplier<Stream<Path>> javaFiles(Path sourceFolder) throws Exception {
-      final var files = Files.find(sourceFolder, 3, (p, a) -> p.getFileName().toString().endsWith(".java")).toArray(Path[]::new);
-      return () -> Arrays.stream(files);
+    public TempFolder targetFolderJavac() {
+      return new TempFolder("ecjtestjavac");
     }
 
     @Bean
-    public Supplier<Stream<ICompilationUnit>> compilationUnits(Supplier<Stream<Path>> javaFiles, Path targetFolder) throws IOException {
-      final var files = javaFiles.get().toArray(Path[]::new);
-      final var units = new ICompilationUnit[files.length];
-      for (int i = 0; i < files.length; i++) {
-        final var contents = Files.readString(files[i], StandardCharsets.UTF_8).toCharArray();
-        final var name = files[i].getFileName().toString();
-        final var target = targetFolder.toString();
-
-        units[i] = new CompilationUnit(contents, name, "UTF-8", target, false, null);
-      }
-      return () -> Arrays.stream(units);
+    public Supplier<Stream<Path>> javaFiles(Path sourceFolder) throws Exception {
+      final var files = Files.find(sourceFolder, 3, (p, a) -> p.getFileName().toString().endsWith(".java")).toArray(Path[]::new);
+      return () -> Arrays.stream(files);
     }
 
     @Bean
@@ -252,9 +281,21 @@ class EcjTest {
       };
     }
 
-    @Bean(initMethod = "run")
-    public Runnable compilationTask(Compiler compiler, Supplier<Stream<ICompilationUnit>> units) {
-      return () -> compiler.compile(units.get().toArray(ICompilationUnit[]::new));
+    @Bean
+    public JavaCompiler systemJavaCompiler() {
+      return ToolProvider.getSystemJavaCompiler();
+    }
+
+    @Bean
+    public DiagnosticCollector<JavaFileObject> collector() {
+      return new DiagnosticCollector<>();
+    }
+
+    @Bean
+    public StandardJavaFileManager fileManager(Path targetFolderJavac, DiagnosticCollector<JavaFileObject> collector, JavaCompiler systemJavaCompiler) throws IOException {
+      final var fileManager = systemJavaCompiler.getStandardFileManager(collector, Locale.US, StandardCharsets.UTF_8);
+      fileManager.setLocation(StandardLocation.CLASS_OUTPUT, List.of(targetFolderJavac.toFile()));
+      return fileManager;
     }
   }
 }
