@@ -133,7 +133,7 @@ class EcjTest {
       assertTrue(methods[2].statements[0] instanceof LocalDeclaration);
       final var localDeclaration = (LocalDeclaration) methods[2].statements[0];
       final var localBinding = localDeclaration.binding;
-      System.out.println(localBinding);
+
       assertTrue(localBinding.type instanceof IntersectionTypeBinding18);
     }
   }
