@@ -29,4 +29,26 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestFile>${project.basedir}/src/main/manifest/MANIFEST.MF</manifestFile>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>org.marid.runtime.MaridLauncher</mainClass>
+              <classpathPrefix>lib</classpathPrefix>
+            </manifest>
+            <manifestEntries>
+              <Class-Path>ext/</Class-Path>
+              <Add-Opens>java.base/java.lang java.base/sun.nio.ch</Add-Opens>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
