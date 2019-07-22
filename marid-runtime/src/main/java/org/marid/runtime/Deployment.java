@@ -32,22 +32,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
-public final class WineBusiness implements Runnable, AutoCloseable {
+public final class Deployment implements AutoCloseable {
 
-  private final String id;
   private final Path deployment;
   private final Path deps;
   private final Path resources;
   private final URLClassLoader classLoader;
 
-  public WineBusiness(String id, URL zipFile) throws IOException {
-    this.id = id;
-
+  public Deployment(URL zipFile) throws IOException {
     try {
       deployment = Files.createTempDirectory("marid");
 
@@ -127,25 +125,19 @@ public final class WineBusiness implements Runnable, AutoCloseable {
   }
 
   public String getId() {
-    return id;
+    return deployment.getFileName().toString();
   }
 
-  @Override
-  public void run() {
+  public void run(String... args) {
     final var services = ServiceLoader.load(EntryPoint.class, classLoader).stream()
         .map(ServiceLoader.Provider::get)
         .collect(Collectors.toList());
 
-    final var context = new Context();
+    final var context = new Context(List.of(args));
 
     for (final var service : services) {
-      try {
         service.run(context);
-      } catch (Throwable e) {
-        throw new IllegalStateException("An exception in " + service.getClass().getName(), e);
-      }
     }
-
   }
 
   @Override

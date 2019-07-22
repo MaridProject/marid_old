@@ -21,6 +21,17 @@ package org.marid.runtime;
  * #L%
  */
 
-public class Context {
+import java.util.List;
 
+public final class Context {
+
+  private final List<String> args;
+
+  public Context(List<String> args) {
+    this.args = args;
+  }
+
+  public List<String> getArgs() {
+    return args;
+  }
 }

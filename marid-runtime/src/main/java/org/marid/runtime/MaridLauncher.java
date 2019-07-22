@@ -21,12 +21,22 @@
 
 package org.marid.runtime;
 
+import java.net.URL;
+import java.util.Arrays;
+
 /**
  * @author Dmitry Ovchinnikov
  */
 public class MaridLauncher {
 
-  public static void main(String... args) {
+  public static void main(String... args) throws Exception {
+    if (args.length == 0) {
+      System.out.println("Usage: java -jar <marid-runtime-jar-file> <url-of-deployment-jar> [<deployment arguments>]");
+      return;
+    }
 
+    try (final var deployment = new Deployment(new URL(args[0]))) {
+      deployment.run(Arrays.copyOfRange(args, 1, args.length));
+    }
   }
 }
