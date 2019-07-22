@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
@@ -58,6 +59,7 @@ public final class WineBusiness implements Runnable, AutoCloseable {
       deps = deployment.resolve("deps");
 
       validate();
+      initialize();
 
       classLoader = classLoader();
     } catch (Throwable e) {
@@ -101,6 +103,17 @@ public final class WineBusiness implements Runnable, AutoCloseable {
     }
   }
 
+  private void initialize() throws IOException {
+    final var propsFile = deployment.resolve("system.properties");
+    if (Files.isRegularFile(propsFile)) {
+      final var props = new Properties();
+      try (final var reader = Files.newBufferedReader(propsFile, StandardCharsets.UTF_8)) {
+        props.load(reader);
+      }
+      props.forEach(System.getProperties()::putIfAbsent);
+    }
+  }
+
   private URLClassLoader classLoader() throws IOException {
     final var urls = new ArrayList<URL>();
     urls.add(deployment.resolve("bundle.jar").toUri().toURL());
@@ -125,14 +138,11 @@ public final class WineBusiness implements Runnable, AutoCloseable {
 
     final var context = new Context();
 
-    Throwable exception = null;
-
     for (final var service : services) {
       try {
         service.run(context);
       } catch (Throwable e) {
-        exception = e;
-        break;
+        throw new IllegalStateException("An exception in " + service.getClass().getName(), e);
       }
     }
 
