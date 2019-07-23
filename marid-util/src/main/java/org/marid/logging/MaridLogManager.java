@@ -28,6 +28,10 @@ public class MaridLogManager extends LogManager {
 
   private final AtomicBoolean firstReset = new AtomicBoolean(true);
 
+  public MaridLogManager() {
+    throw new RuntimeException();
+  }
+
   @Override
   public void reset() throws SecurityException {
     if (firstReset.compareAndSet(true, false)) {

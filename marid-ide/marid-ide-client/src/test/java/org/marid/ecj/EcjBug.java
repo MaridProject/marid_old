@@ -286,12 +286,12 @@ public class EcjBug {
   }
 
   private static Compiler compiler(FileSystem fileSystem,
-                                   CompilerOptions compilerOptions,
-                                   IErrorHandlingPolicy errorHandlingPolicy,
-                                   IProblemFactory problemFactory,
-                                   ICompilerRequestor compilerRequestor,
-                                   StringWriter output,
-                                   ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> results) {
+                                             CompilerOptions compilerOptions,
+                                             IErrorHandlingPolicy errorHandlingPolicy,
+                                             IProblemFactory problemFactory,
+                                             ICompilerRequestor compilerRequestor,
+                                             StringWriter output,
+                                             ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> results) {
     return new Compiler(fileSystem, errorHandlingPolicy, compilerOptions, compilerRequestor, problemFactory, new PrintWriter(output), null) {
       @Override
       protected synchronized void addCompilationUnit(ICompilationUnit sourceUnit, CompilationUnitDeclaration parsedUnit) {

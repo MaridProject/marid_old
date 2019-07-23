@@ -21,16 +21,17 @@ package org.marid.runtime;
  * #L%
  */
 
-import org.marid.io.MaridFiles;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -59,7 +60,7 @@ public final class Deployment implements AutoCloseable {
       validate();
       initialize();
 
-      classLoader = classLoader();
+      Thread.currentThread().setContextClassLoader(classLoader = classLoader());
     } catch (Throwable e) {
       try {
         close();
@@ -153,7 +154,19 @@ public final class Deployment implements AutoCloseable {
     }
 
     try {
-      MaridFiles.delete(deployment);
+      Files.walkFileTree(deployment, new SimpleFileVisitor<>() {
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+          Files.deleteIfExists(file);
+          return super.visitFile(file, attrs);
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+          Files.deleteIfExists(dir);
+          return super.postVisitDirectory(dir, exc);
+        }
+      });
     } catch (Throwable e) {
       exception.addSuppressed(e);
     }
