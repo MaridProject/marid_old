@@ -48,7 +48,7 @@ public class Rack {
         .flatMap(m -> {
           try {
             return Stream.of(MethodHandles.publicLookup().unreflect(m));
-          } catch (Throwable e) {
+          } catch (IllegalAccessException e) {
             return Stream.empty();
           }
         })
