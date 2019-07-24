@@ -32,17 +32,9 @@ class CellarTest {
   void test() {
     try {
       Cellar1.Rack5.instance();
+      Rack.clean();
     } catch (Throwable e) {
-      print(e);
-    }
-  }
-
-  private static void print(Throwable throwable) {
-    for (final var e : throwable.getStackTrace()) {
-      System.out.println(e);
-    }
-    if (throwable.getCause() != null) {
-      print(throwable.getCause());
+      e.printStackTrace();
     }
   }
 }

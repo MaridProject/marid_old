@@ -21,68 +21,95 @@ package org.marid.runtime.cellars;
  * #L%
  */
 
+import org.marid.runtime.Destructor;
+import org.marid.runtime.Rack;
+
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Cellar1 {
 
-  public static class Rack1 {
+  public static class Rack1 extends Rack {
 
-    private static final Closeable INSTANCE = () -> {
-    };
-
-    public static Closeable instance() {
-      return INSTANCE;
-    }
-  }
-
-  public static class Rack2 {
-
-    private static final Closeable INSTANCE = () -> {
-    };
+    private static final Closeable INSTANCE = register(() -> {
+    });
 
     public static Closeable instance() {
       return INSTANCE;
     }
   }
 
-  public static class Rack3 {
+  public static class Rack2 extends Rack {
 
-    private static final Closeable INSTANCE = Stream.of(Rack1.instance(), Rack1.instance())
+    private static final Closeable INSTANCE = register(() -> {
+    });
+
+    public static Closeable instance() {
+      return INSTANCE;
+    }
+
+    @Destructor(order = 1)
+    public static void close() throws IOException {
+      INSTANCE.close();
+    }
+  }
+
+  public static class Rack3 extends Rack {
+
+    private static final Closeable INSTANCE = register(Stream.of(Rack1.instance(), Rack1.instance())
         .filter(Objects::isNull)
         .findFirst()
         .orElse(() -> {
-        });
+        }));
 
     public static Closeable instance() {
       return INSTANCE;
     }
+
+    @Destructor(order = 1)
+    public static void close() throws IOException {
+      INSTANCE.close();
+    }
   }
 
-  public static class Rack4 {
+  public static class Rack4 extends Rack {
 
-    private static final Closeable INSTANCE = Stream.of(Rack1.instance(), Rack2.instance())
+    private static final Closeable INSTANCE = register(Stream.of(Rack1.instance(), Rack2.instance())
         .filter(Objects::isNull)
         .findFirst()
         .orElse(() -> {
-        });
+          throw new IOException("4");
+        }));
 
 
     public static Closeable instance() {
       return INSTANCE;
     }
+
+    @Destructor(order = 1)
+    public static void close() throws IOException {
+      INSTANCE.close();
+    }
   }
 
-  public static class Rack5 {
+  public static class Rack5 extends Rack {
 
-    private static final Object INSTANCE = Stream.of(Rack3.instance(), Rack4.instance())
+    private static final Closeable INSTANCE = register(Stream.of(Rack3.instance(), Rack4.instance())
         .filter(Objects::isNull)
         .findFirst()
-        .orElseThrow(IllegalCallerException::new);
+        .orElse(() -> {
+          throw new IOException("5");
+        }));
 
-    public static Object instance() {
+    public static Closeable instance() {
       return INSTANCE;
+    }
+
+    @Destructor(order = 1)
+    public static void close() throws IOException {
+      instance().close();
     }
   }
 }
