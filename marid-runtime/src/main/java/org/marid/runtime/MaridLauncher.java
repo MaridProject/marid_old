@@ -23,6 +23,7 @@ package org.marid.runtime;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Dmitry Ovchinnikov
@@ -36,7 +37,7 @@ public class MaridLauncher {
     }
 
     try (final var deployment = new Deployment(new URL(args[0]))) {
-      final var deploymentArgs = Arrays.copyOfRange(args, 1, args.length, String[].class);
+      final var deploymentArgs = List.of(Arrays.copyOfRange(args, 1, args.length, String[].class));
       final var thread = new Thread(null, () -> deployment.run(deploymentArgs), "marid");
       thread.join();
     }

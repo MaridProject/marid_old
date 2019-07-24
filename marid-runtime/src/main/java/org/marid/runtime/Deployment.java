@@ -129,7 +129,7 @@ public final class Deployment implements AutoCloseable {
     return deployment.getFileName().toString();
   }
 
-  public void run(String... args) {
+  public void run(List<String> args) {
     Thread.currentThread().setContextClassLoader(classLoader);
 
     try {
@@ -137,7 +137,7 @@ public final class Deployment implements AutoCloseable {
           .map(ServiceLoader.Provider::get)
           .collect(Collectors.toList());
 
-      final var context = new Context(List.of(args));
+      final var context = new Context(args);
 
       for (final var service : services) {
         service.run(context);
