@@ -8,12 +8,12 @@
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -37,18 +37,7 @@ public class MaridLauncher {
 
     try (final var deployment = new Deployment(new URL(args[0]))) {
       final var deploymentArgs = Arrays.copyOfRange(args, 1, args.length, String[].class);
-      final var thread = new Thread(null, () -> {
-        try {
-          deployment.run(deploymentArgs);
-        } catch (Throwable e) {
-          try {
-            Rack.clean();
-          } catch (Throwable x) {
-            e.addSuppressed(x);
-          }
-          throw e;
-        }
-      }, "marid");
+      final var thread = new Thread(null, () -> deployment.run(deploymentArgs), "marid");
       thread.join();
     }
   }

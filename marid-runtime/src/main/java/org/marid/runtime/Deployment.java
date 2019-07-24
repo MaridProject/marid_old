@@ -132,14 +132,23 @@ public final class Deployment implements AutoCloseable {
   public void run(String... args) {
     Thread.currentThread().setContextClassLoader(classLoader);
 
-    final var services = ServiceLoader.load(EntryPoint.class, classLoader).stream()
-        .map(ServiceLoader.Provider::get)
-        .collect(Collectors.toList());
+    try {
+      final var services = ServiceLoader.load(EntryPoint.class, classLoader).stream()
+          .map(ServiceLoader.Provider::get)
+          .collect(Collectors.toList());
 
-    final var context = new Context(List.of(args));
+      final var context = new Context(List.of(args));
 
-    for (final var service : services) {
+      for (final var service : services) {
         service.run(context);
+      }
+    } catch (Throwable e) {
+      try {
+        Rack.clean();
+      } catch (Throwable x) {
+        e.addSuppressed(x);
+      }
+      throw e;
     }
   }
 
