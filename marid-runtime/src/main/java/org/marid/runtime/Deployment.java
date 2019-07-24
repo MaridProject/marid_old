@@ -60,7 +60,7 @@ public final class Deployment implements AutoCloseable {
       validate();
       initialize();
 
-      Thread.currentThread().setContextClassLoader(classLoader = classLoader());
+      classLoader = classLoader();
     } catch (Throwable e) {
       try {
         close();
@@ -130,6 +130,8 @@ public final class Deployment implements AutoCloseable {
   }
 
   public void run(String... args) {
+    Thread.currentThread().setContextClassLoader(classLoader);
+
     final var services = ServiceLoader.load(EntryPoint.class, classLoader).stream()
         .map(ServiceLoader.Provider::get)
         .collect(Collectors.toList());
