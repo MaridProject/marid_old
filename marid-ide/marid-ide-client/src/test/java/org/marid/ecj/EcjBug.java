@@ -2,7 +2,7 @@ package org.marid.ecj;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
