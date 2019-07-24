@@ -23,7 +23,6 @@ package org.marid.runtime;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Dmitry Ovchinnikov
@@ -36,21 +35,21 @@ public class MaridLauncher {
       return;
     }
 
-    final var exception = new AtomicReference<Throwable>();
     try (final var deployment = new Deployment(new URL(args[0]))) {
       final var deploymentArgs = Arrays.copyOfRange(args, 1, args.length, String[].class);
-      final var thread = new Thread(null, () -> deployment.run(deploymentArgs), "marid");
-      thread.setUncaughtExceptionHandler((t, e) -> exception.set(e));
+      final var thread = new Thread(null, () -> {
+        try {
+          deployment.run(deploymentArgs);
+        } catch (Throwable e) {
+          try {
+            Rack.clean();
+          } catch (Throwable x) {
+            e.addSuppressed(x);
+          }
+          throw e;
+        }
+      }, "marid");
       thread.join();
-    } catch (Throwable e) {
-      if (exception.get() != null) {
-        e.addSuppressed(exception.get());
-      }
-      throw e;
-    }
-
-    if (exception.get() != null) {
-      throw exception.get();
     }
   }
 }
