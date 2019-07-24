@@ -7,7 +7,5 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Input {
-
-  int order();
+public @interface Output {
 }
