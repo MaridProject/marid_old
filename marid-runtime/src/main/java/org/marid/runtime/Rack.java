@@ -53,6 +53,7 @@ public class Rack {
           }
         })
         .collect(Collectors.toList());
+
     RACK_HOLDER_TL.get().destructors.addAll(0, list);
   }
 

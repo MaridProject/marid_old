@@ -21,21 +21,15 @@
 
 package org.marid.logging;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.LogManager;
 
 public class MaridLogManager extends LogManager {
 
-  private final AtomicBoolean firstReset = new AtomicBoolean(true);
-
   public MaridLogManager() {
-    throw new RuntimeException();
+    super.reset();
   }
 
   @Override
   public void reset() throws SecurityException {
-    if (firstReset.compareAndSet(true, false)) {
-      super.reset();
-    }
   }
 }
