@@ -31,7 +31,7 @@ class CellarTest {
   @Test
   void test() {
     try {
-      Cellar1.Rack5.instance();
+      final var instance = Cellar1.Rack5.INSTANCE;
       Rack.clean();
     } catch (Throwable e) {
       e.printStackTrace();

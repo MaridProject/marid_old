@@ -36,7 +36,7 @@ public class Rack {
   public static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
   private static final ThreadLocal<RackHolder> RACK_HOLDER_TL = ThreadLocal.withInitial(RackHolder::new);
 
-  protected static <E> E register(E rack) {
+  protected static void register() {
     final var caller = STACK_WALKER.getCallerClass();
 
     final var list = Arrays.stream(caller.getMethods())
@@ -54,8 +54,6 @@ public class Rack {
         })
         .collect(Collectors.toList());
     RACK_HOLDER_TL.get().destructors.addAll(0, list);
-
-    return rack;
   }
 
   static void clean() {

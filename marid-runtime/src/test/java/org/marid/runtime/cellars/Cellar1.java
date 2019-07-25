@@ -33,21 +33,21 @@ public class Cellar1 {
 
   public static class Rack1 extends Rack {
 
-    private static final Closeable INSTANCE = register(() -> {
-    });
+    private static final Closeable INSTANCE = () -> {
+    };
 
-    public static Closeable instance() {
-      return INSTANCE;
+    static {
+      register();
     }
   }
 
   public static class Rack2 extends Rack {
 
-    private static final Closeable INSTANCE = register(() -> {
-    });
+    private static final Closeable INSTANCE = () -> {
+    };
 
-    public static Closeable instance() {
-      return INSTANCE;
+    static {
+      register();
     }
 
     @Destructor(order = 1)
@@ -58,14 +58,14 @@ public class Cellar1 {
 
   public static class Rack3 extends Rack {
 
-    private static final Closeable INSTANCE = register(Stream.of(Rack1.instance(), Rack1.instance())
+    private static final Closeable INSTANCE = Stream.of(Rack1.INSTANCE, Rack1.INSTANCE)
         .filter(Objects::isNull)
         .findFirst()
         .orElse(() -> {
-        }));
+        });
 
-    public static Closeable instance() {
-      return INSTANCE;
+    static {
+      register();
     }
 
     @Destructor(order = 1)
@@ -76,16 +76,15 @@ public class Cellar1 {
 
   public static class Rack4 extends Rack {
 
-    private static final Closeable INSTANCE = register(Stream.of(Rack1.instance(), Rack2.instance())
+    private static final Closeable INSTANCE = Stream.of(Rack1.INSTANCE, Rack2.INSTANCE)
         .filter(Objects::isNull)
         .findFirst()
         .orElse(() -> {
           throw new IOException("4");
-        }));
+        });
 
-
-    public static Closeable instance() {
-      return INSTANCE;
+    static {
+      register();
     }
 
     @Destructor(order = 1)
@@ -96,20 +95,16 @@ public class Cellar1 {
 
   public static class Rack5 extends Rack {
 
-    private static final Closeable INSTANCE = register(Stream.of(Rack3.instance(), Rack4.instance())
+    public static final Closeable INSTANCE = Stream.of(Rack3.INSTANCE, Rack4.INSTANCE)
         .filter(Objects::isNull)
         .findFirst()
         .orElse(() -> {
           throw new IOException("5");
-        }));
-
-    public static Closeable instance() {
-      return INSTANCE;
-    }
+        });
 
     @Destructor(order = 1)
     public static void close() throws IOException {
-      instance().close();
+      INSTANCE.close();
     }
   }
 }
