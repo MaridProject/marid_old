@@ -1,8 +1,8 @@
-package org.marid.runtime;
+package org.marid.ide.types;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,14 +21,28 @@ package org.marid.runtime;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Input {
+import javax.tools.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
-  int order();
+@Component
+public class TypesContext {
+
+  @Bean
+  public JavaCompiler javaCompiler() {
+    return ToolProvider.getSystemJavaCompiler();
+  }
+
+  @Bean
+  public DiagnosticCollector<JavaFileObject> diagnosticCollector() {
+    return new DiagnosticCollector<>();
+  }
+
+  @Bean
+  public StandardJavaFileManager standardJavaFileManager(JavaCompiler javaCompiler, DiagnosticCollector<JavaFileObject> collector) {
+    return javaCompiler.getStandardFileManager(collector, Locale.US, StandardCharsets.UTF_8);
+  }
 }

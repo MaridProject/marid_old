@@ -1,8 +1,8 @@
-package org.marid.runtime;
+package org.marid.ide.types;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,14 +21,27 @@ package org.marid.runtime;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.tools.SimpleJavaFileObject;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.URI;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Input {
+public class StringJavaFileObject extends SimpleJavaFileObject {
 
-  int order();
+  private final String code;
+
+  public StringJavaFileObject(String name, String code) {
+    super(URI.create("string://" + name + Kind.SOURCE.extension), Kind.SOURCE);
+    this.code = code;
+  }
+
+  @Override
+  public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+    return code;
+  }
+
+  @Override
+  public Reader openReader(boolean ignoreEncodingErrors) {
+    return new StringReader(code);
+  }
 }

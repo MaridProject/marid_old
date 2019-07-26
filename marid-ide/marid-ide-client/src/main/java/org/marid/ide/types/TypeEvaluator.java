@@ -1,8 +1,8 @@
-package org.marid.runtime;
+package org.marid.ide.types;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,14 +21,18 @@ package org.marid.runtime;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.stereotype.Component;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Input {
+import javax.tools.JavaCompiler;
+import java.util.BitSet;
 
-  int order();
+@Component
+public class TypeEvaluator {
+
+  private final JavaCompiler compiler;
+  private final BitSet freeSlots = new BitSet();
+
+  public TypeEvaluator(JavaCompiler compiler) {
+    this.compiler = compiler;
+  }
 }

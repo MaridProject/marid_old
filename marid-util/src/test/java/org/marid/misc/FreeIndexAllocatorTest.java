@@ -1,8 +1,8 @@
-package org.marid.runtime;
+package org.marid.misc;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-util
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,14 +21,28 @@ package org.marid.runtime;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Input {
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
-  int order();
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+@Tag("normal")
+class FreeIndexAllocatorTest {
+
+  @Test
+  void test() {
+    final var allocator = new FreeIndexAllocator();
+    final int[] indices = IntStream.generate(allocator::freeIndex)
+        .parallel()
+        .limit(10_000)
+        .sorted()
+        .toArray();
+    final int[] withoutDuplicates = Arrays.stream(indices)
+        .distinct()
+        .toArray();
+    assertArrayEquals(withoutDuplicates, indices);
+  }
 }
