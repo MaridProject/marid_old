@@ -42,6 +42,7 @@ import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.eclipse.jdt.internal.compiler.util.Util;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marid.test.logging.TestLogExtension;
 import org.marid.test.spring.TempFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -67,8 +68,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tag("manual")
-@ExtendWith({SpringExtension.class})
+@Tag("normal")
+@ExtendWith({TestLogExtension.class, SpringExtension.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration
 class EcjTest {
