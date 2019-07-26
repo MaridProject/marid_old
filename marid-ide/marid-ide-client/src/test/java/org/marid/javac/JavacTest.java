@@ -5,7 +5,6 @@ import com.sun.source.tree.IntersectionTypeTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.JavacTask;
-import com.sun.source.util.Trees;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.lang.model.type.IntersectionType;
 import javax.tools.*;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -64,7 +62,6 @@ class JavacTest {
     final var varTree = (VariableTree) stats.get(0);
 
     assertTrue(varTree.getType() instanceof IntersectionTypeTree);
-    System.out.println(varTree.getType());
   }
 
   @Configuration
