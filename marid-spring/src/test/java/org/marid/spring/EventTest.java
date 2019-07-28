@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Tag("manual")
+@Tag("normal")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class EventTest {
 
