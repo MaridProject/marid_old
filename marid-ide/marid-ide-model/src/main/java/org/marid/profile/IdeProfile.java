@@ -68,11 +68,12 @@ public final class IdeProfile implements AutoCloseable {
   public IdeProject addProject(String name) {
     return projects.computeIfAbsent(name, projectName -> {
       final var directory = projectsDirectory.resolve(name);
-      if (!Files.isDirectory(directory)) {
-        throw new IllegalArgumentException(directory + " is not a directory");
+      if (!directory.startsWith(this.directory.getDirectory())) {
+        throw new IllegalArgumentException(name);
       }
       final var child = ContextUtils.context(context, (r, c) -> {
         r.register(IdeProjectContext.class);
+        r.registerBean(Path.class, "ideProjectDirectory", () -> directory);
         c.getDefaultListableBeanFactory().registerSingleton("ideProjectDirectory", directory);
         c.addApplicationListener((ContextClosedListener) event -> projects.remove(projectName));
       });

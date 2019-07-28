@@ -24,6 +24,8 @@ package org.marid.project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
@@ -32,8 +34,9 @@ public class IdeProjectDirectory {
   private final Path directory;
 
   @Autowired(required = false)
-  public IdeProjectDirectory(Path ideProjectDirectory) {
+  public IdeProjectDirectory(Path ideProjectDirectory) throws IOException {
     directory = ideProjectDirectory;
+    Files.createDirectories(ideProjectDirectory);
   }
 
   public Path getDirectory() {

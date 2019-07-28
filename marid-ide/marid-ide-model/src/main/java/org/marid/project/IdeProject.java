@@ -23,31 +23,22 @@ package org.marid.project;
 
 import org.apache.ivy.Ivy;
 import org.marid.io.MaridFiles;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
 public class IdeProject implements AutoCloseable {
 
-  private final Ivy ivy = new Ivy();
   private final Path directory;
   private final GenericApplicationContext context;
 
-  public IdeProject(IdeProjectDirectory directory, GenericApplicationContext context) {
+  private Ivy ivy = new Ivy();
+
+  public IdeProject(IdeProjectDirectory directory, GenericApplicationContext context) throws Exception {
     this.directory = directory.getDirectory();
     this.context = context;
-  }
-
-  @Autowired
-  public void initIvy() throws Exception {
-    final var ivyConfigurationFile = directory.resolve("ivy.xml");
-    if (Files.isRegularFile(ivyConfigurationFile)) {
-      ivy.configure(ivyConfigurationFile.toFile());
-    }
   }
 
   @Override

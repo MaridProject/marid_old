@@ -62,6 +62,7 @@ public class Cellar1 {
         .filter(Objects::isNull)
         .findFirst()
         .orElse(() -> {
+          throw new IOException("3");
         });
 
     static {
