@@ -45,8 +45,6 @@ public interface ContextUtils {
     beanFactory.setAllowBeanDefinitionOverriding(false);
     beanFactory.setAllowCircularReferences(false);
 
-    beanFactory.addBeanPostProcessor(new LoggingPostProcessor());
-
     // do not use context.setParent(...) due to child-to-parent event propagation
     beanFactory.setParentBeanFactory(parent.getBeanFactory());
 

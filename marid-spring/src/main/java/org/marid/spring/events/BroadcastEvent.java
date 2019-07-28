@@ -23,6 +23,7 @@ package org.marid.spring.events;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.LinkedHashSet;
 
@@ -30,8 +31,9 @@ public abstract class BroadcastEvent<S> extends ApplicationEvent {
 
   private final LinkedHashSet<ApplicationContext> passed = new LinkedHashSet<>();
 
-  public BroadcastEvent(S source) {
+  public BroadcastEvent(GenericApplicationContext context, S source) {
     super(source);
+    passed.add(context);
   }
 
   @SuppressWarnings("unchecked")
