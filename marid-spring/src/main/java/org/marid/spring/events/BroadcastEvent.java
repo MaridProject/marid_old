@@ -1,8 +1,8 @@
-package org.marid.ide.types;
+package org.marid.spring.events;
 
 /*-
  * #%L
- * marid-ide-client
+ * marid-spring
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,27 +21,26 @@ package org.marid.ide.types;
  * #L%
  */
 
-import javax.tools.SimpleJavaFileObject;
-import java.io.Reader;
-import java.io.StringReader;
-import java.net.URI;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
 
-public class StringJavaFileObject extends SimpleJavaFileObject {
+import java.util.LinkedHashSet;
 
-  private final String code;
+public abstract class BroadcastEvent<S> extends ApplicationEvent {
 
-  public StringJavaFileObject(String name, String code) {
-    super(URI.create("string://" + name + Kind.SOURCE.extension), Kind.SOURCE);
-    this.code = code;
+  private final LinkedHashSet<ApplicationContext> passed = new LinkedHashSet<>();
+
+  public BroadcastEvent(S source) {
+    super(source);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-    return code;
+  public S getSource() {
+    return (S) super.getSource();
   }
 
-  @Override
-  public Reader openReader(boolean ignoreEncodingErrors) {
-    return new StringReader(code);
+  public boolean check(ApplicationContext context) {
+    return passed.add(context);
   }
 }

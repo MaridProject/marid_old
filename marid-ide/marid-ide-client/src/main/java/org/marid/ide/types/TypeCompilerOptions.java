@@ -21,18 +21,20 @@ package org.marid.ide.types;
  * #L%
  */
 
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.springframework.stereotype.Component;
 
-import javax.tools.JavaCompiler;
-import java.util.BitSet;
-
 @Component
-public class TypeEvaluator {
+public class TypeCompilerOptions extends CompilerOptions {
 
-  private final JavaCompiler compiler;
-  private final BitSet freeSlots = new BitSet();
-
-  public TypeEvaluator(JavaCompiler compiler) {
-    this.compiler = compiler;
+  public TypeCompilerOptions() {
+    processAnnotations = false;
+    produceMethodParameters = true;
+    produceReferenceInfo = true;
+    complianceLevel = originalComplianceLevel = sourceLevel = originalSourceLevel = targetJDK = ClassFileConstants.JDK12;
+    defaultEncoding = "UTF-8";
+    preserveAllLocalVariables = true;
+    generateClassFiles = false;
   }
 }

@@ -18,38 +18,8 @@
 
     <dependency>
       <groupId>org.marid</groupId>
-      <artifactId>marid-spring</artifactId>
+      <artifactId>marid-ide-model</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-runtime</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.ivy</groupId>
-      <artifactId>ivy</artifactId>
-      <version>2.5.0-rc1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jdt</groupId>
-      <artifactId>ecj</artifactId>
-      <version>3.18.0</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

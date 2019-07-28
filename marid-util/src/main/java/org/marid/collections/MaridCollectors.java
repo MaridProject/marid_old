@@ -22,18 +22,14 @@ package org.marid.collections;
  */
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collector;
 
 public interface MaridCollectors {
 
-  static <T, L extends List<ArrayList<T>>> Collector<T, L, L> partition(int size, Supplier<L> listSupplier) {
+  static <T, E extends List<T>, L extends List<E>> Collector<T, L, L> partition(int size, IntFunction<E> intListSupplier, Supplier<L> listSupplier) {
     return new Collector<>() {
       @Override
       public Supplier<L> supplier() {
@@ -49,7 +45,7 @@ public interface MaridCollectors {
               last.add(e);
             }
           }
-          final var list = new ArrayList<T>(size);
+          final var list = intListSupplier.apply(size);
           list.add(e);
           a.add(list);
         };
@@ -72,7 +68,7 @@ public interface MaridCollectors {
     };
   }
 
-  static <T> Collector<T, LinkedList<ArrayList<T>>, LinkedList<ArrayList<T>>> partition(int size) {
-    return partition(size, LinkedList::new);
+  static <T> Collector<T, ArrayList<ArrayList<T>>, ArrayList<ArrayList<T>>> partition(int size) {
+    return partition(size, ArrayList::new, ArrayList::new);
   }
 }

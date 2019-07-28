@@ -21,8 +21,13 @@
 
 package org.marid.spring;
 
-import org.marid.spring.events.ContextClosedListener;
+import org.marid.spring.events.BroadcastEvent;
+import org.marid.spring.events.ForwardingEvent;
+import org.marid.spring.events.PropagatedEvent;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -32,9 +37,9 @@ public interface ContextUtils {
 
   @SafeVarargs
   static GenericApplicationContext context(AbstractApplicationContext parent,
-                                           BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext>... cs) {
+                                           BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext>... configurers) {
     final var context = new GenericApplicationContext();
-    final var bdReader = new AnnotatedBeanDefinitionReader(context);
+    final var beanDefinitionReader = new AnnotatedBeanDefinitionReader(context);
 
     final var beanFactory = context.getDefaultListableBeanFactory();
     beanFactory.setAllowBeanDefinitionOverriding(false);
@@ -46,12 +51,35 @@ public interface ContextUtils {
     beanFactory.setParentBeanFactory(parent.getBeanFactory());
 
     final var parentApplicationListeners = parent.getApplicationListeners();
-    final var parentListener = (ContextClosedListener) event -> context.close();
+    final ApplicationListener<ApplicationEvent> parentListener = event -> {
+      if (event instanceof ContextClosedEvent) {
+        context.close();
+      } else if (event instanceof ForwardingEvent<?>) {
+        context.publishEvent(event);
+      } else if (event instanceof BroadcastEvent<?>) {
+        final var broadcastEvent = (BroadcastEvent<?>) event;
+        if (broadcastEvent.check(context)) {
+          context.publishEvent(broadcastEvent);
+        }
+      }
+    };
     parent.addApplicationListener(parentListener);
-    context.addApplicationListener((ContextClosedListener) e -> parentApplicationListeners.remove(parentListener));
 
-    for (final var configurer : cs) {
-      configurer.accept(bdReader, context);
+    context.addApplicationListener(event -> {
+      if (event instanceof ContextClosedEvent) {
+        parentApplicationListeners.remove(parentListener);
+      } else if (event instanceof PropagatedEvent<?>) {
+        parent.publishEvent(event);
+      } else if (event instanceof BroadcastEvent<?>) {
+        final var broadcastEvent = (BroadcastEvent<?>) event;
+        if (broadcastEvent.check(parent)) {
+          parent.publishEvent(broadcastEvent);
+        }
+      }
+    });
+
+    for (final var configurer : configurers) {
+      configurer.accept(beanDefinitionReader, context);
     }
 
     return context;

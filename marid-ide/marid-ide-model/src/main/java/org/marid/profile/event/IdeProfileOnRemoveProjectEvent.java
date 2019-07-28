@@ -1,8 +1,8 @@
-package org.marid.misc;
+package org.marid.profile.event;
 
 /*-
  * #%L
- * marid-util
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,28 +21,20 @@ package org.marid.misc;
  * #L%
  */
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.marid.profile.IdeProfile;
+import org.marid.project.IdeProject;
+import org.marid.spring.events.PropagatedEvent;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
+public class IdeProfileOnRemoveProjectEvent extends PropagatedEvent<IdeProfile> {
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+  private final IdeProject project;
 
-@Tag("normal")
-class FreeIndexAllocatorTest {
+  public IdeProfileOnRemoveProjectEvent(IdeProfile source, IdeProject project) {
+    super(source);
+    this.project = project;
+  }
 
-  @Test
-  void test() {
-    final var allocator = new FreeIndexAllocator();
-    final int[] indices = IntStream.generate(allocator::freeIndex)
-        .parallel()
-        .limit(100_000)
-        .sorted()
-        .toArray();
-    final int[] withoutDuplicates = Arrays.stream(indices)
-        .distinct()
-        .toArray();
-    assertArrayEquals(withoutDuplicates, indices);
+  public IdeProject getProject() {
+    return project;
   }
 }

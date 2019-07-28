@@ -1,6 +1,8 @@
+package org.marid.profile.exception;
+
 /*-
  * #%L
- * marid-util
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -18,23 +20,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
-package org.marid.misc;
 
-public abstract class EHT {
+import org.marid.profile.IdeProfile;
 
-  @Override
-  public int hashCode() {
-    return Reflections.hashCode(this);
-  }
+public class IdeProfileCloseException extends RuntimeException {
 
-  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-  @Override
-  public boolean equals(Object obj) {
-    return Reflections.equals(this, obj);
-  }
-
-  @Override
-  public String toString() {
-    return Reflections.toString(this);
+  public IdeProfileCloseException(IdeProfile profile) {
+    super("Unable to close profile " + profile);
   }
 }

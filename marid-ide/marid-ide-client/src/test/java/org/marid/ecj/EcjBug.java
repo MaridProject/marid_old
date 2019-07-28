@@ -137,7 +137,7 @@ public class EcjBug {
   }
 
   private static void checkEcj(Path target) {
-    COMPILER.compile(new ICompilationUnit[] {
+    COMPILER.compile(new ICompilationUnit[]{
         new CompilationUnit(CODE.toCharArray(), "TestFile", "UTF-8", target.toString(), false, null)
     });
     final var unitDeclaration = RESULTS.values().iterator().next();
@@ -271,7 +271,7 @@ public class EcjBug {
   private static ICompilerRequestor requestor(ConcurrentLinkedQueue<CompilationResult> compilationResults) {
     return result -> {
       compilationResults.add(result);
-      for (final var classFile: result.getClassFiles()) {
+      for (final var classFile : result.getClassFiles()) {
         if (result.compilationUnit.getDestinationPath() != null) {
           try {
             final var dest = result.compilationUnit.getDestinationPath();
@@ -286,12 +286,12 @@ public class EcjBug {
   }
 
   private static Compiler compiler(FileSystem fileSystem,
-                                             CompilerOptions compilerOptions,
-                                             IErrorHandlingPolicy errorHandlingPolicy,
-                                             IProblemFactory problemFactory,
-                                             ICompilerRequestor compilerRequestor,
-                                             StringWriter output,
-                                             ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> results) {
+                                   CompilerOptions compilerOptions,
+                                   IErrorHandlingPolicy errorHandlingPolicy,
+                                   IProblemFactory problemFactory,
+                                   ICompilerRequestor compilerRequestor,
+                                   StringWriter output,
+                                   ConcurrentHashMap<ICompilationUnit, CompilationUnitDeclaration> results) {
     return new Compiler(fileSystem, errorHandlingPolicy, compilerOptions, compilerRequestor, problemFactory, new PrintWriter(output), null) {
       @Override
       protected synchronized void addCompilationUnit(ICompilationUnit sourceUnit, CompilationUnitDeclaration parsedUnit) {

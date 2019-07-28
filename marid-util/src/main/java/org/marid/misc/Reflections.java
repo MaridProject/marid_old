@@ -23,8 +23,8 @@ package org.marid.misc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InaccessibleObjectException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,19 +50,10 @@ public class Reflections {
     }
   }
 
-  public static boolean allowAccess(@NotNull Field field) {
-    try {
-      field.setAccessible(true);
-      return true;
-    } catch (InaccessibleObjectException | SecurityException x) {
-      return false;
-    }
-  }
-
   public static Stream<Field> fields(@NotNull Object bean) {
     return superclasses(bean.getClass())
         .flatMap(c -> Stream.of(c.getDeclaredFields()))
-        .filter(Reflections::allowAccess);
+        .filter(AccessibleObject::trySetAccessible);
   }
 
   public static int compare(@NotNull Field f1, @NotNull Field f2) {

@@ -1,8 +1,8 @@
-package org.marid.misc;
+package org.marid.project;
 
 /*-
  * #%L
- * marid-util
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,28 +21,27 @@ package org.marid.misc;
  * #L%
  */
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
+import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+@Component
+public class IdeProjectDirectory {
 
-@Tag("normal")
-class FreeIndexAllocatorTest {
+  private final Path directory;
 
-  @Test
-  void test() {
-    final var allocator = new FreeIndexAllocator();
-    final int[] indices = IntStream.generate(allocator::freeIndex)
-        .parallel()
-        .limit(100_000)
-        .sorted()
-        .toArray();
-    final int[] withoutDuplicates = Arrays.stream(indices)
-        .distinct()
-        .toArray();
-    assertArrayEquals(withoutDuplicates, indices);
+  @Autowired(required = false)
+  public IdeProjectDirectory(Path ideProjectDirectory) {
+    directory = ideProjectDirectory;
+  }
+
+  public Path getDirectory() {
+    return directory;
+  }
+
+  @Override
+  public String toString() {
+    return directory.toString();
   }
 }

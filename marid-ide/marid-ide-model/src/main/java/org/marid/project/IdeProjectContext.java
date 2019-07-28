@@ -1,8 +1,8 @@
-package org.marid.ide;
+package org.marid.project;
 
 /*-
  * #%L
- * marid-ide-client
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,30 +21,10 @@ package org.marid.ide;
  * #L%
  */
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.marid.model.ModelContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.EventListener;
 
 @Configuration
-@Import({ModelContext.class})
 @ComponentScan
-public class IdeContext {
-
-  @Bean(destroyMethod = "")
-  public Display mainDisplay() {
-    return new Display();
-  }
-
-  @EventListener
-  public void onStart(ContextStartedEvent event) {
-    final var shell = event.getApplicationContext().getBean("mainShell", Shell.class);
-    shell.layout();
-    shell.open();
-  }
+public class IdeProjectContext {
 }

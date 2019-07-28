@@ -1,8 +1,8 @@
-package org.marid.ide.types;
+package org.marid.profile;
 
 /*-
  * #%L
- * marid-ide-client
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,28 +21,27 @@ package org.marid.ide.types;
  * #L%
  */
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.tools.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+import java.nio.file.Path;
 
 @Component
-public class TypesContext {
+public class IdeProfileDirectory {
 
-  @Bean
-  public JavaCompiler javaCompiler() {
-    return ToolProvider.getSystemJavaCompiler();
+  private final Path directory;
+
+  @Autowired(required = false)
+  public IdeProfileDirectory(Path ideProfileDirectory) {
+    this.directory = ideProfileDirectory;
   }
 
-  @Bean
-  public DiagnosticCollector<JavaFileObject> diagnosticCollector() {
-    return new DiagnosticCollector<>();
+  public Path getDirectory() {
+    return directory;
   }
 
-  @Bean
-  public StandardJavaFileManager standardJavaFileManager(JavaCompiler javaCompiler, DiagnosticCollector<JavaFileObject> collector) {
-    return javaCompiler.getStandardFileManager(collector, Locale.US, StandardCharsets.UTF_8);
+  @Override
+  public String toString() {
+    return directory.toString();
   }
 }

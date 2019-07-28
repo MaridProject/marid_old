@@ -1,8 +1,8 @@
-package org.marid.misc;
+package org.marid.spring.events;
 
 /*-
  * #%L
- * marid-util
+ * marid-spring
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,28 +21,17 @@ package org.marid.misc;
  * #L%
  */
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEvent;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
+public abstract class ForwardingEvent<S> extends ApplicationEvent {
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+  public ForwardingEvent(S source) {
+    super(source);
+  }
 
-@Tag("normal")
-class FreeIndexAllocatorTest {
-
-  @Test
-  void test() {
-    final var allocator = new FreeIndexAllocator();
-    final int[] indices = IntStream.generate(allocator::freeIndex)
-        .parallel()
-        .limit(100_000)
-        .sorted()
-        .toArray();
-    final int[] withoutDuplicates = Arrays.stream(indices)
-        .distinct()
-        .toArray();
-    assertArrayEquals(withoutDuplicates, indices);
+  @SuppressWarnings("unchecked")
+  @Override
+  public S getSource() {
+    return (S) super.getSource();
   }
 }
