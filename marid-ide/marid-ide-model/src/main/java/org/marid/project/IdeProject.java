@@ -26,6 +26,7 @@ import org.marid.io.MaridFiles;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
@@ -33,12 +34,16 @@ public class IdeProject implements AutoCloseable {
 
   private final Path directory;
   private final GenericApplicationContext context;
+  private final Path ivyDirectory;
 
   private Ivy ivy = new Ivy();
 
   public IdeProject(IdeProjectDirectory directory, GenericApplicationContext context) throws Exception {
     this.directory = directory.getDirectory();
     this.context = context;
+    this.ivyDirectory = directory.getDirectory().resolve("ivy");
+
+    Files.createDirectories(ivyDirectory);
   }
 
   @Override
