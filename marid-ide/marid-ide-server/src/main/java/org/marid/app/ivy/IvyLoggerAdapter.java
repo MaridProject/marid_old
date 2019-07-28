@@ -14,34 +14,28 @@
 
 package org.marid.app.ivy;
 
-import org.marid.logging.Log;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import static org.apache.ivy.util.Message.*;
 
 public class IvyLoggerAdapter implements BaseMessageLogger {
 
-  private final Logger logger;
+  private final System.Logger log;
 
-  public IvyLoggerAdapter(Logger logger) {
-    this.logger = logger;
+  public IvyLoggerAdapter(System.Logger log) {
+    this.log = log;
   }
 
-  private Level level(int level) {
+  private System.Logger.Level level(int level) {
     switch (level) {
-      case MSG_INFO: return Level.INFO;
-      case MSG_DEBUG: return Level.CONFIG;
-      case MSG_ERR: return Level.SEVERE;
-      case MSG_WARN: return Level.WARNING;
-      case MSG_VERBOSE: return Level.FINE;
-      default: return Level.FINER;
+      case MSG_INFO: return System.Logger.Level.INFO;
+      case MSG_DEBUG: return System.Logger.Level.DEBUG;
+      case MSG_ERR: return System.Logger.Level.ERROR;
+      case MSG_WARN: return System.Logger.Level.WARNING;
+      default: return System.Logger.Level.TRACE;
     }
   }
 
   @Override
   public void log(String msg, int level) {
-    Log.log(logger, level(level), msg);
+    log.log(level(level), msg);
   }
 }

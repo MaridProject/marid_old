@@ -32,6 +32,7 @@ import org.marid.app.ivy.IvyCommonConfiguration;
 import org.marid.app.ivy.IvyLoggerAdapter;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.test.FileHolder;
+import org.marid.test.logging.TestLogExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +43,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.logging.Logger;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({TestLogExtension.class, SpringExtension.class})
 @ContextConfiguration
 @Tag("manual")
 public class RepositoryItemTest {
@@ -107,7 +107,7 @@ public class RepositoryItemTest {
     @Bean
     public Ivy ivy(IvySettings settings) {
       final var ivy = new Ivy();
-      final var logger = Logger.getLogger("ivy");
+      final var logger = System.getLogger("ivy");
       ivy.getLoggerEngine().setDefaultLogger(new IvyLoggerAdapter(logger));
       ivy.setSettings(settings);
       ivy.bind();
