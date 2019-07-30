@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.exception;
 
 /*-
  * #%L
@@ -21,8 +21,5 @@ package org.marid.runtime;
  * #L%
  */
 
-@FunctionalInterface
-public interface EntryPoint {
-
-  void run(Context context);
+public class ContextCloseException extends Exception {
 }

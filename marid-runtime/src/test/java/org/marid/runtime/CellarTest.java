@@ -23,26 +23,12 @@ package org.marid.runtime;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.marid.runtime.cellars.Cellar1;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Tag("normal")
 class CellarTest {
 
   @Test
   void test() {
-    try {
-      final var instance = Cellar1.Rack5.INSTANCE;
-      Rack.clean();
-      assertNotNull(instance);
-    } catch (Throwable e) {
-      final var suppressed = e.getSuppressed();
 
-      assertEquals(2, suppressed.length);
-      assertEquals("4", suppressed[0].getMessage());
-      assertEquals("3", suppressed[1].getMessage());
-    }
   }
 }

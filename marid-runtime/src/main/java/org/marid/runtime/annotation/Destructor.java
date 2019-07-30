@@ -1,3 +1,5 @@
+package org.marid.runtime.annotation;
+
 /*-
  * #%L
  * marid-runtime
@@ -19,29 +21,14 @@
  * #L%
  */
 
-package org.marid.runtime;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.marid.runtime.model.Deployment;
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Destructor {
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * @author Dmitry Ovchinnikov
- */
-public class MaridLauncher {
-
-  public static void main(String... args) throws Throwable {
-    if (args.length == 0) {
-      System.out.println("Usage: java -jar <marid-runtime-jar-file> <url-of-deployment-jar> [<deployment arguments>]");
-      return;
-    }
-
-    try (final var deployment = new Deployment(new URL(args[0]))) {
-      final var deploymentArgs = List.of(Arrays.copyOfRange(args, 1, args.length, String[].class));
-      final var thread = new Thread(null, () -> deployment.run(deploymentArgs), "marid");
-      thread.join();
-    }
-  }
+  int order();
 }

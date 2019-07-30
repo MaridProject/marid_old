@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.exception;
 
 /*-
  * #%L
@@ -21,14 +21,18 @@ package org.marid.runtime;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.marid.runtime.model.Rack;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Input {
+public class RackCloseException extends Exception {
 
-  int order();
+  private final Rack<?> rack;
+
+  public RackCloseException(Rack<?> rack) {
+    super("Unable to close " + rack.getClass().getName());
+    this.rack = rack;
+  }
+
+  public Rack<?> getRack() {
+    return rack;
+  }
 }

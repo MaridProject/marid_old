@@ -1,8 +1,8 @@
-package org.marid.runtime;
+package org.marid.model;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,22 +21,6 @@ package org.marid.runtime;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public abstract class IdeProfileManager {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PACKAGE, ElementType.TYPE})
-public @interface Info {
-
-  String title() default "";
-
-  String description() default "";
-
-  String icon() default "";
-
-  String version() default "";
-
-  String author() default "";
 }

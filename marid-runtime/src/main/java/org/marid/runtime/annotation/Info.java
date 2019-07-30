@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.annotation;
 
 /*-
  * #%L
@@ -26,9 +26,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Output {
+@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD})
+public @interface Info {
 
-  int order();
+  String title() default "";
+
+  String description() default "";
+
+  String icon() default "";
+
+  String version() default "";
+
+  String author() default "";
 }

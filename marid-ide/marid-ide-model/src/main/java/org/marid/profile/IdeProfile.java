@@ -10,12 +10,12 @@ package org.marid.profile;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -44,13 +44,15 @@ public final class IdeProfile implements AutoCloseable {
 
   private final IdeProfileDirectory directory;
   private final GenericApplicationContext context;
+  private final Path maridDirectory;
   private final Path projectsDirectory;
   private final ConcurrentHashMap<String, IdeProject> projects = new ConcurrentHashMap<>();
 
   public IdeProfile(IdeProfileDirectory directory, GenericApplicationContext context) throws IOException {
     this.directory = directory;
     this.context = context;
-    this.projectsDirectory = directory.getDirectory().resolve("projects");
+    this.maridDirectory = directory.getDirectory().resolve("marid");
+    this.projectsDirectory = maridDirectory.resolve("projects");
 
     Files.createDirectories(projectsDirectory);
 
@@ -83,10 +85,13 @@ public final class IdeProfile implements AutoCloseable {
     });
   }
 
-  public void removeProject(String name) {
+  public boolean removeProject(String name) {
     final var project = projects.remove(name);
     if (project != null) {
       project.delete();
+      return true;
+    } else {
+      return false;
     }
   }
 

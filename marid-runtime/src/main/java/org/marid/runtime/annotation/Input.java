@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.annotation;
 
 /*-
  * #%L
@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Destructor {
+public @interface Input {
 
   int order();
 }

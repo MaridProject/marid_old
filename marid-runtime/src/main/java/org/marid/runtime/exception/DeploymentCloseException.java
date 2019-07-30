@@ -1,3 +1,5 @@
+package org.marid.runtime.exception;
+
 /*-
  * #%L
  * marid-runtime
@@ -19,29 +21,18 @@
  * #L%
  */
 
-package org.marid.runtime;
-
 import org.marid.runtime.model.Deployment;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
+public class DeploymentCloseException extends Exception {
 
-/**
- * @author Dmitry Ovchinnikov
- */
-public class MaridLauncher {
+  private final Deployment deployment;
 
-  public static void main(String... args) throws Throwable {
-    if (args.length == 0) {
-      System.out.println("Usage: java -jar <marid-runtime-jar-file> <url-of-deployment-jar> [<deployment arguments>]");
-      return;
-    }
+  public DeploymentCloseException(Deployment deployment) {
+    super("Unable to close " + deployment);
+    this.deployment = deployment;
+  }
 
-    try (final var deployment = new Deployment(new URL(args[0]))) {
-      final var deploymentArgs = List.of(Arrays.copyOfRange(args, 1, args.length, String[].class));
-      final var thread = new Thread(null, () -> deployment.run(deploymentArgs), "marid");
-      thread.join();
-    }
+  public Deployment getDeployment() {
+    return deployment;
   }
 }

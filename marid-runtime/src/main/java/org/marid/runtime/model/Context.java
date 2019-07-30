@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.model;
 
 /*-
  * #%L
@@ -21,11 +21,16 @@ package org.marid.runtime;
  * #L%
  */
 
+import org.marid.runtime.exception.ContextCloseException;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
-public final class Context {
+public final class Context implements AutoCloseable {
 
   private final List<String> args;
+  final LinkedHashMap<Class<? extends Rack>, Rack> racks = new LinkedHashMap<>();
 
   public Context(List<String> args) {
     this.args = args;
@@ -33,5 +38,30 @@ public final class Context {
 
   public List<String> getArgs() {
     return args;
+  }
+
+  public <R extends Rack> R getRack(Class<R> type) {
+    return type.cast(racks.get(type));
+  }
+
+  @Override
+  public void close() throws Exception {
+    final ContextCloseException exception = new ContextCloseException();
+
+    final var keys = new LinkedList<>(racks.keySet());
+    for (final var it = keys.descendingIterator(); it.hasNext(); ) {
+      final var key = it.next();
+      try {
+        racks.remove(key).close();
+      } catch (Throwable e) {
+        exception.addSuppressed(e);
+      } finally {
+        it.remove();
+      }
+    }
+
+    if (exception.getSuppressed().length > 0) {
+      throw exception;
+    }
   }
 }
