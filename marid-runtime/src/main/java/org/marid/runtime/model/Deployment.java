@@ -22,6 +22,8 @@ package org.marid.runtime.model;
  */
 
 import org.marid.runtime.exception.DeploymentCloseException;
+import org.marid.runtime.exception.RackCircularReferenceException;
+import org.marid.runtime.exception.RackCreationException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -156,23 +158,22 @@ public final class Deployment implements AutoCloseable {
 
   private Rack<?> create(Context context, LinkedHashSet<Class<? extends Rack>> types, Class<? extends Rack> type, Class<?>... passed) {
     if (Arrays.stream(passed).anyMatch(e -> e == type)) {
-      final var passedText = Arrays.stream(passed).map(Class::getName).collect(Collectors.joining(",", "[", "]"));
-      throw new IllegalStateException("Circular dependency detected for " + type.getName() + ": " + passedText);
+      throw new RackCircularReferenceException(context, type, passed);
     }
 
     final var constructors = type.getConstructors();
     if (constructors.length != 1) {
-      throw new IllegalStateException("Illegal rack " + type.getName() + ": # of constructors must be 1");
+      throw new RackCreationException(context, type, "Invalid numbers of constructors (must be 1): " + constructors.length);
     }
 
     final var constructor = constructors[0];
     if (constructor.getParameterCount() < 1) {
-      throw new IllegalStateException("Illegal rack " + type.getName() + ": # of constructor parameters must be >= 1");
+      throw new RackCreationException(context, type, "Number of constructor parameters must be >= 1");
     }
 
     final var argTypes = constructor.getParameterTypes();
     if (!Context.class.isAssignableFrom(argTypes[0])) {
-      throw new IllegalStateException("Illegal rack " + type.getName() + ": the first parameter of constructor must be Context");
+      throw new RackCreationException(context, type, "The first parameter of constructor must be Context");
     }
 
     final var args = new Object[argTypes.length];
@@ -181,7 +182,7 @@ public final class Deployment implements AutoCloseable {
       final var argType = argTypes[i];
 
       if (!Rack.class.isAssignableFrom(argType)) {
-        throw new IllegalStateException("Illegal argument " + i + " of " + type);
+        throw new RackCreationException(context, type, "Illegal argument type of constructor at #" + i);
       }
 
       final var newPassed = Arrays.copyOf(passed, passed.length + 1, Class[].class);
@@ -193,9 +194,9 @@ public final class Deployment implements AutoCloseable {
     try {
       return (Rack<?>) constructor.newInstance(args);
     } catch (InvocationTargetException e) {
-      throw new IllegalStateException("Unable to call " + constructor, e.getTargetException());
+      throw new RackCreationException(context, type, "Unable to call " + constructor, e.getTargetException());
     } catch (Throwable e) {
-      throw new IllegalStateException("Unable to call " + constructor, e);
+      throw new RackCreationException(context, type, "Unable to call " + constructor, e);
     }
   }
 
