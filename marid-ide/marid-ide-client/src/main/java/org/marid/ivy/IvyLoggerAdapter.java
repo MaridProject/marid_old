@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-test
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -19,27 +19,30 @@
  * #L%
  */
 
-package org.marid.test;
+package org.marid.ivy;
 
-import org.springframework.util.FileSystemUtils;
+import static org.apache.ivy.util.Message.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+public class IvyLoggerAdapter implements BaseMessageLogger {
 
-public class PathHolder implements AutoCloseable {
+  private final System.Logger log;
 
-  public final Path file;
+  public IvyLoggerAdapter(System.Logger log) {
+    this.log = log;
+  }
 
-  public PathHolder(Path file) {
-    this.file = file;
+  private System.Logger.Level level(int level) {
+    switch (level) {
+      case MSG_INFO: return System.Logger.Level.INFO;
+      case MSG_DEBUG: return System.Logger.Level.DEBUG;
+      case MSG_ERR: return System.Logger.Level.ERROR;
+      case MSG_WARN: return System.Logger.Level.WARNING;
+      default: return System.Logger.Level.TRACE;
+    }
   }
 
   @Override
-  public void close() throws Exception {
-    if (Files.isRegularFile(file)) {
-      Files.deleteIfExists(file);
-    } else {
-      FileSystemUtils.deleteRecursively(file);
-    }
+  public void log(String msg, int level) {
+    log.log(level(level), msg);
   }
 }

@@ -1,18 +1,25 @@
 /*-
  * #%L
- * marid-ide-server
+ * marid-ide-client
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0
- * and Eclipse Distribution License v. 1.0 which accompanies this distribution.
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- * http://www.eclipse.org/org/documents/edl-v10.php.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-package org.marid.app.maven;
+package org.marid.ivy;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -28,11 +35,9 @@ import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.marid.app.ivy.IvyCommonConfiguration;
-import org.marid.app.ivy.IvyLoggerAdapter;
 import org.marid.spring.LoggingPostProcessor;
-import org.marid.test.FileHolder;
 import org.marid.test.logging.TestLogExtension;
+import org.marid.test.spring.TempFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,13 +46,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({TestLogExtension.class, SpringExtension.class})
 @ContextConfiguration
-@Tag("manual")
-public class RepositoryItemTest {
+@Tag("integration")
+public class RepositoryItemIT {
 
   @Autowired
   private Ivy ivy;
@@ -82,7 +88,8 @@ public class RepositoryItemTest {
         .setDestArtifactPattern("lib/[artifact].[type]");
 
     final RetrieveReport rr = ivy.retrieve(m.getModuleRevisionId(), retrieveOptions);
-    System.out.println(rr);
+
+    assertTrue(rr.getRetrievedFiles().size() > 1);
   }
 
   @Configuration
@@ -90,15 +97,15 @@ public class RepositoryItemTest {
   public static class Context {
 
     @Bean
-    public FileHolder baseDirectory() throws IOException {
-      return new FileHolder(Files.createTempDirectory("temp").toFile());
+    public TempFolder baseDirectory() {
+      return new TempFolder("rep");
     }
 
     @Bean
-    public IvySettings settings(FileHolder baseDirectory, IBiblioResolver resolver) {
+    public IvySettings settings(Path baseDirectory, IBiblioResolver resolver) {
       final IvySettings settings = new IvySettings();
-      settings.setBaseDir(baseDirectory.file);
-      settings.setDefaultCache(new File(baseDirectory.file, "cache"));
+      settings.setBaseDir(baseDirectory.toFile());
+      settings.setDefaultCache(new File(baseDirectory.toFile(), "cache"));
       settings.addResolver(resolver);
       settings.setDefaultResolver(resolver.getName());
       return settings;
