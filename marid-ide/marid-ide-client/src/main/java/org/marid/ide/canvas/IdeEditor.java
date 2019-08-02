@@ -23,6 +23,8 @@ package org.marid.ide.canvas;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.marid.ide.main.MainPane;
 import org.springframework.context.annotation.DependsOn;
@@ -30,11 +32,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @DependsOn("libraryPane")
-public class IdeCanvas extends Canvas {
+public class IdeEditor extends Canvas {
 
-  public IdeCanvas(MainPane mainPane) {
-    super(mainPane, SWT.NONE);
-    final var display = mainPane.getDisplay();
+  public IdeEditor(MainPane mainPane) {
+    super(mainPane, SWT.BORDER);
+
+    setLayout(new RowLayout());
+
+    final var display = getDisplay();
     setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
     addPaintListener(event -> {
@@ -45,5 +50,8 @@ public class IdeCanvas extends Canvas {
       event.gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
       event.gc.drawLine(0, 0, 50, 50);
     });
+
+    final var button = new Button(this, SWT.PUSH);
+    button.setText("ABC");
   }
 }

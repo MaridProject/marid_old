@@ -10,22 +10,25 @@ package org.marid.profile;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import org.marid.profile.event.IdeProfileOnAddProjectEvent;
 import org.marid.profile.exception.IdeProfileCloseException;
 import org.marid.project.IdeProject;
 import org.marid.project.IdeProjectContext;
 import org.marid.spring.ContextUtils;
 import org.marid.spring.events.ContextClosedListener;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -42,16 +45,16 @@ public final class IdeProfile implements AutoCloseable {
 
   private static final System.Logger LOGGER = System.getLogger(IdeProfile.class.getName());
 
-  private final IdeProfileDirectory directory;
+  private final Path directory;
   private final GenericApplicationContext context;
   private final Path maridDirectory;
   private final Path projectsDirectory;
   private final ConcurrentHashMap<String, IdeProject> projects = new ConcurrentHashMap<>();
 
-  public IdeProfile(IdeProfileDirectory directory, GenericApplicationContext context) throws IOException {
-    this.directory = directory;
+  public IdeProfile(GenericApplicationContext context) throws IOException {
+    this.directory = context.getBean("ideProfileDirectory", Path.class);
     this.context = context;
-    this.maridDirectory = directory.getDirectory().resolve("marid");
+    this.maridDirectory = directory.resolve("marid");
     this.projectsDirectory = maridDirectory.resolve("projects");
 
     Files.createDirectories(projectsDirectory);
@@ -67,17 +70,34 @@ public final class IdeProfile implements AutoCloseable {
     }
   }
 
+  public String getName() {
+    return directory.getFileName().toString();
+  }
+
+  public Path getMaridDirectory() {
+    return maridDirectory;
+  }
+
+  public Path getProjectsDirectory() {
+    return projectsDirectory;
+  }
+
   public IdeProject addProject(String name) {
     return projects.computeIfAbsent(name, projectName -> {
       final var directory = projectsDirectory.resolve(name);
-      if (!directory.startsWith(this.directory.getDirectory())) {
+      if (!directory.startsWith(this.directory)) {
         throw new IllegalArgumentException(name);
       }
       final var child = ContextUtils.context(context, (r, c) -> {
         r.register(IdeProjectContext.class);
-        r.registerBean(Path.class, "ideProjectDirectory", () -> directory);
-        c.getDefaultListableBeanFactory().registerSingleton("ideProjectDirectory", directory);
-        c.addApplicationListener((ContextClosedListener) event -> projects.remove(projectName));
+        c.getDefaultListableBeanFactory().registerSingleton("ideProjectName", projectName);
+        c.addApplicationListener(event -> {
+          if (event instanceof ContextClosedEvent) {
+            projects.remove(projectName);
+          } else if (event instanceof ContextRefreshedEvent) {
+            c.publishEvent(new IdeProfileOnAddProjectEvent(this, c.getBean(IdeProject.class)));
+          }
+        });
       });
       child.refresh();
       child.start();
@@ -97,7 +117,7 @@ public final class IdeProfile implements AutoCloseable {
 
   @Override
   public int hashCode() {
-    return directory.getDirectory().hashCode();
+    return directory.hashCode();
   }
 
   @Override
@@ -120,6 +140,11 @@ public final class IdeProfile implements AutoCloseable {
         exception.addSuppressed(e);
       }
     });
+    try {
+      context.close();
+    } catch (Throwable e) {
+      exception.addSuppressed(e);
+    }
     if (exception.getSuppressed().length > 0) {
       throw exception;
     }

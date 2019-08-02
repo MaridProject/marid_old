@@ -21,8 +21,9 @@ package org.marid.project;
  * #L%
  */
 
-import org.apache.ivy.Ivy;
 import org.marid.io.MaridFiles;
+import org.marid.profile.IdeProfile;
+import org.marid.profile.event.IdeProfileOnRemoveProjectEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -33,17 +34,23 @@ import java.nio.file.Path;
 public class IdeProject implements AutoCloseable {
 
   private final Path directory;
+  private final IdeProfile profile;
   private final GenericApplicationContext context;
-  private final Path ivyDirectory;
 
-  private Ivy ivy = new Ivy();
-
-  public IdeProject(IdeProjectDirectory directory, GenericApplicationContext context) throws Exception {
-    this.directory = directory.getDirectory();
+  public IdeProject(IdeProfile profile, GenericApplicationContext context) throws Exception {
+    this.profile = profile;
+    this.directory = profile.getProjectsDirectory().resolve(context.getBean("ideProjectName", String.class));
     this.context = context;
-    this.ivyDirectory = directory.getDirectory().resolve("ivy");
 
-    Files.createDirectories(ivyDirectory);
+    Files.createDirectories(directory);
+  }
+
+  public IdeProfile getProfile() {
+    return profile;
+  }
+
+  public String getName() {
+    return directory.getFileName().toString();
   }
 
   @Override
@@ -63,10 +70,12 @@ public class IdeProject implements AutoCloseable {
 
   @Override
   public String toString() {
-    return "Project(" + directory + ")";
+    return "Project(" + getName() + ")";
   }
 
   public void delete() {
+    context.publishEvent(new IdeProfileOnRemoveProjectEvent(profile, this));
+
     Throwable contextException = null;
     try {
       context.close();
