@@ -26,11 +26,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 
 @Configuration
 @ComponentScan
+@PropertySource({"classpath:/marid/meta.properties"})
 public class IdeContext {
 
   @Bean(destroyMethod = "")
