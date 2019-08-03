@@ -10,23 +10,23 @@ package org.marid.profile;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import org.marid.profile.event.IdeProfileOnAddProjectEvent;
+import org.marid.profile.event.AddProjectEvent;
 import org.marid.profile.exception.IdeProfileCloseException;
 import org.marid.project.IdeProject;
 import org.marid.project.IdeProjectContext;
 import org.marid.spring.ContextUtils;
-import org.marid.spring.events.ContextClosedListener;
+import org.marid.spring.scope.ResettableScope;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.GenericApplicationContext;
@@ -91,11 +91,12 @@ public final class IdeProfile implements AutoCloseable {
       final var child = ContextUtils.context(context, (r, c) -> {
         r.register(IdeProjectContext.class);
         c.getDefaultListableBeanFactory().registerSingleton("ideProjectName", projectName);
+        c.getDefaultListableBeanFactory().registerScope("ivy", new ResettableScope(getName() + "/" + projectName));
         c.addApplicationListener(event -> {
           if (event instanceof ContextClosedEvent) {
             projects.remove(projectName);
           } else if (event instanceof ContextRefreshedEvent) {
-            c.publishEvent(new IdeProfileOnAddProjectEvent(this, c.getBean(IdeProject.class)));
+            c.publishEvent(new AddProjectEvent(this, c.getBean(IdeProject.class)));
           }
         });
       });

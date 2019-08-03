@@ -23,24 +23,32 @@ package org.marid.project;
 
 import org.marid.io.MaridFiles;
 import org.marid.profile.IdeProfile;
-import org.marid.profile.event.IdeProfileOnRemoveProjectEvent;
+import org.marid.profile.event.RemoveProjectEvent;
+import org.marid.spring.scope.ResettableScope;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.lang.System.Logger.Level.ERROR;
+
 @Component
 public class IdeProject implements AutoCloseable {
 
+  private final System.Logger logger;
   private final Path directory;
   private final IdeProfile profile;
   private final GenericApplicationContext context;
 
   public IdeProject(IdeProfile profile, GenericApplicationContext context) throws Exception {
     this.profile = profile;
-    this.directory = profile.getProjectsDirectory().resolve(context.getBean("ideProjectName", String.class));
+
+    final var name = context.getBean("ideProjectName", String.class);
+
+    this.directory = profile.getProjectsDirectory().resolve(name);
     this.context = context;
+    this.logger = System.getLogger(profile.getName() + "/" + name);
 
     Files.createDirectories(directory);
   }
@@ -51,6 +59,18 @@ public class IdeProject implements AutoCloseable {
 
   public String getName() {
     return directory.getFileName().toString();
+  }
+
+  public void refresh() {
+    final var beanFactory = context.getBeanFactory();
+    final var scope = beanFactory.getRegisteredScope("ivy");
+    if (scope instanceof ResettableScope) {
+      try {
+        ((ResettableScope) scope).reset();
+      } catch (Throwable e) {
+        logger.log(ERROR, () -> "Unable to refresh " + scope, e);
+      }
+    }
   }
 
   @Override
@@ -74,7 +94,7 @@ public class IdeProject implements AutoCloseable {
   }
 
   public void delete() {
-    context.publishEvent(new IdeProfileOnRemoveProjectEvent(profile, this));
+    context.publishEvent(new RemoveProjectEvent(profile, this));
 
     Throwable contextException = null;
     try {

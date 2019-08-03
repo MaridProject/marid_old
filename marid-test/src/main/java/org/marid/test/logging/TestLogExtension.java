@@ -32,11 +32,10 @@ public class TestLogExtension implements BeforeAllCallback {
 
   @Override
   public void beforeAll(ExtensionContext context) {
-    final var logManager = LogManager.getLogManager();
     final var logger = Logger.getLogger("");
 
     if (Arrays.stream(logger.getHandlers()).noneMatch(h -> h instanceof TestLogHandler)) {
-      logManager.reset();
+      LogManager.getLogManager().reset();
       logger.addHandler(new TestLogHandler());
     }
   }

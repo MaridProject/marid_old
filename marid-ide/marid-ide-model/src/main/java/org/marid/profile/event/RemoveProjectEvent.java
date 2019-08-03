@@ -25,11 +25,11 @@ import org.marid.profile.IdeProfile;
 import org.marid.project.IdeProject;
 import org.marid.spring.events.PropagatedEvent;
 
-public class IdeProfileOnAddProjectEvent extends PropagatedEvent<IdeProfile> {
+public class RemoveProjectEvent extends PropagatedEvent<IdeProfile> {
 
   private final IdeProject project;
 
-  public IdeProfileOnAddProjectEvent(IdeProfile source, IdeProject project) {
+  public RemoveProjectEvent(IdeProfile source, IdeProject project) {
     super(source);
     this.project = project;
   }
