@@ -45,7 +45,7 @@ public class TestLogHandler extends Handler {
 
   @Override
   public void publish(LogRecord record) {
-    final var out = record.getLevel().intValue() > 800 ? System.err : System.out;
+    final var out = record.getLevel().intValue() > Level.INFO.intValue() ? System.err : System.out;
     synchronized ((PrintStream) out) {
       FORMATTER.formatTo(record.getInstant().atZone(ZoneId.systemDefault()), out);
       out.append(levelSym(record.getLevel())).append(' ').append(record.getLoggerName()).append(' ');
@@ -66,6 +66,8 @@ public class TestLogHandler extends Handler {
 
   @Override
   public void flush() {
+    System.out.flush();
+    System.err.flush();
   }
 
   @Override

@@ -1,6 +1,6 @@
 /*-
  * #%L
- * marid-ide-client
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -19,7 +19,7 @@
  * #L%
  */
 
-package org.marid.ivy;
+package org.marid.project.ivy.infrastructure;
 
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;

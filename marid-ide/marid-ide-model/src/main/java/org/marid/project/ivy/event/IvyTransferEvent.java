@@ -1,6 +1,8 @@
+package org.marid.project.ivy.event;
+
 /*-
  * #%L
- * marid-ide-client
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -19,22 +21,17 @@
  * #L%
  */
 
-package org.marid.ivy;
+import org.apache.ivy.plugins.repository.TransferEvent;
+import org.marid.project.IdeProject;
+import org.marid.spring.events.BroadcastEvent;
+import org.springframework.context.support.GenericApplicationContext;
 
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.lang.NonNull;
+public class IvyTransferEvent extends BroadcastEvent<IdeProject> {
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+  public final TransferEvent data;
 
-public class M2RepositoryExists implements Condition {
-
-  @Override
-  public boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
-    final Path path = Paths.get(System.getProperty("user.home"), ".m2", "repository");
-    return Files.isDirectory(path);
+  public IvyTransferEvent(GenericApplicationContext context, IdeProject source, TransferEvent data) {
+    super(context, source);
+    this.data = data;
   }
 }

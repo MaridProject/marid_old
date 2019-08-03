@@ -1,8 +1,6 @@
-package org.marid.spring.scope;
-
 /*-
  * #%L
- * marid-spring
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,16 +19,23 @@ package org.marid.spring.scope;
  * #L%
  */
 
-public class ScopeResetException extends Exception {
+package org.marid.project.ivy.infrastructure;
 
-  private final ResettableScope scope;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.lang.NonNull;
 
-  public ScopeResetException(ResettableScope scope) {
-    super("Unable to reset scope " + scope.getConversationId());
-    this.scope = scope;
-  }
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-  public ResettableScope getScope() {
-    return scope;
+public class M2RepositoryExists implements Condition {
+
+  public static final Path REPO =  Paths.get(System.getProperty("user.home"), ".m2", "repository");
+
+  @Override
+  public boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
+    return Files.isDirectory(REPO);
   }
 }

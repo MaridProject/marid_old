@@ -35,6 +35,8 @@ import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.marid.project.ivy.infrastructure.IvyCommonConfiguration;
+import org.marid.project.ivy.infrastructure.IvyLoggerAdapter;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.test.logging.TestLogExtension;
 import org.marid.test.spring.TempFolder;

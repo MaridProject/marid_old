@@ -38,6 +38,7 @@ public class IdeProject implements AutoCloseable {
 
   private final System.Logger logger;
   private final Path directory;
+  private final Path ivyDirectory;
   private final IdeProfile profile;
   private final GenericApplicationContext context;
 
@@ -47,10 +48,17 @@ public class IdeProject implements AutoCloseable {
     final var name = context.getBean("ideProjectName", String.class);
 
     this.directory = profile.getProjectsDirectory().resolve(name);
+
+    if (name.contains("/") || name.contains("\\") || !directory.startsWith(profile.getProjectsDirectory())) {
+      throw new IllegalStateException("Invalid project name: " + name);
+    }
+
     this.context = context;
     this.logger = System.getLogger(profile.getName() + "/" + name);
 
-    Files.createDirectories(directory);
+    this.ivyDirectory = directory.resolve("ivy");
+
+    Files.createDirectories(ivyDirectory);
   }
 
   public IdeProfile getProfile() {
@@ -59,6 +67,10 @@ public class IdeProject implements AutoCloseable {
 
   public String getName() {
     return directory.getFileName().toString();
+  }
+
+  public Path getIvyDirectory() {
+    return ivyDirectory;
   }
 
   public void refresh() {

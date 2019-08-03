@@ -1,8 +1,8 @@
-package org.marid.spring.scope;
+package org.marid.project.ivy.event;
 
 /*-
  * #%L
- * marid-spring
+ * marid-ide-model
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,16 +21,18 @@ package org.marid.spring.scope;
  * #L%
  */
 
-public class ScopeResetException extends Exception {
+import org.marid.project.IdeProject;
+import org.marid.spring.events.BroadcastEvent;
+import org.springframework.context.support.GenericApplicationContext;
 
-  private final ResettableScope scope;
+public class IvyProgressEvent extends BroadcastEvent<IdeProject> {
 
-  public ScopeResetException(ResettableScope scope) {
-    super("Unable to reset scope " + scope.getConversationId());
-    this.scope = scope;
-  }
+  public final boolean start;
+  public final String message;
 
-  public ResettableScope getScope() {
-    return scope;
+  public IvyProgressEvent(GenericApplicationContext context, IdeProject source, boolean start, String message) {
+    super(context, source);
+    this.start = start;
+    this.message = message;
   }
 }
