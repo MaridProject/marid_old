@@ -47,7 +47,6 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>true</filtering>
       </resource>
     </resources>
 
@@ -153,12 +152,12 @@
       <build>
         <resources>
           <resource>
-            <directory>src/development/resources</directory>
+            <directory>src/development/filtered-resources</directory>
             <filtering>true</filtering>
           </resource>
 
           <resource>
-            <directory>src/development/binary-resources</directory>
+            <directory>src/development/resources</directory>
             <filtering>false</filtering>
           </resource>
         </resources>
@@ -193,7 +192,6 @@
         <resources>
           <resource>
             <directory>src/release/resources</directory>
-            <filtering>true</filtering>
           </resource>
         </resources>
 

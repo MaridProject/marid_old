@@ -58,6 +58,7 @@ public class IvyContext {
   public FileSystemResolver localMavenResolver() {
     final var resolver = new FileSystemResolver();
     resolver.setM2compatible(true);
+    resolver.setLocal(true);
     resolver.addArtifactPattern(REPO + "/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]");
     resolver.addIvyPattern(REPO + "/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]");
     resolver.setName("maven-local");

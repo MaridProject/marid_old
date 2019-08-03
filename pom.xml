@@ -100,14 +100,12 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>true</filtering>
       </resource>
     </resources>
 
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
-        <filtering>true</filtering>
       </testResource>
     </testResources>
 
@@ -583,6 +581,44 @@
             </configuration>
           </plugin>
         </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>filtered-resources</id>
+
+      <activation>
+        <file>
+          <exists>src/main/filtered-resources</exists>
+        </file>
+      </activation>
+
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/filtered-resources</directory>
+            <filtering>true</filtering>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+
+    <profile>
+      <id>filtered-test-resources</id>
+
+      <activation>
+        <file>
+          <exists>src/test/filtered-resources</exists>
+        </file>
+      </activation>
+
+      <build>
+        <testResources>
+          <testResource>
+            <directory>src/test/filtered-resources</directory>
+            <filtering>true</filtering>
+          </testResource>
+        </testResources>
       </build>
     </profile>
   </profiles>
