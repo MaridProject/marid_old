@@ -23,12 +23,12 @@ package org.marid.project.ivy;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.marid.project.IdeProject;
 import org.marid.project.ivy.event.IvyTransferEvent;
 import org.marid.project.ivy.infrastructure.M2RepositoryExists;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
@@ -38,6 +38,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.marid.project.ivy.infrastructure.M2RepositoryExists.REPO;
 
@@ -53,7 +55,6 @@ public class IvyContext {
 
   @Bean
   @Conditional(M2RepositoryExists.class)
-  @Qualifier("local-maven-resolver")
   public FileSystemResolver localMavenResolver() {
     final var resolver = new FileSystemResolver();
     resolver.setM2compatible(true);
@@ -64,21 +65,36 @@ public class IvyContext {
   }
 
   @Bean
+  public IBiblioResolver remoteMavenResolver() {
+    final var resolver = new IBiblioResolver();
+    resolver.setM2compatible(true);
+    resolver.setUsepoms(true);
+    resolver.setName("maven-central");
+    return resolver;
+  }
+
+  @Bean
   @Scope("ivy")
   public Ivy ivy(IdeProject project,
                  EventManager eventManager,
-                 @Qualifier("local-maven-resolver") ObjectProvider<FileSystemResolver> localMavenResolver,
+                 List<DependencyResolver> dependencyResolvers,
                  IvyLogHandler logHandler) throws IOException, ParseException {
     final var ivy = new Ivy();
+
     ivy.setEventManager(eventManager);
     ivy.getLoggerEngine().setDefaultLogger(logHandler);
+
     final var ivyConfigFile = project.getIvyDirectory().resolve("ivy.xml");
     if (Files.isRegularFile(ivyConfigFile)) {
       ivy.configure(ivyConfigFile.toFile());
+      final var resolverNames = new HashSet<>(ivy.getSettings().getResolverNames());
+      dependencyResolvers.stream()
+          .filter(r -> !resolverNames.contains(r.getName()))
+          .forEach(ivy.getSettings()::addResolver);
     } else {
       ivy.bind();
+      dependencyResolvers.forEach(ivy.getSettings()::addResolver);
     }
-    localMavenResolver.ifAvailable(ivy.getSettings()::addResolver);
 
     return ivy;
   }
