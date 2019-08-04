@@ -23,8 +23,11 @@ package org.marid.project.ivy;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.plugins.resolver.BasicResolver;
+import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.marid.project.IdeProject;
 import org.marid.project.ivy.event.IvyTransferEvent;
@@ -33,15 +36,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
-import java.util.HashSet;
 import java.util.List;
-
-import static org.marid.project.ivy.infrastructure.M2RepositoryExists.REPO;
 
 @Component
 public class IvyContext {
@@ -54,24 +55,42 @@ public class IvyContext {
   }
 
   @Bean
-  @Conditional(M2RepositoryExists.class)
-  public FileSystemResolver localMavenResolver() {
-    final var resolver = new FileSystemResolver();
-    resolver.setM2compatible(true);
-    resolver.setLocal(true);
-    resolver.addArtifactPattern(REPO + "/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]");
-    resolver.addIvyPattern(REPO + "/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]");
-    resolver.setName("maven-local");
-    return resolver;
-  }
-
-  @Bean
+  @Order(1)
   public IBiblioResolver remoteMavenResolver() {
     final var resolver = new IBiblioResolver();
     resolver.setM2compatible(true);
     resolver.setUsepoms(true);
     resolver.setName("maven-central");
     return resolver;
+  }
+
+  @Bean
+  @Conditional(M2RepositoryExists.class)
+  @Order(2)
+  public IBiblioResolver localMavenResolver() {
+    final var resolver = new IBiblioResolver();
+    resolver.setM2compatible(true);
+    resolver.setUsepoms(true);
+    resolver.setName("maven-local");
+    resolver.setRoot(M2RepositoryExists.REPO.toUri().toString());
+    return resolver;
+  }
+
+  @Bean
+  public ResolveOptions resolveOptions() {
+    final var options = new ResolveOptions();
+    options.setTransitive(true);
+    options.setDownload(true);
+    options.setUseCacheOnly(false);
+    options.setCheckIfChanged(true);
+    return options;
+  }
+
+  @Bean
+  public RetrieveOptions retrieveOptions() {
+    final var options = new RetrieveOptions();
+    options.setDestArtifactPattern("lib/[artifact].[type]");
+    return options;
   }
 
   @Bean
@@ -85,16 +104,31 @@ public class IvyContext {
     ivy.setEventManager(eventManager);
     ivy.getLoggerEngine().setDefaultLogger(logHandler);
 
+    dependencyResolvers.stream()
+        .filter(BasicResolver.class::isInstance)
+        .map(BasicResolver.class::cast)
+        .forEach(resolver -> resolver.setEventManager(eventManager));
+
     final var ivyConfigFile = project.getIvyDirectory().resolve("ivy.xml");
     if (Files.isRegularFile(ivyConfigFile)) {
       ivy.configure(ivyConfigFile.toFile());
-      final var resolverNames = new HashSet<>(ivy.getSettings().getResolverNames());
-      dependencyResolvers.stream()
-          .filter(r -> !resolverNames.contains(r.getName()))
-          .forEach(ivy.getSettings()::addResolver);
     } else {
       ivy.bind();
-      dependencyResolvers.forEach(ivy.getSettings()::addResolver);
+    }
+
+    if (ivy.getSettings().getResolvers().isEmpty()) {
+      final var chainResolver = new ChainResolver();
+      chainResolver.setReturnFirst(true);
+      chainResolver.setEventManager(eventManager);
+      dependencyResolvers.forEach(chainResolver::add);
+      ivy.getSettings().addResolver(chainResolver);
+    }
+
+    ivy.getSettings().setBaseDir(project.getIvyDirectory().toFile());
+    ivy.getSettings().setDefaultCache(project.getIvyCacheDirectory().toFile());
+
+    if (ivy.getSettings().getDefaultResolver() == null) {
+      ivy.getSettings().setDefaultResolver(ivy.getSettings().getResolvers().iterator().next().getName());
     }
 
     return ivy;

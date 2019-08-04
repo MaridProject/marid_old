@@ -39,6 +39,7 @@ public class IdeProject implements AutoCloseable {
   private final System.Logger logger;
   private final Path directory;
   private final Path ivyDirectory;
+  private final Path ivyCacheDirectory;
   private final IdeProfile profile;
   private final GenericApplicationContext context;
 
@@ -57,8 +58,9 @@ public class IdeProject implements AutoCloseable {
     this.logger = System.getLogger(profile.getName() + "/" + name);
 
     this.ivyDirectory = directory.resolve("ivy");
+    this.ivyCacheDirectory = ivyDirectory.resolve("cache");
 
-    Files.createDirectories(ivyDirectory);
+    Files.createDirectories(ivyCacheDirectory);
   }
 
   public IdeProfile getProfile() {
@@ -71,6 +73,10 @@ public class IdeProject implements AutoCloseable {
 
   public Path getIvyDirectory() {
     return ivyDirectory;
+  }
+
+  public Path getIvyCacheDirectory() {
+    return ivyCacheDirectory;
   }
 
   public void refresh() {
