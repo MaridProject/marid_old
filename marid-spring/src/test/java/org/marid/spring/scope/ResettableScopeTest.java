@@ -24,7 +24,6 @@ package org.marid.spring.scope;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.spring.LoggingPostProcessor;
-import org.marid.test.logging.TestLogExtension;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextInitializer;
@@ -48,7 +47,7 @@ import static java.lang.System.Logger.Level.INFO;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("normal")
-@ExtendWith({TestLogExtension.class, SpringExtension.class})
+@ExtendWith({SpringExtension.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(initializers = {ResettableScopeTest.Initializer.class})
 class ResettableScopeTest {

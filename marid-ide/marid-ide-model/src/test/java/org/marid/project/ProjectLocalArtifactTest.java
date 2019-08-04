@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.profile.IdeProfileContext;
 import org.marid.spring.LoggingPostProcessor;
 import org.marid.spring.scope.ResettableScope;
-import org.marid.test.logging.TestLogExtension;
 import org.marid.test.spring.TempFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextInitializer;
@@ -40,7 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Tag("functional")
-@ExtendWith({TestLogExtension.class, SpringExtension.class})
+@ExtendWith({SpringExtension.class})
 @ContextConfiguration(initializers = {ProjectLocalArtifactTest.Initializer.class})
 class ProjectLocalArtifactTest {
 

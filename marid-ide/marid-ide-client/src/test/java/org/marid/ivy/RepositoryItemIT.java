@@ -38,7 +38,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.marid.project.ivy.infrastructure.IvyCommonConfiguration;
 import org.marid.project.ivy.infrastructure.IvyLoggerAdapter;
 import org.marid.spring.LoggingPostProcessor;
-import org.marid.test.logging.TestLogExtension;
 import org.marid.test.spring.TempFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +51,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith({TestLogExtension.class, SpringExtension.class})
+@ExtendWith({SpringExtension.class})
 @ContextConfiguration
 @Tag("integration")
 public class RepositoryItemIT {
