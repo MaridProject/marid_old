@@ -56,6 +56,8 @@ import static java.lang.System.Logger.Level.INFO;
 class ProjectLocalArtifactTest {
 
   private static final System.Logger LOGGER = System.getLogger(ProjectLocalArtifactTest.class.getName());
+  private static final System.Logger IVY = System.getLogger("ivy");
+  private static final System.Logger PROGRESS = System.getLogger("progress");
 
   @Autowired
   private IvyRetriever ivyRetriever;
@@ -65,7 +67,8 @@ class ProjectLocalArtifactTest {
 
   @Test
   void remoteArtifactFetch() throws IOException, ParseException {
-    final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("com.amazonaws", "aws-java-sdk-ssm", "1.11.301")));;
+    final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("com.amazonaws", "aws-java-sdk-ssm", "1.11.301")));
+    System.out.println(result);
   }
 
   @Test
@@ -73,6 +76,7 @@ class ProjectLocalArtifactTest {
     LOGGER.log(INFO, "Implementation version: {0}", version);
 
     final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("org.marid", "marid-util", version)));
+    System.out.println(result);
   }
 
   @Configuration
@@ -93,14 +97,14 @@ class ProjectLocalArtifactTest {
     @EventListener
     public void onProgress(IvyProgressEvent event) {
       if (!event.message.isEmpty()) {
-        LOGGER.log(INFO, event.message);
+        PROGRESS.log(INFO, event.message);
       }
     }
 
     @EventListener
     public void onLog(IvyLogEvent event) {
       if (!event.message.isEmpty()) {
-        LOGGER.log(event.level, event.message);
+        IVY.log(event.level, event.message);
       }
     }
   }

@@ -53,7 +53,9 @@ public class IvyRetriever {
   }
 
   public synchronized IvyResult retrieve(List<ModuleRevisionId> revisionIds) throws IOException, ParseException {
+    final var ivy = this.ivy.getObject();
     final int index = indexAllocator.freeIndex();
+    ivy.pushContext();
     try {
       final var projectModuleRevisionId = ModuleRevisionId.newInstance("org.marid.dynamic", "project" + index, "1.0");
       final var moduleDescriptor = DefaultModuleDescriptor.newDefaultInstance(projectModuleRevisionId);
@@ -61,11 +63,10 @@ public class IvyRetriever {
       revisionIds.forEach(revisionId -> {
         final boolean snapshot = revisionId.getRevision().endsWith("-SNAPSHOT");
         final var dependencyDescriptor = new DefaultDependencyDescriptor(moduleDescriptor, revisionId, false, snapshot, true);
-        dependencyDescriptor.addDependencyConfiguration("default", "compile");
+        dependencyDescriptor.addDependencyConfiguration("default", "runtime");
+        dependencyDescriptor.addDependencyConfiguration("default", "master");
         moduleDescriptor.addDependency(dependencyDescriptor);
       });
-
-      final var ivy = this.ivy.getObject();
 
       final ResolveReport resolveReport = ivy.resolve(moduleDescriptor, resolveOptions);
       final RetrieveReport retrieveReport = ivy.retrieve(resolveReport.getModuleDescriptor().getModuleRevisionId(), retrieveOptions);
@@ -73,6 +74,7 @@ public class IvyRetriever {
       return new IvyResult(resolveReport, retrieveReport);
     } finally {
       indexAllocator.free(index);
+      ivy.popContext();
     }
   }
 }
