@@ -46,13 +46,6 @@
       <artifactId>marid-runtime</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>

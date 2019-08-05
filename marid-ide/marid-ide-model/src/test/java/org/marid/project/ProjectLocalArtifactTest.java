@@ -74,9 +74,9 @@ class ProjectLocalArtifactTest {
   void remoteArtifactFetch() throws IOException, ParseException {
     final var result = ivyRetriever.retrieve(ModuleRevisionId.newInstance("com.amazonaws", "aws-java-sdk-ssm", "1.11.301"));
 
-    assertFalse(result.retrieveReport.getCopiedFiles().isEmpty());
+    assertFalse(result.retrieveReport.getRetrievedFiles().isEmpty());
 
-    for (final var file : result.retrieveReport.getCopiedFiles()) {
+    for (final var file : result.retrieveReport.getRetrievedFiles()) {
       assertTrue(file.toPath().startsWith(project.getIvyDirectory().resolve("lib")));
       assertTrue(Files.isRegularFile(file.toPath()));
     }
@@ -88,9 +88,9 @@ class ProjectLocalArtifactTest {
 
     final var result = ivyRetriever.retrieve(ModuleRevisionId.newInstance("org.marid", "marid-util", version));
 
-    assertFalse(result.retrieveReport.getCopiedFiles().isEmpty());
+    assertFalse(result.retrieveReport.getRetrievedFiles().isEmpty());
 
-    for (final var file : result.retrieveReport.getCopiedFiles()) {
+    for (final var file : result.retrieveReport.getRetrievedFiles()) {
       assertTrue(file.toPath().startsWith(project.getIvyDirectory().resolve("lib")));
       assertTrue(Files.isRegularFile(file.toPath()));
     }
