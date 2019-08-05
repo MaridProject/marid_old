@@ -22,6 +22,7 @@ package org.marid.project;
  */
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,10 +46,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.List;
 
 import static java.lang.System.Logger.Level.INFO;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("functional")
 @ExtendWith({SpringExtension.class})
@@ -65,10 +69,19 @@ class ProjectLocalArtifactTest {
   @Value("${implementation.version}")
   private String version;
 
+  @Autowired
+  private IdeProject project;
+
   @Test
   void remoteArtifactFetch() throws IOException, ParseException {
     final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("com.amazonaws", "aws-java-sdk-ssm", "1.11.301")));
-    System.out.println(result);
+
+    assertFalse(result.retrieveReport.getCopiedFiles().isEmpty());
+
+    for (final var file : result.retrieveReport.getCopiedFiles()) {
+      assertTrue(file.toPath().startsWith(project.getIvyDirectory().resolve("lib")));
+      assertTrue(Files.isRegularFile(file.toPath()));
+    }
   }
 
   @Test
@@ -76,7 +89,13 @@ class ProjectLocalArtifactTest {
     LOGGER.log(INFO, "Implementation version: {0}", version);
 
     final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("org.marid", "marid-util", version)));
-    System.out.println(result);
+
+    assertFalse(result.retrieveReport.getCopiedFiles().isEmpty());
+
+    for (final var file : result.retrieveReport.getCopiedFiles()) {
+      assertTrue(file.toPath().startsWith(project.getIvyDirectory().resolve("lib")));
+      assertTrue(Files.isRegularFile(file.toPath()));
+    }
   }
 
   @Configuration
