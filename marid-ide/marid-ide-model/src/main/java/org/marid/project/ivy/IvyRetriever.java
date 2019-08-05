@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -60,13 +61,13 @@ public class IvyRetriever {
       final var projectModuleRevisionId = ModuleRevisionId.newInstance("org.marid.dynamic", "project" + index, "1.0");
       final var moduleDescriptor = DefaultModuleDescriptor.newDefaultInstance(projectModuleRevisionId);
 
-      revisionIds.forEach(revisionId -> {
+      for (final var revisionId : revisionIds) {
         final boolean snapshot = revisionId.getRevision().endsWith("-SNAPSHOT");
         final var dependencyDescriptor = new DefaultDependencyDescriptor(moduleDescriptor, revisionId, false, snapshot, true);
         dependencyDescriptor.addDependencyConfiguration("default", "runtime");
         dependencyDescriptor.addDependencyConfiguration("default", "master");
         moduleDescriptor.addDependency(dependencyDescriptor);
-      });
+      }
 
       final ResolveReport resolveReport = ivy.resolve(moduleDescriptor, resolveOptions);
       final RetrieveReport retrieveReport = ivy.retrieve(resolveReport.getModuleDescriptor().getModuleRevisionId(), retrieveOptions);
@@ -76,5 +77,9 @@ public class IvyRetriever {
       indexAllocator.free(index);
       ivy.popContext();
     }
+  }
+
+  public IvyResult retrieve(ModuleRevisionId... ids) throws IOException, ParseException {
+    return retrieve(Arrays.asList(ids));
   }
 }

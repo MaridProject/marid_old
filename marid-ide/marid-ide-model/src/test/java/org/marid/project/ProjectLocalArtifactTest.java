@@ -22,7 +22,6 @@ package org.marid.project;
  */
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +47,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
-import java.util.List;
 
 import static java.lang.System.Logger.Level.INFO;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -74,7 +72,7 @@ class ProjectLocalArtifactTest {
 
   @Test
   void remoteArtifactFetch() throws IOException, ParseException {
-    final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("com.amazonaws", "aws-java-sdk-ssm", "1.11.301")));
+    final var result = ivyRetriever.retrieve(ModuleRevisionId.newInstance("com.amazonaws", "aws-java-sdk-ssm", "1.11.301"));
 
     assertFalse(result.retrieveReport.getCopiedFiles().isEmpty());
 
@@ -88,7 +86,7 @@ class ProjectLocalArtifactTest {
   void localArtifactFetch() throws IOException, ParseException {
     LOGGER.log(INFO, "Implementation version: {0}", version);
 
-    final var result = ivyRetriever.retrieve(List.of(ModuleRevisionId.newInstance("org.marid", "marid-util", version)));
+    final var result = ivyRetriever.retrieve(ModuleRevisionId.newInstance("org.marid", "marid-util", version));
 
     assertFalse(result.retrieveReport.getCopiedFiles().isEmpty());
 
