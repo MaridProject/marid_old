@@ -40,8 +40,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -132,5 +135,22 @@ public class IvyContext {
     }
 
     return ivy;
+  }
+
+  @Bean
+  @Scope("ivy")
+  public URLClassLoader ivyClassLoader(IdeProject project) throws IOException {
+    final var list = new ArrayList<URL>();
+    final var lib = project.getIvyDirectory().resolve("lib");
+    if (Files.isDirectory(lib)) {
+      try (final var stream = Files.newDirectoryStream(lib, "*.jar")) {
+        for (final var file: stream) {
+          list.add(file.toUri().toURL());
+        }
+      }
+      return new URLClassLoader(list.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
+    } else {
+      return new URLClassLoader(new URL[0], Thread.currentThread().getContextClassLoader());
+    }
   }
 }
