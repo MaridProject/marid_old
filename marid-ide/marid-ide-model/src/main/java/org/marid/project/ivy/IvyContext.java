@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,18 +57,8 @@ public class IvyContext {
   }
 
   @Bean
-  @Order(1)
-  public IBiblioResolver remoteMavenResolver() {
-    final var resolver = new IBiblioResolver();
-    resolver.setM2compatible(true);
-    resolver.setUsepoms(true);
-    resolver.setName("maven-central");
-    return resolver;
-  }
-
-  @Bean
   @Conditional(M2RepositoryExists.class)
-  @Order(2)
+  @Order(-2)
   public IBiblioResolver localMavenResolver() {
     final var resolver = new IBiblioResolver();
     resolver.setM2compatible(true);
@@ -77,6 +66,16 @@ public class IvyContext {
     resolver.setName("maven-local");
     resolver.setUseMavenMetadata(false);
     resolver.setRoot(M2RepositoryExists.REPO.toUri().toString());
+    return resolver;
+  }
+
+  @Bean
+  @Order(-1)
+  public IBiblioResolver remoteMavenResolver() {
+    final var resolver = new IBiblioResolver();
+    resolver.setM2compatible(true);
+    resolver.setUsepoms(true);
+    resolver.setName("maven-central");
     return resolver;
   }
 
@@ -99,28 +98,19 @@ public class IvyContext {
 
   @Bean
   @Scope("ivy")
-  public Ivy ivy(IdeProject project,
-                 EventManager eventManager,
-                 List<DependencyResolver> dependencyResolvers,
-                 IvyLogHandler logHandler) throws IOException, ParseException {
+  public Ivy ivy(IdeProject project, EventManager eventManager, List<DependencyResolver> dependencyResolvers, IvyLogHandler logHandler) {
     final var ivy = new Ivy();
 
     ivy.setEventManager(eventManager);
     ivy.getLoggerEngine().setDefaultLogger(logHandler);
 
-    final var ivyConfigFile = project.getIvyDirectory().resolve("ivy.xml");
-    if (Files.isRegularFile(ivyConfigFile)) {
-      ivy.configure(ivyConfigFile.toFile());
-    } else {
-      ivy.bind();
-    }
+    ivy.bind();
 
-    if (ivy.getSettings().getResolvers().isEmpty()) {
-      final var chainResolver = new ChainResolver();
-      chainResolver.setReturnFirst(true);
-      dependencyResolvers.forEach(chainResolver::add);
-      ivy.getSettings().addResolver(chainResolver);
-    }
+    final var chainResolver = new ChainResolver();
+    chainResolver.setReturnFirst(true);
+    chainResolver.setName("main");
+    dependencyResolvers.forEach(chainResolver::add);
+    ivy.getSettings().addResolver(chainResolver);
 
     ivy.getSettings().setBaseDir(project.getIvyDirectory().toFile());
     ivy.getSettings().setDefaultCache(project.getIvyCacheDirectory().toFile());
@@ -130,9 +120,7 @@ public class IvyContext {
         .map(BasicResolver.class::cast)
         .forEach(resolver -> resolver.setEventManager(eventManager));
 
-    if (ivy.getSettings().getDefaultResolver() == null) {
-      ivy.getSettings().setDefaultResolver(ivy.getSettings().getResolvers().iterator().next().getName());
-    }
+    ivy.getSettings().setDefaultResolver("main");
 
     return ivy;
   }
