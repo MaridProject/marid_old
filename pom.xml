@@ -270,6 +270,16 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
           <version>2.0.0</version>
+          <configuration>
+            <acceptPomPackaging>false</acceptPomPackaging>
+            <organizeLicensesByDependencies>true</organizeLicensesByDependencies>
+            <emptyLineAfterHeader>true</emptyLineAfterHeader>
+            <roots>src/main/java,src/test/java,src/development/java,src/release/java</roots>
+            <canUpdateDescription>true</canUpdateDescription>
+            <canUpdateLicense>true</canUpdateLicense>
+            <canUpdateCopyright>true</canUpdateCopyright>
+            <ignoreNoFileToScan>true</ignoreNoFileToScan>
+          </configuration>
         </plugin>
 
         <plugin>
@@ -329,15 +339,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <organizeLicensesByDependencies>true</organizeLicensesByDependencies>
-          <emptyLineAfterHeader>true</emptyLineAfterHeader>
-          <roots>src/main/java,src/test/java,src/development/java,src/release/java</roots>
-          <canUpdateDescription>true</canUpdateDescription>
-          <canUpdateLicense>true</canUpdateLicense>
-          <canUpdateCopyright>true</canUpdateCopyright>
-        </configuration>
-        <inherited>true</inherited>
       </plugin>
 
       <plugin>
