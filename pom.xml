@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.marid</groupId>
@@ -9,8 +8,19 @@
   <packaging>pom</packaging>
 
   <name>marid</name>
-  <url>http://sf.net/projects/marid</url>
   <description>Data acquisition and visualization system</description>
+  <url>http://sf.net/projects/marid</url>
+  <inceptionYear>2012</inceptionYear>
+  <organization>
+    <name>MARID software development group</name>
+    <url>http://marid.sf.net</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU Affero General Public License version 3.0</name>
+      <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+    </license>
+  </licenses>
 
   <developers>
     <developer>
@@ -23,6 +33,40 @@
       </roles>
     </developer>
   </developers>
+
+  <modules>
+    <module>marid-test</module>
+    <module>marid-services</module>
+    <module>marid-util</module>
+    <module>marid-runtime</module>
+    <module>marid-spring</module>
+    <module>marid-ide</module>
+    <module>marid-bom</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:https://github.com/MaridProject/marid.git</connection>
+    <developerConnection>scm:git:https://github.com/MaridProject/marid.git</developerConnection>
+    <url>http://sf.net/p/marid/code</url>
+    <tag>HEAD</tag>
+  </scm>
+  <issueManagement>
+    <system>Tickets</system>
+    <url>http://sourceforge.net/p/marid/tickets</url>
+  </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>marid-web</id>
+      <name>web</name>
+      <url>sftp://frs.sf.net/home/project-web/marid/htdocs</url>
+    </site>
+
+    <repository>
+      <id>${repo-id}</id>
+      <name>${repo-name}</name>
+      <url>${repo-url}</url>
+    </repository>
+  </distributionManagement>
 
   <properties>
     <project.encoding>UTF-8</project.encoding>
@@ -44,71 +88,124 @@
     <license.licenseName>agpl_v3</license.licenseName>
   </properties>
 
-  <scm>
-    <connection>scm:git:https://github.com/MaridProject/marid.git</connection>
-    <developerConnection>scm:git:https://github.com/MaridProject/marid.git</developerConnection>
-    <url>http://sf.net/p/marid/code</url>
-    <tag>HEAD</tag>
-  </scm>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-parent</artifactId>
+        <version>1.7.26</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
-  <distributionManagement>
-    <site>
-      <id>marid-web</id>
-      <name>web</name>
-      <url>sftp://frs.sf.net/home/project-web/marid/htdocs</url>
-    </site>
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>1.3.2</version>
+      </dependency>
 
-    <repository>
-      <id>${repo-id}</id>
-      <name>${repo-name}</name>
-      <url>${repo-url}</url>
-    </repository>
-  </distributionManagement>
+      <dependency>
+        <groupId>org.objenesis</groupId>
+        <artifactId>objenesis</artifactId>
+        <version>3.0.1</version>
+      </dependency>
 
-  <licenses>
-    <license>
-      <name>GNU Affero General Public License version 3.0</name>
-      <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
-    </license>
-  </licenses>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.9.9</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
-  <modules>
-    <module>marid-test</module>
-    <module>marid-services</module>
-    <module>marid-util</module>
-    <module>marid-runtime</module>
-    <module>marid-spring</module>
-    <module>marid-ide</module>
-    <module>marid-bom</module>
-  </modules>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>5.1.9.RELEASE</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.pac4j</groupId>
+        <artifactId>pac4j</artifactId>
+        <version>3.7.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jetbrains</groupId>
+        <artifactId>annotations</artifactId>
+        <version>17.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>3.0.2</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>1.9.15</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy-agent</artifactId>
+        <version>1.9.14</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.5.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.threads</groupId>
+        <artifactId>jboss-threads</artifactId>
+        <version>2.3.3.Final</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.xnio</groupId>
+        <artifactId>xnio-all</artifactId>
+        <version>3.7.2.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+    </dependency>
+  </dependencies>
 
   <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh</artifactId>
-        <version>3.3.3</version>
-      </extension>
-
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh-external</artifactId>
-        <version>3.3.3</version>
-      </extension>
-    </extensions>
-
     <resources>
       <resource>
         <directory>src/main/resources</directory>
       </resource>
     </resources>
-
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
       </testResource>
     </testResources>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -283,6 +380,12 @@
         </plugin>
 
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>tidy-maven-plugin</artifactId>
+          <version>1.1.0</version>
+        </plugin>
+
+        <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M3</version>
           <configuration>
@@ -317,7 +420,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -342,130 +444,28 @@
       </plugin>
 
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>tidy-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh</artifactId>
+        <version>3.3.3</version>
+      </extension>
+
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>3.3.3</version>
+      </extension>
+    </extensions>
   </build>
-
-  <organization>
-    <name>MARID software development group</name>
-    <url>http://marid.sf.net</url>
-  </organization>
-
-  <inceptionYear>2012</inceptionYear>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-parent</artifactId>
-        <version>1.7.26</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.annotation</groupId>
-        <artifactId>javax.annotation-api</artifactId>
-        <version>1.3.2</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.objenesis</groupId>
-        <artifactId>objenesis</artifactId>
-        <version>3.0.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.jackson</groupId>
-        <artifactId>jackson-bom</artifactId>
-        <version>2.9.9</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-framework-bom</artifactId>
-        <version>5.1.9.RELEASE</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.pac4j</groupId>
-        <artifactId>pac4j</artifactId>
-        <version>3.7.0</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jetbrains</groupId>
-        <artifactId>annotations</artifactId>
-        <version>17.0.0</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>com.google.code.findbugs</groupId>
-        <artifactId>jsr305</artifactId>
-        <version>3.0.2</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>net.bytebuddy</groupId>
-        <artifactId>byte-buddy</artifactId>
-        <version>1.9.15</version>
-      </dependency>
-
-      <dependency>
-        <groupId>net.bytebuddy</groupId>
-        <artifactId>byte-buddy-agent</artifactId>
-        <version>1.9.14</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>5.5.0</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.threads</groupId>
-        <artifactId>jboss-threads</artifactId>
-        <version>2.3.3.Final</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.xnio</groupId>
-        <artifactId>xnio-all</artifactId>
-        <version>3.7.2.Final</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>jsr305</artifactId>
-    </dependency>
-  </dependencies>
-
-  <issueManagement>
-    <system>Tickets</system>
-    <url>http://sourceforge.net/p/marid/tickets</url>
-  </issueManagement>
 
   <profiles>
     <profile>
