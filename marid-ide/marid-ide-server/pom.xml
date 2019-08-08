@@ -9,10 +9,6 @@
 
   <artifactId>marid-ide-server</artifactId>
 
-  <properties>
-    <license.licenseName>epl_v1</license.licenseName>
-  </properties>
-
   <dependencies>
     <!-- web -->
     <dependency>
