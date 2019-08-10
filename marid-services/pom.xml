@@ -15,6 +15,7 @@
     <module>marid-api</module>
     <module>marid-proto</module>
     <module>marid-db</module>
+    <module>marid-racks</module>
   </modules>
 
   <dependencyManagement>

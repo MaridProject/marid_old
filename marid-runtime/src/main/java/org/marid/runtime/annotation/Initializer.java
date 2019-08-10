@@ -1,6 +1,8 @@
+package org.marid.runtime.annotation;
+
 /*-
  * #%L
- * marid-db
+ * marid-runtime
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -19,32 +21,18 @@
  * #L%
  */
 
-package org.hsqldb.jdbc;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.hsqldb.Database;
-import org.jetbrains.annotations.NotNull;
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Initializer {
 
-import java.sql.SQLException;
+  String title();
 
-import static java.util.logging.Level.SEVERE;
-import static org.marid.logging.Log.log;
+  String description();
 
-/**
- * @author Dmitry Ovchinnikov.
- */
-public class JDBCSessionConnection extends JDBCConnection {
-
-  public JDBCSessionConnection(@NotNull Database database, @NotNull String schema) throws SQLException {
-    super(database.getSessionManager().newSysSession());
-    setSchema(schema);
-  }
-
-  @Override
-  public synchronized void close() {
-    try {
-      super.close();
-    } catch (Throwable x) {
-      log(SEVERE, "Unable to close session id={0}", x, getSession().getId());
-    }
-  }
+  String icon();
 }
