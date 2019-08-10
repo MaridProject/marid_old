@@ -146,10 +146,11 @@ public final class Deployment implements AutoCloseable {
       }
       throw exception;
     }
+    close();
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
     final var exception = new DeploymentCloseException(this);
 
     for (final var it = racks.descendingIterator(); it.hasNext(); ) {

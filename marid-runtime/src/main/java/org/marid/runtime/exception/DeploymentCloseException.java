@@ -23,7 +23,7 @@ package org.marid.runtime.exception;
 
 import org.marid.runtime.model.Deployment;
 
-public class DeploymentCloseException extends Exception {
+public class DeploymentCloseException extends RuntimeException {
 
   private final Deployment deployment;
 
