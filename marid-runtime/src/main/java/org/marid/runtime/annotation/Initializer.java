@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Initializer {
 
-  String title();
+  String title() default "";
 
-  String description();
+  String description() default "";
 
-  String icon();
+  String icon() default "";
 }

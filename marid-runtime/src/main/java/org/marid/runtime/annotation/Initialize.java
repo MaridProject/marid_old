@@ -28,11 +28,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Destroyer {
+public @interface Initialize {
 
-  String title() default "";
-
-  String description() default "";
-
-  String icon() default "";
+  int order();
 }

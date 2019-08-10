@@ -1,8 +1,8 @@
-package org.marid.runtime.annotation;
+package org.marid.racks.collection;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-racks
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,18 +21,18 @@ package org.marid.runtime.annotation;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.marid.runtime.annotation.Input;
+import org.marid.runtime.annotation.Rack;
+import org.marid.runtime.model.AbstractRack;
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Destroyer {
+import java.util.ArrayList;
+import java.util.Arrays;
 
-  String title() default "";
+@Rack(title = "Array list")
+public class ArrayListRack<E> extends AbstractRack<ArrayList<E>> {
 
-  String description() default "";
-
-  String icon() default "";
+  @SafeVarargs
+  public ArrayListRack(@Input(code = "+") E... element) {
+    super(() -> new ArrayList<>(Arrays.asList(element)));
+  }
 }

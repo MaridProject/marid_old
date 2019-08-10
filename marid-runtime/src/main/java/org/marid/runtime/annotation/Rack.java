@@ -30,15 +30,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Rack {
 
-  String title();
+  String title() default "";
 
-  String description();
+  String description() default "";
 
-  String icon();
+  String icon() default "";
 
-  String version();
+  String version() default "";
 
-  String author();
+  String author() default "";
 
-  String authorEmail();
+  String authorEmail() default "";
 }

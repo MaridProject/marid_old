@@ -30,11 +30,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Output {
 
-  String code();
+  String code() default "";
 
-  String title();
+  String title() default "";
 
-  String description();
+  String description() default "";
 
-  String icon();
+  String icon() default "";
 }
