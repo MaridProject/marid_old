@@ -1,4 +1,4 @@
-package org.marid.runtime.exception;
+package org.marid.runtime.model;
 
 /*-
  * #%L
@@ -21,5 +21,9 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-public class ContextCloseException extends Exception {
+import java.util.List;
+
+public interface RackProvider<E> {
+
+  Rack<E> getRack(List<String> args);
 }

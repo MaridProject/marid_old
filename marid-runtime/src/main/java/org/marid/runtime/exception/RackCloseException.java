@@ -23,12 +23,12 @@ package org.marid.runtime.exception;
 
 import org.marid.runtime.model.Rack;
 
-public class RackCloseException extends Exception {
+public class RackCloseException extends RuntimeException {
 
   private final Rack<?> rack;
 
   public RackCloseException(Rack<?> rack) {
-    super("Unable to close " + rack.getClass().getName());
+    super("Unable to close " + rack.caller.getName());
     this.rack = rack;
   }
 

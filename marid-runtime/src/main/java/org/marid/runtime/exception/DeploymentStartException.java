@@ -21,15 +21,18 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.model.Context;
-import org.marid.runtime.model.Rack;
+import org.marid.runtime.model.Deployment;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+public class DeploymentStartException extends RuntimeException {
 
-public class RackCircularReferenceException extends RackCreationException {
+  private final Deployment deployment;
 
-  public RackCircularReferenceException(Context context, Class<? extends Rack> type, Class<?>... passed) {
-    super(context, type, Arrays.stream(passed).map(Class::getName).collect(Collectors.joining(",", "Circular reference: [", "]")));
+  public DeploymentStartException(Deployment deployment, Throwable e) {
+    super("Unable to start " + deployment, e);
+    this.deployment = deployment;
+  }
+
+  public Deployment getDeployment() {
+    return deployment;
   }
 }

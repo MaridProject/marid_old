@@ -21,29 +21,20 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.model.Context;
-import org.marid.runtime.model.Rack;
-
 public class RackCreationException extends RuntimeException {
 
-  private final Context context;
-  private final Class<? extends Rack> type;
+  private final Class<?> type;
 
-  public RackCreationException(Context context, Class<? extends Rack> type, String message, Throwable cause) {
-    super(type.getName() + ": " + message, cause);
-    this.context = context;
+  public RackCreationException(Class<?> type, Throwable cause) {
+    super(type.getName(), cause);
     this.type = type;
   }
 
-  public RackCreationException(Context context, Class<? extends Rack> type, String message) {
-    this(context, type, message, null);
+  public RackCreationException(Class<?> type) {
+    this(type, null);
   }
 
-  public Context getContext() {
-    return context;
-  }
-
-  public Class<? extends Rack> getType() {
+  public Class<?> getType() {
     return type;
   }
 }

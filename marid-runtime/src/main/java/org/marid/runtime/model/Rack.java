@@ -21,48 +21,62 @@ package org.marid.runtime.model;
  * #L%
  */
 
-import org.marid.runtime.annotation.Destructor;
 import org.marid.runtime.exception.RackCloseException;
+import org.marid.runtime.exception.RackCreationException;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public abstract class Rack<E> implements AutoCloseable {
+public final class Rack<E> implements AutoCloseable {
 
-  private final Context context;
+  private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
-  protected Rack(Context context) {
-    this.context = context;
+  public final Class<?> caller;
+  public final E instance;
+  private final LinkedList<Consumer<E>> destroyers = new LinkedList<>();
+
+  @SafeVarargs
+  public Rack(Supplier<E> supplier, Consumer<E>... configurers) {
+    this.caller = STACK_WALKER.getCallerClass();
+
+    try {
+      this.instance = supplier.get();
+    } catch (Throwable e) {
+      throw new RackCreationException(caller, e);
+    }
+
+    try {
+      for (final var configurer : configurers) {
+        configurer.accept(instance);
+      }
+    } catch (Throwable e) {
+      try {
+        close();
+      } catch (Throwable ce) {
+        e.addSuppressed(ce);
+      }
+      throw new RackCreationException(caller, e);
+    }
   }
 
-  public abstract E get();
+  public Rack<E> withDestroyer(Consumer<E> destroyer) {
+    destroyers.add(destroyer);
+    return this;
+  }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
     final var exception = new RackCloseException(this);
 
-    Arrays.stream(getClass().getMethods())
-        .filter(m -> m.isAnnotationPresent(Destructor.class))
-        .filter(AccessibleObject::trySetAccessible)
-        .sorted(Comparator.comparingInt(m -> m.getAnnotation(Destructor.class).order()))
-        .forEachOrdered(m -> {
-          final var argTypes = m.getParameterTypes();
-          try {
-            final var args = new Object[argTypes.length];
-            for (int i = 0; i < args.length; i++) {
-              final var arg = context.getRack(argTypes[i].asSubclass(Rack.class));
-              args[i] = arg;
-            }
-            m.invoke(this, args);
-          } catch (InvocationTargetException e) {
-            exception.addSuppressed(e.getTargetException());
-          } catch (Throwable e) {
-            exception.addSuppressed(e);
-          }
-        });
-
+    destroyers.removeIf(d -> {
+      try {
+        d.accept(instance);
+      } catch (Throwable e) {
+        exception.addSuppressed(e);
+      }
+      return true;
+    });
 
     if (exception.getSuppressed().length > 0) {
       throw exception;
