@@ -25,6 +25,7 @@ import org.marid.runtime.exception.RackCloseException;
 import org.marid.runtime.exception.RackCreationException;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public final class Rack<E> implements AutoCloseable {
 
@@ -32,11 +33,11 @@ public final class Rack<E> implements AutoCloseable {
 
   public final Class<?> caller;
   public final E instance;
-  private final LinkedList<RackInstanceConsumer<E>> destroyers = new LinkedList<>();
+  private final LinkedList<RackInstanceConsumer<E>> destroyers;
 
-  @SafeVarargs
-  public Rack(RackInstanceSupplier<E> supplier, RackInstanceConsumer<E>... configurers) {
+  public Rack(RackInstanceSupplier<E> supplier, List<RackInstanceConsumer<E>> configurers, List<RackInstanceConsumer<E>> destroyers) {
     this.caller = STACK_WALKER.getCallerClass();
+    this.destroyers = new LinkedList<>(destroyers);
 
     Deployment.getDeployment().racks.add(this);
 
@@ -58,11 +59,6 @@ public final class Rack<E> implements AutoCloseable {
       }
       throw new RackCreationException(caller, e);
     }
-  }
-
-  public Rack<E> withDestroyer(RackInstanceConsumer<E> destroyer) {
-    destroyers.add(destroyer);
-    return this;
   }
 
   @Override
