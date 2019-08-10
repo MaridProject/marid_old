@@ -29,6 +29,41 @@ class CellarTest {
 
   @Test
   void test() {
+  }
 
+  private interface A {
+
+    int iv();
+  }
+
+  private interface B {
+
+    long lv();
+  }
+
+  private static class X implements A, B {
+
+    @Override
+    public int iv() {
+      return 0;
+    }
+
+    @Override
+    public long lv() {
+      return 0;
+    }
+  }
+
+  private static class Y implements A, B {
+
+    @Override
+    public int iv() {
+      return 0;
+    }
+
+    @Override
+    public long lv() {
+      return 0;
+    }
   }
 }
