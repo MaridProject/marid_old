@@ -25,8 +25,6 @@ import org.marid.runtime.exception.RackCloseException;
 import org.marid.runtime.exception.RackCreationException;
 
 import java.util.LinkedList;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public final class Rack<E> implements AutoCloseable {
 
@@ -34,11 +32,13 @@ public final class Rack<E> implements AutoCloseable {
 
   public final Class<?> caller;
   public final E instance;
-  private final LinkedList<Consumer<E>> destroyers = new LinkedList<>();
+  private final LinkedList<RackInstanceConsumer<E>> destroyers = new LinkedList<>();
 
   @SafeVarargs
-  public Rack(Supplier<E> supplier, Consumer<E>... configurers) {
+  public Rack(RackInstanceSupplier<E> supplier, RackInstanceConsumer<E>... configurers) {
     this.caller = STACK_WALKER.getCallerClass();
+
+    Deployment.getDeployment().racks.add(this);
 
     try {
       this.instance = supplier.get();
@@ -60,26 +60,28 @@ public final class Rack<E> implements AutoCloseable {
     }
   }
 
-  public Rack<E> withDestroyer(Consumer<E> destroyer) {
+  public Rack<E> withDestroyer(RackInstanceConsumer<E> destroyer) {
     destroyers.add(destroyer);
     return this;
   }
 
   @Override
   public void close() {
-    final var exception = new RackCloseException(this);
-
-    destroyers.removeIf(d -> {
-      try {
-        d.accept(instance);
-      } catch (Throwable e) {
-        exception.addSuppressed(e);
+    if (instance != null) {
+      final var exception = new RackCloseException(this);
+      for (final var it = destroyers.iterator(); it.hasNext(); ) {
+        final var destroyer = it.next();
+        try {
+          destroyer.accept(instance);
+        } catch (Throwable e) {
+          exception.addSuppressed(e);
+        } finally {
+          it.remove();
+        }
       }
-      return true;
-    });
-
-    if (exception.getSuppressed().length > 0) {
-      throw exception;
+      if (exception.getSuppressed().length > 0) {
+        throw exception;
+      }
     }
   }
 }

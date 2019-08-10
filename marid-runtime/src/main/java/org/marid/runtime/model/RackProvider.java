@@ -21,9 +21,7 @@ package org.marid.runtime.model;
  * #L%
  */
 
-import java.util.List;
-
 public interface RackProvider<E> {
 
-  Rack<E> getRack(List<String> args);
+  Rack<E> getRack();
 }

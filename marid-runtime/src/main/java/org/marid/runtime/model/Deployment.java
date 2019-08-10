@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -44,10 +43,12 @@ public final class Deployment implements AutoCloseable {
   private final Path deployment;
   private final Path deps;
   private final Path resources;
-  private final URLClassLoader classLoader;
-  private final LinkedList<Rack<?>> racks = new LinkedList<>();
+  private final RackClassLoader classLoader;
+  final LinkedList<Rack<?>> racks = new LinkedList<>();
+  public final List<String> args;
 
-  public Deployment(URL zipFile) throws IOException {
+  public Deployment(URL zipFile, List<String> args) throws IOException {
+    this.args = args;
     try {
       deployment = Files.createTempDirectory("marid");
 
@@ -114,7 +115,7 @@ public final class Deployment implements AutoCloseable {
     }
   }
 
-  private URLClassLoader classLoader() throws IOException {
+  private RackClassLoader classLoader() throws IOException {
     final var urls = new ArrayList<URL>();
     urls.add(deployment.resolve("bundle.jar").toUri().toURL());
     urls.add(resources.toUri().toURL());
@@ -123,18 +124,18 @@ public final class Deployment implements AutoCloseable {
         urls.add(path.toUri().toURL());
       }
     }
-    return new URLClassLoader(urls.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
+    return new RackClassLoader(urls.toArray(URL[]::new), this);
   }
 
   public String getId() {
     return deployment.getFileName().toString();
   }
 
-  public void run(List<String> args) {
+  public void run() {
     Thread.currentThread().setContextClassLoader(classLoader);
     try {
       for (final RackProvider<?> rackProvider : ServiceLoader.load(RackProvider.class)) {
-        racks.add(rackProvider.getRack(args));
+        rackProvider.getRack();
       }
     } catch (Throwable e) {
       final var exception = new DeploymentStartException(this, e);
@@ -214,6 +215,10 @@ public final class Deployment implements AutoCloseable {
     if (exception.getSuppressed().length > 0) {
       throw exception;
     }
+  }
+
+  public static Deployment getDeployment() {
+    return ((RackClassLoader) Thread.currentThread().getContextClassLoader()).deployment;
   }
 
   @Override

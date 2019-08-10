@@ -38,9 +38,8 @@ public class MaridLauncher {
       return;
     }
 
-    try (final var deployment = new Deployment(new URL(args[0]))) {
-      final var deploymentArgs = List.of(Arrays.copyOfRange(args, 1, args.length, String[].class));
-      final var thread = new Thread(null, () -> deployment.run(deploymentArgs), "marid");
+    try (final var deployment = new Deployment(new URL(args[0]), List.of(Arrays.copyOfRange(args, 1, args.length)))) {
+      final var thread = new Thread(null, deployment::run, "marid");
       thread.join();
     }
   }
