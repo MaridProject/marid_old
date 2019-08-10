@@ -44,7 +44,7 @@ public final class Deployment implements AutoCloseable {
   private final Path deps;
   private final Path resources;
   private final RackClassLoader classLoader;
-  final LinkedList<Rack<?>> racks = new LinkedList<>();
+  final LinkedList<AbstractRack<?>> racks = new LinkedList<>();
   public final List<String> args;
 
   public Deployment(URL zipFile, List<String> args) throws IOException {

@@ -1,4 +1,4 @@
-package org.marid.runtime.model;
+package org.marid.runtime.annotation;
 
 /*-
  * #%L
@@ -21,7 +21,20 @@ package org.marid.runtime.model;
  * #L%
  */
 
-public interface RackProvider<E> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-  AbstractRack<E> getRack();
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Output {
+
+  String code();
+
+  String title();
+
+  String description();
+
+  String icon();
 }
