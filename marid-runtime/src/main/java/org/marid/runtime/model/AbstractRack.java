@@ -36,7 +36,7 @@ public abstract class AbstractRack<E> implements AutoCloseable {
   private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
   public final Class<?> caller;
-  public final E instance;
+  protected final E instance;
 
   public AbstractRack(RackInstanceSupplier<E> instanceSupplier) {
     this.caller = STACK_WALKER.getCallerClass();
@@ -72,6 +72,10 @@ public abstract class AbstractRack<E> implements AutoCloseable {
       }
       throw e;
     }
+  }
+
+  public final E get() {
+    return instance;
   }
 
   @Override

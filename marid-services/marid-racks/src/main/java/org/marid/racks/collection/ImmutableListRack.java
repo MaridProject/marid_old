@@ -27,7 +27,7 @@ import org.marid.runtime.model.AbstractRack;
 import java.util.List;
 
 @Rack(title = "Immutable list")
-public class ImmutableListRack<E> extends AbstractRack<List<E>> {
+public class ImmutableListRack<E> extends AbstractRack<List<E>> implements ImmutableCollectionRack<E, List<E>> {
 
   @SafeVarargs
   public ImmutableListRack(E... element) {
