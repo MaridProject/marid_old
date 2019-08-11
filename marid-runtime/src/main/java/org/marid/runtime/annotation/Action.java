@@ -1,8 +1,8 @@
-package org.marid.racks.collection;
+package org.marid.runtime.annotation;
 
 /*-
  * #%L
- * marid-racks
+ * marid-runtime
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,16 +21,18 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.marid.runtime.annotation.Output;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Collection;
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Action {
 
-public interface ImmutableCollectionRack<E, C extends Collection<E>> {
+  String title();
 
-  C get();
+  String description();
 
-  @Output(title = "size")
-  default int size() {
-    return get().size();
-  }
+  String icon();
 }
