@@ -35,4 +35,19 @@ public interface BasicConstants {
   static short shortUnsigned(int value) {
     return (short) (value & 0xFFFF);
   }
+
+  @Constant
+  static char charConstant(char value) {
+    return value;
+  }
+
+  @Constant
+  static byte byteConstant(byte value) {
+    return value;
+  }
+
+  @Constant
+  static byte byteUnsigned(short value) {
+    return (byte) (value & 0xFF);
+  }
 }

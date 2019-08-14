@@ -29,6 +29,7 @@ class CellarTest {
 
   @Test
   void test() {
+
   }
 
   private interface A {
