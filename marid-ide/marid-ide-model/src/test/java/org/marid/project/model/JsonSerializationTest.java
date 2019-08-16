@@ -85,5 +85,11 @@ class JsonSerializationTest {
       final var deserialized = mapper.readValue(serialized, Cellar.class);
       assertEquals(cellar2, deserialized);
     }
+
+    {
+      final var serialized = mapper.writeValueAsString(rack11);
+      final var deserialized = mapper.readValue(serialized, Rack.class);
+      assertEquals(rack11, deserialized);
+    }
   }
 }
