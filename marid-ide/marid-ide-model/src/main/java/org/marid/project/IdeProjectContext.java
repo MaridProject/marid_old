@@ -20,30 +20,10 @@ package org.marid.project;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 @Configuration
 @ComponentScan
 public class IdeProjectContext {
-
-  @Bean
-  public Jdk8Module jdk8Module() {
-    return new Jdk8Module();
-  }
-
-  @Bean
-  public ObjectMapper mapper(List<Module> modules) {
-    final var mapper = new ObjectMapper();
-    mapper.registerModules(modules);
-    mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-    return mapper;
-  }
 }

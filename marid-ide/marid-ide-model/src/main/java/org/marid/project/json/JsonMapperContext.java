@@ -1,4 +1,4 @@
-package org.marid.project.model;
+package org.marid.project.json;
 
 /*-
  * #%L
@@ -20,39 +20,28 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class Winery extends AbstractEntity {
+@Component
+public class JsonMapperContext {
 
-  @JsonManagedReference
-  List<Cellar> cellars = new ArrayList<>();
-
-  public List<Cellar> getCellars() {
-    return cellars;
+  @Bean
+  public Jdk8Module jdk8Module() {
+    return new Jdk8Module();
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode() ^ Objects.hashCode(cellars);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    if (obj instanceof Winery) {
-      final var that = (Winery) obj;
-
-      return Objects.equals(this.cellars, that.cellars);
-    }
-    return false;
+  @Bean
+  public ObjectMapper mapper(List<Module> modules) {
+    final var mapper = new ObjectMapper();
+    mapper.registerModules(modules);
+    mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+    return mapper;
   }
 }
