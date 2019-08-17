@@ -20,17 +20,41 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 public abstract class AbstractEntity {
 
-  @JsonProperty
   protected String id;
-
-  @JsonProperty
   protected String name;
+
+  AbstractEntity(@NotNull String id, @NotNull String name) {
+    this.id = id;
+    this.name = name;
+  }
+
+  AbstractEntity(Element element) {
+    if (!tag().equals(element.getTagName())) {
+      throw new IllegalArgumentException(element.getTagName());
+    }
+    this.id = element.getAttribute("id");
+    this.name = element.getAttribute("name");
+  }
 
   public String getId() {
     return id;
@@ -46,6 +70,47 @@ public abstract class AbstractEntity {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  void save(Element element) {
+    element.setAttribute("id", id);
+    element.setAttribute("name", name);
+  }
+
+  abstract String tag();
+
+  public void save(Result result) {
+    try {
+      final var documentBuilderFactory = DocumentBuilderFactory.newDefaultInstance();
+      final var documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      final var document = documentBuilder.newDocument();
+      final var node = document.createElement(tag());
+      document.appendChild(node);
+      save(node);
+      final var transformerFactory = TransformerFactory.newDefaultInstance();
+      transformerFactory.setAttribute("indent-number", 2);
+      final var transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      transformer.transform(new DOMSource(node), result);
+    } catch (TransformerException | ParserConfigurationException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  static Element element(InputSource inputSource) {
+    try {
+      final var documentBuilderFactory = DocumentBuilderFactory.newDefaultInstance();
+      final var documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      final var document = documentBuilder.parse(inputSource);
+      return document.getDocumentElement();
+    } catch (ParserConfigurationException | SAXException e) {
+      throw new IllegalStateException(e);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   @Override
@@ -64,5 +129,12 @@ public abstract class AbstractEntity {
           && Objects.equals(this.name, that.name);
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    final var writer = new StringWriter(1024);
+    save(new StreamResult(writer));
+    return writer.toString();
   }
 }

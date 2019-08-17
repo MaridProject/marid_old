@@ -20,25 +20,38 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import java.util.Objects;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 public class Rack extends AbstractEntity {
 
-  @JsonBackReference
-  private Cellar cellar;
+  private final Cellar cellar;
 
-  public Rack(Cellar cellar) {
+  public Rack(Cellar cellar, String id, String name) {
+    super(id, name);
     this.cellar = cellar;
-    cellar.racks.add(this);
   }
 
-  Rack() {
+  Rack(Cellar cellar, Element element) {
+    super(element);
+    this.cellar = cellar;
+  }
+
+  Rack(Cellar cellar, InputSource source) {
+    this(cellar, element(source));
   }
 
   public Cellar getCellar() {
     return cellar;
+  }
+
+  public Winery getWinery() {
+    return cellar.getWinery();
+  }
+
+  @Override
+  String tag() {
+    return "rack";
   }
 
   @Override

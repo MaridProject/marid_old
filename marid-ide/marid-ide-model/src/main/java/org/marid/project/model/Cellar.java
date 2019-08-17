@@ -20,8 +20,8 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,18 +29,30 @@ import java.util.Objects;
 
 public class Cellar extends AbstractEntity {
 
-  @JsonBackReference
-  private Winery winery;
+  private final Winery winery;
+  private final ArrayList<Rack> racks = new ArrayList<>();
 
-  @JsonManagedReference
-  List<Rack> racks = new ArrayList<>();
-
-  public Cellar(Winery winery) {
+  public Cellar(Winery winery, String id, String name) {
+    super(id, name);
     this.winery = winery;
-    winery.cellars.add(this);
   }
 
-  Cellar() {
+  Cellar(Winery winery, Element element) {
+    super(element);
+    this.winery = winery;
+    final var racks = element.getElementsByTagName("rack");
+    for (int i = 0; i < racks.getLength(); i++) {
+      final var e = (Element) racks.item(i);
+      this.racks.add(new Rack(this, e));
+    }
+  }
+
+  Cellar(Winery winery, InputSource source) {
+    this(winery, element(source));
+  }
+
+  public Rack rack(InputSource source) {
+    return new Rack(this, element(source));
   }
 
   public Winery getWinery() {
@@ -49,6 +61,21 @@ public class Cellar extends AbstractEntity {
 
   public List<Rack> getRacks() {
     return racks;
+  }
+
+  @Override
+  void save(Element element) {
+    super.save(element);
+    for (final var rack : racks) {
+      final var e = element.getOwnerDocument().createElement(rack.tag());
+      element.appendChild(e);
+      rack.save(e);
+    }
+  }
+
+  @Override
+  String tag() {
+    return "cellar";
   }
 
   @Override

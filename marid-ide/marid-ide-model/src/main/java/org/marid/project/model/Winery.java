@@ -20,19 +20,58 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Winery extends AbstractEntity {
 
-  @JsonManagedReference
-  List<Cellar> cellars = new ArrayList<>();
+  private final List<Cellar> cellars = new ArrayList<>();
+
+  public Winery(@NotNull String id, @NotNull String name) {
+    super(id, name);
+  }
+
+  public Winery(Element element) {
+    super(element);
+    final var cellars = element.getElementsByTagName("cellar");
+    for (int i = 0; i < cellars.getLength(); i++) {
+      final var e = (Element) cellars.item(i);
+      this.cellars.add(new Cellar(this, e));
+    }
+  }
+
+  public Winery(InputSource inputSource) {
+    this(element(inputSource));
+  }
+
+  public Cellar cellar(Element element) {
+    return new Cellar(this, element);
+  }
+
+  public Cellar cellar(InputSource source) {
+    return new Cellar(this, element(source));
+  }
 
   public List<Cellar> getCellars() {
     return cellars;
+  }
+
+  @Override
+  void save(Element element) {
+    super.save(element);
+    for (final var cellar : cellars) {
+      final var e = element.getOwnerDocument().createElement(cellar.tag());
+      element.appendChild(e);
+      cellar.save(e);
+    }
+  }
+
+  @Override
+  String tag() {
+    return "winery";
   }
 
   @Override
