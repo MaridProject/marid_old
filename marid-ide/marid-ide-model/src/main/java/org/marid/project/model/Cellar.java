@@ -67,14 +67,14 @@ public class Cellar extends AbstractEntity {
   void save(Element element) {
     super.save(element);
     for (final var rack : racks) {
-      final var e = element.getOwnerDocument().createElement(rack.tag());
+      final var e = element.getOwnerDocument().createElement(rack.getTag());
       element.appendChild(e);
       rack.save(e);
     }
   }
 
   @Override
-  String tag() {
+  public String getTag() {
     return "cellar";
   }
 

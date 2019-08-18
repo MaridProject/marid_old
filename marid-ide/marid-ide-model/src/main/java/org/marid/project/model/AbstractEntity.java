@@ -21,6 +21,7 @@ package org.marid.project.model;
  */
 
 import org.jetbrains.annotations.NotNull;
+import org.marid.xml.Tagged;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,7 +39,7 @@ import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.util.Objects;
 
-public abstract class AbstractEntity {
+public abstract class AbstractEntity implements Tagged {
 
   protected String id;
   protected String name;
@@ -49,7 +50,7 @@ public abstract class AbstractEntity {
   }
 
   AbstractEntity(Element element) {
-    if (!tag().equals(element.getTagName())) {
+    if (!getTag().equals(element.getTagName())) {
       throw new IllegalArgumentException(element.getTagName());
     }
     this.id = element.getAttribute("id");
@@ -77,14 +78,12 @@ public abstract class AbstractEntity {
     element.setAttribute("name", name);
   }
 
-  abstract String tag();
-
   public void save(Result result) {
     try {
       final var documentBuilderFactory = DocumentBuilderFactory.newDefaultInstance();
       final var documentBuilder = documentBuilderFactory.newDocumentBuilder();
       final var document = documentBuilder.newDocument();
-      final var node = document.createElement(tag());
+      final var node = document.createElement(getTag());
       document.appendChild(node);
       save(node);
       final var transformerFactory = TransformerFactory.newDefaultInstance();

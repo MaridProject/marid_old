@@ -23,9 +23,12 @@ package org.marid.project.model;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import java.util.ArrayList;
+
 public class Rack extends AbstractEntity {
 
   private final Cellar cellar;
+  private final ArrayList<RackConstant> constants = new ArrayList<>();
 
   public Rack(Cellar cellar, String id, String name) {
     super(id, name);
@@ -49,8 +52,12 @@ public class Rack extends AbstractEntity {
     return cellar.getWinery();
   }
 
+  public ArrayList<RackConstant> getConstants() {
+    return constants;
+  }
+
   @Override
-  String tag() {
+  public String getTag() {
     return "rack";
   }
 

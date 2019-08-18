@@ -63,14 +63,14 @@ public class Winery extends AbstractEntity {
   void save(Element element) {
     super.save(element);
     for (final var cellar : cellars) {
-      final var e = element.getOwnerDocument().createElement(cellar.tag());
+      final var e = element.getOwnerDocument().createElement(cellar.getTag());
       element.appendChild(e);
       cellar.save(e);
     }
   }
 
   @Override
-  String tag() {
+  public String getTag() {
     return "winery";
   }
 
