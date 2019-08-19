@@ -20,8 +20,8 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.jetbrains.annotations.NotNull;
 import org.marid.xml.Tagged;
+import org.marid.xml.XmlWritable;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,45 +37,16 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
-import java.util.Objects;
 
-public abstract class AbstractEntity implements Tagged {
+abstract class AbstractEntity implements Tagged, XmlWritable {
 
-  protected String id;
-  protected String name;
-
-  AbstractEntity(@NotNull String id, @NotNull String name) {
-    this.id = id;
-    this.name = name;
+  AbstractEntity() {
   }
 
   AbstractEntity(Element element) {
     if (!getTag().equals(element.getTagName())) {
       throw new IllegalArgumentException(element.getTagName());
     }
-    this.id = element.getAttribute("id");
-    this.name = element.getAttribute("name");
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  void save(Element element) {
-    element.setAttribute("id", id);
-    element.setAttribute("name", name);
   }
 
   public void save(Result result) {
@@ -85,7 +56,7 @@ public abstract class AbstractEntity implements Tagged {
       final var document = documentBuilder.newDocument();
       final var node = document.createElement(getTag());
       document.appendChild(node);
-      save(node);
+      writeTo(node);
       final var transformerFactory = TransformerFactory.newDefaultInstance();
       transformerFactory.setAttribute("indent-number", 2);
       final var transformer = transformerFactory.newTransformer();
@@ -113,22 +84,10 @@ public abstract class AbstractEntity implements Tagged {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(id, name);
-  }
+  public abstract int hashCode();
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj instanceof AbstractEntity) {
-      final var that = (AbstractEntity) obj;
-      return Objects.equals(this.id, that.id)
-          && Objects.equals(this.name, that.name);
-    }
-    return false;
-  }
+  public abstract boolean equals(Object obj);
 
   @Override
   public String toString() {

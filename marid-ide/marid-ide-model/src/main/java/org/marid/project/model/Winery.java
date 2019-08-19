@@ -21,38 +21,36 @@ package org.marid.project.model;
  */
 
 import org.jetbrains.annotations.NotNull;
+import org.marid.xml.XmlStreams;
+import org.marid.xml.XmlUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class Winery extends AbstractEntity {
+public final class Winery extends AbstractEntity {
 
-  private final List<Cellar> cellars = new ArrayList<>();
+  private final List<Cellar> cellars;
+  private String name;
 
-  public Winery(@NotNull String id, @NotNull String name) {
-    super(id, name);
+  public Winery(@NotNull String name) {
+    this.name = name;
+    this.cellars = new ArrayList<>();
   }
 
   public Winery(Element element) {
     super(element);
-    final var cellars = element.getElementsByTagName("cellar");
-    for (int i = 0; i < cellars.getLength(); i++) {
-      final var e = (Element) cellars.item(i);
-      this.cellars.add(new Cellar(this, e));
-    }
+    this.name = element.getAttribute("name");
+    this.cellars = XmlStreams.elementsByTag(element, "cellar")
+        .map(Cellar::new)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public Winery(InputSource inputSource) {
     this(element(inputSource));
-  }
-
-  public Cellar cellar(Element element) {
-    return new Cellar(this, element);
-  }
-
-  public Cellar cellar(InputSource source) {
-    return new Cellar(this, element(source));
   }
 
   public List<Cellar> getCellars() {
@@ -60,15 +58,20 @@ public class Winery extends AbstractEntity {
   }
 
   @Override
-  void save(Element element) {
-    super.save(element);
-    for (final var cellar : cellars) {
-      final var e = element.getOwnerDocument().createElement(cellar.getTag());
-      element.appendChild(e);
-      cellar.save(e);
-    }
+  public void writeTo(@NotNull Element element) {
+    element.setAttribute("name", name);
+    cellars.forEach(c -> XmlUtils.appendTo(c, element));
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @NotNull
   @Override
   public String getTag() {
     return "winery";
@@ -76,7 +79,7 @@ public class Winery extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return super.hashCode() ^ Objects.hashCode(cellars);
+    return Objects.hash(name, cellars);
   }
 
   @Override
@@ -84,13 +87,11 @@ public class Winery extends AbstractEntity {
     if (obj == this) {
       return true;
     }
-    if (!super.equals(obj)) {
-      return false;
-    }
     if (obj instanceof Winery) {
       final var that = (Winery) obj;
 
-      return Objects.equals(this.cellars, that.cellars);
+      return Objects.equals(this.name, that.name)
+          && Objects.equals(this.cellars, that.cellars);
     }
     return false;
   }

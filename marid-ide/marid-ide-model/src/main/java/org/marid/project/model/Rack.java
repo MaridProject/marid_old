@@ -20,36 +20,45 @@ package org.marid.project.model;
  * #L%
  */
 
+import org.jetbrains.annotations.NotNull;
+import org.marid.xml.XmlStreams;
+import org.marid.xml.XmlUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class Rack extends AbstractEntity {
+public final class Rack extends AbstractEntity {
 
-  private final Cellar cellar;
-  private final ArrayList<RackConstant> constants = new ArrayList<>();
+  private final ArrayList<RackConstant> constants;
 
-  public Rack(Cellar cellar, String id, String name) {
-    super(id, name);
-    this.cellar = cellar;
+  private String className;
+
+  public Rack(@NotNull String className) {
+    this.className = className;
+    this.constants = new ArrayList<>();
   }
 
-  Rack(Cellar cellar, Element element) {
+  public Rack(Element element) {
     super(element);
-    this.cellar = cellar;
+    this.className = element.getAttribute("class");
+    this.constants = XmlStreams.elementsByTag(element, "const")
+        .map(RackConstant::new)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  Rack(Cellar cellar, InputSource source) {
-    this(cellar, element(source));
+  public Rack(InputSource source) {
+    this(element(source));
   }
 
-  public Cellar getCellar() {
-    return cellar;
+  public String getClassName() {
+    return className;
   }
 
-  public Winery getWinery() {
-    return cellar.getWinery();
+  public void setClassName(String className) {
+    this.className = className;
   }
 
   public ArrayList<RackConstant> getConstants() {
@@ -57,13 +66,20 @@ public class Rack extends AbstractEntity {
   }
 
   @Override
+  public void writeTo(@NotNull Element element) {
+    element.setAttribute("class", className);
+    constants.forEach(c -> XmlUtils.appendTo(c, element));
+  }
+
+  @NotNull
+  @Override
   public String getTag() {
     return "rack";
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return Objects.hash(className, constants);
   }
 
   @Override
@@ -71,12 +87,10 @@ public class Rack extends AbstractEntity {
     if (obj == this) {
       return true;
     }
-    if (!super.equals(obj)) {
-      return false;
-    }
     if (obj instanceof Rack) {
       final var that = (Rack) obj;
-      return true;
+      return Objects.equals(this.className, that.className)
+          && Objects.equals(this.constants, that.constants);
     }
     return false;
   }

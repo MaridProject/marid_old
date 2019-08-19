@@ -21,35 +21,59 @@ package org.marid.project.model;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.xml.XmlStreams;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-public class RackConstant extends AbstractEntity {
+public final class RackConstant extends AbstractEntity {
 
   private String library;
-  private final ArrayList<String> arguments;
+  private String name;
+  private String expression;
 
-  RackConstant(@NotNull String id, @NotNull String name, @NotNull String library, @NotNull String... args) {
-    super(id, name);
+  public RackConstant(@NotNull String library, @NotNull String name, @NotNull String expression) {
     this.library = library;
-    this.arguments = new ArrayList<>(Arrays.asList(args));
+    this.name = name;
+    this.expression = expression;
   }
 
-  RackConstant(Element element) {
+  public RackConstant(Element element) {
     super(element);
-    this.arguments = XmlStreams.elementsByTag(element, "arg")
-        .map(Node::getTextContent)
-        .collect(Collectors.toCollection(ArrayList::new));
+    this.name = element.getAttribute("name");
+    this.expression = element.getTextContent();
   }
 
+  public RackConstant(InputSource source) {
+    this(element(source));
+  }
+
+  @NotNull
   @Override
   public String getTag() {
     return "const";
+  }
+
+  @Override
+  public void writeTo(@NotNull Element element) {
+    element.setAttribute("library", library);
+    element.setTextContent(expression);
+  }
+
+  public String getExpression() {
+    return expression;
+  }
+
+  public void setExpression(String expression) {
+    this.expression = expression;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getLibrary() {
@@ -60,7 +84,22 @@ public class RackConstant extends AbstractEntity {
     this.library = library;
   }
 
-  public ArrayList<String> getArguments() {
-    return arguments;
+  @Override
+  public int hashCode() {
+    return Objects.hash(library, name, expression);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (obj instanceof RackConstant) {
+      final var that = (RackConstant) obj;
+      return Objects.equals(this.library, that.library)
+          && Objects.equals(this.name, that.name)
+          && Objects.equals(this.expression, that.expression);
+    }
+    return false;
   }
 }

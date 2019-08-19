@@ -29,6 +29,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,12 +39,16 @@ class SerializationTest {
 
   @Test
   void testRack() throws IOException {
-    final var winery = Builder.build(new Winery("w1", "winery1"));
-    final var cellar1 = Builder.build(new Cellar(winery, "c1", "cellar1"));
-    final var cellar2 = Builder.build(new Cellar(winery, "c2", "cellar2"));
-    final var rack11 = Builder.build(new Rack(cellar1, "r11", "rack11"));
-    final var rack21 = Builder.build(new Rack(cellar2, "r21", "rack21"));
-    final var rack22 = Builder.build(new Rack(cellar2, "r22", "rack22"));
+    final var winery = Builder.build(new Winery("winery1"));
+    final var cellar1 = Builder.build(new Cellar("cellar1"));
+    final var cellar2 = Builder.build(new Cellar("cellar2"));
+    final var rack11 = Builder.build(new Rack("rack11"));
+    final var rack21 = Builder.build(new Rack("rack21"));
+    final var rack22 = Builder.build(new Rack("rack22"));
+
+    winery.getCellars().addAll(Arrays.asList(cellar1, cellar2));
+    cellar1.getRacks().addAll(Collections.singletonList(rack11));
+    cellar2.getRacks().addAll(Arrays.asList(rack21, rack22));
 
     final var writer = new StringWriter();
     {

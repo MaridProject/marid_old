@@ -20,59 +20,58 @@ package org.marid.project.model;
  * #L%
  */
 
+import org.jetbrains.annotations.NotNull;
+import org.marid.xml.XmlStreams;
+import org.marid.xml.XmlUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class Cellar extends AbstractEntity {
+public final class Cellar extends AbstractEntity {
 
-  private final Winery winery;
-  private final ArrayList<Rack> racks = new ArrayList<>();
+  private final ArrayList<Rack> racks;
 
-  public Cellar(Winery winery, String id, String name) {
-    super(id, name);
-    this.winery = winery;
+  private String packageName;
+
+  public Cellar(@NotNull String packageName) {
+    this.packageName = packageName;
+    this.racks = new ArrayList<>();
   }
 
-  Cellar(Winery winery, Element element) {
+  public Cellar(Element element) {
     super(element);
-    this.winery = winery;
-    final var racks = element.getElementsByTagName("rack");
-    for (int i = 0; i < racks.getLength(); i++) {
-      final var e = (Element) racks.item(i);
-      this.racks.add(new Rack(this, e));
-    }
+    this.packageName = element.getAttribute("pkg");
+    this.racks = XmlStreams.elementsByTag(element, "rack")
+        .map(Rack::new)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  Cellar(Winery winery, InputSource source) {
-    this(winery, element(source));
+  public Cellar(InputSource source) {
+    this(element(source));
   }
 
-  public Rack rack(InputSource source) {
-    return new Rack(this, element(source));
+  public String getPackageName() {
+    return packageName;
   }
 
-  public Winery getWinery() {
-    return winery;
+  public void setPackageName(String packageName) {
+    this.packageName = packageName;
   }
 
-  public List<Rack> getRacks() {
+  public ArrayList<Rack> getRacks() {
     return racks;
   }
 
   @Override
-  void save(Element element) {
-    super.save(element);
-    for (final var rack : racks) {
-      final var e = element.getOwnerDocument().createElement(rack.getTag());
-      element.appendChild(e);
-      rack.save(e);
-    }
+  public void writeTo(@NotNull Element element) {
+    element.setAttribute("pkg", packageName);
+    racks.forEach(r -> XmlUtils.appendTo(r, element));
   }
 
+  @NotNull
   @Override
   public String getTag() {
     return "cellar";
@@ -80,7 +79,7 @@ public class Cellar extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return super.hashCode() ^ Objects.hashCode(racks);
+    return Objects.hash(packageName, racks);
   }
 
   @Override
@@ -88,13 +87,10 @@ public class Cellar extends AbstractEntity {
     if (obj == this) {
       return true;
     }
-    if (!super.equals(obj)) {
-      return false;
-    }
     if (obj instanceof Cellar) {
       final var that = (Cellar) obj;
-
-      return Objects.equals(this.racks, that.racks);
+      return Objects.equals(this.packageName, that.packageName)
+          && Objects.equals(this.racks, that.racks);
     }
     return false;
   }
