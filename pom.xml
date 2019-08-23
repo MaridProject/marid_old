@@ -133,7 +133,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>5.1.9.RELEASE</version>
+        <version>5.2.0.RC1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -657,4 +657,11 @@
       </build>
     </profile>
   </profiles>
+
+  <repositories>
+    <repository>
+      <id>jboss</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
+    </repository>
+  </repositories>
 </project>
