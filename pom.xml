@@ -219,6 +219,13 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <id>jboss</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
+    </repository>
+  </repositories>
+
   <build>
     <resources>
       <resource>
@@ -657,11 +664,4 @@
       </build>
     </profile>
   </profiles>
-
-  <repositories>
-    <repository>
-      <id>jboss</id>
-      <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
-    </repository>
-  </repositories>
 </project>
