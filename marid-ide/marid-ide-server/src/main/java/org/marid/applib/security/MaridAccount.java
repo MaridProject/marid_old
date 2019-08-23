@@ -23,6 +23,7 @@ package org.marid.applib.security;
 import io.undertow.security.idm.Account;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.Pac4JPrincipal;
+import org.pac4j.core.profile.UserProfile;
 
 import java.util.Collections;
 import java.util.Set;
@@ -30,10 +31,10 @@ import java.util.Set;
 public class MaridAccount implements Account {
 
   private final Pac4JPrincipal principal;
-  private final CommonProfile profile;
+  private final UserProfile profile;
 
-  public MaridAccount(CommonProfile profile) {
-    this.principal = new Pac4JPrincipal(this.profile = profile);
+  public MaridAccount(UserProfile profile) {
+    this.principal = new Pac4JPrincipal((CommonProfile) (this.profile = profile));
   }
 
   @Override
@@ -41,7 +42,7 @@ public class MaridAccount implements Account {
     return principal;
   }
 
-  public CommonProfile getProfile() {
+  public UserProfile getProfile() {
     return profile;
   }
 

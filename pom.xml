@@ -93,9 +93,15 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-parent</artifactId>
-        <version>1.7.26</version>
+        <version>1.8.0-beta4</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>3.0.0</version>
       </dependency>
 
       <dependency>
@@ -170,19 +176,19 @@
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.9.15</version>
+        <version>1.10.1</version>
       </dependency>
 
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy-agent</artifactId>
-        <version>1.9.14</version>
+        <version>1.10.1</version>
       </dependency>
 
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.5.0</version>
+        <version>5.5.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -196,7 +202,7 @@
       <dependency>
         <groupId>org.jboss.xnio</groupId>
         <artifactId>xnio-all</artifactId>
-        <version>3.7.2.Final</version>
+        <version>3.7.3.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
