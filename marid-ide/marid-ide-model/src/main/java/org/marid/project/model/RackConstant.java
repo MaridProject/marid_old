@@ -20,28 +20,42 @@ package org.marid.project.model;
  * #L%
  */
 
+import com.github.javaparser.ast.AccessSpecifier;
 import org.jetbrains.annotations.NotNull;
+import org.marid.xml.XmlStreams;
+import org.marid.xml.XmlUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.github.javaparser.ast.AccessSpecifier.PACKAGE_PRIVATE;
+import static com.github.javaparser.ast.AccessSpecifier.PRIVATE;
+import static com.github.javaparser.ast.AccessSpecifier.PUBLIC;
 
 public final class RackConstant extends AbstractEntity {
 
+  private AccessType accessType;
   private String library;
   private String name;
-  private String expression;
+  private final ArrayList<LiteralExpression> parameters;
 
-  public RackConstant(@NotNull String library, @NotNull String name, @NotNull String expression) {
+  public RackConstant(@NotNull String library, @NotNull String name, @NotNull List<LiteralExpression> parameters) {
     this.library = library;
     this.name = name;
-    this.expression = expression;
+    this.parameters = new ArrayList<>(parameters);
   }
 
   public RackConstant(Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.expression = element.getTextContent();
+    this.library = element.getAttribute("library");
+    this.parameters = XmlStreams.children(element, Element.class)
+        .map(LiteralExpression::new)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public RackConstant(InputSource source) {
@@ -56,16 +70,16 @@ public final class RackConstant extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
+    element.setAttribute("name", name);
     element.setAttribute("library", library);
-    element.setTextContent(expression);
+    element.setAttribute("access", accessType.name().toLowerCase());
+    for (final var expression : parameters) {
+      XmlUtils.appendTo(expression, element);
+    }
   }
 
-  public String getExpression() {
-    return expression;
-  }
-
-  public void setExpression(String expression) {
-    this.expression = expression;
+  public ArrayList<LiteralExpression> getParameters() {
+    return parameters;
   }
 
   public String getName() {
@@ -84,9 +98,17 @@ public final class RackConstant extends AbstractEntity {
     this.library = library;
   }
 
+  public AccessType getAccessType() {
+    return accessType;
+  }
+
+  public void setAccessType(AccessType accessType) {
+    this.accessType = accessType;
+  }
+
   @Override
   public int hashCode() {
-    return Objects.hash(library, name, expression);
+    return Objects.hash(library, name, parameters);
   }
 
   @Override
@@ -98,8 +120,21 @@ public final class RackConstant extends AbstractEntity {
       final var that = (RackConstant) obj;
       return Objects.equals(this.library, that.library)
           && Objects.equals(this.name, that.name)
-          && Objects.equals(this.expression, that.expression);
+          && Objects.equals(this.parameters, that.parameters);
     }
     return false;
+  }
+
+  public enum AccessType {
+
+    RACK(PRIVATE),
+    CELLAR(PACKAGE_PRIVATE),
+    WINERY(PUBLIC);
+
+    public final AccessSpecifier accessSpecifier;
+
+    AccessType(AccessSpecifier accessSpecifier) {
+      this.accessSpecifier = accessSpecifier;
+    }
   }
 }
