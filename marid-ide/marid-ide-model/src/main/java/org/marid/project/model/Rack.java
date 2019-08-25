@@ -34,15 +34,18 @@ import java.util.stream.Collectors;
 public final class Rack extends AbstractEntity {
 
   private final ArrayList<RackConstant> constants;
+  private final ArrayList<Argument> arguments;
   private final ArrayList<RackInput> inputs;
 
   private String name;
 
   public Rack(@NotNull String name,
               @NotNull List<@NotNull RackConstant> constants,
+              @NotNull List<@NotNull Argument> arguments,
               @NotNull List<@NotNull RackInput> inputs) {
     this.name = name;
     this.constants = new ArrayList<>(constants);
+    this.arguments = new ArrayList<>(arguments);
     this.inputs = new ArrayList<>(inputs);
   }
 
@@ -51,6 +54,10 @@ public final class Rack extends AbstractEntity {
     this.name = element.getAttribute("name");
     this.constants = XmlStreams.elementsByTag(element, "const")
         .map(RackConstant::new)
+        .collect(Collectors.toCollection(ArrayList::new));
+    this.arguments = XmlStreams.elementsByTag(element, "args")
+        .flatMap(e -> XmlStreams.children(e, Element.class))
+        .map(ArgumentFactory::argument)
         .collect(Collectors.toCollection(ArrayList::new));
     this.inputs = XmlStreams.elementsByTag(element, "input")
         .map(RackInput::new)
@@ -73,6 +80,10 @@ public final class Rack extends AbstractEntity {
     return constants;
   }
 
+  public ArrayList<Argument> getArguments() {
+    return arguments;
+  }
+
   public ArrayList<RackInput> getInputs() {
     return inputs;
   }
@@ -81,6 +92,9 @@ public final class Rack extends AbstractEntity {
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
     constants.forEach(c -> XmlUtils.appendTo(c, element));
+    if (!arguments.isEmpty()) {
+      XmlUtils.append(element, "args", e -> arguments.forEach(a -> XmlUtils.appendTo(a, e)));
+    }
     inputs.forEach(i -> XmlUtils.appendTo(i, element));
   }
 
@@ -92,7 +106,7 @@ public final class Rack extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, constants, inputs);
+    return Objects.hash(name, constants, arguments, inputs);
   }
 
   @Override
@@ -104,6 +118,7 @@ public final class Rack extends AbstractEntity {
       final var that = (Rack) obj;
       return Objects.equals(this.name, that.name)
           && Objects.equals(this.constants, that.constants)
+          && Objects.equals(this.arguments, that.arguments)
           && Objects.equals(this.inputs, that.inputs);
     }
     return false;

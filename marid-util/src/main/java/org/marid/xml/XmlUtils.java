@@ -23,11 +23,23 @@ package org.marid.xml;
 
 import org.w3c.dom.Element;
 
+import java.util.function.Consumer;
+
 public interface XmlUtils {
 
   static <E extends Tagged & XmlWritable> void appendTo(E self, Element target) {
     final var child = target.getOwnerDocument().createElement(self.getTag());
     target.appendChild(child);
     self.writeTo(child);
+  }
+
+  @SafeVarargs
+  static Element append(Element target, String tag, Consumer<Element>... configurers) {
+    final var child = target.getOwnerDocument().createElement(tag);
+    target.appendChild(child);
+    for (final var configurer : configurers) {
+      configurer.accept(child);
+    }
+    return child;
   }
 }

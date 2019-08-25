@@ -26,7 +26,6 @@ import org.marid.misc.Builder;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -39,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SerializationTest {
 
   @Test
-  void testRack() throws IOException {
+  void testRack() {
     final var winery = Builder.build(new Winery("winery1"));
     final var cellar1 = Builder.build(new Cellar("cellar1"));
     final var cellar2 = Builder.build(new Cellar("cellar2"));
-    final var rack11 = Builder.build(new Rack("rack11", List.of(), List.of()));
-    final var rack21 = Builder.build(new Rack("rack21", List.of(), List.of()));
-    final var rack22 = Builder.build(new Rack("rack22", List.of(), List.of()));
+    final var rack11 = Builder.build(new Rack("rack11", List.of(), List.of(), List.of()));
+    final var rack21 = Builder.build(new Rack("rack21", List.of(), List.of(), List.of()));
+    final var rack22 = Builder.build(new Rack("rack22", List.of(), List.of(), List.of()));
 
     winery.getCellars().addAll(Arrays.asList(cellar1, cellar2));
     cellar1.getRacks().addAll(Collections.singletonList(rack11));
