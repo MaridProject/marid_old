@@ -27,25 +27,33 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class Rack extends AbstractEntity {
 
   private final ArrayList<RackConstant> constants;
+  private final ArrayList<RackInput> inputs;
 
-  private String className;
+  private String name;
 
-  public Rack(@NotNull String className) {
-    this.className = className;
-    this.constants = new ArrayList<>();
+  public Rack(@NotNull String name,
+              @NotNull List<@NotNull RackConstant> constants,
+              @NotNull List<@NotNull RackInput> inputs) {
+    this.name = name;
+    this.constants = new ArrayList<>(constants);
+    this.inputs = new ArrayList<>(inputs);
   }
 
   public Rack(Element element) {
     super(element);
-    this.className = element.getAttribute("class");
+    this.name = element.getAttribute("name");
     this.constants = XmlStreams.elementsByTag(element, "const")
         .map(RackConstant::new)
+        .collect(Collectors.toCollection(ArrayList::new));
+    this.inputs = XmlStreams.elementsByTag(element, "input")
+        .map(RackInput::new)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -53,22 +61,27 @@ public final class Rack extends AbstractEntity {
     this(element(source));
   }
 
-  public String getClassName() {
-    return className;
+  public String getName() {
+    return name;
   }
 
-  public void setClassName(String className) {
-    this.className = className;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public ArrayList<RackConstant> getConstants() {
     return constants;
   }
 
+  public ArrayList<RackInput> getInputs() {
+    return inputs;
+  }
+
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("class", className);
+    element.setAttribute("name", name);
     constants.forEach(c -> XmlUtils.appendTo(c, element));
+    inputs.forEach(i -> XmlUtils.appendTo(i, element));
   }
 
   @NotNull
@@ -79,7 +92,7 @@ public final class Rack extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(className, constants);
+    return Objects.hash(name, constants, inputs);
   }
 
   @Override
@@ -89,8 +102,9 @@ public final class Rack extends AbstractEntity {
     }
     if (obj instanceof Rack) {
       final var that = (Rack) obj;
-      return Objects.equals(this.className, that.className)
-          && Objects.equals(this.constants, that.constants);
+      return Objects.equals(this.name, that.name)
+          && Objects.equals(this.constants, that.constants)
+          && Objects.equals(this.inputs, that.inputs);
     }
     return false;
   }

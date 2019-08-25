@@ -3,11 +3,13 @@ package org.marid.project.model;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.CastExpr;
 import com.github.javaparser.ast.expr.CharLiteralExpr;
+import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LongLiteralExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -18,42 +20,29 @@ import java.util.function.Function;
 import static com.github.javaparser.ast.type.PrimitiveType.byteType;
 import static com.github.javaparser.ast.type.PrimitiveType.shortType;
 
-public class LiteralExpression extends AbstractEntity {
+public final class ArgumentLiteral extends Argument {
 
   private final Type type;
   private String value;
 
-  public LiteralExpression(Type type, String value) {
+  public ArgumentLiteral(Type type, String value) {
     this.type = type;
     this.value = value;
   }
 
-  public LiteralExpression(Element element) {
+  public ArgumentLiteral(Element element) {
     super(element);
     type = Type.valueOf(element.getTagName().toUpperCase());
     value = element.getTextContent();
   }
 
-  public LiteralExpression(InputSource inputSource) {
+  @Override
+  public Expression getExpression() {
+    return type.ast.apply(value);
+  }
+
+  public ArgumentLiteral(InputSource inputSource) {
     this(element(inputSource));
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, value);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj instanceof LiteralExpression) {
-      final var that = (LiteralExpression) obj;
-      return Objects.equals(this.type, that.type)
-          && Objects.equals(this.value, that.value);
-    }
-    return false;
   }
 
   public Type getType() {
@@ -67,7 +56,25 @@ public class LiteralExpression extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
+    element.setTextContent(value);
+  }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, value);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (obj instanceof ArgumentLiteral) {
+      final var that = (ArgumentLiteral) obj;
+      return Objects.equals(this.type, that.type)
+          && Objects.equals(this.value, that.value);
+    }
+    return false;
   }
 
   public enum Type {
@@ -80,7 +87,8 @@ public class LiteralExpression extends AbstractEntity {
     DOUBLE(double.class, DoubleLiteralExpr::new),
     CHAR(char.class, CharLiteralExpr::new),
     BOOLEAN(boolean.class, value -> new BooleanLiteralExpr("true".equalsIgnoreCase(value))),
-    STRING(String.class, StringLiteralExpr::new);
+    STRING(String.class, StringLiteralExpr::new),
+    CLASS(Class.class, value -> new ClassExpr(new ClassOrInterfaceType(null, value)));
 
     public final Class<?> type;
     public final Function<String, Expression> ast;

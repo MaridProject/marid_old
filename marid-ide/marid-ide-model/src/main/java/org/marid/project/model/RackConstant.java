@@ -41,20 +41,22 @@ public final class RackConstant extends AbstractEntity {
   private AccessType accessType;
   private String library;
   private String name;
-  private final ArrayList<LiteralExpression> parameters;
+  private final ArrayList<ArgumentLiteral> arguments;
 
-  public RackConstant(@NotNull String library, @NotNull String name, @NotNull List<LiteralExpression> parameters) {
+  public RackConstant(@NotNull String library,
+                      @NotNull String name,
+                      @NotNull List<@NotNull ArgumentLiteral> arguments) {
     this.library = library;
     this.name = name;
-    this.parameters = new ArrayList<>(parameters);
+    this.arguments = new ArrayList<>(arguments);
   }
 
   public RackConstant(Element element) {
     super(element);
     this.name = element.getAttribute("name");
     this.library = element.getAttribute("library");
-    this.parameters = XmlStreams.children(element, Element.class)
-        .map(LiteralExpression::new)
+    this.arguments = XmlStreams.children(element, Element.class)
+        .map(ArgumentLiteral::new)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -73,13 +75,11 @@ public final class RackConstant extends AbstractEntity {
     element.setAttribute("name", name);
     element.setAttribute("library", library);
     element.setAttribute("access", accessType.name().toLowerCase());
-    for (final var expression : parameters) {
-      XmlUtils.appendTo(expression, element);
-    }
+    arguments.forEach(e -> XmlUtils.appendTo(e, element));
   }
 
-  public ArrayList<LiteralExpression> getParameters() {
-    return parameters;
+  public ArrayList<ArgumentLiteral> getArguments() {
+    return arguments;
   }
 
   public String getName() {
@@ -108,7 +108,7 @@ public final class RackConstant extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(library, name, parameters);
+    return Objects.hash(accessType, library, name, arguments);
   }
 
   @Override
@@ -118,9 +118,10 @@ public final class RackConstant extends AbstractEntity {
     }
     if (obj instanceof RackConstant) {
       final var that = (RackConstant) obj;
-      return Objects.equals(this.library, that.library)
+      return Objects.equals(this.accessType, that.accessType)
+          && Objects.equals(this.library, that.library)
           && Objects.equals(this.name, that.name)
-          && Objects.equals(this.parameters, that.parameters);
+          && Objects.equals(this.arguments, that.arguments);
     }
     return false;
   }

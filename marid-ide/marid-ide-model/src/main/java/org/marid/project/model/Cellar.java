@@ -34,16 +34,16 @@ public final class Cellar extends AbstractEntity {
 
   private final ArrayList<Rack> racks;
 
-  private String packageName;
+  private String name;
 
-  public Cellar(@NotNull String packageName) {
-    this.packageName = packageName;
+  public Cellar(@NotNull String name) {
+    this.name = name;
     this.racks = new ArrayList<>();
   }
 
   public Cellar(Element element) {
     super(element);
-    this.packageName = element.getAttribute("pkg");
+    this.name = element.getAttribute("name");
     this.racks = XmlStreams.elementsByTag(element, "rack")
         .map(Rack::new)
         .collect(Collectors.toCollection(ArrayList::new));
@@ -53,12 +53,12 @@ public final class Cellar extends AbstractEntity {
     this(element(source));
   }
 
-  public String getPackageName() {
-    return packageName;
+  public String getName() {
+    return name;
   }
 
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public ArrayList<Rack> getRacks() {
@@ -67,7 +67,7 @@ public final class Cellar extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("pkg", packageName);
+    element.setAttribute("name", name);
     racks.forEach(r -> XmlUtils.appendTo(r, element));
   }
 
@@ -79,7 +79,7 @@ public final class Cellar extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(packageName, racks);
+    return Objects.hash(name, racks);
   }
 
   @Override
@@ -89,7 +89,7 @@ public final class Cellar extends AbstractEntity {
     }
     if (obj instanceof Cellar) {
       final var that = (Cellar) obj;
-      return Objects.equals(this.packageName, that.packageName)
+      return Objects.equals(this.name, that.name)
           && Objects.equals(this.racks, that.racks);
     }
     return false;
