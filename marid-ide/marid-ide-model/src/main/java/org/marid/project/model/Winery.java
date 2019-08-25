@@ -41,7 +41,7 @@ public final class Winery extends AbstractEntity {
     this.cellars = new ArrayList<>();
   }
 
-  public Winery(Element element) {
+  public Winery(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
     this.cellars = XmlStreams.elementsByTag(element, "cellar")
@@ -49,7 +49,7 @@ public final class Winery extends AbstractEntity {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public Winery(InputSource inputSource) {
+  public Winery(@NotNull InputSource inputSource) {
     this(element(inputSource));
   }
 

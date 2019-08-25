@@ -28,7 +28,7 @@ public final class RackInput extends AbstractEntity {
     this.arguments = new ArrayList<>(arguments);
   }
 
-  public RackInput(Element element) {
+  public RackInput(@NotNull Element element) {
     this.cellar = element.getAttribute("cellar");
     this.rack = element.getAttribute("rack");
     this.method = element.getAttribute("method");
@@ -37,7 +37,7 @@ public final class RackInput extends AbstractEntity {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public RackInput(InputSource inputSource) {
+  public RackInput(@NotNull InputSource inputSource) {
     this(element(inputSource));
   }
 

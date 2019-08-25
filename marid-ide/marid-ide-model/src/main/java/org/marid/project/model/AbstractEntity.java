@@ -20,6 +20,7 @@ package org.marid.project.model;
  * #L%
  */
 
+import org.jetbrains.annotations.NotNull;
 import org.marid.xml.Tagged;
 import org.marid.xml.XmlWritable;
 import org.w3c.dom.Element;
@@ -43,7 +44,7 @@ abstract class AbstractEntity implements Tagged, XmlWritable {
   AbstractEntity() {
   }
 
-  AbstractEntity(Element element) {
+  AbstractEntity(@NotNull Element element) {
     if (!getTag().equals(element.getTagName())) {
       throw new IllegalArgumentException(element.getTagName());
     }

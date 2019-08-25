@@ -41,7 +41,7 @@ public final class Cellar extends AbstractEntity {
     this.racks = new ArrayList<>();
   }
 
-  public Cellar(Element element) {
+  public Cellar(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
     this.racks = XmlStreams.elementsByTag(element, "rack")
@@ -49,7 +49,7 @@ public final class Cellar extends AbstractEntity {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public Cellar(InputSource source) {
+  public Cellar(@NotNull InputSource source) {
     this(element(source));
   }
 

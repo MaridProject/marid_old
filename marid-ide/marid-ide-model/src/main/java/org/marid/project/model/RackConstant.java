@@ -51,7 +51,7 @@ public final class RackConstant extends AbstractEntity {
     this.arguments = new ArrayList<>(arguments);
   }
 
-  public RackConstant(Element element) {
+  public RackConstant(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
     this.library = element.getAttribute("library");
@@ -60,7 +60,7 @@ public final class RackConstant extends AbstractEntity {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public RackConstant(InputSource source) {
+  public RackConstant(@NotNull InputSource source) {
     this(element(source));
   }
 

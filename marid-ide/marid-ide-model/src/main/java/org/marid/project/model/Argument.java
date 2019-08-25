@@ -1,6 +1,7 @@
 package org.marid.project.model;
 
 import com.github.javaparser.ast.expr.Expression;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
 public abstract class Argument extends AbstractEntity {
@@ -8,7 +9,7 @@ public abstract class Argument extends AbstractEntity {
   Argument() {
   }
 
-  Argument(Element element) {
+  Argument(@NotNull Element element) {
     super(element);
   }
 

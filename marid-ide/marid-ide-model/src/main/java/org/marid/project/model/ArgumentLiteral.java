@@ -30,19 +30,19 @@ public final class ArgumentLiteral extends Argument {
     this.value = value;
   }
 
-  public ArgumentLiteral(Element element) {
+  public ArgumentLiteral(@NotNull Element element) {
     super(element);
     type = Type.valueOf(element.getTagName().toUpperCase());
     value = element.getTextContent();
   }
 
+  public ArgumentLiteral(@NotNull InputSource inputSource) {
+    this(element(inputSource));
+  }
+
   @Override
   public Expression getExpression() {
     return type.ast.apply(value);
-  }
-
-  public ArgumentLiteral(InputSource inputSource) {
-    this(element(inputSource));
   }
 
   public Type getType() {

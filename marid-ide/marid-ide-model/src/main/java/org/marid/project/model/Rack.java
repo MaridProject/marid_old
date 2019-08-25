@@ -46,7 +46,7 @@ public final class Rack extends AbstractEntity {
     this.inputs = new ArrayList<>(inputs);
   }
 
-  public Rack(Element element) {
+  public Rack(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
     this.constants = XmlStreams.elementsByTag(element, "const")
@@ -57,7 +57,7 @@ public final class Rack extends AbstractEntity {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public Rack(InputSource source) {
+  public Rack(@NotNull InputSource source) {
     this(element(source));
   }
 

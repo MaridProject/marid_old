@@ -10,6 +10,10 @@ interface ArgumentFactory {
       return new ArgumentLiteral(element);
     } catch (IllegalArgumentException e) {
       switch (element.getTagName()) {
+        case "ref-method":
+          return new ArgumentRefMethod(element);
+        case "ref-field":
+          return new ArgumentRefField(element);
         default:
           throw new IllegalArgumentException(element.getTagName());
       }
