@@ -21,8 +21,8 @@ package org.marid.racks.net;
  * #L%
  */
 
-import org.marid.runtime.annotation.Input;
-import org.marid.runtime.annotation.Output;
+import org.marid.runtime.annotation.BottleIn;
+import org.marid.runtime.annotation.BottleOut;
 import org.marid.runtime.annotation.Rack;
 import org.marid.runtime.model.AbstractRack;
 
@@ -34,23 +34,23 @@ import java.net.StandardSocketOptions;
 @Rack(title = "Server socket")
 public class ServerSocketRack extends AbstractRack<ServerSocket> {
 
-  public ServerSocketRack(@Input(title = "Socket port to bind") int port,
-                          @Input(title = "Requested maximum length of the queue of incoming connections") int backlog,
-                          @Input(title = "Bind address", code = "bind") InetAddress bindAddress) {
+  public ServerSocketRack(@BottleIn(title = "Socket port to bind") int port,
+                          @BottleIn(title = "Requested maximum length of the queue of incoming connections") int backlog,
+                          @BottleIn(title = "Bind address", code = "bind") InetAddress bindAddress) {
     super(() -> new ServerSocket(port, backlog, bindAddress));
   }
 
-  @Input(code = "IBS")
+  @BottleIn(code = "IBS")
   public void inputBufferSize(int size) throws IOException {
     instance.setOption(StandardSocketOptions.SO_RCVBUF, size);
   }
 
-  @Input(code = "OBS")
+  @BottleIn(code = "OBS")
   public void outputBufferSize(int size) throws IOException {
     instance.setOption(StandardSocketOptions.SO_SNDBUF, size);
   }
 
-  @Output(title = "Actual port")
+  @BottleOut(title = "Actual port")
   public int port() {
     return instance.getLocalPort();
   }

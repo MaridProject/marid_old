@@ -134,9 +134,7 @@ public final class Deployment implements AutoCloseable {
   public void run() {
     Thread.currentThread().setContextClassLoader(classLoader);
     try {
-      for (final RackProvider<?> rackProvider : ServiceLoader.load(RackProvider.class)) {
-        rackProvider.getRack();
-      }
+
     } catch (Throwable e) {
       final var exception = new DeploymentStartException(this, e);
       try {
@@ -156,7 +154,9 @@ public final class Deployment implements AutoCloseable {
     for (final var it = racks.descendingIterator(); it.hasNext(); ) {
       final var rack = it.next();
       try {
-        rack.close();
+        if (rack instanceof AutoCloseable) {
+          ((AutoCloseable) rack).close();
+        }
       } catch (Throwable x) {
         exception.addSuppressed(x);
       } finally {

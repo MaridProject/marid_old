@@ -21,86 +21,30 @@ package org.marid.runtime.model;
  * #L%
  */
 
-import org.marid.runtime.annotation.Destroy;
-import org.marid.runtime.annotation.Initialize;
-import org.marid.runtime.exception.RackCloseException;
 import org.marid.runtime.exception.RackCreationException;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.security.PrivilegedExceptionAction;
 
-public abstract class AbstractRack<E> implements AutoCloseable {
+public abstract class AbstractRack<E> {
 
   private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
   public final Class<?> caller;
   protected final E instance;
 
-  public AbstractRack(RackInstanceSupplier<E> instanceSupplier) {
+  public AbstractRack(PrivilegedExceptionAction<E> instanceSupplier) {
     this.caller = STACK_WALKER.getCallerClass();
 
     Deployment.getDeployment().racks.add(this);
 
     try {
-      this.instance = instanceSupplier.get();
+      this.instance = instanceSupplier.run();
     } catch (Throwable e) {
       throw new RackCreationException(caller, e);
-    }
-
-    try {
-      Arrays.stream(getClass().getMethods())
-          .filter(m -> m.getParameterCount() == 0)
-          .filter(m -> m.isAnnotationPresent(Initialize.class))
-          .filter(AccessibleObject::trySetAccessible)
-          .sorted(Comparator.comparingInt(m -> m.getAnnotation(Initialize.class).order()))
-          .forEachOrdered(method -> {
-            try {
-              method.invoke(this);
-            } catch (InvocationTargetException e) {
-              throw new RackCreationException(caller, e.getTargetException());
-            } catch (Throwable e) {
-              throw new RackCreationException(caller, e);
-            }
-          });
-    } catch (Throwable e) {
-      try {
-        close();
-      } catch (Throwable ce) {
-        e.addSuppressed(ce);
-      }
-      throw e;
     }
   }
 
   public final E get() {
     return instance;
-  }
-
-  @Override
-  public void close() {
-    if (instance != null) {
-      final var exception = new RackCloseException(this);
-
-      Arrays.stream(getClass().getMethods())
-          .filter(m -> m.getParameterCount() == 0)
-          .filter(m -> m.isAnnotationPresent(Destroy.class))
-          .filter(AccessibleObject::trySetAccessible)
-          .sorted(Comparator.comparingInt(m -> m.getAnnotation(Destroy.class).order()))
-          .forEachOrdered(method -> {
-            try {
-              method.invoke(this);
-            } catch (InvocationTargetException e) {
-              exception.addSuppressed(e.getTargetException());
-            } catch (Throwable e) {
-              exception.addSuppressed(e);
-            }
-          });
-
-      if (exception.getSuppressed().length > 0) {
-        throw exception;
-      }
-    }
   }
 }
