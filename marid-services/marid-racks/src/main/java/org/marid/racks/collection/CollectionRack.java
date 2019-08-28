@@ -25,7 +25,7 @@ import org.marid.runtime.annotation.Out;
 
 import java.util.Collection;
 
-public interface ImmutableCollectionRack<E, C extends Collection<E>> {
+public interface CollectionRack<E, C extends Collection<E>> {
 
   C get();
 

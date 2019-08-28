@@ -21,16 +21,15 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.marid.runtime.annotation.Rack;
-import org.marid.runtime.model.AbstractRack;
+import org.marid.runtime.annotation.Out;
 
 import java.util.List;
+import java.util.function.IntFunction;
 
-@Rack(title = "Immutable list")
-public class ImmutableListRack<E> extends AbstractRack<List<E>> implements ListRack<E, List<E>> {
+public interface ListRack<E, L extends List<E>> extends CollectionRack<E, L> {
 
-  @SafeVarargs
-  public ImmutableListRack(E... element) {
-    super(() -> List.of(element));
+  @Out(title = "Function: get element by index")
+  default IntFunction<E> getByIndex() {
+    return get()::get;
   }
 }
