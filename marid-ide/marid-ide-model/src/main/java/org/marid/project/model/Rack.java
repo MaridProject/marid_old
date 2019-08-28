@@ -27,40 +27,31 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class Rack extends AbstractEntity {
 
-  private final ArrayList<RackConstant> constants;
   private final ArrayList<Argument> arguments;
-  private final ArrayList<RackInput> inputs;
+  private final ArrayList<RackInit> initializers;
 
   private String name;
 
-  public Rack(@NotNull String name,
-              @NotNull List<@NotNull RackConstant> constants,
-              @NotNull List<@NotNull Argument> arguments,
-              @NotNull List<@NotNull RackInput> inputs) {
+  public Rack(@NotNull String name) {
     this.name = name;
-    this.constants = new ArrayList<>(constants);
-    this.arguments = new ArrayList<>(arguments);
-    this.inputs = new ArrayList<>(inputs);
+    this.arguments = new ArrayList<>();
+    this.initializers = new ArrayList<>();
   }
 
   public Rack(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.constants = XmlStreams.elementsByTag(element, "const")
-        .map(RackConstant::new)
-        .collect(Collectors.toCollection(ArrayList::new));
     this.arguments = XmlStreams.elementsByTag(element, "args")
         .flatMap(e -> XmlStreams.children(e, Element.class))
         .map(ArgumentFactory::argument)
         .collect(Collectors.toCollection(ArrayList::new));
-    this.inputs = XmlStreams.elementsByTag(element, "input")
-        .map(RackInput::new)
+    this.initializers = XmlStreams.elementsByTag(element, "init")
+        .map(RackInit::new)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -76,26 +67,21 @@ public final class Rack extends AbstractEntity {
     this.name = name;
   }
 
-  public ArrayList<RackConstant> getConstants() {
-    return constants;
-  }
-
   public ArrayList<Argument> getArguments() {
     return arguments;
   }
 
-  public ArrayList<RackInput> getInputs() {
-    return inputs;
+  public ArrayList<RackInit> getInitializers() {
+    return initializers;
   }
 
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
-    constants.forEach(c -> XmlUtils.appendTo(c, element));
     if (!arguments.isEmpty()) {
       XmlUtils.append(element, "args", e -> arguments.forEach(a -> XmlUtils.appendTo(a, e)));
     }
-    inputs.forEach(i -> XmlUtils.appendTo(i, element));
+    initializers.forEach(i -> XmlUtils.appendTo(i, element));
   }
 
   @NotNull
@@ -106,7 +92,7 @@ public final class Rack extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, constants, arguments, inputs);
+    return Objects.hash(name, arguments, initializers);
   }
 
   @Override
@@ -117,9 +103,8 @@ public final class Rack extends AbstractEntity {
     if (obj instanceof Rack) {
       final var that = (Rack) obj;
       return Objects.equals(this.name, that.name)
-          && Objects.equals(this.constants, that.constants)
           && Objects.equals(this.arguments, that.arguments)
-          && Objects.equals(this.inputs, that.inputs);
+          && Objects.equals(this.initializers, that.initializers);
     }
     return false;
   }

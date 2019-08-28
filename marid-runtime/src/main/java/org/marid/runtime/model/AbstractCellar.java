@@ -1,4 +1,4 @@
-package org.marid.runtime.annotation;
+package org.marid.runtime.model;
 
 /*-
  * #%L
@@ -21,18 +21,7 @@ package org.marid.runtime.annotation;
  * #L%
  */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public abstract class AbstractCellar {
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Cellar {
-
-  String title() default "";
-
-  String description() default "";
-
-  String icon() default "";
+  public abstract void run();
 }

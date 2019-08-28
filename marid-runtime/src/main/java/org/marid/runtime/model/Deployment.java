@@ -35,7 +35,11 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.zip.ZipInputStream;
 
 public final class Deployment implements AutoCloseable {
@@ -134,7 +138,9 @@ public final class Deployment implements AutoCloseable {
   public void run() {
     Thread.currentThread().setContextClassLoader(classLoader);
     try {
-
+      for (final var cellar : ServiceLoader.load(AbstractCellar.class, classLoader)) {
+        cellar.run();
+      }
     } catch (Throwable e) {
       final var exception = new DeploymentStartException(this, e);
       try {
@@ -216,10 +222,6 @@ public final class Deployment implements AutoCloseable {
     if (exception.getSuppressed().length > 0) {
       throw exception;
     }
-  }
-
-  public static Deployment getDeployment() {
-    return ((RackClassLoader) Thread.currentThread().getContextClassLoader()).deployment;
   }
 
   @Override

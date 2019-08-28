@@ -53,6 +53,11 @@ public final class Winery extends AbstractEntity {
     this(element(inputSource));
   }
 
+  public Winery addCellar(Cellar cellar) {
+    cellars.add(cellar);
+    return this;
+  }
+
   public List<Cellar> getCellars() {
     return cellars;
   }

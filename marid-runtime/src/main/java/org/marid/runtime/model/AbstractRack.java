@@ -23,7 +23,7 @@ package org.marid.runtime.model;
 
 import org.marid.runtime.exception.RackCreationException;
 
-import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.Callable;
 
 public abstract class AbstractRack<E> {
 
@@ -32,15 +32,39 @@ public abstract class AbstractRack<E> {
   public final Class<?> caller;
   protected final E instance;
 
-  public AbstractRack(PrivilegedExceptionAction<E> instanceSupplier) {
+  public AbstractRack(Callable<E> instanceSupplier) {
     this.caller = STACK_WALKER.getCallerClass();
 
-    Deployment.getDeployment().racks.add(this);
+    deployment().racks.add(this);
 
     try {
-      this.instance = instanceSupplier.run();
+      this.instance = instanceSupplier.call();
     } catch (Throwable e) {
       throw new RackCreationException(caller, e);
+    }
+  }
+
+  public void init(AutoCloseable initAction) {
+    try {
+      initAction.close();
+      if (this instanceof Runnable) {
+        ((Runnable) this).run();
+      }
+    } catch (Throwable e) {
+      throw new RackCreationException(caller, e);
+    }
+  }
+
+  protected Deployment deployment() {
+    return classLoader().deployment;
+  }
+
+  protected RackClassLoader classLoader() {
+    final var current = getClass().getClassLoader();
+    if (current instanceof RackClassLoader) {
+      return (RackClassLoader) current;
+    } else {
+      return (RackClassLoader) Thread.currentThread().getContextClassLoader();
     }
   }
 

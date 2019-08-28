@@ -36,22 +36,22 @@ import static com.github.javaparser.ast.AccessSpecifier.PACKAGE_PRIVATE;
 import static com.github.javaparser.ast.AccessSpecifier.PRIVATE;
 import static com.github.javaparser.ast.AccessSpecifier.PUBLIC;
 
-public final class RackConstant extends AbstractEntity {
+public final class CellarConstant extends AbstractEntity {
 
   private AccessType accessType;
   private String library;
   private String name;
   private final ArrayList<ArgumentLiteral> arguments;
 
-  public RackConstant(@NotNull String library,
-                      @NotNull String name,
-                      @NotNull List<@NotNull ArgumentLiteral> arguments) {
+  public CellarConstant(@NotNull String library,
+                        @NotNull String name,
+                        @NotNull List<@NotNull ArgumentLiteral> arguments) {
     this.library = library;
     this.name = name;
     this.arguments = new ArrayList<>(arguments);
   }
 
-  public RackConstant(@NotNull Element element) {
+  public CellarConstant(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
     this.library = element.getAttribute("library");
@@ -60,7 +60,7 @@ public final class RackConstant extends AbstractEntity {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public RackConstant(@NotNull InputSource source) {
+  public CellarConstant(@NotNull InputSource source) {
     this(element(source));
   }
 
@@ -116,8 +116,8 @@ public final class RackConstant extends AbstractEntity {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof RackConstant) {
-      final var that = (RackConstant) obj;
+    if (obj instanceof CellarConstant) {
+      final var that = (CellarConstant) obj;
       return Objects.equals(this.accessType, that.accessType)
           && Objects.equals(this.library, that.library)
           && Objects.equals(this.name, that.name)

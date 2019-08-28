@@ -33,17 +33,22 @@ import java.util.stream.Collectors;
 public final class Cellar extends AbstractEntity {
 
   private final ArrayList<Rack> racks;
+  private final ArrayList<CellarConstant> constants;
 
   private String name;
 
   public Cellar(@NotNull String name) {
     this.name = name;
     this.racks = new ArrayList<>();
+    this.constants = new ArrayList<>();
   }
 
   public Cellar(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
+    this.constants = XmlStreams.elementsByTag(element, "constant")
+        .map(CellarConstant::new)
+        .collect(Collectors.toCollection(ArrayList::new));
     this.racks = XmlStreams.elementsByTag(element, "rack")
         .map(Rack::new)
         .collect(Collectors.toCollection(ArrayList::new));
@@ -51,6 +56,16 @@ public final class Cellar extends AbstractEntity {
 
   public Cellar(@NotNull InputSource source) {
     this(element(source));
+  }
+
+  public Cellar addConstant(CellarConstant constant) {
+    constants.add(constant);
+    return this;
+  }
+
+  public Cellar addRack(Rack rack) {
+    racks.add(rack);
+    return this;
   }
 
   public String getName() {
@@ -68,6 +83,7 @@ public final class Cellar extends AbstractEntity {
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
+    constants.forEach(r -> XmlUtils.appendTo(r, element));
     racks.forEach(r -> XmlUtils.appendTo(r, element));
   }
 
@@ -79,7 +95,7 @@ public final class Cellar extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, racks);
+    return Objects.hash(name, constants, racks);
   }
 
   @Override
@@ -90,6 +106,7 @@ public final class Cellar extends AbstractEntity {
     if (obj instanceof Cellar) {
       final var that = (Cellar) obj;
       return Objects.equals(this.name, that.name)
+          && Objects.equals(this.constants, that.constants)
           && Objects.equals(this.racks, that.racks);
     }
     return false;
