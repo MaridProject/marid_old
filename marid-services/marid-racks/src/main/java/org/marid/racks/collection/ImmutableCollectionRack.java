@@ -21,7 +21,7 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.marid.runtime.annotation.BottleOut;
+import org.marid.runtime.annotation.Out;
 
 import java.util.Collection;
 
@@ -29,7 +29,7 @@ public interface ImmutableCollectionRack<E, C extends Collection<E>> {
 
   C get();
 
-  @BottleOut(title = "size")
+  @Out(title = "size")
   default int size() {
     return get().size();
   }

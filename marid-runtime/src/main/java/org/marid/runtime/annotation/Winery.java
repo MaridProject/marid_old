@@ -26,11 +26,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Target({ElementType.PACKAGE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BottleIn {
-
-  String code() default "";
+public @interface Winery {
 
   String title() default "";
 

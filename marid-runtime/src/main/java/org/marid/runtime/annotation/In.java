@@ -26,7 +26,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.LOCAL_VARIABLE})
-@Retention(RetentionPolicy.SOURCE)
-public @interface Var {
+@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface In {
+
+  String code() default "";
+
+  String title() default "";
+
+  String description() default "";
+
+  String icon() default "";
 }

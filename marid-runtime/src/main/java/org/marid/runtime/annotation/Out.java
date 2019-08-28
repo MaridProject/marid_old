@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BottleOut {
+public @interface Out {
 
   String code() default "";
 

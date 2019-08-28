@@ -21,7 +21,7 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.marid.runtime.annotation.BottleIn;
+import org.marid.runtime.annotation.In;
 import org.marid.runtime.annotation.Rack;
 import org.marid.runtime.model.AbstractRack;
 
@@ -32,7 +32,7 @@ import java.util.Arrays;
 public class ArrayListRack<E> extends AbstractRack<ArrayList<E>> {
 
   @SafeVarargs
-  public ArrayListRack(@BottleIn(code = "+", title = "element") E... elements) {
+  public ArrayListRack(@In(code = "+", title = "element") E... elements) {
     super(() -> new ArrayList<>(Arrays.asList(elements)));
   }
 }

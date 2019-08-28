@@ -20,9 +20,14 @@ package org.marid.project.compiler;
  * #L%
  */
 
-import org.marid.runtime.annotation.Var;
+import org.marid.runtime.annotation.Rack;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.Completion;
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -44,7 +49,7 @@ public class VarProcessor implements Processor {
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    return Collections.singleton(Var.class.getName());
+    return Collections.singleton(Rack.class.getName());
   }
 
   @Override
