@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.github.javaparser.ast.AccessSpecifier.PACKAGE_PRIVATE;
 import static com.github.javaparser.ast.AccessSpecifier.PRIVATE;
 import static com.github.javaparser.ast.AccessSpecifier.PUBLIC;
 
@@ -129,7 +128,6 @@ public final class CellarConstant extends AbstractEntity {
   public enum AccessType {
 
     RACK(PRIVATE),
-    CELLAR(PACKAGE_PRIVATE),
     WINERY(PUBLIC);
 
     public final AccessSpecifier accessSpecifier;

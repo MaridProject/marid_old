@@ -47,7 +47,7 @@ public final class Deployment implements AutoCloseable {
   private final Path deployment;
   private final Path deps;
   private final Path resources;
-  private final RackClassLoader classLoader;
+  private final DeploymentClassLoader classLoader;
   final LinkedList<AbstractRack<?>> racks = new LinkedList<>();
   public final List<String> args;
 
@@ -119,7 +119,7 @@ public final class Deployment implements AutoCloseable {
     }
   }
 
-  private RackClassLoader classLoader() throws IOException {
+  private DeploymentClassLoader classLoader() throws IOException {
     final var urls = new ArrayList<URL>();
     urls.add(deployment.resolve("bundle.jar").toUri().toURL());
     urls.add(resources.toUri().toURL());
@@ -128,7 +128,7 @@ public final class Deployment implements AutoCloseable {
         urls.add(path.toUri().toURL());
       }
     }
-    return new RackClassLoader(urls.toArray(URL[]::new), this);
+    return new DeploymentClassLoader(urls.toArray(URL[]::new), this);
   }
 
   public String getId() {

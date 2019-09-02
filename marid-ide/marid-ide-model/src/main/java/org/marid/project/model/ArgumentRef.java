@@ -21,45 +21,49 @@ package org.marid.project.model;
  */
 
 import com.github.javaparser.ast.expr.ClassExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.Objects;
+import java.util.function.Function;
 
-public final class ArgumentRefMethod extends Argument {
+public final class ArgumentRef extends Argument {
 
+  private Type type;
   private String cellar;
-  private String rack;
-  private String method;
+  private String ref;
 
-  public ArgumentRefMethod(@NotNull String cellar, @NotNull String rack, @NotNull String method) {
+  public ArgumentRef(@NotNull Type type, @NotNull String cellar, @NotNull String ref) {
+    this.type = type;
     this.cellar = cellar;
-    this.rack = rack;
-    this.method = method;
+    this.ref = ref;
   }
 
-  public ArgumentRefMethod(@NotNull Element element) {
+  public ArgumentRef(@NotNull Element element) {
     super(element);
+    this.type = Type.valueOf(element.getAttribute("type").toUpperCase());
     this.cellar = element.getAttribute("cellar");
-    this.rack = element.getAttribute("rack");
-    this.method = element.getAttribute("method");
+    this.ref = element.getAttribute("ref");
   }
 
-  public ArgumentRefMethod(@NotNull InputSource inputSource) {
+  public ArgumentRef(@NotNull InputSource inputSource) {
     this(element(inputSource));
   }
 
   @Override
-  public MethodCallExpr getExpression() {
-    return new MethodCallExpr(new ClassExpr(new ClassOrInterfaceType(null, cellar + "." + rack)), method);
+  public Expression getExpression() {
+    return type.ast.apply(this);
   }
 
   @Override
   public @NotNull String getTag() {
-    return "ref-method";
+    return "ref";
   }
 
   public String getCellar() {
@@ -70,32 +74,24 @@ public final class ArgumentRefMethod extends Argument {
     this.cellar = cellar;
   }
 
-  public String getRack() {
-    return rack;
+  public String getRef() {
+    return ref;
   }
 
-  public void setRack(String rack) {
-    this.rack = rack;
-  }
-
-  public String getMethod() {
-    return method;
-  }
-
-  public void setMethod(String method) {
-    this.method = method;
+  public void setRef(String ref) {
+    this.ref = ref;
   }
 
   @Override
   public void writeTo(@NotNull Element element) {
+    element.setAttribute("type", type.name().toLowerCase());
     element.setAttribute("cellar", cellar);
-    element.setAttribute("rack", rack);
-    element.setAttribute("method", method);
+    element.setAttribute("ref", ref);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cellar, rack, method);
+    return Objects.hash(type, cellar, ref);
   }
 
   @Override
@@ -103,12 +99,23 @@ public final class ArgumentRefMethod extends Argument {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ArgumentRefMethod) {
-      final var that = (ArgumentRefMethod) obj;
-      return Objects.equals(this.cellar, that.cellar)
-          && Objects.equals(this.rack, that.rack)
-          && Objects.equals(this.method, that.method);
+    if (obj instanceof ArgumentRef) {
+      final var that = (ArgumentRef) obj;
+      return Objects.equals(this.type, that.type)
+          && Objects.equals(this.cellar, that.cellar)
+          && Objects.equals(this.ref, that.ref);
     }
     return false;
+  }
+
+  public enum Type {
+    CONST(a -> new FieldAccessExpr(new ClassExpr(new ClassOrInterfaceType(null, a.cellar)), a.ref)),
+    LOCAL(a -> new MethodCallExpr(new NameExpr(a.ref), "get"));
+
+    private final Function<ArgumentRef, Expression> ast;
+
+    Type(Function<ArgumentRef, Expression> ast) {
+      this.ast = ast;
+    }
   }
 }

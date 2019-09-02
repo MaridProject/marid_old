@@ -62,7 +62,7 @@ public final class ArgumentLiteral extends Argument {
 
   @Override
   public Expression getExpression() {
-    return type.ast.apply(value);
+    return type.ast.apply(this);
   }
 
   public Type getType() {
@@ -99,21 +99,21 @@ public final class ArgumentLiteral extends Argument {
 
   public enum Type {
 
-    BYTE(byte.class, value -> new CastExpr(byteType(), new IntegerLiteralExpr(value))),
-    SHORT(short.class, value -> new CastExpr(shortType(), new IntegerLiteralExpr(value))),
-    INT(int.class, IntegerLiteralExpr::new),
-    LONG(long.class, LongLiteralExpr::new),
-    FLOAT(float.class, DoubleLiteralExpr::new),
-    DOUBLE(double.class, DoubleLiteralExpr::new),
-    CHAR(char.class, CharLiteralExpr::new),
-    BOOLEAN(boolean.class, value -> new BooleanLiteralExpr("true".equalsIgnoreCase(value))),
-    STRING(String.class, StringLiteralExpr::new),
-    CLASS(Class.class, value -> new ClassExpr(new ClassOrInterfaceType(null, value)));
+    BYTE(byte.class, a -> new CastExpr(byteType(), new IntegerLiteralExpr(a.value))),
+    SHORT(short.class, a -> new CastExpr(shortType(), new IntegerLiteralExpr(a.value))),
+    INT(int.class, a -> new IntegerLiteralExpr(a.value)),
+    LONG(long.class, a -> new LongLiteralExpr(a.value)),
+    FLOAT(float.class, a -> new DoubleLiteralExpr(a.value)),
+    DOUBLE(double.class, a -> new DoubleLiteralExpr(a.value)),
+    CHAR(char.class, a -> new CharLiteralExpr(a.value)),
+    BOOLEAN(boolean.class, a -> new BooleanLiteralExpr("true".equalsIgnoreCase(a.value))),
+    STRING(String.class, a -> new StringLiteralExpr(a.value)),
+    CLASS(Class.class, a -> new ClassExpr(new ClassOrInterfaceType(null, a.value)));
 
     public final Class<?> type;
-    public final Function<String, Expression> ast;
+    public final Function<ArgumentLiteral, Expression> ast;
 
-    Type(Class<?> type, Function<String, Expression> ast) {
+    Type(Class<?> type, Function<ArgumentLiteral, Expression> ast) {
       this.type = type;
       this.ast = ast;
     }

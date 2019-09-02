@@ -24,16 +24,25 @@ package org.marid.runtime.model;
 import org.marid.runtime.exception.RackCreationException;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractRack<E> {
 
   private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+  private static final ClassValue<AtomicInteger> RACK_COUNTS = new ClassValue<>() {
+    @Override
+    protected AtomicInteger computeValue(Class<?> type) {
+      return new AtomicInteger();
+    }
+  };
 
   public final Class<?> caller;
   protected final E instance;
+  protected final int index;
 
   public AbstractRack(Callable<E> instanceSupplier) {
     this.caller = STACK_WALKER.getCallerClass();
+    this.index = RACK_COUNTS.get(caller).getAndIncrement();
 
     deployment().racks.add(this);
 
@@ -59,12 +68,12 @@ public abstract class AbstractRack<E> {
     return classLoader().deployment;
   }
 
-  protected RackClassLoader classLoader() {
+  protected DeploymentClassLoader classLoader() {
     final var current = getClass().getClassLoader();
-    if (current instanceof RackClassLoader) {
-      return (RackClassLoader) current;
+    if (current instanceof DeploymentClassLoader) {
+      return (DeploymentClassLoader) current;
     } else {
-      return (RackClassLoader) Thread.currentThread().getContextClassLoader();
+      return (DeploymentClassLoader) Thread.currentThread().getContextClassLoader();
     }
   }
 

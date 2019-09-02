@@ -23,5 +23,5 @@ package org.marid.runtime.model;
 
 public abstract class AbstractCellar {
 
-  public abstract void run();
+  public abstract void run() throws Exception;
 }
