@@ -28,7 +28,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -42,12 +41,10 @@ public final class CellarConstant extends AbstractEntity {
   private String name;
   private final ArrayList<ArgumentLiteral> arguments;
 
-  public CellarConstant(@NotNull String library,
-                        @NotNull String name,
-                        @NotNull List<@NotNull ArgumentLiteral> arguments) {
+  public CellarConstant(@NotNull String library, @NotNull String name) {
     this.library = library;
     this.name = name;
-    this.arguments = new ArrayList<>(arguments);
+    this.arguments = new ArrayList<>();
   }
 
   public CellarConstant(@NotNull Element element) {
@@ -75,6 +72,11 @@ public final class CellarConstant extends AbstractEntity {
     element.setAttribute("library", library);
     element.setAttribute("access", accessType.name().toLowerCase());
     arguments.forEach(e -> XmlUtils.appendTo(e, element));
+  }
+
+  public CellarConstant addArg(ArgumentLiteral arg) {
+    arguments.add(arg);
+    return this;
   }
 
   public ArrayList<ArgumentLiteral> getArguments() {
