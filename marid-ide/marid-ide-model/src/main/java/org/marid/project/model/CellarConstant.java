@@ -37,12 +37,12 @@ import static com.github.javaparser.ast.AccessSpecifier.PUBLIC;
 public final class CellarConstant extends AbstractEntity {
 
   private AccessType accessType;
-  private String library;
+  private String cellar;
   private String name;
   private final ArrayList<ArgumentLiteral> arguments;
 
-  public CellarConstant(@NotNull String library, @NotNull String name) {
-    this.library = library;
+  public CellarConstant(@NotNull String cellar, @NotNull String name) {
+    this.cellar = cellar;
     this.name = name;
     this.arguments = new ArrayList<>();
   }
@@ -50,7 +50,7 @@ public final class CellarConstant extends AbstractEntity {
   public CellarConstant(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.library = element.getAttribute("library");
+    this.cellar = element.getAttribute("cellar");
     this.arguments = XmlStreams.children(element, Element.class)
         .map(ArgumentLiteral::new)
         .collect(Collectors.toCollection(ArrayList::new));
@@ -68,8 +68,8 @@ public final class CellarConstant extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
+    element.setAttribute("cellar", cellar);
     element.setAttribute("name", name);
-    element.setAttribute("library", library);
     element.setAttribute("access", accessType.name().toLowerCase());
     arguments.forEach(e -> XmlUtils.appendTo(e, element));
   }
@@ -91,12 +91,12 @@ public final class CellarConstant extends AbstractEntity {
     this.name = name;
   }
 
-  public String getLibrary() {
-    return library;
+  public String getCellar() {
+    return cellar;
   }
 
-  public void setLibrary(String library) {
-    this.library = library;
+  public void setCellar(String cellar) {
+    this.cellar = cellar;
   }
 
   public AccessType getAccessType() {
@@ -109,7 +109,7 @@ public final class CellarConstant extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(accessType, library, name, arguments);
+    return Objects.hash(accessType, cellar, name, arguments);
   }
 
   @Override
@@ -120,7 +120,7 @@ public final class CellarConstant extends AbstractEntity {
     if (obj instanceof CellarConstant) {
       final var that = (CellarConstant) obj;
       return Objects.equals(this.accessType, that.accessType)
-          && Objects.equals(this.library, that.library)
+          && Objects.equals(this.cellar, that.cellar)
           && Objects.equals(this.name, that.name)
           && Objects.equals(this.arguments, that.arguments);
     }
