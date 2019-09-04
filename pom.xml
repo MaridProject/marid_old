@@ -42,6 +42,7 @@
     <module>marid-spring</module>
     <module>marid-ide</module>
     <module>marid-bom</module>
+    <module>marid-types</module>
   </modules>
 
   <scm>
