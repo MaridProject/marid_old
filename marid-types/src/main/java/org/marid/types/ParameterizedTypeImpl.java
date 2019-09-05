@@ -29,7 +29,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 final class ParameterizedTypeImpl implements ParameterizedType {
 
@@ -114,18 +113,20 @@ final class ParameterizedTypeImpl implements ParameterizedType {
 
     if (ownerType != null) {
       sb.append(ownerType.getTypeName());
-      sb.append("$");
+      sb.append('$');
       sb.append(rawType.getSimpleName());
     } else {
       sb.append(rawType.getName());
     }
 
-    final StringJoiner sj = new StringJoiner(", ", "<", ">");
-    sj.setEmptyValue("");
-    for (final var t : actualTypeArguments) {
-      sj.add(t.getTypeName());
+    sb.append('<');
+    for (int i = 0; i < actualTypeArguments.length; i++) {
+      if (i > 0) {
+        sb.append(", ");
+      }
+      sb.append(actualTypeArguments[i].getTypeName());
     }
-    sb.append(sj.toString());
+    sb.append('>');
 
     return sb.toString();
   }
