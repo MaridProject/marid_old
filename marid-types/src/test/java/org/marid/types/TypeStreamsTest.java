@@ -52,15 +52,36 @@ class TypeStreamsTest {
     assertEquals(expected, TypeStreams.superclasses(type).collect(Collectors.toList()));
   }
 
-  public static class C1 extends C2 {
+  private static Stream<Arguments> interfacesData() {
+    return Stream.of(
+        arguments(C1.class, List.of(I3.class, I1.class, I2.class))
+    );
   }
 
-  static class C2 extends C3 {
+  @ParameterizedTest
+  @MethodSource("interfacesData")
+  void interfaces(Class<?> type, List<Class<?>> expected) {
+    assertEquals(expected, TypeStreams.interfaces(type).collect(Collectors.toList()));
   }
 
-  private static class C3 extends C4 {
+  public static class C1 extends C2 implements I1 {
   }
 
-  public static class C4 {
+  static class C2 extends C3 implements I3 {
+  }
+
+  private static class C3 extends C4 implements I2 {
+  }
+
+  public static class C4 implements I1 {
+  }
+
+  public interface I1 extends I2 {
+  }
+
+  public interface I2 {
+  }
+
+  public interface I3 extends I2, I1 {
   }
 }

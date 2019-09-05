@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -42,15 +42,27 @@ public interface TypeStreams {
   }
 
   static Stream<Class<?>> interfaces(Class<?> type) {
-    return type.isInterface()
+    return (type.isInterface()
         ? Stream.of(type).flatMap(TypeStreams::interfaces0)
-        : Arrays.stream(type.getInterfaces()).flatMap(TypeStreams::interfaces0);
+        : superclasses(type).flatMap(t -> Arrays.stream(t.getInterfaces())).flatMap(TypeStreams::interfaces0)
+    ).distinct()
+        .sorted((i1, i2) -> {
+          if (i1.equals(i2)) {
+            return 0;
+          } else if (i1.isAssignableFrom(i2)) {
+            return 1;
+          } else if (i2.isAssignableFrom(i1)) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
   }
 
   private static Stream<Class<?>> interfaces0(Class<?> itf) {
     return Stream.concat(
         Stream.of(itf),
         Arrays.stream(itf.getInterfaces()).flatMap(TypeStreams::interfaces0)
-    ).distinct();
+    );
   }
 }
