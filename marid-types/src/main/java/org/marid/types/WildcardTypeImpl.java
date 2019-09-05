@@ -37,6 +37,10 @@ final class WildcardTypeImpl implements WildcardType {
   WildcardTypeImpl(@NotNull Type[] upperBounds, @NotNull Type[] lowerBounds) {
     this.upperBounds = upperBounds;
     this.lowerBounds = lowerBounds;
+
+    if (upperBounds.length > 0 && lowerBounds.length > 0) {
+      throw new IllegalArgumentException("Illegal wildcard type bounds: both upper bounds and lower bounds are present");
+    }
   }
 
   @Override
