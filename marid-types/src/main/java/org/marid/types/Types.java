@@ -29,7 +29,7 @@ public interface Types {
     try {
       MethodHandles.publicLookup().accessClass(type);
       return true;
-    } catch (IllegalAccessException e) {
+    } catch (IllegalAccessException | SecurityException e) {
       return false;
     }
   }
