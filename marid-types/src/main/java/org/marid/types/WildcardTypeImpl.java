@@ -25,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.Arrays;
+
+import static java.util.stream.Collectors.joining;
 
 final class WildcardTypeImpl implements WildcardType {
 
@@ -47,7 +50,32 @@ final class WildcardTypeImpl implements WildcardType {
   }
 
   @Override
+  public int hashCode() {
+    return Arrays.hashCode(upperBounds) ^ Arrays.hashCode(lowerBounds);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    } else if (obj instanceof WildcardType) {
+      return Arrays.equals(upperBounds, ((WildcardType) obj).getUpperBounds())
+          && Arrays.equals(lowerBounds, ((WildcardType) obj).getLowerBounds());
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public String toString() {
-    return super.toString();
+    if (lowerBounds.length == 0) {
+      if (upperBounds.length == 0) {
+        return "?";
+      } else {
+        return Arrays.stream(upperBounds).map(Type::getTypeName).collect(joining(" & ", "? extends ", ""));
+      }
+    } else {
+      return Arrays.stream(lowerBounds).map(Type::getTypeName).collect(joining(" & ", "? super ", ""));
+    }
   }
 }
