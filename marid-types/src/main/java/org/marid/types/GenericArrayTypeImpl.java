@@ -21,19 +21,42 @@ package org.marid.types;
  * #L%
  */
 
-import java.lang.invoke.MethodHandles;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 
-public interface Types {
+final class GenericArrayTypeImpl implements GenericArrayType {
 
-  Type[] EMPTY_TYPES = {};
+  private final Type genericComponentType;
 
-  static boolean isPublic(Class<?> type) {
-    try {
-      MethodHandles.publicLookup().accessClass(type);
+  GenericArrayTypeImpl(@NotNull Type genericComponentType) {
+    this.genericComponentType = genericComponentType;
+  }
+
+  @Override
+  public Type getGenericComponentType() {
+    return genericComponentType;
+  }
+
+  @Override
+  public int hashCode() {
+    return genericComponentType.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
       return true;
-    } catch (IllegalAccessException | SecurityException e) {
+    } else if (obj instanceof GenericArrayType) {
+      return genericComponentType.equals(((GenericArrayType) obj).getGenericComponentType());
+    } else {
       return false;
     }
+  }
+
+  @Override
+  public String toString() {
+    return genericComponentType.getTypeName() + "[]";
   }
 }
