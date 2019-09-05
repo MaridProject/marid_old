@@ -22,8 +22,11 @@ package org.marid.types;
  */
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Type;
 
 public interface Types {
+
+  Type[] EMPTY_TYPES = {};
 
   static boolean isPublic(Class<?> type) {
     try {
