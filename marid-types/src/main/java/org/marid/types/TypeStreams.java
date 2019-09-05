@@ -47,7 +47,7 @@ public interface TypeStreams {
         : superclasses(type).flatMap(t -> Arrays.stream(t.getInterfaces())).flatMap(TypeStreams::interfaces0)
     ).distinct()
         .sorted((i1, i2) -> {
-          if (i1 == i2) {
+          if (i1.equals(i2)) {
             return 0;
           } else if (i1.isAssignableFrom(i2)) {
             return 1;
