@@ -21,18 +21,18 @@ package org.marid.types;
  * #L%
  */
 
+import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.stream.Stream;
+import java.lang.reflect.Member;
+import java.lang.reflect.Modifier;
 
 public interface Classes {
 
   Class<?>[] EMPTY_CLASSES = {};
 
-  static boolean isPublic(Class<?> type) {
+  static boolean isPublic(@NotNull Class<?> type) {
     try {
       MethodHandles.publicLookup().accessClass(type);
       return true;
@@ -41,15 +41,19 @@ public interface Classes {
     }
   }
 
-  static Stream<Method> publicMethods(Class<?> type) {
-    return Arrays.stream(type.getMethods()).filter(m -> isPublic(m.getDeclaringClass()));
+  static boolean hasAll(@NotNull Class<?> type, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
+    return (type.getModifiers() & modifiers) == modifiers;
   }
 
-  static Stream<Field> publicFields(Class<?> type) {
-    return Arrays.stream(type.getFields()).filter(f -> isPublic(f.getDeclaringClass()));
+  static boolean hasAll(@NotNull Member member, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
+    return (member.getModifiers() & modifiers) == modifiers;
   }
 
-  static Stream<Constructor<?>> publicConstructors(Class<?> type) {
-    return Arrays.stream(type.getConstructors()).filter(c -> isPublic(c.getDeclaringClass()));
+  static boolean hasAny(@NotNull Class<?> type, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
+    return (type.getModifiers() & modifiers) != 0;
+  }
+
+  static boolean hasAny(@NotNull Member member, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
+    return (member.getModifiers() & modifiers) != 0;
   }
 }

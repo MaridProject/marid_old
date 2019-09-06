@@ -23,15 +23,18 @@ package org.marid.types.classes;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.marid.types.ClassStreams;
 
+import java.lang.reflect.Method;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,6 +67,17 @@ class ClassStreamsTest {
   @MethodSource("interfacesData")
   void interfaces(Class<?> type, List<Class<?>> expected) {
     assertEquals(expected, ClassStreams.interfaces(type).collect(Collectors.toList()));
+  }
+
+  @Test
+  void publicMethods() {
+    assertEquals(
+        Set.of("m1", "m2", "m3", "im3", "im1"),
+        ClassStreams.publicMethods(C1.class)
+            .filter(m -> m.getDeclaringClass() != Object.class)
+            .map(Method::getName)
+            .collect(Collectors.toSet())
+    );
   }
 
   public static class C1 extends C2 implements I1 {

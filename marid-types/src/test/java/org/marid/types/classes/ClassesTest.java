@@ -29,12 +29,8 @@ import org.marid.types.Classes;
 import org.marid.types.classes.ClassStreamsTest.C1;
 import org.marid.types.classes.ClassStreamsTest.C4;
 
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("normal")
 class ClassesTest {
@@ -46,17 +42,6 @@ class ClassesTest {
         ClassStreams.superclasses(C1.class)
             .filter(Classes::isPublic)
             .collect(Collectors.toList())
-    );
-  }
-
-  @Test
-  void methods() {
-    assertEquals(
-        Set.of("m1", "m2", "m3", "im3", "im1"),
-        Classes.publicMethods(C1.class)
-            .filter(m -> m.getDeclaringClass() != Object.class)
-            .map(Method::getName)
-            .collect(Collectors.toSet())
     );
   }
 }

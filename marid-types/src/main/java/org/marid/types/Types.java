@@ -21,13 +21,16 @@ package org.marid.types;
  * #L%
  */
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 
 public interface Types {
 
   Type[] EMPTY_TYPES = {};
 
-  static Type parameterize(Class<?> type) {
+  @NotNull
+  static Type parameterize(@NotNull Class<?> type) {
     final var args = type.getTypeParameters();
     return args.length == 0 ? type : new ParameterizedTypeImpl(type, args, type.getDeclaringClass());
   }
