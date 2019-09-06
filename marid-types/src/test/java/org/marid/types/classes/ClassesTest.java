@@ -1,4 +1,4 @@
-package org.marid.types;
+package org.marid.types.classes;
 
 /*-
  * #%L
@@ -21,26 +21,42 @@ package org.marid.types;
  * #L%
  */
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.marid.types.ClassStreamsTest.C1;
-import org.marid.types.ClassStreamsTest.C4;
+import org.marid.types.ClassStreams;
+import org.marid.types.Classes;
+import org.marid.types.classes.ClassStreamsTest.C1;
+import org.marid.types.classes.ClassStreamsTest.C4;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("normal")
-class TypesTest {
+class ClassesTest {
 
   @Test
   void isPublic() {
-    assertEquals(
+    Assertions.assertEquals(
         List.of(C1.class, C4.class, Object.class),
         ClassStreams.superclasses(C1.class)
             .filter(Classes::isPublic)
             .collect(Collectors.toList())
+    );
+  }
+
+  @Test
+  void methods() {
+    assertEquals(
+        Set.of("m1", "m2", "m3", "im3", "im1"),
+        Classes.methods(C1.class)
+            .filter(m -> m.getDeclaringClass() != Object.class)
+            .map(Method::getName)
+            .collect(Collectors.toSet())
     );
   }
 }

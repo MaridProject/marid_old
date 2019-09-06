@@ -1,4 +1,4 @@
-package org.marid.types;
+package org.marid.types.classes;
 
 /*-
  * #%L
@@ -10,21 +10,23 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.marid.types.ClassStreams;
 
 import java.util.AbstractCollection;
 import java.util.AbstractList;
@@ -49,7 +51,7 @@ class ClassStreamsTest {
   @ParameterizedTest
   @MethodSource("superclassesData")
   void superclasses(Class<?> type, List<Class<?>> expected) {
-    assertEquals(expected, ClassStreams.superclasses(type).collect(Collectors.toList()));
+    Assertions.assertEquals(expected, ClassStreams.superclasses(type).collect(Collectors.toList()));
   }
 
   private static Stream<Arguments> interfacesData() {
@@ -65,23 +67,29 @@ class ClassStreamsTest {
   }
 
   public static class C1 extends C2 implements I1 {
+    public void m1() {}
   }
 
   static class C2 extends C3 implements I3 {
+    public void m2() {}
   }
 
   private static class C3 extends C4 implements I2 {
+    public void m3() {}
   }
 
   public static class C4 implements I1 {
   }
 
   public interface I1 extends I2 {
+    default void im1() {}
   }
 
-  public interface I2 {
+  interface I2 {
+    default void im2() {}
   }
 
   public interface I3 extends I2, I1 {
+    default void im3() {}
   }
 }

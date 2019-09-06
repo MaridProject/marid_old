@@ -22,6 +22,10 @@ package org.marid.types;
  */
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public interface Classes {
 
@@ -34,5 +38,15 @@ public interface Classes {
     } catch (IllegalAccessException | SecurityException e) {
       return false;
     }
+  }
+
+  static Stream<Method> methods(Class<?> type) {
+    return Arrays.stream(type.getMethods())
+        .filter(m -> isPublic(m.getDeclaringClass()));
+  }
+
+  static Stream<Field> fields(Class<?> type) {
+    return Arrays.stream(type.getFields())
+        .filter(f -> isPublic(f.getDeclaringClass()));
   }
 }
