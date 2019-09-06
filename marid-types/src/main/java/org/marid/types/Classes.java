@@ -21,14 +21,18 @@ package org.marid.types;
  * #L%
  */
 
-import java.lang.reflect.Type;
+import java.lang.invoke.MethodHandles;
 
-public interface Types {
+public interface Classes {
 
-  Type[] EMPTY_TYPES = {};
+  Class<?>[] EMPTY_CLASSES = {};
 
-  static Type parameterize(Class<?> type) {
-    final var args = type.getTypeParameters();
-    return args.length == 0 ? type : new ParameterizedTypeImpl(type, args, type.getDeclaringClass());
+  static boolean isPublic(Class<?> type) {
+    try {
+      MethodHandles.publicLookup().accessClass(type);
+      return true;
+    } catch (IllegalAccessException | SecurityException e) {
+      return false;
+    }
   }
 }

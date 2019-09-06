@@ -37,10 +37,6 @@ final class WildcardTypeImpl implements WildcardType {
   WildcardTypeImpl(@NotNull Type[] upperBounds, @NotNull Type[] lowerBounds) {
     this.upperBounds = upperBounds;
     this.lowerBounds = lowerBounds;
-
-    if (upperBounds.length > 0 && lowerBounds.length > 0) {
-      throw new IllegalArgumentException("Illegal wildcard type bounds: both upper bounds and lower bounds are present");
-    }
   }
 
   @Override
@@ -79,7 +75,12 @@ final class WildcardTypeImpl implements WildcardType {
         return Arrays.stream(upperBounds).map(Type::getTypeName).collect(joining(" & ", "? extends ", ""));
       }
     } else {
-      return Arrays.stream(lowerBounds).map(Type::getTypeName).collect(joining(" & ", "? super ", ""));
+      if (upperBounds.length == 0) {
+        return Arrays.stream(lowerBounds).map(Type::getTypeName).collect(joining(" & ", "? super ", ""));
+      } else {
+        return Arrays.stream(upperBounds).map(Type::getTypeName).collect(joining(" & ", "? extends ",
+            Arrays.stream(lowerBounds).map(Type::getTypeName).collect(joining(" & ", " super ", ""))));
+      }
     }
   }
 }

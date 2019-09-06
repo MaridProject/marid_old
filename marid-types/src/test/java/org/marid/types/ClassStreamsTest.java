@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Tag("normal")
-class TypeStreamsTest {
+class ClassStreamsTest {
 
   private static Stream<Arguments> superclassesData() {
     return Stream.of(
@@ -49,7 +49,7 @@ class TypeStreamsTest {
   @ParameterizedTest
   @MethodSource("superclassesData")
   void superclasses(Class<?> type, List<Class<?>> expected) {
-    assertEquals(expected, TypeStreams.superclasses(type).collect(Collectors.toList()));
+    assertEquals(expected, ClassStreams.superclasses(type).collect(Collectors.toList()));
   }
 
   private static Stream<Arguments> interfacesData() {
@@ -61,7 +61,7 @@ class TypeStreamsTest {
   @ParameterizedTest
   @MethodSource("interfacesData")
   void interfaces(Class<?> type, List<Class<?>> expected) {
-    assertEquals(expected, TypeStreams.interfaces(type).collect(Collectors.toList()));
+    assertEquals(expected, ClassStreams.interfaces(type).collect(Collectors.toList()));
   }
 
   public static class C1 extends C2 implements I1 {

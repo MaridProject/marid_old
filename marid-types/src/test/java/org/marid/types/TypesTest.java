@@ -23,8 +23,8 @@ package org.marid.types;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.marid.types.TypeStreamsTest.C1;
-import org.marid.types.TypeStreamsTest.C4;
+import org.marid.types.ClassStreamsTest.C1;
+import org.marid.types.ClassStreamsTest.C4;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,8 +38,8 @@ class TypesTest {
   void isPublic() {
     assertEquals(
         List.of(C1.class, C4.class, Object.class),
-        TypeStreams.superclasses(C1.class)
-            .filter(Types::isPublic)
+        ClassStreams.superclasses(C1.class)
+            .filter(Classes::isPublic)
             .collect(Collectors.toList())
     );
   }
