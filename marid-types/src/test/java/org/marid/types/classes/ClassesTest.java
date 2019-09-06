@@ -53,7 +53,7 @@ class ClassesTest {
   void methods() {
     assertEquals(
         Set.of("m1", "m2", "m3", "im3", "im1"),
-        Classes.methods(C1.class)
+        Classes.publicMethods(C1.class)
             .filter(m -> m.getDeclaringClass() != Object.class)
             .map(Method::getName)
             .collect(Collectors.toSet())

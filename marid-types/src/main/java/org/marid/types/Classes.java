@@ -22,6 +22,7 @@ package org.marid.types;
  */
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -40,13 +41,15 @@ public interface Classes {
     }
   }
 
-  static Stream<Method> methods(Class<?> type) {
-    return Arrays.stream(type.getMethods())
-        .filter(m -> isPublic(m.getDeclaringClass()));
+  static Stream<Method> publicMethods(Class<?> type) {
+    return Arrays.stream(type.getMethods()).filter(m -> isPublic(m.getDeclaringClass()));
   }
 
-  static Stream<Field> fields(Class<?> type) {
-    return Arrays.stream(type.getFields())
-        .filter(f -> isPublic(f.getDeclaringClass()));
+  static Stream<Field> publicFields(Class<?> type) {
+    return Arrays.stream(type.getFields()).filter(f -> isPublic(f.getDeclaringClass()));
+  }
+
+  static Stream<Constructor<?>> publicConstructors(Class<?> type) {
+    return Arrays.stream(type.getConstructors()).filter(c -> isPublic(c.getDeclaringClass()));
   }
 }
