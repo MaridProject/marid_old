@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -80,6 +80,48 @@ public interface Types {
           && WildcardTypes.upperBounds(((WildcardType) type)).allMatch(Types::isGround);
     } else if (type instanceof TypeVariable<?>) {
       return false;
+    } else {
+      throw new IllegalArgumentException(type.getTypeName());
+    }
+  }
+
+  @NotNull
+  static Type ground(@NotNull Type type) {
+    return ground(type, Collections.emptySet());
+  }
+
+  private static Type ground(@NotNull Type type, Set<TypeVariable<?>> passed) {
+    if (isGround(type)) {
+      return type;
+    } else if (type instanceof TypeVariable<?>) {
+      final var newPassed = TypeUtils.add(passed, (TypeVariable<?>) type);
+      return WildcardTypes.wildcardTypeUpperBounds(TypeVariables.bounds((TypeVariable<?>) type)
+          .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+          .map(t -> ground(t, newPassed))
+          .toArray(Type[]::new)
+      );
+    } else if (type instanceof WildcardType) {
+      return WildcardTypes.wildcardType(
+          WildcardTypes.upperBounds((WildcardType) type)
+              .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+              .map(t -> ground(t, passed))
+              .toArray(Type[]::new),
+          WildcardTypes.lowerBounds((WildcardType) type)
+              .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+              .map(t -> ground(t, passed))
+              .toArray(Type[]::new)
+      );
+    } else if (type instanceof ParameterizedType) {
+      return ParameterizedTypes.parameterizedTypeWithOwner(
+          (Class<?>) ((ParameterizedType) type).getRawType(),
+          ((ParameterizedType) type).getOwnerType(),
+          ParameterizedTypes.parameters((ParameterizedType) type)
+              .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+              .map(t -> ground(t, passed))
+              .toArray(Type[]::new)
+      );
+    } else if (type instanceof GenericArrayType) {
+      return GenericArrayTypes.genericArrayType(ground(type, passed));
     } else {
       throw new IllegalArgumentException(type.getTypeName());
     }
