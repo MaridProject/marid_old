@@ -22,36 +22,18 @@ package org.marid.types;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public interface Types {
 
   Type[] EMPTY_TYPES = {};
-
-  @NotNull
-  static Stream<@NotNull Type> upperBounds(@NotNull WildcardType type) {
-    return Arrays.stream(type.getUpperBounds());
-  }
-
-  @NotNull
-  static Stream<@NotNull Type> lowerBounds(@NotNull WildcardType type) {
-    return Arrays.stream(type.getLowerBounds());
-  }
-
-  @NotNull
-  static Stream<@NotNull Type> bounds(@NotNull TypeVariable<?> var) {
-    return Arrays.stream(var.getBounds());
-  }
 
   @NotNull
   static Class<?> toRaw(@NotNull Type type) {
@@ -67,7 +49,7 @@ public interface Types {
       final var componentType = ((GenericArrayType) type).getGenericComponentType();
       return toRaw(componentType, passed).arrayType();
     } else if (type instanceof WildcardType) {
-      return upperBounds((WildcardType) type)
+      return WildcardTypes.upperBounds((WildcardType) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
           .map(t -> toRaw(t, passed))
           .filter(Classes::notObject)
@@ -75,7 +57,7 @@ public interface Types {
           .orElse(Object.class);
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, (TypeVariable<?>) type);
-      return bounds((TypeVariable<?>) type)
+      return TypeVariables.bounds((TypeVariable<?>) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
           .map(t -> toRaw(t, newPassed))
           .filter(Classes::notObject)
@@ -86,67 +68,20 @@ public interface Types {
     }
   }
 
-  @NotNull
-  static ParameterizedType parameterizedTypeFromClass(@NotNull Class<?> type) {
-    return new ParameterizedTypeImpl(type, type.getTypeParameters(), type.getDeclaringClass());
-  }
-
-  @NotNull
-  static Type parameterizedFromClass(@NotNull Class<?> type) {
-    final var vars = type.getTypeParameters();
-    return vars.length > 0 ? parameterizedTypeFromClass(type) : type;
-  }
-
-  @NotNull
-  static ParameterizedType parameterizedType(@NotNull Class<?> raw, @NotNull Type... parameters) {
-    return new ParameterizedTypeImpl(raw, parameters, raw.getDeclaringClass());
-  }
-
-  @NotNull
-  static Type parameterized(@NotNull Class<?> raw, @NotNull Type... parameters) {
-    if (parameters.length == 0 && raw.getTypeParameters().length == 0) {
-      return raw;
+  static boolean isGround(@NotNull Type type) {
+    if (type instanceof Class<?>) {
+      return true;
+    } else if (type instanceof ParameterizedType) {
+      return ParameterizedTypes.parameters((ParameterizedType) type).allMatch(Types::isGround);
+    } else if (type instanceof GenericArrayType) {
+      return isGround(((GenericArrayType) type).getGenericComponentType());
+    } else if (type instanceof WildcardType) {
+      return WildcardTypes.lowerBounds(((WildcardType) type)).allMatch(Types::isGround)
+          && WildcardTypes.upperBounds(((WildcardType) type)).allMatch(Types::isGround);
+    } else if (type instanceof TypeVariable<?>) {
+      return false;
     } else {
-      return parameterizedType(raw, parameters);
+      throw new IllegalArgumentException(type.getTypeName());
     }
-  }
-
-  @NotNull
-  static ParameterizedType parameterizedTypeWithOwner(@NotNull Class<?> raw, @Nullable Type owner, @NotNull Type... parameters) {
-    return new ParameterizedTypeImpl(raw, parameters, owner);
-  }
-
-  @NotNull
-  static Type parameterizedWithOwner(@NotNull Class<?> raw, @Nullable Type owner, @NotNull Type... parameters) {
-    if (parameters.length == 0 && raw.getTypeParameters().length == 0 && owner == raw.getDeclaringClass()) {
-      return raw;
-    } else {
-      return parameterizedTypeWithOwner(raw, owner, parameters);
-    }
-  }
-
-  @NotNull
-  static GenericArrayType genericArrayType(@NotNull Type component) {
-    return new GenericArrayTypeImpl(component);
-  }
-
-  @NotNull
-  static Type genericArray(@NotNull Type component) {
-    return component instanceof Class<?> ? ((Class<?>) component).arrayType() : genericArrayType(component);
-  }
-
-  @NotNull
-  static WildcardType wildcardTypeUpperBounds(@NotNull Type... upperBounds) {
-    return new WildcardTypeImpl(upperBounds, EMPTY_TYPES);
-  }
-
-  @NotNull
-  static WildcardType wildcardTypeLowerBounds(@NotNull Type... lowerBounds) {
-    return new WildcardTypeImpl(EMPTY_TYPES, lowerBounds);
-  }
-
-  @NotNull
-  static WildcardType wildcardType(@NotNull Type[] upperBounds, @NotNull Type[] lowerBounds) {
-    return new WildcardTypeImpl(upperBounds, lowerBounds);
   }
 }

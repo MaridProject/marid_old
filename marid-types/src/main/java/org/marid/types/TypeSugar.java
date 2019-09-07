@@ -35,27 +35,27 @@ public class TypeSugar {
 
   @NotNull
   public static ParameterizedType p(@NotNull Class<?> raw, @NotNull Type... params) {
-    return Types.parameterizedType(raw, params);
+    return ParameterizedTypes.parameterizedType(raw, params);
   }
 
   @NotNull
   public static ParameterizedType po(@NotNull Class<?> raw, @Nullable Type owner, @NotNull Type... params) {
-    return Types.parameterizedTypeWithOwner(raw, owner, params);
+    return ParameterizedTypes.parameterizedTypeWithOwner(raw, owner, params);
   }
 
   @NotNull
   public static GenericArrayType a(@NotNull Type componentType) {
-    return Types.genericArrayType(componentType);
+    return GenericArrayTypes.genericArrayType(componentType);
   }
 
   @NotNull
   public static WildcardType wu(@NotNull Type... upper) {
-    return Types.wildcardTypeUpperBounds(upper);
+    return WildcardTypes.wildcardTypeUpperBounds(upper);
   }
 
   @NotNull
   public static WildcardType wl(@NotNull Type... lower) {
-    return Types.wildcardTypeLowerBounds(lower);
+    return WildcardTypes.wildcardTypeLowerBounds(lower);
   }
 
   @NotNull
