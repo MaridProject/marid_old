@@ -41,6 +41,10 @@ public interface Classes {
     }
   }
 
+  static boolean notObject(@NotNull Class<?> type) {
+    return type != Object.class;
+  }
+
   static boolean hasAll(@NotNull Class<?> type, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
     return (type.getModifiers() & modifiers) == modifiers;
   }

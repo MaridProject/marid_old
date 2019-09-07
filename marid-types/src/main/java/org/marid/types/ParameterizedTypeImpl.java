@@ -68,6 +68,12 @@ final class ParameterizedTypeImpl implements ParameterizedType {
               "Illegal owner type: must be Class<?> or ParameterizedType but the actual is " + ownerType
           );
         }
+        if (!((ParameterizedType) ownerType).getRawType().equals(rawType.getDeclaringClass())) {
+          throw new MalformedParameterizedTypeException("Illegal owner for " + rawType.getName()
+              + ": should be " + rawType.getDeclaringClass()
+              + " but the actual is " + ownerType
+          );
+        }
       }
     }
   }
