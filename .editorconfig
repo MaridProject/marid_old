@@ -18,6 +18,7 @@ ij_java_keep_simple_lambdas_in_one_line = true
 ij_java_keep_simple_classes_in_one_line = true
 ij_java_keep_simple_methods_in_one_line = true
 ij_java_case_statement_on_separate_line = false
+ij_java_blank_lines_around_class = 0
 
 [*.xml]
 indent_size = 2
