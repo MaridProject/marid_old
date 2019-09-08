@@ -23,33 +23,37 @@ package org.marid.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Comparator;
 
 class TypeUtils {
 
   @NotNull
-  static <T> Set<@NotNull T> add(@NotNull Set<@NotNull T> vars, @NotNull T var) {
-    if (vars.contains(var)) {
-      return vars;
-    } else if (vars.isEmpty()) {
-      return Collections.singleton(var);
+  static Type[] add(@NotNull Type[] types, @NotNull Type type) {
+    if (types.length == 0) {
+      return new Type[] {type};
     } else {
-      final var it = vars.iterator();
-      switch (vars.size()) {
-        case 1: return Set.of(it.next(), var);
-        case 2: return Set.of(it.next(), it.next(), var);
-        case 3: return Set.of(it.next(), it.next(), it.next(), var);
-        case 4: return Set.of(it.next(), it.next(), it.next(), it.next(), var);
-        case 5: return Set.of(it.next(), it.next(), it.next(), it.next(), it.next(), var);
-        case 6: return Set.of(it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), var);
-        case 7: return Set.of(it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), var);
-        case 8: return Set.of(it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), var);
-        case 9: return Set.of(it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), it.next(), var);
-        default: return Stream.concat(Stream.of(var), vars.stream()).collect(Collectors.toUnmodifiableSet());
+      int index = Arrays.binarySearch(types, type, Comparator.comparingInt(Object::hashCode));
+      final int len = types.length;
+      if (index < 0) {
+        index = -(index + 1);
+      } else {
+        if (types[index].equals(type)) {
+          return types;
+        }
       }
+      final var newTypes = Arrays.copyOf(types, len + 1);
+      if (index < len) {
+        System.arraycopy(types, index, newTypes, index + 1, len - index);
+      }
+      newTypes[index] = type;
+      return newTypes;
     }
+  }
+
+  static boolean contains(@NotNull Type[] types, @NotNull Type type) {
+    final int index = Arrays.binarySearch(types, type, Comparator.comparingInt(Object::hashCode));
+    return index >= 0 && types[index].equals(type);
   }
 }

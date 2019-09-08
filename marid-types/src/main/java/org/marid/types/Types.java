@@ -28,9 +28,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 public interface Types {
 
@@ -38,10 +37,10 @@ public interface Types {
 
   @NotNull
   static Class<?> toRaw(@NotNull Type type) {
-    return toRaw(type, Collections.emptySet());
+    return toRaw(type, EMPTY_TYPES);
   }
 
-  private static Class toRaw(Type type, Set<TypeVariable<?>> passed) {
+  private static Class toRaw(Type type, Type[] passed) {
     if (type instanceof Class<?>) {
       return (Class<?>) type;
     } else if (type instanceof ParameterizedType) {
@@ -51,15 +50,15 @@ public interface Types {
       return toRaw(componentType, passed).arrayType();
     } else if (type instanceof WildcardType) {
       return WildcardTypes.upperBounds((WildcardType) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+          .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
           .map(t -> toRaw(t, passed))
           .filter(Classes::notObject)
           .findFirst()
           .orElse(Object.class);
     } else if (type instanceof TypeVariable<?>) {
-      final var newPassed = TypeUtils.add(passed, (TypeVariable<?>) type);
+      final var newPassed = TypeUtils.add(passed, type);
       return TypeVariables.bounds((TypeVariable<?>) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !newPassed.contains(t))
+          .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(newPassed, t))
           .map(t -> toRaw(t, newPassed))
           .filter(Classes::notObject)
           .findFirst()
@@ -88,40 +87,46 @@ public interface Types {
 
   @NotNull
   static Type ground(@NotNull Type type) {
-    return ground(type, Collections.emptySet());
+    return ground(type, EMPTY_TYPES);
   }
 
-  private static Type ground(@NotNull Type type, Set<TypeVariable<?>> passed) {
+  private static Type ground(@NotNull Type type, Type[] passed) {
     if (isGround(type)) {
       return type;
     } else if (type instanceof TypeVariable<?>) {
-      final var newPassed = TypeUtils.add(passed, (TypeVariable<?>) type);
+      final var newPassed = TypeUtils.add(passed, type);
       return WildcardTypes.wildcardTypeUpperBounds(TypeVariables.bounds((TypeVariable<?>) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !newPassed.contains(t))
+          .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(newPassed, t))
           .map(t -> ground(t, newPassed))
+          .flatMap(t -> t instanceof WildcardType ? WildcardTypes.upperBounds((WildcardType) t) : Stream.of(t))
           .toArray(Type[]::new)
       );
     } else if (type instanceof WildcardType) {
       return WildcardTypes.wildcardType(
           WildcardTypes.upperBounds((WildcardType) type)
-              .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+              .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
               .map(t -> ground(t, passed))
               .toArray(Type[]::new),
           WildcardTypes.lowerBounds((WildcardType) type)
-              .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+              .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
               .map(t -> ground(t, passed))
               .toArray(Type[]::new)
       );
     } else if (type instanceof ParameterizedType) {
-      return ParameterizedTypes.parameterizedTypeWithOwner(
-          (Class<?>) ((ParameterizedType) type).getRawType(),
-          Optional.ofNullable(((ParameterizedType) type).getOwnerType())
-              .map(t -> ground(t, passed))
-              .orElse(null),
-          ParameterizedTypes.parameters((ParameterizedType) type)
-              .map(t -> ground(t, passed))
-              .toArray(Type[]::new)
-      );
+      if (TypeUtils.contains(passed, type)) {
+        return WildcardTypes.wildcardTypeUpperBounds(EMPTY_TYPES);
+      } else {
+        final var newPassed = TypeUtils.add(passed, type);
+        return ParameterizedTypes.parameterizedTypeWithOwner(
+            (Class<?>) ((ParameterizedType) type).getRawType(),
+            Optional.ofNullable(((ParameterizedType) type).getOwnerType())
+                .map(t -> ground(t, newPassed))
+                .orElse(null),
+            ParameterizedTypes.parameters((ParameterizedType) type)
+                .map(t -> ground(t, newPassed))
+                .toArray(Type[]::new)
+        );
+      }
     } else if (type instanceof GenericArrayType) {
       return GenericArrayTypes.genericArrayType(ground(type, passed));
     } else {
