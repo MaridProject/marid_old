@@ -106,10 +106,12 @@ public interface Types {
           WildcardTypes.upperBounds((WildcardType) type)
               .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
               .map(t -> ground(t, passed))
+              .flatMap(t -> t instanceof WildcardType ? WildcardTypes.upperBounds((WildcardType) t) : Stream.of(t))
               .toArray(Type[]::new),
           WildcardTypes.lowerBounds((WildcardType) type)
               .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
               .map(t -> ground(t, passed))
+              .flatMap(t -> t instanceof WildcardType ? WildcardTypes.lowerBounds((WildcardType) t) : Stream.of(t))
               .toArray(Type[]::new)
       );
     } else if (type instanceof ParameterizedType) {
