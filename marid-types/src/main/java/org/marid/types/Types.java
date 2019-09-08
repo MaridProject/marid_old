@@ -29,6 +29,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 public interface Types {
@@ -58,7 +59,7 @@ public interface Types {
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, (TypeVariable<?>) type);
       return TypeVariables.bounds((TypeVariable<?>) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+          .filter(t -> !(t instanceof TypeVariable<?>) || !newPassed.contains(t))
           .map(t -> toRaw(t, newPassed))
           .filter(Classes::notObject)
           .findFirst()
@@ -96,7 +97,7 @@ public interface Types {
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, (TypeVariable<?>) type);
       return WildcardTypes.wildcardTypeUpperBounds(TypeVariables.bounds((TypeVariable<?>) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
+          .filter(t -> !(t instanceof TypeVariable<?>) || !newPassed.contains(t))
           .map(t -> ground(t, newPassed))
           .toArray(Type[]::new)
       );
@@ -114,9 +115,10 @@ public interface Types {
     } else if (type instanceof ParameterizedType) {
       return ParameterizedTypes.parameterizedTypeWithOwner(
           (Class<?>) ((ParameterizedType) type).getRawType(),
-          ((ParameterizedType) type).getOwnerType(),
+          Optional.ofNullable(((ParameterizedType) type).getOwnerType())
+              .map(t -> ground(t, passed))
+              .orElse(null),
           ParameterizedTypes.parameters((ParameterizedType) type)
-              .filter(t -> !(t instanceof TypeVariable<?>) || !passed.contains(t))
               .map(t -> ground(t, passed))
               .toArray(Type[]::new)
       );
