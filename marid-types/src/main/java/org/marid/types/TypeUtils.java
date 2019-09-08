@@ -25,35 +25,29 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Comparator;
 
 class TypeUtils {
 
   @NotNull
   static Type[] add(@NotNull Type[] types, @NotNull Type type) {
-    if (types.length == 0) {
+    final int len = types.length;
+    if (len == 0) {
       return new Type[] {type};
+    } else if (contains(types, type)) {
+      return types;
     } else {
-      int index = Arrays.binarySearch(types, type, Comparator.comparingInt(Object::hashCode));
-      final int len = types.length;
-      if (index < 0) {
-        index = -(index + 1);
-      } else {
-        if (types[index].equals(type)) {
-          return types;
-        }
-      }
-      final var newTypes = Arrays.copyOf(types, len + 1);
-      if (index < len) {
-        System.arraycopy(types, index, newTypes, index + 1, len - index);
-      }
-      newTypes[index] = type;
+      final var newTypes = Arrays.copyOf(types, len + 1, Type[].class);
+      newTypes[len] = type;
       return newTypes;
     }
   }
 
-  static boolean contains(@NotNull Type[] types, @NotNull Type type) {
-    final int index = Arrays.binarySearch(types, type, Comparator.comparingInt(Object::hashCode));
-    return index >= 0 && types[index].equals(type);
+  static boolean contains(Type[] types, Type type) {
+    for (final Type t : types) {
+      if (t.equals(type)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

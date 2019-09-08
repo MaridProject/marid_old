@@ -49,6 +49,11 @@ public class TypeSugar {
   }
 
   @NotNull
+  public static WildcardType w() {
+    return WildcardTypes.wildcardType(Types.EMPTY_TYPES, Types.EMPTY_TYPES);
+  }
+
+  @NotNull
   public static WildcardType wu(@NotNull Type... upper) {
     return WildcardTypes.wildcardTypeUpperBounds(upper);
   }

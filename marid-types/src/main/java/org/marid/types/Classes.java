@@ -60,4 +60,12 @@ public interface Classes {
   static boolean hasAny(@NotNull Member member, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
     return (member.getModifiers() & modifiers) != 0;
   }
+
+  static boolean hasNone(@NotNull Class<?> type, @MagicConstant (flagsFromClass = Modifier.class) int modifiers) {
+    return (type.getModifiers() & modifiers) == 0;
+  }
+
+  static boolean hasNone(@NotNull Member member, @MagicConstant (flagsFromClass = Modifier.class) int modifiers) {
+    return (member.getModifiers() & modifiers) == 0;
+  }
 }
