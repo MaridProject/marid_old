@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface ParameterizedTypes {
@@ -73,5 +74,10 @@ public interface ParameterizedTypes {
   @NotNull
   static Stream<Type> parameters(@NotNull ParameterizedType type) {
     return Arrays.stream(type.getActualTypeArguments());
+  }
+
+  @NotNull
+  static Optional<Type> owner(@NotNull ParameterizedType type) {
+    return Optional.ofNullable(type.getOwnerType());
   }
 }

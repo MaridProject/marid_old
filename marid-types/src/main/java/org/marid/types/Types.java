@@ -28,10 +28,12 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static org.marid.types.ParameterizedTypes.owner;
+import static org.marid.types.ParameterizedTypes.parameterizedTypeWithOwner;
+import static org.marid.types.ParameterizedTypes.parameters;
 import static org.marid.types.TypeVariables.bounds;
 import static org.marid.types.WildcardTypes.lowerBounds;
 import static org.marid.types.WildcardTypes.upperBounds;
@@ -78,7 +80,7 @@ public interface Types {
     if (type instanceof Class<?>) {
       return true;
     } else if (type instanceof ParameterizedType) {
-      return ParameterizedTypes.parameters((ParameterizedType) type).allMatch(Types::isGround);
+      return parameters((ParameterizedType) type).allMatch(Types::isGround);
     } else if (type instanceof GenericArrayType) {
       return isGround(((GenericArrayType) type).getGenericComponentType());
     } else if (type instanceof WildcardType) {
@@ -121,14 +123,11 @@ public interface Types {
         return wildcardTypeUpperBounds(EMPTY_TYPES);
       } else {
         final var newPassed = TypeUtils.add(passed, type);
-        return ParameterizedTypes.parameterizedTypeWithOwner(
-            (Class<?>) ((ParameterizedType) type).getRawType(),
-            Optional.ofNullable(((ParameterizedType) type).getOwnerType())
-                .map(t -> ground(t, newPassed))
-                .orElse(null),
-            ParameterizedTypes.parameters((ParameterizedType) type)
-                .map(t -> ground(t, newPassed))
-                .toArray(Type[]::new)
+        final var parameterizedType = (ParameterizedType) type;
+        return parameterizedTypeWithOwner(
+            toRaw(type),
+            owner(parameterizedType).map(t -> ground(t, newPassed)).orElse(null),
+            parameters(parameterizedType).map(t -> ground(t, newPassed)).toArray(Type[]::new)
         );
       }
     } else if (type instanceof GenericArrayType) {
