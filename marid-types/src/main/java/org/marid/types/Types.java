@@ -31,12 +31,14 @@ import java.lang.reflect.WildcardType;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static org.marid.types.GenericArrayTypes.genericArrayType;
 import static org.marid.types.ParameterizedTypes.owner;
 import static org.marid.types.ParameterizedTypes.parameterizedTypeWithOwner;
 import static org.marid.types.ParameterizedTypes.parameters;
 import static org.marid.types.TypeVariables.bounds;
 import static org.marid.types.WildcardTypes.lowerBounds;
 import static org.marid.types.WildcardTypes.upperBounds;
+import static org.marid.types.WildcardTypes.wildcardType;
 import static org.marid.types.WildcardTypes.wildcardTypeUpperBounds;
 
 public interface Types {
@@ -98,7 +100,7 @@ public interface Types {
     return ground(type, EMPTY_TYPES);
   }
 
-  private static Type[] filter(Stream<Type> types, Type[] passed, Function<WildcardType, Stream<Type>> bounds) {
+  private static Type[] ground(Stream<Type> types, Type[] passed, Function<WildcardType, Stream<Type>> bounds) {
     return types
         .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
         .map(t -> ground(t, passed))
@@ -107,16 +109,16 @@ public interface Types {
         .toArray(Type[]::new);
   }
 
-  private static Type ground(@NotNull Type type, Type[] passed) {
+  private static Type ground(Type type, Type[] passed) {
     if (isGround(type)) {
       return type;
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, type);
-      return wildcardTypeUpperBounds(filter(bounds((TypeVariable<?>) type), newPassed, WildcardTypes::upperBounds));
+      return wildcardTypeUpperBounds(ground(bounds((TypeVariable<?>) type), newPassed, WildcardTypes::upperBounds));
     } else if (type instanceof WildcardType) {
-      return WildcardTypes.wildcardType(
-          filter(upperBounds((WildcardType) type), passed, WildcardTypes::upperBounds),
-          filter(lowerBounds((WildcardType) type), passed, WildcardTypes::lowerBounds)
+      return wildcardType(
+          ground(upperBounds((WildcardType) type), passed, WildcardTypes::upperBounds),
+          ground(lowerBounds((WildcardType) type), passed, WildcardTypes::lowerBounds)
       );
     } else if (type instanceof ParameterizedType) {
       if (TypeUtils.contains(passed, type)) {
@@ -131,7 +133,7 @@ public interface Types {
         );
       }
     } else if (type instanceof GenericArrayType) {
-      return GenericArrayTypes.genericArrayType(ground(type, passed));
+      return genericArrayType(ground(type, passed));
     } else {
       throw new IllegalArgumentException(type.getTypeName());
     }
