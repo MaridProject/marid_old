@@ -21,6 +21,7 @@ package org.marid.types;
  * #L%
  */
 
+import jdk.dynalink.linker.support.TypeUtilities;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,5 +68,22 @@ public interface Classes {
 
   static boolean hasNone(@NotNull Member member, @MagicConstant (flagsFromClass = Modifier.class) int modifiers) {
     return (member.getModifiers() & modifiers) == 0;
+  }
+
+  static boolean isAssignableFrom(@NotNull Class<?> target, @NotNull Class<?> source) {
+    if (target.isAssignableFrom(source)) {
+      return true;
+    } else if (target.isPrimitive()) {
+      if (source.isPrimitive()) {
+        return TypeUtilities.isSubtype(source, target);
+      } else {
+        final var source0 = TypeUtilities.getPrimitiveType(source);
+        return source0 != null && TypeUtilities.isSubtype(source0, target);
+      }
+    } else if (TypeUtilities.isWrapperType(target)) {
+      return TypeUtilities.isSubtype(source, TypeUtilities.getPrimitiveType(target));
+    } else {
+      return false;
+    }
   }
 }

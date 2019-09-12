@@ -138,4 +138,17 @@ public interface Types {
       throw new IllegalArgumentException(type.getTypeName());
     }
   }
+
+  static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source) {
+    return isAssignableFrom(target, source, EMPTY_TYPES);
+  }
+
+  private static boolean isAssignableFrom(Type target, Type source, Type[] passed) {
+    if (target instanceof Class<?>) {
+      if (source instanceof Class<?>) {
+
+      }
+    }
+    return false;
+  }
 }

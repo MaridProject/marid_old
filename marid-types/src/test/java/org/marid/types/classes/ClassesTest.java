@@ -21,9 +21,11 @@ package org.marid.types.classes;
  * #L%
  */
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.marid.types.ClassStreams;
 import org.marid.types.Classes;
 import org.marid.types.classes.ClassStreamsTest.C1;
@@ -31,17 +33,43 @@ import org.marid.types.classes.ClassStreamsTest.C4;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Tag("normal")
 class ClassesTest {
 
   @Test
   void isPublic() {
-    Assertions.assertEquals(
+    assertEquals(
         List.of(C1.class, C4.class, Object.class),
         ClassStreams.superclasses(C1.class)
             .filter(Classes::isPublic)
             .collect(Collectors.toList())
     );
+  }
+
+  private static Stream<Arguments> isAssignableFromData() {
+    return Stream.of(
+        arguments(Object.class, Integer.class, true),
+        arguments(Number.class, Integer.class, true),
+        arguments(long.class, int.class, true),
+        arguments(int.class, long.class, false),
+        arguments(Number.class, Object.class, false),
+        arguments(double.class, float.class, true),
+        arguments(float.class, double.class, false),
+        arguments(float.class, Double.class, false),
+        arguments(double.class, Float.class, true),
+        arguments(float.class, Float.class, true),
+        arguments(Float.class, float.class, true)
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("isAssignableFromData")
+  void isAssignableFrom(Class<?> target, Class<?> source, boolean expected) {
+    assertEquals(expected, Classes.isAssignableFrom(target, source));
   }
 }
