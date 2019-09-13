@@ -145,10 +145,10 @@ public interface Types {
 
   private static boolean isAssignableFrom(Type target, Type source, Type[] passed) {
     if (target instanceof Class<?>) {
-      if (source instanceof Class<?>) {
-        return Classes.isAssignableFrom((Class<?>) target, (Class<?>) source);
-      }
-      // todo: implement
+      final var sourceRaw = toRaw(source);
+      return Classes.isAssignableFrom((Class<?>) target, sourceRaw);
+    } else if (target instanceof TypeVariable<?>) {
+
     }
     return false;
   }
