@@ -21,7 +21,6 @@ package org.marid.types;
  * #L%
  */
 
-import jdk.dynalink.linker.support.TypeUtilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -30,16 +29,16 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static org.marid.types.Classes.wrapper;
+
 public interface ClassStreams {
 
   @NotNull
   static Stream<@NotNull Class<?>> superclasses(@NotNull Class<?> type) {
-    if (type.isPrimitive()) {
-      return superclasses(TypeUtilities.getWrapperType(type));
-    } else if (type.isInterface()) {
+    if (type.isInterface()) {
       return Stream.empty();
     } else {
-      return Stream.of(type).flatMap(ClassStreams::superclasses0);
+      return Stream.of(wrapper(type)).flatMap(ClassStreams::superclasses0);
     }
   }
 
@@ -52,25 +51,23 @@ public interface ClassStreams {
 
   @NotNull
   static Stream<@NotNull Class<?>> interfaces(@NotNull Class<?> type) {
-    if (type.isPrimitive()) {
-      return interfaces(TypeUtilities.getWrapperType(type));
-    } else {
-      return (type.isInterface()
-          ? Stream.of(type).flatMap(ClassStreams::interfaces0)
-          : superclasses(type).flatMap(t -> Arrays.stream(t.getInterfaces())).flatMap(ClassStreams::interfaces0)
-      ).distinct()
-          .sorted((i1, i2) -> {
-            if (i1.equals(i2)) {
-              return 0;
-            } else if (i1.isAssignableFrom(i2)) {
-              return 1;
-            } else if (i2.isAssignableFrom(i1)) {
-              return -1;
-            } else {
-              return 0;
-            }
-          });
-    }
+    final var stream = type.isInterface()
+        ? Stream.of(type)
+        : superclasses(wrapper(type)).flatMap(t -> Arrays.stream(t.getInterfaces()));
+    return stream
+        .flatMap(ClassStreams::interfaces0)
+        .distinct()
+        .sorted((i1, i2) -> {
+          if (i1.equals(i2)) {
+            return 0;
+          } else if (i1.isAssignableFrom(i2)) {
+            return 1;
+          } else if (i2.isAssignableFrom(i1)) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
   }
 
   private static Stream<Class<?>> interfaces0(Class<?> itf) {
