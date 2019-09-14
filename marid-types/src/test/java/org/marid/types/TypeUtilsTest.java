@@ -11,10 +11,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("normal")
 class TypeUtilsTest extends TypeSugar {
@@ -68,10 +70,8 @@ class TypeUtilsTest extends TypeSugar {
   @ParameterizedTest
   @MethodSource("addData")
   void add(Type[] types, Type type) {
-    final var expected = Stream.concat(Arrays.stream(types), Stream.of(type))
-        .distinct()
-        .toArray(Type[]::new);
-    final var actual = TypeUtils.add(types, type);
-    assertArrayEquals(expected, actual);
+    final var expected = Stream.concat(Arrays.stream(types), Stream.of(type)).collect(Collectors.toUnmodifiableSet());
+    final var actual = Set.of(TypeUtils.add(types, type));
+    assertEquals(expected, actual);
   }
 }

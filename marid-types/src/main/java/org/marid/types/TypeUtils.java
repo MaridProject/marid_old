@@ -33,9 +33,12 @@ class TypeUtils {
     final int len = types.length;
     if (len == 0) {
       return new Type[] {type};
-    } else if (contains(types, type)) {
-      return types;
     } else {
+      for (final Type t : types) {
+        if (t.equals(type)) {
+          return types;
+        }
+      }
       final var newTypes = Arrays.copyOf(types, len + 1, Type[].class);
       newTypes[len] = type;
       return newTypes;

@@ -28,6 +28,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -137,6 +138,11 @@ public interface Types {
     } else {
       throw new IllegalArgumentException(type.getTypeName());
     }
+  }
+
+  @NotNull
+  static Type resolve(@NotNull Type type, @NotNull Map<@NotNull TypeVariable<?>, @NotNull Type> bindings) {
+    return null;
   }
 
   static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source) {

@@ -21,7 +21,40 @@ package org.marid.types;
  * #L%
  */
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.LinkedHashMap;
+import java.util.stream.Stream;
+
 public interface TypeStreams {
 
+  @NotNull
+  static Stream<@NotNull Type> superclasses(@NotNull Type type) {
+    if (type instanceof Class<?>) {
+      final var t = (Class<?>) type;
+      if (t.isInterface()) {
+        return Stream.empty();
+      }
+    } else if (type instanceof ParameterizedType) {
+      final var t = (ParameterizedType) type;
+      final var raw = (Class<?>) t.getRawType();
+      if (raw.isInterface()) {
+        return Stream.of();
+      }
+    }
+    return superclasses(type, Types.EMPTY_TYPES, new LinkedHashMap<>(0));
+  }
 
+  static Stream<Type> superclasses(Type type, Type[] passed, LinkedHashMap<TypeVariable<?>, Type> bindings) {
+    if (type instanceof Class<?>) {
+    } if (type instanceof GenericArrayType) {
+      return Stream.of(type, Object.class);
+    }
+
+    return Stream.of();
+  }
 }
