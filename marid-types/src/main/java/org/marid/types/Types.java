@@ -140,14 +140,73 @@ public interface Types {
   }
 
   static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source) {
-    return isAssignableFrom(target, source, EMPTY_TYPES);
+    if (target instanceof Class<?> && source instanceof Class<?>) {
+      return Classes.isAssignableFrom((Class<?>) target, (Class<?>) source);
+    } else {
+      return isAssignableFrom(target, source, EMPTY_TYPES, EMPTY_TYPES);
+    }
   }
 
-  private static boolean isAssignableFrom(Type target, Type source, Type[] passed) {
+  private static boolean isAssignableFrom(Type target, Type source, Type[] tp, Type[] sp) {
     if (target instanceof Class<?>) {
-      final var sourceRaw = toRaw(source);
-      return Classes.isAssignableFrom((Class<?>) target, sourceRaw);
+      return isAssignableFrom((Class<?>) target, source, tp, sp);
     } else if (target instanceof TypeVariable<?>) {
+      final var ntp = TypeUtils.add(tp, target);
+      return ntp.length == tp.length
+          || bounds((TypeVariable<?>) target).allMatch(b -> isAssignableFrom(b, source, ntp, sp));
+    } else if (target instanceof WildcardType) {
+      return upperBounds((WildcardType) target).allMatch(b -> isAssignableFrom(b, source, tp, sp))
+          && lowerBounds((WildcardType) target).allMatch(b -> isAssignableFrom(source, b, tp, sp));
+    } else if (target instanceof GenericArrayType) {
+      return isAssignableFrom((GenericArrayType) target, source, tp, sp);
+    } else if (target instanceof ParameterizedType) {
+       return isAssignableFrom((ParameterizedType) target, source, tp, sp);
+    } else {
+      throw new IllegalArgumentException("Illegal target: " + target);
+    }
+  }
+
+  private static boolean isAssignableFrom(Class<?> t, Type source, Type[] tp, Type[] sp) {
+    if (source instanceof Class<?>) {
+      return t.isAssignableFrom((Class<?>) source);
+    } else if (source instanceof ParameterizedType) {
+      return t.isAssignableFrom((Class<?>) ((ParameterizedType) source).getRawType());
+    } else if (source instanceof GenericArrayType) {
+      final var s = (GenericArrayType) source;
+      return t.isArray()
+          ? isAssignableFrom(t.getComponentType(), s.getGenericComponentType(), tp, sp)
+          : t.isAssignableFrom(Object[].class);
+    } else if (source instanceof WildcardType) {
+      return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(t, b, tp, sp))
+          && lowerBounds((WildcardType) source).allMatch(b -> isAssignableFrom(b, t, tp, sp));
+    } else if (source instanceof TypeVariable<?>) {
+      final var nsp = TypeUtils.add(sp, source);
+      return nsp.length != sp.length && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(t, b, tp, nsp));
+    } else {
+      throw new IllegalArgumentException("Illegal source: " + source);
+    }
+  }
+
+  private static boolean isAssignableFrom(GenericArrayType t, Type source, Type[] tp, Type[] sp) {
+    if (source instanceof Class<?>) {
+      final var s = (Class<?>) source;
+      return s.isArray() && isAssignableFrom(t.getGenericComponentType(), s.getComponentType(), tp, sp);
+    } else if (source instanceof GenericArrayType) {
+      final var s = (GenericArrayType) source;
+      return isAssignableFrom(t.getGenericComponentType(), s.getGenericComponentType(), tp, sp);
+    } else if (source instanceof WildcardType) {
+      return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(t, b, tp, sp))
+          && lowerBounds((WildcardType) source).allMatch(b -> isAssignableFrom(b, t, tp, sp));
+    } else if (source instanceof TypeVariable<?>) {
+      final var nsp = TypeUtils.add(sp, source);
+      return nsp.length != sp.length && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(t, b, tp, nsp));
+    } else {
+      return false;
+    }
+  }
+
+  private static boolean isAssignableFrom(ParameterizedType target, Type source, Type[] tp, Type[] sp) {
+    if (source instanceof Class<?>) {
 
     }
     return false;
