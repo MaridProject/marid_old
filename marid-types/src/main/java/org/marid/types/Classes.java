@@ -153,6 +153,8 @@ public interface Classes {
       } else {
         return false;
       }
+    } else if (source.isPrimitive()) {
+      return target.isAssignableFrom(wrapper(source));
     } else {
       return primitive(target) == source;
     }

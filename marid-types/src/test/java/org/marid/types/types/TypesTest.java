@@ -111,6 +111,26 @@ class TypesTest extends TypeSugar {
     assertEquals(expected, actual);
   }
 
+  private static Stream<Arguments> isAssignableFromData() {
+    return Stream.of(
+        arguments(int.class, long.class, false),
+        arguments(long.class, int.class, true),
+        arguments(long.class, Long.class, true),
+        arguments(Long.class, long.class, true),
+        arguments(a(Long.class), Long[].class, true),
+        arguments(long[].class, long[].class, true),
+        arguments(long[].class, int[].class, false),
+        arguments(Object.class, int[].class, true),
+        arguments(Object.class, int.class, true)
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("isAssignableFromData")
+  void isAssignableFrom(Type target, Type source, boolean expected) {
+    assertEquals(expected, Types.isAssignableFrom(target, source));
+  }
+
   public static class C1<E extends List<E> & Serializable> {}
   public static class C2<M extends Map<Integer, List<Long>>, E extends M> {}
   public static class C3<M extends Map<? extends M, Integer>> {}
