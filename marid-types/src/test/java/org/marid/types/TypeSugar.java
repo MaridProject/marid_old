@@ -34,42 +34,75 @@ import java.lang.reflect.WildcardType;
 public class TypeSugar {
 
   @NotNull
-  public static ParameterizedType p(@NotNull Class<?> raw, @NotNull Type... params) {
+  protected static ParameterizedType p(@NotNull Class<?> raw, @NotNull Type... params) {
     return ParameterizedTypes.parameterizedType(raw, params);
   }
 
   @NotNull
-  public static ParameterizedType po(@NotNull Class<?> raw, @Nullable Type owner, @NotNull Type... params) {
+  protected static Type p(@NotNull Class<?> raw, int index) {
+    return raw.getTypeParameters()[index];
+  }
+
+  @NotNull
+  protected static Type p(@NotNull Type type, int index) {
+    if (type instanceof Class<?>) {
+      return p((Class<?>) type, index);
+    } else {
+      return ((ParameterizedType) type).getActualTypeArguments()[index];
+    }
+  }
+
+  @NotNull
+  protected static ParameterizedType po(@NotNull Class<?> raw, @Nullable Type owner, @NotNull Type... params) {
     return ParameterizedTypes.parameterizedTypeWithOwner(raw, owner, params);
   }
 
   @NotNull
-  public static GenericArrayType a(@NotNull Type componentType) {
+  protected static GenericArrayType a(@NotNull Type componentType) {
     return GenericArrayTypes.genericArrayType(componentType);
   }
 
   @NotNull
-  public static WildcardType w() {
+  protected static WildcardType w() {
     return WildcardTypes.wildcardType(Types.EMPTY_TYPES, Types.EMPTY_TYPES);
   }
 
   @NotNull
-  public static WildcardType wu(@NotNull Type... upper) {
+  protected static WildcardType wu(@NotNull Type... upper) {
     return WildcardTypes.wildcardTypeUpperBounds(upper);
   }
 
   @NotNull
-  public static WildcardType wl(@NotNull Type... lower) {
+  protected static WildcardType wl(@NotNull Type... lower) {
     return WildcardTypes.wildcardTypeLowerBounds(lower);
   }
 
   @NotNull
-  public static TypeVariable<?> v(@NotNull Class<?> type, int index) {
+  protected static TypeVariable<?> v(@NotNull Class<?> type, int index) {
     return type.getTypeParameters()[index];
   }
 
   @NotNull
-  public static TypeVariable<?> v(@NotNull ReflectiveSupplier<? extends Executable> method, int index) {
+  protected static TypeVariable<?> v(@NotNull ReflectiveSupplier<? extends Executable> method, int index) {
     return method.getSafe().getTypeParameters()[index];
+  }
+
+  @NotNull
+  protected static Type b(@NotNull Type type, int index) {
+    if (type instanceof TypeVariable<?>) {
+      return ((TypeVariable<?>) type).getBounds()[index];
+    } else {
+      return ((WildcardType) type).getUpperBounds()[index];
+    }
+  }
+
+  @NotNull
+  protected static Type lb(@NotNull Type type, int index) {
+    return ((WildcardType) type).getLowerBounds()[index];
+  }
+
+  @NotNull
+  protected static Type ct(@NotNull Type type) {
+    return ((GenericArrayType) type).getGenericComponentType();
   }
 }

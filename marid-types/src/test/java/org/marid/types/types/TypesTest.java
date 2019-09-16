@@ -30,7 +30,6 @@ import org.marid.types.TypeSugar;
 import org.marid.types.Types;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,42 +44,15 @@ class TypesTest extends TypeSugar {
 
   private static Stream<Arguments> toRawData() {
     return Stream.of(
-        arguments(
-            String.class,
-            String.class
-        ),
-        arguments(
-            p(List.class, Integer.class),
-            List.class
-        ),
-        arguments(
-            v(C1.class, 0),
-            List.class
-        ),
-        arguments(
-            v(C2.class, 1),
-            Map.class
-        ),
-        arguments(
-            v(C3.class, 0),
-            Map.class
-        ),
-        arguments(
-            ((ParameterizedType) C4.class.getGenericSuperclass()).getActualTypeArguments()[0],
-            List[].class
-        ),
-        arguments(
-            v(C5.class, 0),
-            Map.class
-        ),
-        arguments(
-            v(C6.class, 0),
-            Object.class
-        ),
-        arguments(
-            Enum.class.getTypeParameters()[0],
-            Enum.class
-        )
+        arguments(String.class, String.class),
+        arguments(p(List.class, Integer.class), List.class),
+        arguments(v(C1.class, 0), List.class),
+        arguments(v(C2.class, 1), Map.class),
+        arguments(v(C3.class, 0), Map.class),
+        arguments(p(C4.class.getGenericSuperclass(), 0), List[].class),
+        arguments(v(C5.class, 0), Map.class),
+        arguments(v(C6.class, 0), Object.class),
+        arguments(p(Enum.class, 0), Enum.class)
     );
   }
 
