@@ -113,22 +113,32 @@ class TypesTest extends TypeSugar {
 
   private static Stream<Arguments> isAssignableFromData() {
     return Stream.of(
-        arguments(int.class, long.class, false),
-        arguments(long.class, int.class, true),
-        arguments(long.class, Long.class, true),
-        arguments(Long.class, long.class, true),
-        arguments(a(Long.class), Long[].class, true),
-        arguments(long[].class, long[].class, true),
-        arguments(long[].class, int[].class, false),
-        arguments(Object.class, int[].class, true),
-        arguments(Object.class, int.class, true)
-    );
+        arguments(int.class, long.class, null, false),
+        arguments(long.class, int.class, null, true),
+        arguments(long.class, Long.class, null, true),
+        arguments(Long.class, long.class, null, true),
+        arguments(a(Long.class), Long[].class, null, true),
+        arguments(long[].class, long[].class, null, true),
+        arguments(long[].class, int[].class, null, false),
+        arguments(Object.class, int[].class, null, true),
+        arguments(Object.class, int.class, null, true)
+    ).flatMap(args -> {
+      final var v = args.get();
+      if (v[2] == null) {
+        return Stream.of(
+            arguments(v[0], v[1], false, v[3]),
+            arguments(v[0], v[1], true, v[3])
+        );
+      } else {
+        return Stream.of(args);
+      }
+    });
   }
 
   @ParameterizedTest
   @MethodSource("isAssignableFromData")
-  void isAssignableFrom(Type target, Type source, boolean expected) {
-    assertEquals(expected, Types.isAssignableFrom(target, source));
+  void isAssignableFrom(Type target, Type source, boolean covariance, boolean expected) {
+    assertEquals(expected, Types.isAssignableFrom(target, source, covariance));
   }
 
   public static class C1<E extends List<E> & Serializable> {}
