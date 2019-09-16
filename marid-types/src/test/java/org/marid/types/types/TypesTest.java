@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.marid.types.ParameterizedTypes.parameterizedTypeFromClass;
 
 @Tag("normal")
 class TypesTest extends TypeSugar {
@@ -65,14 +66,8 @@ class TypesTest extends TypeSugar {
 
   private static Stream<Arguments> groundData() {
     return Stream.of(
-        arguments(
-            ParameterizedTypes.parameterizedTypeFromClass(Enum.class),
-            p(Enum.class, wu())
-        ),
-        arguments(
-            ParameterizedTypes.parameterizedTypeFromClass(C7.class),
-            p(C7.class, wu(p(ArrayList.class, wu())))
-        )
+        arguments(parameterizedTypeFromClass(Enum.class), p(Enum.class, wu())),
+        arguments(parameterizedTypeFromClass(C7.class), p(C7.class, wu(p(ArrayList.class, wu()))))
     );
   }
 
