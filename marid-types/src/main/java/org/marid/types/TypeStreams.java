@@ -38,6 +38,8 @@ public interface TypeStreams {
       final var t = (Class<?>) type;
       if (t.isInterface()) {
         return Stream.empty();
+      } else if (t.isPrimitive()) {
+        type = Classes.wrapper(t);
       }
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
@@ -46,11 +48,17 @@ public interface TypeStreams {
         return Stream.of();
       }
     }
-    return superclasses(type, Types.EMPTY_TYPES, new LinkedHashMap<>(0));
+    return superclasses(type, new LinkedHashMap<>(0));
   }
 
-  static Stream<Type> superclasses(Type type, Type[] passed, LinkedHashMap<TypeVariable<?>, Type> bindings) {
+  static Stream<Type> superclasses(Type type, LinkedHashMap<TypeVariable<?>, Type> bindings) {
     if (type instanceof Class<?>) {
+      final var t = (Class<?>) type;
+      final var gt = t.getGenericSuperclass();
+      final var gc = t.getSuperclass();
+      final var vars = gc.getTypeParameters();
+      if (vars.length == 0) {
+      }
     } if (type instanceof GenericArrayType) {
       return Stream.of(type, Object.class);
     }

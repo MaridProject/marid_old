@@ -80,7 +80,7 @@ final class ParameterizedTypeImpl implements ParameterizedType {
 
   @Override
   public Type[] getActualTypeArguments() {
-    return actualTypeArguments;
+    return actualTypeArguments.clone();
   }
 
   @Override

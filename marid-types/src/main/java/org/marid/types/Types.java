@@ -142,7 +142,44 @@ public interface Types {
 
   @NotNull
   static Type resolve(@NotNull Type type, @NotNull Map<@NotNull TypeVariable<?>, @NotNull Type> bindings) {
-    return null;
+    if (isGround(type)) {
+      return type;
+    } else {
+      if (type instanceof GenericArrayType) {
+        final var ct = ((GenericArrayType) type).getGenericComponentType();
+        final var rt = resolve(ct, bindings);
+        return rt == ct ? type : genericArrayType(resolve(ct, bindings));
+      } else if (type instanceof ParameterizedType) {
+        final var t = (ParameterizedType) type;
+        final var args = t.getActualTypeArguments();
+        final boolean changed = resolvedTypes(args, bindings);
+        return changed ? parameterizedTypeWithOwner((Class<?>) t.getRawType(), t.getOwnerType(), args) : type;
+      } else if (type instanceof WildcardType) {
+        final var t = (WildcardType) type;
+        final var ubs = t.getUpperBounds();
+        final var lbs = t.getLowerBounds();
+        final var ubsChanged = resolvedTypes(ubs, bindings);
+        final var lbsChanged = resolvedTypes(lbs, bindings);
+        return ubsChanged || lbsChanged ? WildcardTypes.wildcardType(ubs, lbs) : type;
+      } else if (type instanceof TypeVariable<?>) {
+        return bindings.getOrDefault(type, type);
+      } else {
+        throw new IllegalArgumentException("Unknown type: " + type);
+      }
+    }
+  }
+
+  private static boolean resolvedTypes(Type[] array, Map<TypeVariable<?>, Type> bindings) {
+    boolean changed = false;
+    for (int i = 0; i < array.length; i++) {
+      final var ot = array[i];
+      final var nt = resolve(ot, bindings);
+      if (ot != nt) {
+        changed = true;
+        array[i] = nt;
+      }
+    }
+    return changed;
   }
 
   static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source) {
