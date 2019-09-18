@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -158,5 +158,22 @@ public interface Classes {
     } else {
       return primitive(target) == source;
     }
+  }
+
+  static int compare(@NotNull Class<?> c1, @NotNull Class<?> c2) {
+    if (c1.equals(c2)) {
+      return 0;
+    } else if (c1.isAssignableFrom(c2)) {
+      return 1;
+    } else if (c2.isAssignableFrom(c1)) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  static int fullCompare(@NotNull Class<?> c1, @NotNull Class<?> c2) {
+    final int c = compare(c1, c2);
+    return c != 0 ? c : c1.getName().compareTo(c2.getName());
   }
 }
