@@ -1,4 +1,4 @@
-package org.marid.types.classes;
+package org.marid.types;
 
 /*-
  * #%L
@@ -26,10 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.marid.types.ClassStreams;
-import org.marid.types.Classes;
-import org.marid.types.classes.ClassStreamsTest.C1;
-import org.marid.types.classes.ClassStreamsTest.C4;
+import org.marid.types.ClassStreamsTest.C1;
+import org.marid.types.ClassStreamsTest.C4;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -26,42 +26,43 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public interface TypeUnification {
+public class TypeUnification {
 
   @NotNull
-  static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
-    final var map = new TreeMap<TypeVariable<?>, Type>(TypeVariables::compare);
-    resolveVars(type, map);
-    return map;
+  public static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
+    final var map = new HashMap<TypeVariable<?>, Type>();
+    resolveTypes(type, map);
+    return Map.of();
   }
 
-  private static void resolveVars(Type type, TreeMap<TypeVariable<?>, Type> map) {
+  static void resolveTypes(Type type, HashMap<TypeVariable<?>, Type> map) {
     if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
       final var args = t.getActualTypeArguments();
       final var vars = raw.getTypeParameters();
       for (int i = 0; i < vars.length; i++) {
-        resolveVars(vars[i], args[i], map);
+        map.put(vars[i], args[i]);
       }
       final var gsc = raw.getGenericSuperclass();
       if (gsc != null) {
-        resolveVars(gsc, map);
+        resolveTypes(gsc, map);
       }
       for (final var gsi: raw.getGenericInterfaces()) {
-        resolveVars(gsi, map);
+        resolveTypes(gsi, map);
       }
     } else if (type instanceof Class<?>) {
       final var t = (Class<?>) type;
       final var gsc = t.getGenericSuperclass();
       if (gsc != null) {
-        resolveVars(gsc, map);
+        resolveTypes(gsc, map);
       }
       for (final var gsi: t.getGenericInterfaces()) {
-        resolveVars(gsi, map);
+        resolveTypes(gsi, map);
       }
     }
   }

@@ -24,12 +24,19 @@ package org.marid.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Executable;
 import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TypeSugar {
 
@@ -88,6 +95,11 @@ public class TypeSugar {
   }
 
   @NotNull
+  protected static Var v(@NotNull GenericDeclaration decl, @NotNull String name) {
+    return new Var(decl, name);
+  }
+
+  @NotNull
   protected static Type b(@NotNull Type type, int index) {
     if (type instanceof TypeVariable<?>) {
       return ((TypeVariable<?>) type).getBounds()[index];
@@ -104,5 +116,95 @@ public class TypeSugar {
   @NotNull
   protected static Type ct(@NotNull Type type) {
     return ((GenericArrayType) type).getGenericComponentType();
+  }
+
+  public static Map<Var, Type> prettyMap(@NotNull Map<TypeVariable<?>, Type> binding) {
+    return binding.entrySet().stream()
+        .sorted(Comparator.comparing(Map.Entry::getKey, TypeVariables::compare))
+        .collect(Collectors.toMap(
+            e -> new Var(e.getKey()),
+            e -> Var.convert(e.getValue()),
+            (e1, e2) -> e2,
+            LinkedHashMap::new)
+        );
+  }
+
+  public static class Var implements TypeVariable<GenericDeclaration> {
+
+    private final GenericDeclaration declaration;
+    private final String name;
+
+    public Var(GenericDeclaration declaration, String name) {
+      this.declaration = declaration;
+      this.name = name;
+    }
+
+    public Var(TypeVariable<?> var) {
+      this(var.getGenericDeclaration(), var.getName());
+    }
+
+    public static Type convert(Type type) {
+      return type instanceof TypeVariable<?> ? new Var((TypeVariable<?>) type) : type;
+    }
+
+    @Override
+    public Type[] getBounds() {
+      return Types.EMPTY_TYPES;
+    }
+
+    @Override
+    public GenericDeclaration getGenericDeclaration() {
+      return declaration;
+    }
+
+    @Override
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public AnnotatedType[] getAnnotatedBounds() {
+      return new AnnotatedType[0];
+    }
+
+    @Override
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+      return null;
+    }
+
+    @Override
+    public Annotation[] getAnnotations() {
+      return new Annotation[0];
+    }
+
+    @Override
+    public Annotation[] getDeclaredAnnotations() {
+      return new Annotation[0];
+    }
+
+    @Override
+    public int hashCode() {
+      return declaration.hashCode() ^ name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      return obj == this
+          || obj instanceof Var && ((Var) obj).name.equals(name) && ((Var) obj).declaration.equals(declaration);
+    }
+
+    @Override
+    public String toString() {
+      final String d;
+      if (declaration instanceof Class<?>) {
+        d = ((Class<?>) declaration).getSimpleName();
+      } else if (declaration instanceof Executable) {
+        final var e = (Executable) declaration;
+        d = e.getDeclaringClass().getSimpleName() + "." + e.getName() + "/" + e.getParameterCount();
+      } else {
+        d = declaration.toString();
+      }
+      return d + "<" + name + ">";
+    }
   }
 }

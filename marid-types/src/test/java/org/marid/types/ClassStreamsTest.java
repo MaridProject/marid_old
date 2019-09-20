@@ -1,4 +1,4 @@
-package org.marid.types.classes;
+package org.marid.types;
 
 /*-
  * #%L
