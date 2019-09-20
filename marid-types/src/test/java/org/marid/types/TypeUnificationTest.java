@@ -52,7 +52,8 @@ class TypeUnificationTest extends TypeSugar {
             v(Map.class, "V"), v(HashMap.class, "V")
         )),
         arguments(p(C3.class, Integer.class), Map.of(
-
+            v(C3.class, "P"), Integer.class,
+            v(C2.class, "A"), p(List.class, v(C3.class, 0))
         ))
     );
   }
