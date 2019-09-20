@@ -32,7 +32,7 @@ public interface WildcardTypes {
 
   @NotNull
   static WildcardType wildcardTypeUpperBounds(@NotNull Type... upperBounds) {
-    return new WildcardTypeImpl(upperBounds, Types.EMPTY_TYPES);
+    return new WildcardTypeImpl(upperBounds.length == 0 ? Types.ONLY_OBJECT : upperBounds, Types.EMPTY_TYPES);
   }
 
   @NotNull
@@ -42,7 +42,7 @@ public interface WildcardTypes {
 
   @NotNull
   static WildcardType wildcardType(@NotNull Type[] upperBounds, @NotNull Type[] lowerBounds) {
-    return new WildcardTypeImpl(upperBounds, lowerBounds);
+    return new WildcardTypeImpl(upperBounds.length == 0 ? Types.ONLY_OBJECT : upperBounds, lowerBounds);
   }
 
   @NotNull

@@ -45,6 +45,7 @@ import static org.marid.types.WildcardTypes.wildcardTypeUpperBounds;
 public interface Types {
 
   Type[] EMPTY_TYPES = {};
+  Type[] ONLY_OBJECT = {Object.class};
 
   @NotNull
   static Class<?> toRaw(@NotNull Type type) {
