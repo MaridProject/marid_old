@@ -41,6 +41,18 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @Tag("normal")
 class TypeUnificationTest extends TypeSugar {
 
+  private static class C1 extends HashMap<Integer, ArrayList<?>> {
+  }
+
+  private static class C2<A> {
+  }
+
+  private static class C3<P> extends C2<List<P>> {
+  }
+
+  private static class C4<E, P extends List<E>> extends C3<P> {
+  }
+
   private static Stream<Arguments> resolveTypesData() {
     return Stream.of(
         arguments(C1.class, Map.of(
@@ -54,6 +66,12 @@ class TypeUnificationTest extends TypeSugar {
         arguments(p(C3.class, Integer.class), Map.of(
             v(C3.class, "P"), Integer.class,
             v(C2.class, "A"), p(List.class, v(C3.class, 0))
+        )),
+        arguments(p(C4.class, Integer.class, p(List.class, Integer.class)), Map.of(
+            v(C4.class, "E"), Integer.class,
+            v(C4.class, "P"), p(List.class, Integer.class),
+            v(C3.class, "P"), v(C4.class, "P"),
+            v(C2.class, "A"), p(List.class, v(C3.class, 0))
         ))
     );
   }
@@ -66,14 +84,5 @@ class TypeUnificationTest extends TypeSugar {
     final var actual = prettyMap(map);
     assertEquals(expected, actual);
   }
-}
-
-class C1 extends HashMap<Integer, ArrayList<?>> {
-}
-
-class C2<A> {
-}
-
-class C3<P> extends C2<List<P>> {
 }
 
