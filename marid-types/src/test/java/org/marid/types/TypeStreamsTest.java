@@ -6,10 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Type;
-import java.util.AbstractCollection;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,6 +22,17 @@ class TypeStreamsTest extends TypeSugar {
             p(ArrayList.class, Integer.class),
             p(AbstractList.class, Integer.class),
             p(AbstractCollection.class, Integer.class),
+            Object.class
+        )),
+        arguments(p(HashMap.class, Long.class, p(List.class, Long.class)), List.of(
+            p(HashMap.class, Long.class, p(List.class, Long.class)),
+            p(AbstractMap.class, Long.class, p(List.class, Long.class)),
+            Object.class
+        )),
+        arguments(p(LinkedHashMap.class, Long.class, v(LinkedHashMap.class, 1)), List.of(
+            p(LinkedHashMap.class, Long.class, v(LinkedHashMap.class, 1)),
+            p(HashMap.class, Long.class, v(LinkedHashMap.class, 1)),
+            p(AbstractMap.class, Long.class, v(LinkedHashMap.class, 1)),
             Object.class
         ))
     );
