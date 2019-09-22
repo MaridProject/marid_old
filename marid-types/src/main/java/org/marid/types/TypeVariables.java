@@ -23,8 +23,7 @@ package org.marid.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -33,5 +32,27 @@ public interface TypeVariables {
   @NotNull
   static Stream<@NotNull Type> bounds(@NotNull TypeVariable<?> var) {
     return Arrays.stream(var.getBounds());
+  }
+
+  @NotNull
+  static Stream<@NotNull TypeVariable<?>> from(@NotNull Type type) {
+    return extract0(type).distinct();
+  }
+
+  private static Stream<TypeVariable<?>> extract0(Type type) {
+    if (type instanceof TypeVariable<?>) {
+      return Stream.of((TypeVariable<?>) type);
+    } else if (type instanceof WildcardType) {
+      return Stream.concat(
+          Arrays.stream(((WildcardType) type).getUpperBounds()).flatMap(TypeVariables::extract0),
+          Arrays.stream(((WildcardType) type).getLowerBounds()).flatMap(TypeVariables::extract0)
+      );
+    } else if (type instanceof GenericArrayType) {
+      return extract0(((GenericArrayType) type).getGenericComponentType());
+    } else if (type instanceof ParameterizedType) {
+      return Arrays.stream(((ParameterizedType) type).getActualTypeArguments()).flatMap(TypeVariables::extract0);
+    } else {
+      return Stream.empty();
+    }
   }
 }
