@@ -35,6 +35,10 @@ public interface GenericArrayTypes {
 
   @NotNull
   static Type genericArray(@NotNull Type component) {
-    return component instanceof Class<?> ? ((Class<?>) component).arrayType() : genericArrayType(component);
+    if (component instanceof Class<?>) {
+      return Classes.arrayClass((Class<?>) component);
+    } else {
+      return genericArrayType(component);
+    }
   }
 }

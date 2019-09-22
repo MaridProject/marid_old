@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Array;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 
@@ -40,6 +41,11 @@ public interface Classes {
     } catch (IllegalAccessException | SecurityException e) {
       return false;
     }
+  }
+
+  @NotNull
+  static Class<?> arrayClass(@NotNull Class<?> componentType) {
+    return Array.newInstance(componentType, 0).getClass();
   }
 
   static boolean notObject(@NotNull Class<?> type) {

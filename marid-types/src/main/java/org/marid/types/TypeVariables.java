@@ -36,21 +36,21 @@ public interface TypeVariables {
 
   @NotNull
   static Stream<@NotNull TypeVariable<?>> from(@NotNull Type type) {
-    return extract0(type).distinct();
+    return extract(type).distinct();
   }
 
-  private static Stream<TypeVariable<?>> extract0(Type type) {
+  private static Stream<TypeVariable<?>> extract(Type type) {
     if (type instanceof TypeVariable<?>) {
       return Stream.of((TypeVariable<?>) type);
     } else if (type instanceof WildcardType) {
       return Stream.concat(
-          Arrays.stream(((WildcardType) type).getUpperBounds()).flatMap(TypeVariables::extract0),
-          Arrays.stream(((WildcardType) type).getLowerBounds()).flatMap(TypeVariables::extract0)
+          Arrays.stream(((WildcardType) type).getUpperBounds()).flatMap(TypeVariables::extract),
+          Arrays.stream(((WildcardType) type).getLowerBounds()).flatMap(TypeVariables::extract)
       );
     } else if (type instanceof GenericArrayType) {
-      return extract0(((GenericArrayType) type).getGenericComponentType());
+      return extract(((GenericArrayType) type).getGenericComponentType());
     } else if (type instanceof ParameterizedType) {
-      return Arrays.stream(((ParameterizedType) type).getActualTypeArguments()).flatMap(TypeVariables::extract0);
+      return Arrays.stream(((ParameterizedType) type).getActualTypeArguments()).flatMap(TypeVariables::extract);
     } else {
       return Stream.empty();
     }

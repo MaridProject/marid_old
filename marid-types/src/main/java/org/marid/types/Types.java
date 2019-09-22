@@ -51,7 +51,7 @@ public interface Types {
       return (Class<?>) ((ParameterizedType) type).getRawType();
     } else if (type instanceof GenericArrayType) {
       final var componentType = ((GenericArrayType) type).getGenericComponentType();
-      return toRaw(componentType, passed).arrayType();
+      return Classes.arrayClass(toRaw(componentType, passed));
     } else if (type instanceof WildcardType) {
       return upperBounds((WildcardType) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
