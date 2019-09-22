@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 import static org.marid.types.GenericArrayTypes.genericArrayType;
 import static org.marid.types.ParameterizedTypes.*;
+import static org.marid.types.TypeUnification.resolve;
 import static org.marid.types.TypeVariables.bounds;
 import static org.marid.types.WildcardTypes.*;
 
@@ -263,12 +264,7 @@ public interface Types {
       if (!tRaw.isAssignableFrom(s)) {
         return false;
       } else {
-        return isAssignable(
-            tRaw.getTypeParameters(),
-            TypeUnification.resolve(target),
-            TypeUnification.resolve(s),
-            tp, sp, covariance
-        );
+        return isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, covariance);
       }
     } else if (source instanceof ParameterizedType) {
       final var s = (ParameterizedType) source;
@@ -277,12 +273,7 @@ public interface Types {
       if (!tRaw.isAssignableFrom(sRaw)) {
         return false;
       } else {
-        return isAssignable(
-            tRaw.getTypeParameters(),
-            TypeUnification.resolve(target),
-            TypeUnification.resolve(s),
-            tp, sp, covariance
-        );
+        return isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, covariance);
       }
     } else if (source instanceof WildcardType) {
       return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(target, b, tp, sp, covariance));
