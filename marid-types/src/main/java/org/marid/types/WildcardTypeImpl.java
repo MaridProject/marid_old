@@ -69,13 +69,13 @@ final class WildcardTypeImpl implements WildcardType {
   @Override
   public String toString() {
     if (lowerBounds.length == 0) {
-      if (upperBounds.length == 0 || Arrays.equals(upperBounds, Types.ONLY_OBJECT)) {
+      if (upperBounds.length == 0 || Arrays.equals(upperBounds, TypeUtils.ONLY_OBJECT)) {
         return "?";
       } else {
         return Arrays.stream(upperBounds).map(Type::getTypeName).collect(joining(" & ", "? extends ", ""));
       }
     } else {
-      if (upperBounds.length == 0 || Arrays.equals(upperBounds, Types.ONLY_OBJECT)) {
+      if (upperBounds.length == 0 || Arrays.equals(upperBounds, TypeUtils.ONLY_OBJECT)) {
         return Arrays.stream(lowerBounds).map(Type::getTypeName).collect(joining(" & ", "? super ", ""));
       } else {
         return Arrays.stream(upperBounds).map(Type::getTypeName).collect(joining(" & ", "? extends ",

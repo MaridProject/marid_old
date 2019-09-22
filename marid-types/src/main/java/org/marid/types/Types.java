@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -36,7 +37,6 @@ import static org.marid.types.WildcardTypes.*;
 public interface Types {
 
   Type[] EMPTY_TYPES = {};
-  Type[] ONLY_OBJECT = {Object.class};
 
   @NotNull
   static Class<?> toRaw(@NotNull Type type) {
@@ -195,7 +195,9 @@ public interface Types {
   }
 
   private static boolean isAssignableFrom(Type target, Type source, Type[] tp, Type[] sp, boolean covariance) {
-    if (target instanceof Class<?>) {
+    if (target.equals(source)) {
+      return true;
+    } else if (target instanceof Class<?>) {
       return isAssignableFrom((Class<?>) target, source, tp, sp, covariance);
     } else if (target instanceof TypeVariable<?>) {
       final var ntp = TypeUtils.add(tp, target);
@@ -256,8 +258,64 @@ public interface Types {
 
   private static boolean isAssignableFrom(ParameterizedType target, Type source, Type[] tp, Type[] sp, boolean covariance) {
     if (source instanceof Class<?>) {
-
+      final var s = (Class<?>) source;
+      final var tRaw = (Class<?>) target.getRawType();
+      if (!tRaw.isAssignableFrom(s)) {
+        return false;
+      } else {
+        return isAssignable(
+            tRaw.getTypeParameters(),
+            TypeUnification.resolve(target),
+            TypeUnification.resolve(s),
+            tp, sp, covariance
+        );
+      }
+    } else if (source instanceof ParameterizedType) {
+      final var s = (ParameterizedType) source;
+      final var sRaw = (Class<?>) s.getRawType();
+      final var tRaw = (Class<?>) target.getRawType();
+      if (!tRaw.isAssignableFrom(sRaw)) {
+        return false;
+      } else {
+        return isAssignable(
+            tRaw.getTypeParameters(),
+            TypeUnification.resolve(target),
+            TypeUnification.resolve(s),
+            tp, sp, covariance
+        );
+      }
+    } else if (source instanceof WildcardType) {
+      return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(target, b, tp, sp, covariance));
+    } else if (source instanceof TypeVariable<?>) {
+      final var nsp = TypeUtils.add(sp, source);
+      return nsp.length != sp.length
+          && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp, covariance));
+    } else {
+      return false;
     }
-    return false;
+  }
+
+  private static boolean isAssignable(TypeVariable<?>[] tVars,
+                                      Map<TypeVariable<?>, Type> tMap,
+                                      Map<TypeVariable<?>, Type> sMap,
+                                      Type[] tp,
+                                      Type[] sp,
+                                      boolean covariance) {
+    for (final var tVar : tVars) {
+      final var sResolvedVar = sMap.get(tVar);
+      if (sResolvedVar == null) {
+        return false;
+      }
+      final var tResolvedVar = tMap.get(tVar);
+      if (tResolvedVar == null) {
+        return false;
+      }
+      if (covariance) {
+        return isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp, covariance);
+      } else {
+        return tResolvedVar.equals(sResolvedVar);
+      }
+    }
+    return true;
   }
 }

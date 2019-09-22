@@ -28,6 +28,8 @@ import java.util.Arrays;
 
 class TypeUtils {
 
+  static final Type[] ONLY_OBJECT = {Object.class};
+
   @NotNull
   static Type[] add(@NotNull Type[] types, @NotNull Type type) {
     final int len = types.length;
