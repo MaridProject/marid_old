@@ -54,7 +54,7 @@ public interface TypeStreams {
       return Stream.of(type, Object.class);
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
-      final var raw = (Class<?>) t.getOwnerType();
+      final var raw = (Class<?>) t.getRawType();
       if (raw.isInterface()) {
         return Stream.empty();
       } else {
@@ -106,7 +106,7 @@ public interface TypeStreams {
       return Stream.of(type, Object.class);
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
-      final var raw = (Class<?>) t.getOwnerType();
+      final var raw = (Class<?>) t.getRawType();
       final var map = TypeUnification.resolve(t);
       return ClassStreams.interfaces(raw).map(c -> expand(map, c));
     } else if (type instanceof TypeVariable<?>) {
