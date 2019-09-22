@@ -36,6 +36,7 @@ import java.lang.reflect.WildcardType;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class TypeSugar {
@@ -120,16 +121,15 @@ public class TypeSugar {
 
   public static Map<Var, Type> prettyMap(@NotNull Map<TypeVariable<?>, Type> binding) {
     return binding.entrySet().stream()
-        .sorted(Comparator.comparing(Map.Entry::getKey, TypeVariables::compare))
         .collect(Collectors.toMap(
             e -> new Var(e.getKey()),
             e -> Var.convert(e.getValue()),
             (e1, e2) -> e2,
-            LinkedHashMap::new)
+            TreeMap::new)
         );
   }
 
-  public static class Var implements TypeVariable<GenericDeclaration> {
+  public static class Var implements TypeVariable<GenericDeclaration>, Comparable<Var> {
 
     private final GenericDeclaration declaration;
     private final String name;
@@ -205,6 +205,14 @@ public class TypeSugar {
         d = declaration.toString();
       }
       return d + "<" + name + ">";
+    }
+
+    @Override
+    public int compareTo(@NotNull Var o) {
+      final Comparator<Var> c = Comparator
+          .comparing(Var::getGenericDeclaration, Comparator.comparing(GenericDeclaration::toString))
+          .thenComparing(Var::getName);
+      return c.compare(this, o);
     }
   }
 }
