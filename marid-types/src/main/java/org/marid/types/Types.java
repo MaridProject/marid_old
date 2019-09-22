@@ -10,37 +10,29 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.marid.types.GenericArrayTypes.genericArrayType;
-import static org.marid.types.ParameterizedTypes.owner;
-import static org.marid.types.ParameterizedTypes.parameterizedTypeWithOwner;
-import static org.marid.types.ParameterizedTypes.parameters;
+import static org.marid.types.ParameterizedTypes.*;
 import static org.marid.types.TypeVariables.bounds;
-import static org.marid.types.WildcardTypes.lowerBounds;
-import static org.marid.types.WildcardTypes.upperBounds;
-import static org.marid.types.WildcardTypes.wildcardType;
-import static org.marid.types.WildcardTypes.wildcardTypeUpperBounds;
+import static org.marid.types.WildcardTypes.*;
 
 public interface Types {
 
@@ -141,46 +133,63 @@ public interface Types {
     }
   }
 
-  @NotNull
-  static Type resolve(@NotNull Type type, @NotNull Map<@NotNull TypeVariable<?>, @NotNull Type> bindings) {
+  static Type resolve(@NotNull Type type, @NotNull Function<@NotNull TypeVariable<?>, @Nullable Type> mapping) {
+    return resolve(type, mapping, EMPTY_TYPES);
+  }
+
+  private static Type resolve(Type type, Function<TypeVariable<?>, Type> mapping, Type[] passed) {
     if (isGround(type)) {
       return type;
-    } else {
-      if (type instanceof GenericArrayType) {
-        final var ct = ((GenericArrayType) type).getGenericComponentType();
-        final var rt = resolve(ct, bindings);
-        return rt == ct ? type : genericArrayType(resolve(ct, bindings));
-      } else if (type instanceof ParameterizedType) {
-        final var t = (ParameterizedType) type;
-        final var args = t.getActualTypeArguments();
-        final boolean changed = resolvedTypes(args, bindings);
-        return changed ? parameterizedTypeWithOwner((Class<?>) t.getRawType(), t.getOwnerType(), args) : type;
-      } else if (type instanceof WildcardType) {
-        final var t = (WildcardType) type;
-        final var ubs = t.getUpperBounds();
-        final var lbs = t.getLowerBounds();
-        final var ubsChanged = resolvedTypes(ubs, bindings);
-        final var lbsChanged = resolvedTypes(lbs, bindings);
-        return ubsChanged || lbsChanged ? wildcardType(ubs, lbs) : type;
-      } else if (type instanceof TypeVariable<?>) {
-        return bindings.getOrDefault(type, type);
+    } else if (type instanceof GenericArrayType) {
+      final var ct = ((GenericArrayType) type).getGenericComponentType();
+      final var rt = resolve(ct, mapping);
+      return rt.equals(ct) ? type : genericArrayType(resolve(ct, mapping));
+    } else if (type instanceof ParameterizedType) {
+      final var t = (ParameterizedType) type;
+      final var args = t.getActualTypeArguments();
+      final boolean changed = resolvedTypes(args, mapping, passed);
+      return changed ? parameterizedTypeWithOwner((Class<?>) t.getRawType(), t.getOwnerType(), args) : type;
+    } else if (type instanceof WildcardType) {
+      final var t = (WildcardType) type;
+      final var ubs = t.getUpperBounds();
+      final var lbs = t.getLowerBounds();
+      final var ubsChanged = resolvedTypes(ubs, mapping, passed);
+      final var lbsChanged = resolvedTypes(lbs, mapping, passed);
+      return ubsChanged || lbsChanged ? wildcardType(ubs, lbs) : type;
+    } else if (type instanceof TypeVariable<?>) {
+      final var newTypes = TypeUtils.add(passed, type);
+      final var cycle = newTypes.length == passed.length;
+      if (cycle) {
+        return type;
       } else {
-        throw new IllegalArgumentException("Unknown type: " + type);
+        final var m = mapping.apply((TypeVariable<?>) type);
+        if (m == null) {
+          return type;
+        } else {
+          return resolve(m, mapping, newTypes);
+        }
       }
+    } else {
+      throw new IllegalArgumentException("Unknown type: " + type);
     }
   }
 
-  private static boolean resolvedTypes(Type[] array, Map<TypeVariable<?>, Type> bindings) {
+  private static boolean resolvedTypes(Type[] array, Function<TypeVariable<?>, Type> mapping, Type[] passed) {
     boolean changed = false;
     for (int i = 0; i < array.length; i++) {
       final var ot = array[i];
-      final var nt = resolve(ot, bindings);
-      if (ot != nt) {
+      final var nt = resolve(ot, mapping, passed);
+      if (!ot.equals(nt)) {
         changed = true;
         array[i] = nt;
       }
     }
     return changed;
+  }
+
+  @NotNull
+  static Type resolve(@NotNull Type type, @NotNull Map<@NotNull TypeVariable<?>, @NotNull Type> bindings) {
+    return resolve(type, bindings::get);
   }
 
   static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source, boolean covariance) {
@@ -204,7 +213,7 @@ public interface Types {
     } else if (target instanceof GenericArrayType) {
       return isAssignableFrom((GenericArrayType) target, source, tp, sp, covariance);
     } else if (target instanceof ParameterizedType) {
-       return isAssignableFrom((ParameterizedType) target, source, tp, sp, covariance);
+      return isAssignableFrom((ParameterizedType) target, source, tp, sp, covariance);
     } else {
       throw new IllegalArgumentException("Illegal target: " + target);
     }

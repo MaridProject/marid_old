@@ -26,20 +26,22 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class TypeUnification {
 
+  private TypeUnification() {
+  }
+
   @NotNull
   public static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
-    final var map = new HashMap<TypeVariable<?>, Type>();
+    final var map = new LinkedHashMap<TypeVariable<?>, Type>();
     resolveTypes(type, map);
     return Map.of();
   }
 
-  static void resolveTypes(Type type, HashMap<TypeVariable<?>, Type> map) {
+  static void resolveTypes(Type type, LinkedHashMap<TypeVariable<?>, Type> map) {
     if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
@@ -67,7 +69,7 @@ public class TypeUnification {
     }
   }
 
-  private static void resolveVars(Type left, Type right, TreeMap<TypeVariable<?>, Type> map) {
+  private static void resolveVars(Type left, Type right, Map<TypeVariable<?>, Type> map) {
     if (Types.isGround(left)) {
       return;
     }

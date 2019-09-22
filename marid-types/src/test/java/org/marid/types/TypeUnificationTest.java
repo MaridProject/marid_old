@@ -28,11 +28,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,7 +75,7 @@ class TypeUnificationTest extends TypeSugar {
   @ParameterizedTest
   @MethodSource("resolveTypesData")
   void resolveTypes(Type type, Map<Var, Type> expected) {
-    final var map = new HashMap<TypeVariable<?>, Type>();
+    final var map = new LinkedHashMap<TypeVariable<?>, Type>();
     TypeUnification.resolveTypes(type, map);
     final var actual = prettyMap(map);
     assertEquals(expected, actual);
