@@ -38,7 +38,8 @@ public class TypeUnification {
   public static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
     final var map = new LinkedHashMap<TypeVariable<?>, Type>();
     resolveTypes(type, map);
-    return Map.of();
+    map.entrySet().forEach(e -> e.setValue(Types.substitute(e.getValue(), map::get)));
+    return map;
   }
 
   static void resolveTypes(Type type, LinkedHashMap<TypeVariable<?>, Type> map) {

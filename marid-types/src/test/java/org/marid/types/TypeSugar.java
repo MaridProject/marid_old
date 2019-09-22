@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -115,7 +116,7 @@ public class TypeSugar {
             e -> new Var(e.getKey()),
             e -> Var.convert(e.getValue()),
             (e1, e2) -> e2,
-            TreeMap::new)
+            LinkedHashMap::new)
         );
   }
 }

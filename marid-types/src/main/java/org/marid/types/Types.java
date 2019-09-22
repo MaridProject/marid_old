@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -133,17 +132,17 @@ public interface Types {
     }
   }
 
-  static Type resolve(@NotNull Type type, @NotNull Function<@NotNull TypeVariable<?>, @Nullable Type> mapping) {
-    return resolve(type, mapping, EMPTY_TYPES);
+  static Type substitute(@NotNull Type type, @NotNull Function<@NotNull TypeVariable<?>, @Nullable Type> mapping) {
+    return substitute(type, mapping, EMPTY_TYPES);
   }
 
-  private static Type resolve(Type type, Function<TypeVariable<?>, Type> mapping, Type[] passed) {
+  private static Type substitute(Type type, Function<TypeVariable<?>, Type> mapping, Type[] passed) {
     if (isGround(type)) {
       return type;
     } else if (type instanceof GenericArrayType) {
       final var ct = ((GenericArrayType) type).getGenericComponentType();
-      final var rt = resolve(ct, mapping);
-      return rt.equals(ct) ? type : genericArrayType(resolve(ct, mapping));
+      final var rt = substitute(ct, mapping);
+      return rt.equals(ct) ? type : genericArrayType(substitute(ct, mapping));
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var args = t.getActualTypeArguments();
@@ -166,7 +165,7 @@ public interface Types {
         if (m == null) {
           return type;
         } else {
-          return resolve(m, mapping, newTypes);
+          return substitute(m, mapping, newTypes);
         }
       }
     } else {
@@ -178,18 +177,13 @@ public interface Types {
     boolean changed = false;
     for (int i = 0; i < array.length; i++) {
       final var ot = array[i];
-      final var nt = resolve(ot, mapping, passed);
+      final var nt = substitute(ot, mapping, passed);
       if (!ot.equals(nt)) {
         changed = true;
         array[i] = nt;
       }
     }
     return changed;
-  }
-
-  @NotNull
-  static Type resolve(@NotNull Type type, @NotNull Map<@NotNull TypeVariable<?>, @NotNull Type> bindings) {
-    return resolve(type, bindings::get);
   }
 
   static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source, boolean covariance) {

@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.marid.test.util.Maps.map;
 
 @Tag("normal")
 class TypeUnificationTest extends TypeSugar {
@@ -51,7 +52,7 @@ class TypeUnificationTest extends TypeSugar {
 
   private static Stream<Arguments> resolveTypesData() {
     return Stream.of(
-        arguments(C1.class, Map.of(
+        arguments(C1.class, map(
             v(HashMap.class, "K"), Integer.class,
             v(HashMap.class, "V"), p(ArrayList.class, w()),
             v(AbstractMap.class, "K"), v(HashMap.class, "K"),
@@ -59,11 +60,11 @@ class TypeUnificationTest extends TypeSugar {
             v(Map.class, "K"), v(HashMap.class, "K"),
             v(Map.class, "V"), v(HashMap.class, "V")
         )),
-        arguments(p(C3.class, Integer.class), Map.of(
+        arguments(p(C3.class, Integer.class), map(
             v(C3.class, "P"), Integer.class,
             v(C2.class, "A"), p(List.class, v(C3.class, 0))
         )),
-        arguments(p(C4.class, Integer.class, p(List.class, Integer.class)), Map.of(
+        arguments(p(C4.class, Integer.class, p(List.class, Integer.class)), map(
             v(C4.class, "E"), Integer.class,
             v(C4.class, "P"), p(List.class, Integer.class),
             v(C3.class, "P"), v(C4.class, "P"),
@@ -80,5 +81,35 @@ class TypeUnificationTest extends TypeSugar {
     final var actual = prettyMap(map);
     assertEquals(expected, actual);
   }
-}
 
+  private static Stream<Arguments> resolveData() {
+    return Stream.of(
+        arguments(C1.class, map(
+            v(HashMap.class, "K"), Integer.class,
+            v(HashMap.class, "V"), p(ArrayList.class, w()),
+            v(AbstractMap.class, "K"), Integer.class,
+            v(AbstractMap.class, "V"), p(ArrayList.class, w()),
+            v(Map.class, "K"), Integer.class,
+            v(Map.class, "V"), p(ArrayList.class, w())
+        )),
+        arguments(p(C3.class, Integer.class), map(
+            v(C3.class, "P"), Integer.class,
+            v(C2.class, "A"), p(List.class, Integer.class)
+        )),
+        arguments(p(C4.class, Integer.class, p(List.class, Integer.class)), map(
+            v(C4.class, "E"), Integer.class,
+            v(C4.class, "P"), p(List.class, Integer.class),
+            v(C3.class, "P"), p(List.class, Integer.class),
+            v(C2.class, "A"), p(List.class, p(List.class, Integer.class))
+        ))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("resolveData")
+  void resolve(Type type, Map<Var, Type> expected) {
+    final var map = TypeUnification.resolve(type);
+    final var actual = prettyMap(map);
+    assertEquals(expected, actual);
+  }
+}
