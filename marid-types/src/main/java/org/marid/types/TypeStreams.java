@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -69,8 +69,7 @@ public interface TypeStreams {
         return TypeVariables.bounds((TypeVariable<?>) type).flatMap(t -> superclasses(t, newPassed));
       }
     } else if (type instanceof WildcardType) {
-      return WildcardTypes.upperBounds((WildcardType) type)
-          .flatMap(t -> superclasses(t, passed));
+      return WildcardTypes.upperBounds((WildcardType) type).flatMap(t -> superclasses(t, passed));
     } else if (type instanceof Class<?>) {
       final var map = TypeUnification.resolve(type);
       return ClassStreams.superclasses((Class<?>) type).map(c -> expand(map, c));
@@ -88,6 +87,42 @@ public interface TypeStreams {
           .map(v -> map.getOrDefault(v, v))
           .toArray(Type[]::new);
       return ParameterizedTypes.parameterizedTypeWithOwner(c, c.getDeclaringClass(), args);
+    }
+  }
+
+  @NotNull
+  static Stream<@NotNull Type> interfaces(@NotNull Type type) {
+    if (type instanceof Class<?>) {
+      final var t = (Class<?>) type;
+      if (t.isPrimitive()) {
+        return interfaces(Classes.wrapper(t));
+      }
+    }
+    return interfaces(type, EMPTY_TYPES).distinct().sorted(Types::compareCovariantly);
+  }
+
+  static Stream<Type> interfaces(Type type, Type[] passed) {
+    if (type instanceof GenericArrayType) {
+      return Stream.of(type, Object.class);
+    } else if (type instanceof ParameterizedType) {
+      final var t = (ParameterizedType) type;
+      final var raw = (Class<?>) t.getOwnerType();
+      final var map = TypeUnification.resolve(t);
+      return ClassStreams.interfaces(raw).map(c -> expand(map, c));
+    } else if (type instanceof TypeVariable<?>) {
+      final var newPassed = TypeUtils.add(passed, type);
+      if (newPassed.length == passed.length) {
+        return Stream.empty();
+      } else {
+        return TypeVariables.bounds((TypeVariable<?>) type).flatMap(t -> interfaces(t, newPassed));
+      }
+    } else if (type instanceof WildcardType) {
+      return WildcardTypes.upperBounds((WildcardType) type).flatMap(t -> interfaces(t, passed));
+    } else if (type instanceof Class<?>) {
+      final var map = TypeUnification.resolve(type);
+      return ClassStreams.interfaces((Class<?>) type).map(c -> expand(map, c));
+    } else {
+      throw new IllegalArgumentException("Unsupported type: " + type);
     }
   }
 }
