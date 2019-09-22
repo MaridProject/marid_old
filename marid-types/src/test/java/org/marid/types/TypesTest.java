@@ -30,6 +30,7 @@ import org.marid.types.Types;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,14 @@ class TypesTest extends TypeSugar {
         arguments(long[].class, long[].class, null, true),
         arguments(long[].class, int[].class, null, false),
         arguments(Object.class, int[].class, null, true),
-        arguments(Object.class, int.class, null, true)
+        arguments(Object.class, int.class, null, true),
+        arguments(Object.class, p(ArrayList.class, Integer.class), null, true),
+        arguments(ArrayList.class, p(ArrayList.class, Integer.class), null, true),
+        arguments(p(AbstractList.class, Integer.class), p(ArrayList.class, Integer.class), null, true),
+        arguments(p(List.class, Long.class), p(ArrayList.class, Long.class), null, true),
+        arguments(p(List.class, Integer.class), p(ArrayList.class, Long.class), null, false),
+        arguments(p(List.class, Number.class), p(ArrayList.class, Integer.class), false, false),
+        arguments(p(List.class, Number.class), p(ArrayList.class, Integer.class), true, true)
     ).flatMap(args -> {
       final var v = args.get();
       if (v[2] == null) {
