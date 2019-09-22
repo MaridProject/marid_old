@@ -23,12 +23,12 @@ package org.marid.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.LinkedHashMap;
+import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import static org.marid.types.Types.EMPTY_TYPES;
 
 public interface TypeStreams {
 
@@ -36,33 +36,58 @@ public interface TypeStreams {
   static Stream<@NotNull Type> superclasses(@NotNull Type type) {
     if (type instanceof Class<?>) {
       final var t = (Class<?>) type;
-      if (t.isInterface()) {
+      if (t.isPrimitive()) {
+        return superclasses(Classes.wrapper(t));
+      } else if (t.isInterface()) {
         return Stream.empty();
-      } else if (t.isPrimitive()) {
-        type = Classes.wrapper(t);
-      }
-    } else if (type instanceof ParameterizedType) {
-      final var t = (ParameterizedType) type;
-      final var raw = (Class<?>) t.getRawType();
-      if (raw.isInterface()) {
-        return Stream.of();
       }
     }
-    return superclasses(type, new LinkedHashMap<>(0));
+    if (type instanceof WildcardType || type instanceof TypeVariable<?>) {
+      return superclasses(type, EMPTY_TYPES).distinct().sorted(Types::compareCovariantly);
+    } else {
+      return superclasses(type, EMPTY_TYPES);
+    }
   }
 
-  static Stream<Type> superclasses(Type type, LinkedHashMap<TypeVariable<?>, Type> bindings) {
-    if (type instanceof Class<?>) {
-      final var t = (Class<?>) type;
-      final var gt = t.getGenericSuperclass();
-      final var gc = t.getSuperclass();
-      final var vars = gc.getTypeParameters();
-      if (vars.length == 0) {
-      }
-    } if (type instanceof GenericArrayType) {
+  static Stream<Type> superclasses(Type type, Type[] passed) {
+    if (type instanceof GenericArrayType) {
       return Stream.of(type, Object.class);
+    } else if (type instanceof ParameterizedType) {
+      final var t = (ParameterizedType) type;
+      final var raw = (Class<?>) t.getOwnerType();
+      if (raw.isInterface()) {
+        return Stream.empty();
+      } else {
+        final var map = TypeUnification.resolve(t);
+        return ClassStreams.superclasses(raw).map(c -> expand(map, c));
+      }
+    } else if (type instanceof TypeVariable<?>) {
+      final var newPassed = TypeUtils.add(passed, type);
+      if (newPassed.length == passed.length) {
+        return Stream.empty();
+      } else {
+        return TypeVariables.bounds((TypeVariable<?>) type).flatMap(t -> superclasses(t, newPassed));
+      }
+    } else if (type instanceof WildcardType) {
+      return WildcardTypes.upperBounds((WildcardType) type)
+          .flatMap(t -> superclasses(t, passed));
+    } else if (type instanceof Class<?>) {
+      final var map = TypeUnification.resolve(type);
+      return ClassStreams.superclasses((Class<?>) type).map(c -> expand(map, c));
+    } else {
+      throw new IllegalArgumentException("Unsupported type: " + type);
     }
+  }
 
-    return Stream.of();
+  private static Type expand(Map<TypeVariable<?>, Type> map, Class<?> c) {
+    final var vars = c.getTypeParameters();
+    if (vars.length == 0) {
+      return c;
+    } else {
+      final var args = Arrays.stream(vars)
+          .map(v -> map.getOrDefault(v, v))
+          .toArray(Type[]::new);
+      return ParameterizedTypes.parameterizedTypeWithOwner(c, c.getDeclaringClass(), args);
+    }
   }
 }

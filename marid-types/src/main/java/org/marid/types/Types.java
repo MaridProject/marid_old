@@ -309,4 +309,24 @@ public interface Types {
     }
     return true;
   }
+
+  static int compare(boolean covariant, @NotNull Type t1, @NotNull Type t2) {
+    if (t1.equals(t2)) {
+      return 0;
+    } else if (isAssignableFrom(t1, t2, covariant)) {
+      return 1;
+    } else if (isAssignableFrom(t2, t1, covariant)) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  static int compareInvariantly(@NotNull Type t1, @NotNull Type t2) {
+    return compare(false, t1, t2);
+  }
+
+  static int compareCovariantly(@NotNull Type t1, @NotNull Type t2) {
+    return compare(true, t1, t2);
+  }
 }
