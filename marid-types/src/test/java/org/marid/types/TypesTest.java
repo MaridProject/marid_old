@@ -25,8 +25,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.marid.types.TypeSugar;
-import org.marid.types.Types;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -95,7 +93,9 @@ class TypesTest extends TypeSugar {
         arguments(p(List.class, Long.class), p(ArrayList.class, Long.class), null, true),
         arguments(p(List.class, Integer.class), p(ArrayList.class, Long.class), null, false),
         arguments(p(List.class, Number.class), p(ArrayList.class, Integer.class), false, false),
-        arguments(p(List.class, Number.class), p(ArrayList.class, Integer.class), true, true)
+        arguments(p(List.class, Number.class), p(ArrayList.class, Integer.class), true, true),
+        arguments(p(C7.class, EC7.class), C8.class, null, true),
+        arguments(C8.class, p(C7.class, EC7.class), null, false)
     ).flatMap(args -> {
       final var v = args.get();
       if (v[2] == null) {
@@ -115,11 +115,15 @@ class TypesTest extends TypeSugar {
     assertEquals(expected, Types.isAssignableFrom(target, source, covariance));
   }
 
-  public static class C1<E extends List<E> & Serializable> {}
-  public static class C2<M extends Map<Integer, List<Long>>, E extends M> {}
-  public static class C3<M extends Map<? extends M, Integer>> {}
-  public static class C4<E extends List<E>> extends ArrayList<E[]> {}
-  public static class C5<K extends E, E extends Map<K, Object>> {}
-  public static class C6<V> {}
-  public static class C7<E extends ArrayList<C7<E>>> {}
+  static class C1<E extends List<E> & Serializable> {}
+  static class C2<M extends Map<Integer, List<Long>>, E extends M> {}
+  static class C3<M extends Map<? extends M, Integer>> {}
+  static class C4<E extends List<E>> extends ArrayList<E[]> {}
+  static class C5<K extends E, E extends Map<K, Object>> {}
+  static class C6<V> {}
+  static class C7<E extends ArrayList<C7<E>>> {}
+
+  static class EC7 extends ArrayList<C7<EC7>> {}
+
+  static class C8 extends C7<EC7> {}
 }
