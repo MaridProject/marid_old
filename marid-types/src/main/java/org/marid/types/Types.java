@@ -161,11 +161,7 @@ public interface Types {
         return type;
       } else {
         final var m = mapping.apply((TypeVariable<?>) type);
-        if (m == null) {
-          return type;
-        } else {
-          return substitute(m, mapping, newTypes);
-        }
+        return m == null ? type : substitute(m, mapping, newTypes);
       }
     } else {
       throw new IllegalArgumentException("Unknown type: " + type);
