@@ -126,8 +126,8 @@ public interface TypeStreams {
       final var t = (Class<?>) type;
       if (t.isArray() && !t.getComponentType().isPrimitive()) {
         return Stream.concat(
-            interfaces(t.getComponentType()).map(GenericArrayTypes::genericArray),
-            interfaces(Object[].class)
+            interfaces(t.getComponentType(), passed).map(GenericArrayTypes::genericArray),
+            Arrays.stream(Object[].class.getGenericInterfaces())
         );
       } else {
         final var map = TypeUnification.resolve(type);
