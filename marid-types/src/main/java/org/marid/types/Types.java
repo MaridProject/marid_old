@@ -56,16 +56,14 @@ public interface Types {
       return upperBounds((WildcardType) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
           .map(t -> toRaw(t, passed))
-          .filter(Classes::notObject)
-          .findFirst()
+          .min(Types::compareCovariantly)
           .orElse(Object.class);
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, type);
       return bounds((TypeVariable<?>) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(newPassed, t))
           .map(t -> toRaw(t, newPassed))
-          .filter(Classes::notObject)
-          .findFirst()
+          .min(Types::compareCovariantly)
           .orElse(Object.class);
     } else {
       throw new IllegalArgumentException(type.getTypeName());
