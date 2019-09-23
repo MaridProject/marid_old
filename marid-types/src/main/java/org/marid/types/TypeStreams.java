@@ -24,11 +24,16 @@ package org.marid.types;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static org.marid.types.Types.EMPTY_TYPES;
+import static org.marid.types.Types.isAssignableFrom;
 
 public interface TypeStreams {
 
@@ -124,5 +129,19 @@ public interface TypeStreams {
     } else {
       throw new IllegalArgumentException("Unsupported type: " + type);
     }
+  }
+
+  @NotNull
+  static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> superless(boolean covariant) {
+    final BiConsumer<List<Type>, Type> adder = (a, e) -> {
+      if (a.stream().noneMatch(t -> isAssignableFrom(e, t, covariant))) {
+        a.removeIf(t -> Types.isAssignableFrom(t, e, covariant));
+        a.add(e);
+      }
+    };
+    return Collector.of(ArrayList::new, adder, (a1, a2) -> {
+      a1.forEach(e -> adder.accept(a2, e));
+      return a2;
+    });
   }
 }

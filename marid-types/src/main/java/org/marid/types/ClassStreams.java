@@ -26,7 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static org.marid.types.Classes.wrapper;
@@ -95,5 +99,19 @@ public interface ClassStreams {
   @NotNull
   static Stream<@NotNull Constructor<?>> publicConstructors(@NotNull Class<?> type) {
     return constructors(type).filter(c -> Classes.isPublic(c.getDeclaringClass()));
+  }
+
+  @NotNull
+  static Collector<@NotNull Class<?>, @NotNull List<@NotNull Class<?>>, @NotNull List<@NotNull Class<?>>> superless() {
+    final BiConsumer<List<Class<?>>, Class<?>> adder = (a, e) -> {
+      if (a.stream().noneMatch(t -> Classes.isAssignableFrom(e, t))) {
+        a.removeIf(t -> Classes.isAssignableFrom(t, e));
+        a.add(e);
+      }
+    };
+    return Collector.of(ArrayList::new, adder, (a1, a2) -> {
+      a1.forEach(e -> adder.accept(a2, e));
+      return a2;
+    });
   }
 }
