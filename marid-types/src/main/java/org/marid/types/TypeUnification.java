@@ -69,23 +69,4 @@ public class TypeUnification {
       }
     }
   }
-
-  private static void resolveVars(Type left, Type right, Map<TypeVariable<?>, Type> map) {
-    if (Types.isGround(left)) {
-      return;
-    }
-    if (left instanceof TypeVariable<?>) {
-      final var l = (TypeVariable<?>) left;
-      final var old = map.putIfAbsent(l, right);
-      if (old == null || right.equals(old)) {
-        return;
-      }
-      if (old instanceof TypeVariable<?>) {
-        if (right instanceof TypeVariable<?>) {
-          return;
-        }
-        resolveVars(old, right, map);
-      }
-    }
-  }
 }
