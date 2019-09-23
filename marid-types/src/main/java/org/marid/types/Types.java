@@ -228,9 +228,8 @@ public interface Types {
       return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(t, b, tp, sp, covariance))
           && lowerBounds((WildcardType) source).allMatch(b -> isAssignableFrom(b, t, tp, sp, covariance));
     } else if (source instanceof TypeVariable<?>) {
-      final var s = (TypeVariable<?>) source;
       final var nsp = TypeUtils.add(sp, source);
-      return nsp.length != sp.length && bounds(s).anyMatch(b -> isAssignableFrom(t, b, tp, nsp, covariance));
+      return nsp.length != sp.length && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(t, b, tp, nsp, covariance));
     } else {
       throw new IllegalArgumentException("Illegal source: " + source);
     }
@@ -247,38 +246,37 @@ public interface Types {
       return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(t, b, tp, sp, covariance))
           && lowerBounds((WildcardType) source).allMatch(b -> isAssignableFrom(b, t, tp, sp, covariance));
     } else if (source instanceof TypeVariable<?>) {
-      final var s = (TypeVariable<?>) source;
       final var nsp = TypeUtils.add(sp, source);
-      return nsp.length != sp.length && bounds(s).anyMatch(b -> isAssignableFrom(t, b, tp, nsp, covariance));
+      return nsp.length != sp.length && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(t, b, tp, nsp, covariance));
     } else {
       return false;
     }
   }
 
   private static boolean isAssignableFrom(ParameterizedType target, Type source, Type[] tp, Type[] sp, boolean covariance) {
+    final var tRaw = (Class<?>) target.getRawType();
+    final boolean cv = tRaw.isAnnotationPresent(Covariant.class) || covariance;
     if (source instanceof Class<?>) {
       final var s = (Class<?>) source;
-      final var tRaw = (Class<?>) target.getRawType();
       if (!tRaw.isAssignableFrom(s)) {
         return false;
       } else {
-        return isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, covariance);
+        return isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, cv);
       }
     } else if (source instanceof ParameterizedType) {
       final var s = (ParameterizedType) source;
       final var sRaw = (Class<?>) s.getRawType();
-      final var tRaw = (Class<?>) target.getRawType();
       if (!tRaw.isAssignableFrom(sRaw)) {
         return false;
       } else {
-        return isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, covariance);
+        return isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, cv);
       }
     } else if (source instanceof WildcardType) {
-      return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(target, b, tp, sp, covariance));
+      return upperBounds((WildcardType) source).anyMatch(b -> isAssignableFrom(target, b, tp, sp, cv));
     } else if (source instanceof TypeVariable<?>) {
       final var nsp = TypeUtils.add(sp, source);
       return nsp.length != sp.length
-          && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp, covariance));
+          && bounds((TypeVariable<?>) source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp, cv));
     } else {
       return false;
     }
