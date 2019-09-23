@@ -47,10 +47,17 @@ public interface ClassStreams {
   }
 
   private static Stream<Class<?>> superclasses0(Class<?> type) {
-    return Stream.concat(
-        Stream.of(type),
-        Stream.ofNullable(type.getSuperclass()).flatMap(ClassStreams::superclasses0)
-    );
+    if (type.isArray() && !type.getComponentType().isPrimitive()) {
+      return Stream.concat(
+          superclasses0(type.getComponentType()).map(Classes::arrayClass),
+          Stream.of(Object.class)
+      );
+    } else {
+      return Stream.concat(
+          Stream.of(type),
+          Stream.ofNullable(type.getSuperclass()).flatMap(ClassStreams::superclasses0)
+      );
+    }
   }
 
   @NotNull

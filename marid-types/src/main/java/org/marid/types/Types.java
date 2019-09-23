@@ -315,4 +315,9 @@ public interface Types {
   static int compareCovariantly(@NotNull Type t1, @NotNull Type t2) {
     return compare(true, t1, t2);
   }
+
+  @NotNull
+  static Type wrapIfPrimitive(@NotNull Type type) {
+    return type instanceof Class<?> ? Classes.wrapper((Class<?>) type) : type;
+  }
 }
