@@ -39,7 +39,7 @@ public interface TypeStreams {
   @NotNull
   static Stream<@NotNull Type> superclasses(@NotNull Type type) {
     if (type instanceof WildcardType || type instanceof TypeVariable<?>) {
-      return superclasses(type, EMPTY_TYPES).distinct().sorted(Types::compareCovariantly);
+      return superclasses(type, EMPTY_TYPES).distinct().sorted(Types::compare);
     } else {
       return superclasses(wrapIfPrimitive(type), EMPTY_TYPES);
     }
@@ -54,7 +54,7 @@ public interface TypeStreams {
               interfaces(t.getGenericComponentType(), passed).map(GenericArrayTypes::genericArray),
               Stream.of(Object.class)
           )
-      ).sorted(Types::compareCovariantly);
+      ).sorted(Types::compare);
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
@@ -84,7 +84,7 @@ public interface TypeStreams {
                 interfaces(t.getComponentType(), passed).map(GenericArrayTypes::genericArray),
                 Stream.of(Object.class)
             )
-        ).sorted(Types::compareCovariantly);
+        ).sorted(Types::compare);
       } else {
         final var map = TypeUnification.resolve(type);
         return ClassStreams.superclasses((Class<?>) type).map(c -> expand(map, c));
@@ -108,7 +108,7 @@ public interface TypeStreams {
 
   @NotNull
   static Stream<@NotNull Type> interfaces(@NotNull Type type) {
-    return interfaces(wrapIfPrimitive(type), EMPTY_TYPES).distinct().sorted(Types::compareCovariantly);
+    return interfaces(wrapIfPrimitive(type), EMPTY_TYPES).distinct().sorted(Types::compare);
   }
 
   private static Stream<Type> interfaces(Type type, Type[] passed) {
@@ -137,10 +137,10 @@ public interface TypeStreams {
   }
 
   @NotNull
-  static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> superless(boolean covariant) {
+  static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> superless() {
     final BiConsumer<List<Type>, Type> adder = (a, e) -> {
-      if (a.stream().noneMatch(t -> isAssignableFrom(e, t, covariant))) {
-        a.removeIf(t -> Types.isAssignableFrom(t, e, covariant));
+      if (a.stream().noneMatch(t -> isAssignableFrom(e, t))) {
+        a.removeIf(t -> Types.isAssignableFrom(t, e));
         a.add(e);
       }
     };

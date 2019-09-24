@@ -56,14 +56,14 @@ public interface Types {
       return upperBounds((WildcardType) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
           .map(t -> toRaw(t, passed))
-          .min(Types::compareCovariantly)
+          .min(Types::compare)
           .orElse(Object.class);
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, type);
       return bounds((TypeVariable<?>) type)
           .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(newPassed, t))
           .map(t -> toRaw(t, newPassed))
-          .min(Types::compareCovariantly)
+          .min(Types::compare)
           .orElse(Object.class);
     } else {
       throw new IllegalArgumentException(type.getTypeName());
@@ -181,35 +181,35 @@ public interface Types {
     return changed;
   }
 
-  static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source, boolean covariance) {
+  static boolean isAssignableFrom(@NotNull Type target, @NotNull Type source) {
     if (target instanceof Class<?> && source instanceof Class<?>) {
       return Classes.isAssignableFrom((Class<?>) target, (Class<?>) source);
     } else {
-      return isAssignableFrom(target, source, EMPTY_TYPES, EMPTY_TYPES, covariance);
+      return isAssignableFrom(target, source, EMPTY_TYPES, EMPTY_TYPES);
     }
   }
 
-  private static boolean isAssignableFrom(Type target, Type source, Type[] tp, Type[] sp, boolean c) {
+  private static boolean isAssignableFrom(Type target, Type source, Type[] tp, Type[] sp) {
     if (target.equals(source)) {
       return true;
     } else if (target instanceof Class<?>) {
-      return isAssignableFrom((Class<?>) target, source, tp, sp, c);
+      return isAssignableFrom((Class<?>) target, source, tp, sp);
     } else if (target instanceof TypeVariable<?>) {
       final var ntp = TypeUtils.add(tp, target);
-      return ntp.length == tp.length || bounds((TypeVariable<?>) target).allMatch(b -> isAssignableFrom(b, source, ntp, sp, c));
+      return ntp.length == tp.length || bounds((TypeVariable<?>) target).allMatch(b -> isAssignableFrom(b, source, ntp, sp));
     } else if (target instanceof WildcardType) {
-      return upperBounds((WildcardType) target).allMatch(b -> isAssignableFrom(b, source, tp, sp, c))
-          && lowerBounds((WildcardType) target).allMatch(b -> isAssignableFrom(source, b, tp, sp, c));
+      return upperBounds((WildcardType) target).allMatch(b -> isAssignableFrom(b, source, tp, sp))
+          && lowerBounds((WildcardType) target).allMatch(b -> isAssignableFrom(source, b, tp, sp));
     } else if (target instanceof GenericArrayType) {
-      return isAssignableFrom((GenericArrayType) target, source, tp, sp, c);
+      return isAssignableFrom((GenericArrayType) target, source, tp, sp);
     } else if (target instanceof ParameterizedType) {
-      return isAssignableFrom((ParameterizedType) target, source, tp, sp, c);
+      return isAssignableFrom((ParameterizedType) target, source, tp, sp);
     } else {
       throw new IllegalArgumentException("Illegal target: " + target);
     }
   }
 
-  private static boolean isAssignableFrom(Class<?> t, Type source, Type[] tp, Type[] sp, boolean c) {
+  private static boolean isAssignableFrom(Class<?> t, Type source, Type[] tp, Type[] sp) {
     if (source instanceof Class<?>) {
       return t.isAssignableFrom((Class<?>) source);
     } else if (source instanceof ParameterizedType) {
@@ -217,68 +217,68 @@ public interface Types {
     } else if (source instanceof GenericArrayType) {
       final var s = (GenericArrayType) source;
       return t.isArray()
-          ? isAssignableFrom(t.getComponentType(), s.getGenericComponentType(), tp, sp, c)
+          ? isAssignableFrom(t.getComponentType(), s.getGenericComponentType(), tp, sp)
           : t.isAssignableFrom(Object[].class);
     } else if (source instanceof WildcardType) {
-      return isAssignable(t, (WildcardType) source, tp, sp, c);
+      return isAssignable(t, (WildcardType) source, tp, sp);
     } else if (source instanceof TypeVariable<?>) {
-      return isAssignable(t, (TypeVariable<?>) source, tp, sp, c);
+      return isAssignable(t, (TypeVariable<?>) source, tp, sp);
     } else {
       throw new IllegalArgumentException("Illegal source: " + source);
     }
   }
 
-  private static boolean isAssignableFrom(GenericArrayType t, Type source, Type[] tp, Type[] sp, boolean c) {
+  private static boolean isAssignableFrom(GenericArrayType t, Type source, Type[] tp, Type[] sp) {
     if (source instanceof Class<?>) {
       final var s = (Class<?>) source;
-      return s.isArray() && isAssignableFrom(t.getGenericComponentType(), s.getComponentType(), tp, sp, c);
+      return s.isArray() && isAssignableFrom(t.getGenericComponentType(), s.getComponentType(), tp, sp);
     } else if (source instanceof GenericArrayType) {
       final var s = (GenericArrayType) source;
-      return isAssignableFrom(t.getGenericComponentType(), s.getGenericComponentType(), tp, sp, c);
+      return isAssignableFrom(t.getGenericComponentType(), s.getGenericComponentType(), tp, sp);
     } else if (source instanceof WildcardType) {
-      return isAssignable(t, (WildcardType) source, tp, sp, c);
+      return isAssignable(t, (WildcardType) source, tp, sp);
     } else if (source instanceof TypeVariable<?>) {
-      return isAssignable(t, (TypeVariable<?>) source, tp, sp, c);
+      return isAssignable(t, (TypeVariable<?>) source, tp, sp);
     } else {
       return false;
     }
   }
 
-  private static boolean isAssignableFrom(ParameterizedType target, Type source, Type[] tp, Type[] sp, boolean c) {
+  private static boolean isAssignableFrom(ParameterizedType target, Type source, Type[] tp, Type[] sp) {
     final var tRaw = (Class<?>) target.getRawType();
     if (source instanceof Class<?>) {
       final var s = (Class<?>) source;
-      return tRaw.isAssignableFrom(s) && isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, c);
+      return tRaw.isAssignableFrom(s) && isAssignable(tRaw, resolve(target), resolve(s), tp, sp);
     } else if (source instanceof ParameterizedType) {
       final var s = (ParameterizedType) source;
       final var sRaw = (Class<?>) s.getRawType();
-      return tRaw.isAssignableFrom(sRaw) && isAssignable(tRaw.getTypeParameters(), resolve(target), resolve(s), tp, sp, c);
+      return tRaw.isAssignableFrom(sRaw) && isAssignable(tRaw, resolve(target), resolve(s), tp, sp);
     } else if (source instanceof WildcardType) {
-      return isAssignable(target, (WildcardType) source, tp, sp, c);
+      return isAssignable(target, (WildcardType) source, tp, sp);
     } else if (source instanceof TypeVariable<?>) {
-      return isAssignable(target, (TypeVariable<?>) source, tp, sp, c);
+      return isAssignable(target, (TypeVariable<?>) source, tp, sp);
     } else {
       return false;
     }
   }
 
-  private static boolean isAssignable(Type target, WildcardType source, Type[] tp, Type[] sp, boolean covariance) {
-    return upperBounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, sp, covariance))
-        && lowerBounds(source).allMatch(b -> isAssignableFrom(b, target, tp, sp, covariance));
+  private static boolean isAssignable(Type target, WildcardType source, Type[] tp, Type[] sp) {
+    return upperBounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, sp))
+        && lowerBounds(source).allMatch(b -> isAssignableFrom(b, target, tp, sp));
   }
 
-  private static boolean isAssignable(Type target, TypeVariable<?> source, Type[] tp, Type[] sp, boolean covariance) {
+  private static boolean isAssignable(Type target, TypeVariable<?> source, Type[] tp, Type[] sp) {
     final var nsp = TypeUtils.add(sp, source);
-    return nsp.length != sp.length && bounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp, covariance));
+    return nsp.length != sp.length && bounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp));
   }
 
-  private static boolean isAssignable(TypeVariable<?>[] tVars,
+  private static boolean isAssignable(Class<?> raw,
                                       Map<TypeVariable<?>, Type> tMap,
                                       Map<TypeVariable<?>, Type> sMap,
                                       Type[] tp,
-                                      Type[] sp,
-                                      boolean covariance) {
-    for (final var tVar : tVars) {
+                                      Type[] sp) {
+    final var vars = raw.getTypeParameters();
+    for (final var tVar : vars) {
       final var sResolvedVar = sMap.get(tVar);
       if (sResolvedVar == null) {
         return false;
@@ -287,33 +287,31 @@ public interface Types {
       if (tResolvedVar == null) {
         return false;
       }
-      if (covariance) {
-        return isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp, covariance);
+      if (raw.isAnnotationPresent(Covariant.class) || tVar.isAnnotationPresent(Covariant.class)) {
+        return isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp);
       } else {
-        return tResolvedVar.equals(sResolvedVar);
+        if (tResolvedVar.equals(sResolvedVar)) {
+          return true;
+        } else if (sResolvedVar instanceof WildcardType) {
+          return WildcardTypes.upperBounds((WildcardType) sResolvedVar).anyMatch(tResolvedVar::equals);
+        } else {
+          return false;
+        }
       }
     }
     return true;
   }
 
-  static int compare(boolean covariant, @NotNull Type t1, @NotNull Type t2) {
+  static int compare(@NotNull Type t1, @NotNull Type t2) {
     if (t1.equals(t2)) {
       return 0;
-    } else if (isAssignableFrom(t1, t2, covariant)) {
+    } else if (isAssignableFrom(t1, t2)) {
       return 1;
-    } else if (isAssignableFrom(t2, t1, covariant)) {
+    } else if (isAssignableFrom(t2, t1)) {
       return -1;
     } else {
       return 0;
     }
-  }
-
-  static int compareInvariantly(@NotNull Type t1, @NotNull Type t2) {
-    return compare(false, t1, t2);
-  }
-
-  static int compareCovariantly(@NotNull Type t1, @NotNull Type t2) {
-    return compare(true, t1, t2);
   }
 
   @NotNull
