@@ -49,9 +49,12 @@ public interface TypeStreams {
     if (type instanceof GenericArrayType) {
       final var t = (GenericArrayType) type;
       return Stream.concat(
-          superclasses(t.getGenericComponentType(), passed).map(GenericArrayTypes::genericArrayType),
-          Stream.of(Object.class)
-      );
+          superclasses(t.getGenericComponentType(), passed).map(GenericArrayTypes::genericArray),
+          Stream.concat(
+              interfaces(t.getGenericComponentType(), passed).map(GenericArrayTypes::genericArray),
+              Stream.of(Object.class)
+          )
+      ).sorted(Types::compareCovariantly);
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
@@ -77,8 +80,11 @@ public interface TypeStreams {
       } else if (t.isArray() && !t.getComponentType().isPrimitive()) {
         return Stream.concat(
             superclasses(t.getComponentType(), passed).map(GenericArrayTypes::genericArray),
-            Stream.of(Object.class)
-        );
+            Stream.concat(
+                interfaces(t.getComponentType(), passed).map(GenericArrayTypes::genericArray),
+                Stream.of(Object.class)
+            )
+        ).sorted(Types::compareCovariantly);
       } else {
         final var map = TypeUnification.resolve(type);
         return ClassStreams.superclasses((Class<?>) type).map(c -> expand(map, c));
@@ -105,9 +111,9 @@ public interface TypeStreams {
     return interfaces(wrapIfPrimitive(type), EMPTY_TYPES).distinct().sorted(Types::compareCovariantly);
   }
 
-  static Stream<Type> interfaces(Type type, Type[] passed) {
+  private static Stream<Type> interfaces(Type type, Type[] passed) {
     if (type instanceof GenericArrayType) {
-      return Stream.of(type, Object.class);
+      return Arrays.stream(Object[].class.getGenericInterfaces());
     } else if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
@@ -123,16 +129,8 @@ public interface TypeStreams {
     } else if (type instanceof WildcardType) {
       return WildcardTypes.upperBounds((WildcardType) type).flatMap(t -> interfaces(t, passed));
     } else if (type instanceof Class<?>) {
-      final var t = (Class<?>) type;
-      if (t.isArray() && !t.getComponentType().isPrimitive()) {
-        return Stream.concat(
-            interfaces(t.getComponentType(), passed).map(GenericArrayTypes::genericArray),
-            Arrays.stream(Object[].class.getGenericInterfaces())
-        );
-      } else {
-        final var map = TypeUnification.resolve(type);
-        return ClassStreams.interfaces((Class<?>) type).map(c -> expand(map, c));
-      }
+      final var map = TypeUnification.resolve(type);
+      return ClassStreams.interfaces((Class<?>) type).map(c -> expand(map, c));
     } else {
       throw new IllegalArgumentException("Unsupported type: " + type);
     }

@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,6 +64,30 @@ class TypeStreamsTest extends TypeSugar {
   @MethodSource("superclassesData")
   void superclasses(Type type, List<Type> expected) {
     final var actual = TypeStreams.superclasses(type).collect(Collectors.toList());
+    assertEquals(expected, actual);
+  }
+
+  private static Stream<Arguments> interfacesData() {
+    return Stream.of(
+        arguments(p(ArrayList.class, Integer.class), List.of(
+            p(List.class, Integer.class),
+            p(Collection.class, Integer.class),
+            p(Iterable.class, Integer.class),
+            RandomAccess.class,
+            Cloneable.class,
+            Serializable.class
+        )),
+        arguments(a(p(ArrayList.class, Integer.class)), List.of(
+            Cloneable.class,
+            Serializable.class
+        ))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("interfacesData")
+  void interfaces(Type type, List<Type> expected) {
+    final var actual = TypeStreams.interfaces(type).collect(Collectors.toList());
     assertEquals(expected, actual);
   }
 }
