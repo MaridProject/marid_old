@@ -283,7 +283,7 @@ public interface Types {
       if (tResolvedVar == null) {
         return false;
       }
-      if (raw.isAnnotationPresent(Covariant.class) || tVar.isAnnotationPresent(Covariant.class)) {
+      if (VarianceProvider.checkCovariant(tVar)) {
         return isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp);
       } else {
         if (tResolvedVar.equals(sResolvedVar)) {
