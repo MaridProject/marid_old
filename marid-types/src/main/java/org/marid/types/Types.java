@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -248,11 +247,11 @@ public interface Types {
     final var tRaw = (Class<?>) target.getRawType();
     if (source instanceof Class<?>) {
       final var s = (Class<?>) source;
-      return tRaw.isAssignableFrom(s) && isAssignable(tRaw, resolve(target), resolve(s), tp, sp);
+      return tRaw.isAssignableFrom(s) && isAssignable(tRaw, target, s, tp, sp);
     } else if (source instanceof ParameterizedType) {
       final var s = (ParameterizedType) source;
       final var sRaw = (Class<?>) s.getRawType();
-      return tRaw.isAssignableFrom(sRaw) && isAssignable(tRaw, resolve(target), resolve(s), tp, sp);
+      return tRaw.isAssignableFrom(sRaw) && isAssignable(tRaw, target, s, tp, sp);
     } else if (source instanceof WildcardType) {
       return isAssignable(target, (WildcardType) source, tp, sp);
     } else if (source instanceof TypeVariable<?>) {
@@ -272,13 +271,10 @@ public interface Types {
     return nsp.length != sp.length && bounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp));
   }
 
-  private static boolean isAssignable(Class<?> raw,
-                                      Map<TypeVariable<?>, Type> tMap,
-                                      Map<TypeVariable<?>, Type> sMap,
-                                      Type[] tp,
-                                      Type[] sp) {
-    final var vars = raw.getTypeParameters();
-    for (final var tVar : vars) {
+  private static boolean isAssignable(Class<?> raw, Type t, Type s, Type[] tp, Type[] sp) {
+    final var tMap = resolve(t);
+    final var sMap = resolve(s);
+    for (final var tVar : raw.getTypeParameters()) {
       final var sResolvedVar = sMap.get(tVar);
       if (sResolvedVar == null) {
         return false;
