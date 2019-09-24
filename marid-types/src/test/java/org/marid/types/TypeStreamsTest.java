@@ -56,6 +56,19 @@ class TypeStreamsTest extends TypeSugar {
             p(HashMap.class, Long.class, v(LinkedHashMap.class, 1)),
             p(AbstractMap.class, Long.class, v(LinkedHashMap.class, 1)),
             Object.class
+        )),
+        arguments(a(p(ArrayList.class, Integer.class)), List.of(
+            a(p(ArrayList.class, Integer.class)),
+            a(p(AbstractList.class, Integer.class)),
+            a(p(AbstractCollection.class, Integer.class)),
+            a(p(List.class, Integer.class)),
+            a(p(Collection.class, Integer.class)),
+            a(p(Iterable.class, Integer.class)),
+            RandomAccess[].class,
+            Cloneable[].class,
+            Serializable[].class,
+            Object[].class,
+            Object.class
         ))
     );
   }
