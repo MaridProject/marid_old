@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,13 +43,13 @@ public class TypeUnification {
 
   @NotNull
   public static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
-    final var map = new HashMap<TypeVariable<?>, Type>();
+    final var map = new LinkedHashMap<TypeVariable<?>, Type>();
     resolveTypes(type, map);
     map.replaceAll((k, v) -> Types.substitute(v, map::get));
     return map;
   }
 
-  static void resolveTypes(Type type, HashMap<TypeVariable<?>, Type> map) {
+  static void resolveTypes(Type type, LinkedHashMap<TypeVariable<?>, Type> map) {
     if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
