@@ -75,11 +75,12 @@
     <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
 
     <java.version>13</java.version>
-    <release.java.version>${java.version}</release.java.version>
-    <test.java.version>${java.version}</test.java.version>
+    <test.java.version>13</test.java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <maven.compiler.testRelease>${test.java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <maven.compiler.testSource>${release.java.version}</maven.compiler.testSource>
+    <maven.compiler.testSource>${test.java.version}</maven.compiler.testSource>
     <maven.compiler.testTarget>${test.java.version}</maven.compiler.testTarget>
 
     <repo-id>sourceforge</repo-id>
@@ -260,8 +261,6 @@
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
             <parameters>true</parameters>
-            <release>${java.version}</release>
-            <testRelease>${test.java.version}</testRelease>
             <compilerArgs>
               <arg>-Xlint:unchecked</arg>
             </compilerArgs>

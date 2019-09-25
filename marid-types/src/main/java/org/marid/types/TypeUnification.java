@@ -45,7 +45,7 @@ public class TypeUnification {
   public static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
     final var map = new LinkedHashMap<TypeVariable<?>, Type>();
     resolveTypes(type, map);
-    map.entrySet().forEach(e -> e.setValue(Types.substitute(e.getValue(), map::get)));
+    map.replaceAll((k, v) -> Types.substitute(v, map::get));
     return map;
   }
 

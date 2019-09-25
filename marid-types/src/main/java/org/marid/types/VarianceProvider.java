@@ -53,14 +53,12 @@ public abstract class VarianceProvider {
     if (decl.isAnnotationPresent(Covariant.class)) {
       return true;
     }
-    final ClassLoader classLoader;
     if (decl instanceof Class<?>) {
-      classLoader = ((Class<?>) decl).getClassLoader();
+      return checkCovariant(((Class<?>) decl).getClassLoader(), variable);
     } else if (decl instanceof Executable) {
-      classLoader = ((Executable) decl).getDeclaringClass().getClassLoader();
+      return checkCovariant(((Executable) decl).getDeclaringClass().getClassLoader(), variable);
     } else {
-      classLoader = Thread.currentThread().getContextClassLoader();
+      throw new IllegalArgumentException("Unsupported generic declaration type: " + decl);
     }
-    return checkCovariant(classLoader, variable);
   }
 }
