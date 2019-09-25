@@ -94,12 +94,8 @@ public class TypeUnification {
   @NotNull
   public static Type commonType(boolean intersection, @NotNull Type... types) {
     final var commonTypes = commonTypes(types);
-    if (commonTypes.size() == 1) {
-      return commonTypes.get(0);
-    } else if (intersection) {
-      return WildcardTypes.wildcardTypeUpperBounds(commonTypes.toArray(Type[]::new));
-    } else {
-      return commonTypes.get(0);
-    }
+    return intersection && commonTypes.size() > 1
+        ? WildcardTypes.wildcardTypeUpperBounds(commonTypes.toArray(Type[]::new))
+        : commonTypes.get(0);
   }
 }

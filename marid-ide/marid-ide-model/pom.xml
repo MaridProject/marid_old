@@ -51,5 +51,11 @@
       <artifactId>marid-runtime</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

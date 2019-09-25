@@ -22,24 +22,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>org.marid.app.Context</mainClass>
-              <classpathPrefix>lib</classpathPrefix>
-            </manifest>
-            <manifestEntries>
-              <Add-Opens>java.base/java.lang</Add-Opens>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
