@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -38,17 +38,10 @@ import static org.marid.test.util.Maps.map;
 @Tag("normal")
 class TypeUnificationTest extends TypeSugar {
 
-  private static class C1 extends HashMap<Integer, ArrayList<?>> {
-  }
-
-  private static class C2<A> {
-  }
-
-  private static class C3<P> extends C2<List<P>> {
-  }
-
-  private static class C4<E, P extends List<E>> extends C3<P> {
-  }
+  private static class C1 extends HashMap<Integer, ArrayList<?>> {}
+  private static class C2<A> {}
+  private static class C3<P> extends C2<List<P>> {}
+  private static class C4<E, P extends List<E>> extends C3<P> {}
 
   private static Stream<Arguments> resolveTypesData() {
     return Stream.of(
@@ -110,6 +103,24 @@ class TypeUnificationTest extends TypeSugar {
   void resolve(Type type, Map<Var, Type> expected) {
     final var map = TypeUnification.resolve(type);
     final var actual = prettyMap(map);
+    assertEquals(expected, actual);
+  }
+
+  private interface CTI1 {}
+  private static class CTC1 implements CTI1 {}
+  private static class CTC2 implements CTI1 {}
+
+  private static Stream<Arguments> commonTypesData() {
+    return Stream.of(
+        arguments(List.of(String.class, CharSequence.class), List.of(CharSequence.class)),
+        arguments(List.of(CTC1.class, CTC2.class), List.of(CTI1.class))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("commonTypesData")
+  void commonTypes(List<Type> types, List<Type> expected) {
+    final var actual = TypeUnification.commonTypes(types.toArray(Type[]::new));
     assertEquals(expected, actual);
   }
 }
