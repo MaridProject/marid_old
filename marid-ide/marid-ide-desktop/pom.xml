@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.eclipse.platform</groupId>
       <artifactId>org.eclipse.jface</artifactId>
-      <version>3.16.0</version>
+      <version>3.17.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.platform</groupId>
