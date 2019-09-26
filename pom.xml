@@ -76,8 +76,6 @@
 
     <java.version>13</java.version>
     <test.java.version>13</test.java.version>
-    <maven.compiler.release>${java.version}</maven.compiler.release>
-    <maven.compiler.testRelease>${test.java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <maven.compiler.testSource>${test.java.version}</maven.compiler.testSource>
