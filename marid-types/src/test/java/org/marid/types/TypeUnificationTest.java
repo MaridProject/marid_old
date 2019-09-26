@@ -134,6 +134,10 @@ class TypeUnificationTest extends TypeSugar {
         arguments(
             List.of(p(Pair.class, Integer.class, Long.class), p(Pair.class, Integer.class, Double.class)),
             List.of(Serializable.class)
+        ),
+        arguments(
+            List.of(p(CTC6.class, CTC3.class), p(CTC6.class, CTC5.class)),
+            List.of()
         )
     );
   }
