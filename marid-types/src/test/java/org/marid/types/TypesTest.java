@@ -21,6 +21,7 @@ package org.marid.types;
  * #L%
  */
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -94,7 +95,8 @@ class TypesTest extends TypeSugar {
         arguments(p(List.class, Integer.class), p(ArrayList.class, Long.class), false),
         arguments(p(List.class, Number.class), p(ArrayList.class, Integer.class), false),
         arguments(p(C7.class, EC7.class), C8.class, true),
-        arguments(C8.class, p(C7.class, EC7.class), false)
+        arguments(C8.class, p(C7.class, EC7.class), false),
+        arguments(p(Pair.class, Integer.class, Long.class), p(Pair.class, Integer.class, Double.class), false)
     );
   }
 

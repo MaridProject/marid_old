@@ -80,14 +80,14 @@ public class TypeUnification {
   @NotNull
   public static List<@NotNull Type> commonTypes(@NotNull Type... types) {
     return concat(
-        stream(types)
-            .flatMap(t -> superclasses(t)
-                .filter(s -> stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
-                .findFirst().stream()),
-        stream(types)
-            .flatMap(t -> interfaces(t)
-                .filter(s -> stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
-                .findFirst().stream())
+        stream(types).flatMap(t -> superclasses(t)
+            .filter(s -> stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
+            .findFirst().stream()
+        ),
+        stream(types).flatMap(t -> interfaces(t)
+            .filter(s -> stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
+            .findFirst().stream()
+        )
     ).collect(TypeStreams.superless());
   }
 

@@ -21,11 +21,13 @@ package org.marid.types;
  * #L%
  */
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
@@ -113,12 +115,26 @@ class TypeUnificationTest extends TypeSugar {
   private static class CTC3 implements CTI1, CTI2 {}
   private static class CTC4 implements CTI1 {}
   private static class CTC5 extends CTC4 implements CTI2 {}
+  private static class CTC6<@Covariant E> {}
 
   private static Stream<Arguments> commonTypesData() {
     return Stream.of(
-        arguments(List.of(String.class, CharSequence.class), List.of(CharSequence.class)),
-        arguments(List.of(CTC1.class, CTC2.class), List.of(CTI1.class)),
-        arguments(List.of(CTC3.class, CTC5.class), List.of(CTI1.class, CTI2.class))
+        arguments(
+            List.of(String.class, CharSequence.class),
+            List.of(CharSequence.class)
+        ),
+        arguments(
+            List.of(CTC1.class, CTC2.class),
+            List.of(CTI1.class)
+        ),
+        arguments(
+            List.of(CTC3.class, CTC5.class),
+            List.of(CTI1.class, CTI2.class)
+        ),
+        arguments(
+            List.of(p(Pair.class, Integer.class, Long.class), p(Pair.class, Integer.class, Double.class)),
+            List.of(Serializable.class)
+        )
     );
   }
 

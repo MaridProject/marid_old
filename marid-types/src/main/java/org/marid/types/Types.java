@@ -284,12 +284,17 @@ public interface Types {
         return false;
       }
       if (VarianceProvider.checkCovariant(tVar)) {
-        return isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp);
+        if (!isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp)) {
+          return false;
+        }
       } else {
         if (tResolvedVar.equals(sResolvedVar)) {
-          return true;
-        } else if (sResolvedVar instanceof WildcardType) {
-          return WildcardTypes.upperBounds((WildcardType) sResolvedVar).anyMatch(tResolvedVar::equals);
+          continue;
+        }
+        if (sResolvedVar instanceof WildcardType) {
+          if (WildcardTypes.upperBounds((WildcardType) sResolvedVar).noneMatch(tResolvedVar::equals)) {
+            return false;
+          }
         } else {
           return false;
         }
