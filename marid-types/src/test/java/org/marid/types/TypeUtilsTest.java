@@ -30,19 +30,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Tag("normal")
 class TypeUtilsTest extends TypeSugar {
@@ -90,7 +84,7 @@ class TypeUtilsTest extends TypeSugar {
           return types;
         })
         .limit(100)
-        .map(types -> Arguments.arguments(types, ADDING[ThreadLocalRandom.current().nextInt(ADDING.length)]));
+        .map(types -> arguments(types, ADDING[ThreadLocalRandom.current().nextInt(ADDING.length)]));
   }
 
   @ParameterizedTest
@@ -108,6 +102,47 @@ class TypeUtilsTest extends TypeSugar {
     System.out.println(e.getGenericDeclaration());
   }
 
-  private static class X extends ArrayList<Integer> implements Collection<Integer> {
+  private static class X extends ArrayList<Integer> implements Collection<Integer> {}
+
+  private static Stream<Arguments> combinationsData() {
+    return Stream.of(
+        arguments(
+            List.of(List.of(int.class), List.of(long.class)),
+            List.of(List.of(int.class, long.class))
+        ),
+        arguments(
+            List.of(List.of(long.class, int.class), List.of(void.class)),
+            List.of(List.of(long.class, void.class), List.of(int.class, void.class))
+        ),
+        arguments(
+            List.of(List.of(int.class, char.class), List.of(long.class), List.of(void.class, short.class)),
+            List.of(
+                List.of(int.class, long.class, void.class),
+                List.of(char.class, long.class, void.class),
+                List.of(int.class, long.class, short.class),
+                List.of(char.class, long.class, short.class)
+            )
+        ),
+        arguments(
+            List.of(List.of(int.class, char.class), List.of(long.class), List.of(void.class, short.class, float.class)),
+            List.of(
+                List.of(int.class, long.class, void.class),
+                List.of(char.class, long.class, void.class),
+                List.of(int.class, long.class, short.class),
+                List.of(char.class, long.class, short.class),
+                List.of(int.class, long.class, float.class),
+                List.of(char.class, long.class, float.class)
+            )
+        )
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("combinationsData")
+  void combinations(List<List<Type>> types, List<List<Type>> expected) {
+    final var actual = TypeUtils.combinations(types.stream().map(v -> v.toArray(Type[]::new)).toArray(Type[][]::new))
+        .map(List::of)
+        .collect(Collectors.toList());
+    assertEquals(expected, actual);
   }
 }

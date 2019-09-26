@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class TypeUtils {
 
@@ -34,7 +36,7 @@ class TypeUtils {
   static Type[] add(@NotNull Type[] types, @NotNull Type type) {
     final int len = types.length;
     if (len == 0) {
-      return new Type[] {type};
+      return new Type[]{type};
     } else {
       for (final Type t : types) {
         if (t.equals(type)) {
@@ -54,5 +56,19 @@ class TypeUtils {
       }
     }
     return false;
+  }
+
+  static Stream<Type[]> combinations(Type[][] types) {
+    final int count = Arrays.stream(types).mapToInt(t -> t.length).reduce(1, (a, e) -> a * e);
+    return IntStream.range(0, count).mapToObj(n -> {
+      final var r = new Type[types.length];
+      int d = count;
+      for (int i = types.length - 1; i >= 0; i--) {
+        d = d / types[i].length;
+        r[i] = types[i][n / d];
+        n %= d;
+      }
+      return r;
+    });
   }
 }
