@@ -109,11 +109,16 @@ class TypeUnificationTest extends TypeSugar {
   private interface CTI1 {}
   private static class CTC1 implements CTI1 {}
   private static class CTC2 implements CTI1 {}
+  private interface CTI2 {}
+  private static class CTC3 implements CTI1, CTI2 {}
+  private static class CTC4 implements CTI1 {}
+  private static class CTC5 extends CTC4 implements CTI2 {}
 
   private static Stream<Arguments> commonTypesData() {
     return Stream.of(
         arguments(List.of(String.class, CharSequence.class), List.of(CharSequence.class)),
-        arguments(List.of(CTC1.class, CTC2.class), List.of(CTI1.class))
+        arguments(List.of(CTC1.class, CTC2.class), List.of(CTI1.class)),
+        arguments(List.of(CTC3.class, CTC5.class), List.of(CTI1.class, CTI2.class))
     );
   }
 
