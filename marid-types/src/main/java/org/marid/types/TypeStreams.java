@@ -62,7 +62,7 @@ public interface TypeStreams {
         return Stream.empty();
       } else {
         final var map = TypeUnification.resolve(t);
-        return ClassStreams.superclasses(raw).map(c -> expand(map, c));
+        return ClassStreams.superclasses(raw).flatMap(c -> expand(map, c));
       }
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, type);
@@ -87,22 +87,30 @@ public interface TypeStreams {
         ).sorted(Types::compare);
       } else {
         final var map = TypeUnification.resolve(type);
-        return ClassStreams.superclasses((Class<?>) type).map(c -> expand(map, c));
+        return ClassStreams.superclasses((Class<?>) type).flatMap(c -> expand(map, c));
       }
     } else {
       throw new IllegalArgumentException("Unsupported type: " + type);
     }
   }
 
-  private static Type expand(Map<TypeVariable<?>, Type> map, Class<?> c) {
+  private static Stream<Type> expand(Map<TypeVariable<?>, Type> map, Class<?> c) {
     final var vars = c.getTypeParameters();
     if (vars.length == 0) {
-      return c;
+      return Stream.of(c);
     } else {
-      final var args = Arrays.stream(vars)
-          .map(v -> map.getOrDefault(v, v))
-          .toArray(Type[]::new);
-      return ParameterizedTypes.parameterizedTypeWithOwner(c, c.getDeclaringClass(), args);
+      final var types = Arrays.stream(vars)
+          .map(v -> {
+            final var m = map.getOrDefault(v, v);
+            if (m instanceof TypeVariable<?> || !VarianceProvider.checkCovariant(v)) {
+              return new Type[] {m};
+            } else {
+              return Stream.concat(superclasses(m), interfaces(m)).sorted(Types::compare).toArray(Type[]::new);
+            }
+          })
+          .toArray(Type[][]::new);
+      return TypeUtils.combinations(types)
+          .map(v -> ParameterizedTypes.parameterizedTypeWithOwner(c, c.getDeclaringClass(), v));
     }
   }
 
@@ -118,7 +126,7 @@ public interface TypeStreams {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
       final var map = TypeUnification.resolve(t);
-      return ClassStreams.interfaces(raw).map(c -> expand(map, c));
+      return ClassStreams.interfaces(raw).flatMap(c -> expand(map, c));
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, type);
       if (newPassed.length == passed.length) {
@@ -130,7 +138,7 @@ public interface TypeStreams {
       return WildcardTypes.upperBounds((WildcardType) type).flatMap(t -> interfaces(t, passed));
     } else if (type instanceof Class<?>) {
       final var map = TypeUnification.resolve(type);
-      return ClassStreams.interfaces((Class<?>) type).map(c -> expand(map, c));
+      return ClassStreams.interfaces((Class<?>) type).flatMap(c -> expand(map, c));
     } else {
       throw new IllegalArgumentException("Unsupported type: " + type);
     }

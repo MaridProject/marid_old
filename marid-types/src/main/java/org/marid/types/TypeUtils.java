@@ -64,7 +64,7 @@ class TypeUtils {
       final var r = new Type[types.length];
       int d = count;
       for (int i = types.length - 1; i >= 0; i--) {
-        d = d / types[i].length;
+        d /= types[i].length;
         r[i] = types[i][n / d];
         n %= d;
       }
