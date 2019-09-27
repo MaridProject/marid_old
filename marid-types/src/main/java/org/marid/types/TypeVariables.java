@@ -55,4 +55,45 @@ public interface TypeVariables {
       return Stream.empty();
     }
   }
+
+  static int compare(@NotNull TypeVariable<?> v1, @NotNull TypeVariable<?> v2) {
+    final var d1 = v1.getGenericDeclaration();
+    final var d2 = v2.getGenericDeclaration();
+    if (d1 instanceof Executable && d2 instanceof Executable) {
+      final var e1 = (Executable) d1;
+      final var e2 = (Executable) d2;
+      int c = Classes.compare(e1.getDeclaringClass(), e2.getDeclaringClass());
+      if (c != 0) {
+        return c;
+      }
+      c = e1.getName().compareTo(e2.getName());
+      if (c != 0) {
+        return c;
+      }
+      final var a1 = e1.getParameterTypes();
+      final var a2 = e2.getParameterTypes();
+      c = Integer.compare(a1.length, a2.length);
+      if (c != 0) {
+        return c;
+      }
+      for (int i = 0; i < a1.length; i++) {
+        c = Classes.compare(a1[i], a2[i]);
+        if (c != 0) {
+          return c;
+        }
+      }
+      return 0;
+    } else if (d1 instanceof Class<?> && d2 instanceof Class<?>) {
+      final int c = Classes.compare((Class<?>) d1, (Class<?>) d2);
+      if (c != 0) {
+        return c;
+      }
+    } else {
+      final int c = d1.toString().compareTo(d2.toString());
+      if (c != 0) {
+        return c;
+      }
+    }
+    return v1.getName().compareTo(v2.getName());
+  }
 }

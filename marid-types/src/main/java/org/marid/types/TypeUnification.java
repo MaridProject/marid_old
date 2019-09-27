@@ -26,14 +26,12 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Stream.concat;
-import static org.marid.types.TypeStreams.interfaces;
-import static org.marid.types.TypeStreams.superclasses;
 import static org.marid.types.Types.isAssignableFrom;
 
 public class TypeUnification {
@@ -79,23 +77,18 @@ public class TypeUnification {
 
   @NotNull
   public static List<@NotNull Type> commonTypes(@NotNull Type... types) {
-    return concat(
-        stream(types).flatMap(t -> superclasses(t)
-            .filter(s -> stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
-            .findFirst().stream()
+    return Stream.concat(
+        Arrays.stream(types).flatMap(t -> TypeStreams.superclasses(t)
+            .filter(s -> Arrays.stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
         ),
-        stream(types).flatMap(t -> interfaces(t)
-            .filter(s -> stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
-            .findFirst().stream()
+        Arrays.stream(types).flatMap(t -> TypeStreams.interfaces(t)
+            .filter(s -> Arrays.stream(types).filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
         )
-    ).collect(TypeStreams.superless());
+    ).collect(TypeStreams.absorber());
   }
 
   @NotNull
-  public static Type commonType(boolean intersection, @NotNull Type... types) {
-    final var commonTypes = commonTypes(types);
-    return intersection && commonTypes.size() > 1
-        ? WildcardTypes.wildcardTypeUpperBounds(commonTypes.toArray(Type[]::new))
-        : commonTypes.get(0);
+  public static Type commonType(@NotNull Type... types) {
+    return WildcardTypes.wildcardIfNecessary(commonTypes(types));
   }
 }

@@ -80,4 +80,24 @@ public interface ParameterizedTypes {
   static Optional<Type> owner(@NotNull ParameterizedType type) {
     return Optional.ofNullable(type.getOwnerType());
   }
+
+  static int compare(@NotNull ParameterizedType pt1, @NotNull ParameterizedType pt2) {
+    int c = Types.compare(pt1.getRawType(), pt2.getRawType());
+    if (c != 0) {
+      return c;
+    }
+    c = Types.compare(pt1.getOwnerType(), pt2.getOwnerType());
+    if (c != 0) {
+      return c;
+    }
+    final var a1 = pt1.getActualTypeArguments();
+    final var a2 = pt2.getActualTypeArguments();
+    for (int i = 0; i < a1.length; i++) {
+      c = Types.compare(a1[i], a2[i]);
+      if (c != 0) {
+        return c;
+      }
+    }
+    return 0;
+  }
 }

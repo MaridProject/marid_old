@@ -41,4 +41,8 @@ public interface GenericArrayTypes {
       return genericArrayType(component);
     }
   }
+
+  static int compare(@NotNull GenericArrayType t1, @NotNull GenericArrayType t2) {
+    return Types.compare(t1.getGenericComponentType(), t2.getGenericComponentType());
+  }
 }

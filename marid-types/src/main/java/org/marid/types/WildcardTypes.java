@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 public interface WildcardTypes {
@@ -53,5 +54,43 @@ public interface WildcardTypes {
   @NotNull
   static Stream<@NotNull Type> lowerBounds(@NotNull WildcardType type) {
     return Arrays.stream(type.getLowerBounds());
+  }
+
+  @NotNull
+  static Type wildcardIfNecessary(@NotNull Collection<@NotNull Type> types) {
+    return types.size() == 1 ? types.iterator().next() : wildcardTypeUpperBounds(types.toArray(Type[]::new));
+  }
+
+  @NotNull
+  static Stream<@NotNull Type> flatten(@NotNull Type type) {
+    return type instanceof WildcardType ? upperBounds((WildcardType) type) : Stream.of(type);
+  }
+
+  static int compare(@NotNull WildcardType t1, @NotNull WildcardType t2) {
+    final var lb1 = t1.getLowerBounds();
+    final var lb2 = t2.getLowerBounds();
+    int c = Integer.compare(lb1.length, lb2.length);
+    if (c != 0) {
+      return c;
+    }
+    final var ub1 = t1.getUpperBounds();
+    final var ub2 = t2.getUpperBounds();
+    c = Integer.compare(ub1.length, ub2.length);
+    if (c != 0) {
+      return c;
+    }
+    for (int i = 0; i < lb1.length; i++) {
+      c = Types.compare(lb1[i], lb2[i]);
+      if (c != 0) {
+        return c;
+      }
+    }
+    for (int i = 0; i < ub1.length; i++) {
+      c = Types.compare(ub1[i], ub2[i]);
+      if (c != 0) {
+        return c;
+      }
+    }
+    return 0;
   }
 }

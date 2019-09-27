@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -28,10 +28,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.stream.Collector;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.marid.types.ParameterizedTypes.parameterizedTypeWithOwner;
 import static org.marid.types.Types.*;
 
 public interface TypeStreams {
@@ -103,14 +104,14 @@ public interface TypeStreams {
           .map(v -> {
             final var m = map.getOrDefault(v, v);
             if (m instanceof TypeVariable<?> || !VarianceProvider.checkCovariant(v)) {
-              return new Type[] {m};
+              return new Type[]{m};
             } else {
               return Stream.concat(superclasses(m), interfaces(m)).sorted(Types::compare).toArray(Type[]::new);
             }
           })
           .toArray(Type[][]::new);
       return TypeUtils.combinations(types)
-          .map(v -> ParameterizedTypes.parameterizedTypeWithOwner(c, c.getDeclaringClass(), v));
+          .map(v -> parameterizedTypeWithOwner(c, c.getDeclaringClass(), v));
     }
   }
 
@@ -144,17 +145,49 @@ public interface TypeStreams {
     }
   }
 
-  @NotNull
-  static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> superless() {
-    final BiConsumer<List<Type>, Type> adder = (a, e) -> {
-      if (a.stream().noneMatch(t -> isAssignableFrom(e, t))) {
-        a.removeIf(t -> Types.isAssignableFrom(t, e));
-        a.add(e);
+  private static void absorber(List<Type> a, Type e) {
+    if (a.stream().anyMatch(t -> isAssignableFrom(e, t))) {
+      return;
+    }
+    if (e instanceof ParameterizedType) {
+      final var pe = (ParameterizedType) e;
+      for (final var it = a.listIterator(); it.hasNext(); ) {
+        final var t = it.next();
+        if (t instanceof ParameterizedType) {
+          final var pt = (ParameterizedType) t;
+          if (pt.getRawType().equals(pe.getRawType())) {
+            final var ae = pe.getActualTypeArguments();
+            final var at = pt.getActualTypeArguments();
+            final var args = IntStream.range(0, ae.length)
+                .mapToObj(i -> {
+                  final var types = Stream.of(ae[i], at[i])
+                      .flatMap(WildcardTypes::flatten)
+                      .collect(absorber());
+                  return WildcardTypes.wildcardIfNecessary(types);
+                })
+                .toArray(Type[]::new);
+            it.set(parameterizedTypeWithOwner((Class<?>) pe.getRawType(), pe.getOwnerType(), args));
+            return;
+          }
+        }
       }
-    };
-    return Collector.of(ArrayList::new, adder, (a1, a2) -> {
-      a1.forEach(e -> adder.accept(a2, e));
-      return a2;
-    });
+    }
+    a.removeIf(t -> Types.isAssignableFrom(t, e));
+    a.add(e);
+  }
+
+  @NotNull
+  static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> absorber() {
+    return Collector.of(
+        ArrayList::new,
+        TypeStreams::absorber,
+        (a1, a2) -> {
+          a1.forEach(e -> absorber(a2, e));
+          return a2;
+        }, list -> {
+          list.sort(Types::compare);
+          return list;
+        }
+    );
   }
 }
