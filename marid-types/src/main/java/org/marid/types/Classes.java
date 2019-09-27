@@ -176,7 +176,7 @@ public interface Classes {
     } else if (c2.isAssignableFrom(c1)) {
       return -1;
     } else {
-      return c1.getName().compareTo(c2.getName());
+      return 0;
     }
   }
 

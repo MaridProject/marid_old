@@ -303,22 +303,6 @@ public interface Types {
     return true;
   }
 
-  static int order(@NotNull Type type) {
-    if (type instanceof Class<?>) {
-      return 0;
-    } else if (type instanceof ParameterizedType) {
-      return 1;
-    } else if (type instanceof GenericArrayType) {
-      return 2;
-    } else if (type instanceof WildcardType) {
-      return 3;
-    } else if (type instanceof TypeVariable<?>) {
-      return 4;
-    } else {
-      return 5;
-    }
-  }
-
   static int compare(@NotNull Type t1, @NotNull Type t2) {
     if (t1.equals(t2)) {
       return 0;
@@ -326,18 +310,8 @@ public interface Types {
       return 1;
     } else if (isAssignableFrom(t2, t1)) {
       return -1;
-    } else if (t1 instanceof ParameterizedType && t2 instanceof ParameterizedType) {
-      return ParameterizedTypes.compare((ParameterizedType) t1, (ParameterizedType) t2);
-    } else if (t1 instanceof Class<?> && t2 instanceof Class<?>) {
-      return ((Class<?>) t1).getName().compareTo(((Class<?>) t2).getName());
-    } else if (t1 instanceof WildcardType) {
-      return WildcardTypes.compare((WildcardType) t1, (WildcardType) t2);
-    } else if (t1 instanceof GenericArrayType && t2 instanceof GenericArrayType) {
-      return GenericArrayTypes.compare((GenericArrayType) t1, (GenericArrayType) t2);
-    } else if (t1 instanceof TypeVariable<?> && t2 instanceof TypeVariable<?>) {
-      return TypeVariables.compare((TypeVariable<?>) t1, (TypeVariable<?>) t2);
     } else {
-      return Integer.compare(order(t1), order(t2));
+      return Classes.compare(Types.toRaw(t1), Types.toRaw(t2));
     }
   }
 

@@ -137,7 +137,7 @@ class TypeUnificationTest extends TypeSugar {
         ),
         arguments(
             List.of(p(CTC6.class, CTC3.class), p(CTC6.class, CTC5.class)),
-            List.of(p(CTC6.class, wu(CTI1.class, CTI2.class)))
+            List.of(p(CTC6.class, wu(CTI2.class, CTI1.class)))
         )
     );
   }
