@@ -15,13 +15,6 @@
     <dependencies>
       <dependency>
         <groupId>org.marid</groupId>
-        <artifactId>marid</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.marid</groupId>
         <artifactId>marid-test</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -29,6 +22,12 @@
       <dependency>
         <groupId>org.marid</groupId>
         <artifactId>marid-util</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.marid</groupId>
+        <artifactId>marid-types</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -42,22 +41,6 @@
         <groupId>org.marid</groupId>
         <artifactId>marid-runtime</artifactId>
         <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.marid</groupId>
-        <artifactId>marid-services</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.marid</groupId>
-        <artifactId>marid-ide</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
