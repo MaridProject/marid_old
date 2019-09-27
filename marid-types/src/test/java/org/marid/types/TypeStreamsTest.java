@@ -81,7 +81,8 @@ class TypeStreamsTest extends TypeSugar {
             p(CTC6.class, CTI2.class),
             p(CTC6.class, Object.class),
             Object.class
-        ))
+        )),
+        arguments(int.class, TypeStreams.superclasses(Integer.class).collect(Collectors.toList()))
     );
   }
 
