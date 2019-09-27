@@ -30,6 +30,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Stream;
@@ -161,6 +162,10 @@ class TypeUnificationTest extends TypeSugar {
         arguments(
             List.of(int.class, BigInteger.class),
             TypeUnification.commonTypes(Integer.class, BigInteger.class)
+        ),
+        arguments(
+            List.of(BigInteger.class, BigDecimal.class),
+            List.of(Number.class)
         )
     );
   }
