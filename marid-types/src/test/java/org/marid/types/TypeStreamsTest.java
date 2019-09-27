@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.marid.types.TypeUnificationTest.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -69,6 +70,17 @@ class TypeStreamsTest extends TypeSugar {
             Serializable[].class,
             Object[].class,
             Object.class
+        )),
+        arguments(p(CTC7.class, CTC3.class), List.of(
+            p(CTC7.class, CTC3.class),
+            p(CTC7.class, CTI1.class),
+            p(CTC7.class, CTI2.class),
+            p(CTC7.class, Object.class),
+            p(CTC6.class, CTC3.class),
+            p(CTC6.class, CTI1.class),
+            p(CTC6.class, CTI2.class),
+            p(CTC6.class, Object.class),
+            Object.class
         ))
     );
   }
@@ -93,6 +105,8 @@ class TypeStreamsTest extends TypeSugar {
         arguments(a(p(ArrayList.class, Integer.class)), List.of(
             Cloneable.class,
             Serializable.class
+        )),
+        arguments(p(CTC7.class, CTC3.class), List.of(
         ))
     );
   }

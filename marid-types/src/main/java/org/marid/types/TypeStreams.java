@@ -145,7 +145,7 @@ public interface TypeStreams {
     }
   }
 
-  private static void absorber(List<Type> a, Type e) {
+  private static void absorb(List<Type> a, Type e) {
     if (a.stream().anyMatch(t -> isAssignableFrom(e, t))) {
       return;
     }
@@ -158,6 +158,7 @@ public interface TypeStreams {
           if (pt.getRawType().equals(pe.getRawType())) {
             final var ae = pe.getActualTypeArguments();
             final var at = pt.getActualTypeArguments();
+            assert ae.length == at.length;
             final var args = IntStream.range(0, ae.length)
                 .mapToObj(i -> {
                   final var types = Stream.of(ae[i], at[i])
@@ -180,9 +181,9 @@ public interface TypeStreams {
   static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> absorber() {
     return Collector.of(
         ArrayList::new,
-        TypeStreams::absorber,
+        TypeStreams::absorb,
         (a1, a2) -> {
-          a1.forEach(e -> absorber(a2, e));
+          a1.forEach(e -> absorb(a2, e));
           return a2;
         }, list -> {
           list.sort(Types::compare);

@@ -108,14 +108,16 @@ class TypeUnificationTest extends TypeSugar {
     assertEquals(expected, actual);
   }
 
-  private interface CTI1 {}
-  private static class CTC1 implements CTI1 {}
-  private static class CTC2 implements CTI1 {}
-  private interface CTI2 {}
-  private static class CTC3 implements CTI1, CTI2 {}
-  private static class CTC4 implements CTI1 {}
-  private static class CTC5 extends CTC4 implements CTI2 {}
-  private static class CTC6<@Covariant E> {}
+  interface CTI1 {}
+  static class CTC1 implements CTI1 {}
+  static class CTC2 implements CTI1 {}
+  interface CTI2 {}
+  static class CTC3 implements CTI1, CTI2 {}
+  static class CTC4 implements CTI1 {}
+  static class CTC5 extends CTC4 implements CTI2 {}
+  static class CTC6<@Covariant E> {}
+  static class CTC7<@Covariant E> extends CTC6<E> {}
+  static class CTC8<@Covariant E> extends CTC6<E> {}
 
   private static Stream<Arguments> commonTypesData() {
     return Stream.of(
@@ -137,6 +139,18 @@ class TypeUnificationTest extends TypeSugar {
         ),
         arguments(
             List.of(p(CTC6.class, CTC3.class), p(CTC6.class, CTC5.class)),
+            List.of(p(CTC6.class, wu(CTI2.class, CTI1.class)))
+        ),
+        arguments(
+            List.of(p(CTC6.class, CTC3.class), p(CTC6.class, CTC4.class)),
+            List.of(p(CTC6.class, CTI1.class))
+        ),
+        arguments(
+            List.of(p(CTC6.class, p(CTC7.class, String.class)), p(CTC7.class, p(CTC6.class, CharSequence.class))),
+            List.of(p(CTC6.class, p(CTC6.class, CharSequence.class)))
+        ),
+        arguments(
+            List.of(p(CTC7.class, CTC3.class), p(CTC8.class, CTC5.class)),
             List.of(p(CTC6.class, wu(CTI2.class, CTI1.class)))
         )
     );
