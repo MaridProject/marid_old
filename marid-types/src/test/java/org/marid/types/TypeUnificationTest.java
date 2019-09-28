@@ -166,6 +166,10 @@ class TypeUnificationTest extends TypeSugar {
         arguments(
             List.of(BigInteger.class, BigDecimal.class),
             List.of(Number.class)
+        ),
+        arguments(
+            List.of(p(CTC7.class, BigInteger.class), p(CTC8.class, BigDecimal.class)),
+            List.of(p(CTC6.class, Number.class))
         )
     );
   }
