@@ -29,11 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.marid.types.ParameterizedTypes.parameterizedTypeWithOwner;
 import static org.marid.types.Types.*;
+import static org.marid.types.WildcardTypes.wildcard;
 
 public interface TypeStreams {
 
@@ -158,15 +158,10 @@ public interface TypeStreams {
           if (pt.getRawType().equals(pe.getRawType())) {
             final var ae = pe.getActualTypeArguments();
             final var at = pt.getActualTypeArguments();
-            assert ae.length == at.length;
-            final var args = IntStream.range(0, ae.length)
-                .mapToObj(i -> {
-                  final var types = Stream.of(ae[i], at[i])
-                      .flatMap(WildcardTypes::flatten)
-                      .collect(absorber());
-                  return WildcardTypes.wildcardIfNecessary(types);
-                })
-                .toArray(Type[]::new);
+            final var args = new Type[ae.length];
+            for (int i = 0; i < args.length; i++) {
+              args[i] = wildcard(Stream.of(ae[i], at[i]).flatMap(WildcardTypes::flatten).collect(absorber()));
+            }
             it.set(parameterizedTypeWithOwner((Class<?>) pe.getRawType(), pe.getOwnerType(), args));
             return;
           }

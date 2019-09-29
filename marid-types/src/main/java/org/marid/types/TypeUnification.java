@@ -89,6 +89,6 @@ public class TypeUnification {
 
   @NotNull
   public static Type commonType(@NotNull Type... types) {
-    return WildcardTypes.wildcardIfNecessary(commonTypes(types));
+    return WildcardTypes.wildcard(commonTypes(types));
   }
 }

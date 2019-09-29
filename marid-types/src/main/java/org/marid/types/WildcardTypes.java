@@ -57,7 +57,7 @@ public interface WildcardTypes {
   }
 
   @NotNull
-  static Type wildcardIfNecessary(@NotNull Collection<@NotNull Type> types) {
+  static Type wildcard(@NotNull Collection<@NotNull Type> types) {
     return types.size() == 1 ? types.iterator().next() : wildcardTypeUpperBounds(types.toArray(Type[]::new));
   }
 
