@@ -173,7 +173,7 @@ public interface TypeStreams {
   }
 
   @NotNull
-  static Collector<@NotNull Type, @NotNull List<@NotNull Type>, @NotNull List<@NotNull Type>> absorber() {
+  static Collector<@NotNull Type, @NotNull ArrayList<@NotNull Type>, @NotNull ArrayList<@NotNull Type>> absorber() {
     return Collector.of(
         ArrayList::new,
         TypeStreams::absorb,
@@ -181,6 +181,7 @@ public interface TypeStreams {
           a1.forEach(e -> absorb(a2, e));
           return a2;
         }, list -> {
+          list.trimToSize();
           list.sort(Types::compare);
           return list;
         }
