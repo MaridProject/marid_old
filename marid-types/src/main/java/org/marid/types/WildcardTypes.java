@@ -63,7 +63,9 @@ public interface WildcardTypes {
 
   @NotNull
   static Stream<@NotNull Type> flatten(@NotNull Type type) {
-    return type instanceof WildcardType ? upperBounds((WildcardType) type) : Stream.of(type);
+    return type instanceof WildcardType
+        ? upperBounds((WildcardType) type).flatMap(WildcardTypes::flatten)
+        : Stream.of(type);
   }
 
   static int compare(@NotNull WildcardType t1, @NotNull WildcardType t2) {
