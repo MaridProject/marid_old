@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.marid.types.TypeUnificationTest.*;
+import org.marid.types.TypeResolutionTest.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;

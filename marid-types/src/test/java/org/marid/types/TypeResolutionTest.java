@@ -40,7 +40,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.marid.test.util.Maps.map;
 
 @Tag("normal")
-class TypeUnificationTest extends TypeSugar {
+class TypeResolutionTest extends TypeSugar {
 
   private static class C1 extends HashMap<Integer, ArrayList<?>> {}
   private static class C2<A> {}
@@ -74,12 +74,12 @@ class TypeUnificationTest extends TypeSugar {
   @MethodSource("resolveTypesData")
   void resolveTypes(Type type, Map<Var, Type> expected) {
     final var map = new LinkedHashMap<TypeVariable<?>, Type>();
-    TypeUnification.resolveTypes(type, map);
+    TypeResolution.resolveVars(type, map);
     final var actual = prettyMap(map);
     assertEquals(expected, actual);
   }
 
-  private static Stream<Arguments> resolveData() {
+  private static Stream<Arguments> resolveVarsData() {
     return Stream.of(
         arguments(C1.class, map(
             v(HashMap.class, "K"), Integer.class,
@@ -103,9 +103,9 @@ class TypeUnificationTest extends TypeSugar {
   }
 
   @ParameterizedTest
-  @MethodSource("resolveData")
-  void resolve(Type type, Map<Var, Type> expected) {
-    final var map = TypeUnification.resolve(type);
+  @MethodSource("resolveVarsData")
+  void resolveVars(Type type, Map<Var, Type> expected) {
+    final var map = TypeResolution.resolveVars(type);
     final var actual = prettyMap(map);
     assertEquals(expected, actual);
   }
@@ -157,11 +157,11 @@ class TypeUnificationTest extends TypeSugar {
         ),
         arguments(
             List.of(int.class, long.class),
-            TypeUnification.commonTypes(Integer.class, Long.class)
+            TypeResolution.commonTypes(Integer.class, Long.class)
         ),
         arguments(
             List.of(int.class, BigInteger.class),
-            TypeUnification.commonTypes(Integer.class, BigInteger.class)
+            TypeResolution.commonTypes(Integer.class, BigInteger.class)
         ),
         arguments(
             List.of(BigInteger.class, BigDecimal.class),
@@ -177,7 +177,7 @@ class TypeUnificationTest extends TypeSugar {
   @ParameterizedTest
   @MethodSource("commonTypesData")
   void commonTypes(List<Type> types, List<Type> expected) {
-    final var actual = TypeUnification.commonTypes(types.toArray(Type[]::new));
+    final var actual = TypeResolution.commonTypes(types.toArray(Type[]::new));
     assertEquals(expected, actual);
   }
 }

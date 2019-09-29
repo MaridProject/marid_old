@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 import static org.marid.types.GenericArrayTypes.genericArrayType;
 import static org.marid.types.ParameterizedTypes.*;
-import static org.marid.types.TypeUnification.resolve;
+import static org.marid.types.TypeResolution.resolveVars;
 import static org.marid.types.TypeVariables.bounds;
 import static org.marid.types.WildcardTypes.*;
 
@@ -272,8 +272,8 @@ public interface Types {
   }
 
   private static boolean isAssignable(Class<?> raw, Type t, Type s, Type[] tp, Type[] sp) {
-    final var tMap = resolve(t);
-    final var sMap = resolve(s);
+    final var tMap = resolveVars(t);
+    final var sMap = resolveVars(s);
     for (final var tVar : raw.getTypeParameters()) {
       final var sResolvedVar = sMap.get(tVar);
       if (sResolvedVar == null) {

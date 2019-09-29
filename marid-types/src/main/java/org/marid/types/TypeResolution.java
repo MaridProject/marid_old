@@ -34,20 +34,20 @@ import java.util.stream.Stream;
 
 import static org.marid.types.Types.isAssignableFrom;
 
-public class TypeUnification {
+public class TypeResolution {
 
-  private TypeUnification() {
+  private TypeResolution() {
   }
 
   @NotNull
-  public static Map<TypeVariable<?>, Type> resolve(@NotNull Type type) {
+  public static Map<TypeVariable<?>, Type> resolveVars(@NotNull Type type) {
     final var map = new LinkedHashMap<TypeVariable<?>, Type>();
-    resolveTypes(type, map);
+    resolveVars(type, map);
     map.replaceAll((k, v) -> Types.substitute(v, map::get));
     return map;
   }
 
-  static void resolveTypes(Type type, LinkedHashMap<TypeVariable<?>, Type> map) {
+  static void resolveVars(Type type, LinkedHashMap<TypeVariable<?>, Type> map) {
     if (type instanceof ParameterizedType) {
       final var t = (ParameterizedType) type;
       final var raw = (Class<?>) t.getRawType();
@@ -58,19 +58,19 @@ public class TypeUnification {
       }
       final var gsc = raw.getGenericSuperclass();
       if (gsc != null) {
-        resolveTypes(gsc, map);
+        resolveVars(gsc, map);
       }
       for (final var gsi : raw.getGenericInterfaces()) {
-        resolveTypes(gsi, map);
+        resolveVars(gsi, map);
       }
     } else if (type instanceof Class<?>) {
       final var t = (Class<?>) type;
       final var gsc = t.getGenericSuperclass();
       if (gsc != null) {
-        resolveTypes(gsc, map);
+        resolveVars(gsc, map);
       }
       for (final var gsi : t.getGenericInterfaces()) {
-        resolveTypes(gsi, map);
+        resolveVars(gsi, map);
       }
     }
   }
