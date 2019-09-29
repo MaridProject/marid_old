@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.marid.types.Types.isAssignableFrom;
@@ -90,5 +92,13 @@ public class TypeResolution {
   @NotNull
   public static Type commonType(@NotNull Type... types) {
     return WildcardTypes.wildcard(commonTypes(types));
+  }
+
+  @NotNull
+  public static Type resolve(@NotNull Type source, @NotNull Consumer<BiConsumer<@NotNull Type, @NotNull Type>> binder) {
+    binder.accept((t1, t2) -> {
+
+    });
+    return source;
   }
 }
