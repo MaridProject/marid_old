@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -141,7 +141,7 @@ class TypeResolutionTest extends TypeSugar {
         ),
         arguments(
             List.of(p(CTC6.class, CTC3.class), p(CTC6.class, CTC5.class)),
-            List.of(p(CTC6.class, wu(CTI2.class, CTI1.class)))
+            List.of(p(CTC6.class, wu(CTI1.class, CTI2.class)))
         ),
         arguments(
             List.of(p(CTC6.class, CTC3.class), p(CTC6.class, CTC4.class)),
@@ -153,7 +153,7 @@ class TypeResolutionTest extends TypeSugar {
         ),
         arguments(
             List.of(p(CTC7.class, CTC3.class), p(CTC8.class, CTC5.class)),
-            List.of(p(CTC6.class, wu(CTI2.class, CTI1.class)))
+            List.of(p(CTC6.class, wu(CTI1.class, CTI2.class)))
         ),
         arguments(
             List.of(int.class, long.class),

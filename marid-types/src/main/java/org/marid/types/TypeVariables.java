@@ -23,7 +23,12 @@ package org.marid.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Executable;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -57,32 +62,16 @@ public interface TypeVariables {
   }
 
   static int compare(@NotNull TypeVariable<?> v1, @NotNull TypeVariable<?> v2) {
+    if (v1.equals(v2)) {
+      return 0;
+    }
     final var d1 = v1.getGenericDeclaration();
     final var d2 = v2.getGenericDeclaration();
     if (d1 instanceof Executable && d2 instanceof Executable) {
-      final var e1 = (Executable) d1;
-      final var e2 = (Executable) d2;
-      int c = Classes.compare(e1.getDeclaringClass(), e2.getDeclaringClass());
+      final int c = Executables.compare((Executable) d1, (Executable) d2);
       if (c != 0) {
         return c;
       }
-      c = e1.getName().compareTo(e2.getName());
-      if (c != 0) {
-        return c;
-      }
-      final var a1 = e1.getParameterTypes();
-      final var a2 = e2.getParameterTypes();
-      c = Integer.compare(a1.length, a2.length);
-      if (c != 0) {
-        return c;
-      }
-      for (int i = 0; i < a1.length; i++) {
-        c = Classes.compare(a1[i], a2[i]);
-        if (c != 0) {
-          return c;
-        }
-      }
-      return 0;
     } else if (d1 instanceof Class<?> && d2 instanceof Class<?>) {
       final int c = Classes.compare((Class<?>) d1, (Class<?>) d2);
       if (c != 0) {

@@ -176,12 +176,45 @@ public interface Classes {
     } else if (c2.isAssignableFrom(c1)) {
       return -1;
     } else {
-      return 0;
+      final var d1 = c1.getDeclaringClass();
+      final var d2 = c2.getDeclaringClass();
+      if (d1 != null) {
+        if (d2 != null) {
+          final int c = compare(d1, d2);
+          if (c != 0) {
+            return c;
+          }
+        } else {
+          return 1;
+        }
+      } else if (d2 != null) {
+        return -1;
+      }
+      if (c1.isInterface()) {
+        if (!c2.isInterface()) {
+          return 1;
+        }
+      } else if (c2.isInterface()) {
+        return -1;
+      }
+      if (c1.isArray()) {
+        if (c2.isArray()) {
+          return compare(c1.getComponentType(), c2.getComponentType());
+        } else {
+          return -1;
+        }
+      } else {
+        if (c2.isArray()) {
+          return 1;
+        }
+      }
+      final var t1 = c1.getTypeParameters();
+      final var t2 = c2.getTypeParameters();
+      final int c = -Integer.compare(t1.length, t2.length);
+      if (c != 0) {
+        return c;
+      }
+      return c1.getName().compareTo(c2.getName());
     }
-  }
-
-  static int fullCompare(@NotNull Class<?> c1, @NotNull Class<?> c2) {
-    final int c = compare(c1, c2);
-    return c != 0 ? c : c1.getName().compareTo(c2.getName());
   }
 }

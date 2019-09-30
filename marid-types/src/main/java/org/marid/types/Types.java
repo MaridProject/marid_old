@@ -24,15 +24,24 @@ package org.marid.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.*;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.marid.types.GenericArrayTypes.genericArrayType;
-import static org.marid.types.ParameterizedTypes.*;
+import static org.marid.types.ParameterizedTypes.owner;
+import static org.marid.types.ParameterizedTypes.parameterizedTypeWithOwner;
+import static org.marid.types.ParameterizedTypes.parameters;
 import static org.marid.types.TypeResolution.resolveVars;
 import static org.marid.types.TypeVariables.bounds;
-import static org.marid.types.WildcardTypes.*;
+import static org.marid.types.WildcardTypes.lowerBounds;
+import static org.marid.types.WildcardTypes.upperBounds;
+import static org.marid.types.WildcardTypes.wildcardType;
+import static org.marid.types.WildcardTypes.wildcardTypeUpperBounds;
 
 public interface Types {
 
@@ -310,8 +319,33 @@ public interface Types {
       return 1;
     } else if (isAssignableFrom(t2, t1)) {
       return -1;
+    } else if (t1 instanceof GenericArrayType && t2 instanceof GenericArrayType) {
+      return GenericArrayTypes.compare((GenericArrayType) t1, (GenericArrayType) t2);
+    } else if (t1 instanceof ParameterizedType && t2 instanceof ParameterizedType) {
+      return ParameterizedTypes.compare((ParameterizedType) t1, (ParameterizedType) t2);
+    } else if (t1 instanceof WildcardType && t2 instanceof WildcardType) {
+      return WildcardTypes.compare((WildcardType) t1, (WildcardType) t2);
+    } else if (t1 instanceof TypeVariable<?> && t2 instanceof TypeVariable<?>) {
+      return TypeVariables.compare((TypeVariable<?>) t1, (TypeVariable<?>) t2);
+    } else if (t1 instanceof Class<?> && t2 instanceof Class<?>) {
+      return Classes.compare((Class<?>) t1, (Class<?>) t2);
     } else {
-      return Classes.compare(Types.toRaw(t1), Types.toRaw(t2));
+      final int c = Integer.compare(order(t1), order(t2));
+      return c != 0 ? c : t1.getTypeName().compareTo(t2.getTypeName());
+    }
+  }
+
+  static int order(@NotNull Type type) {
+    if (type instanceof GenericArrayType) {
+      return 0;
+    } else if (type instanceof ParameterizedType) {
+      return 1;
+    } else if (type instanceof WildcardType) {
+      return 2;
+    } else if (type instanceof TypeVariable<?>) {
+      return 3;
+    } else {
+      return 4;
     }
   }
 

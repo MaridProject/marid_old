@@ -22,15 +22,18 @@ package org.marid.types;
  */
 
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -93,13 +96,6 @@ class TypeUtilsTest extends TypeSugar {
     final var expected = Stream.concat(Arrays.stream(types), Stream.of(type)).collect(Collectors.toUnmodifiableSet());
     final var actual = Set.of(TypeUtils.add(types, type));
     assertEquals(expected, actual);
-  }
-
-  @Test
-  void testTypes() {
-    final var type = (ParameterizedType) AbstractCollection.class.getGenericInterfaces()[0];
-    final var e = (TypeVariable<?>) type.getActualTypeArguments()[0];
-    System.out.println(e.getGenericDeclaration());
   }
 
   private static class X extends ArrayList<Integer> implements Collection<Integer> {}

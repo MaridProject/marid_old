@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -65,9 +65,9 @@ class TypeStreamsTest extends TypeSugar {
             a(p(List.class, Integer.class)),
             a(p(Collection.class, Integer.class)),
             a(p(Iterable.class, Integer.class)),
-            RandomAccess[].class,
-            Cloneable[].class,
             Serializable[].class,
+            Cloneable[].class,
+            RandomAccess[].class,
             Object[].class,
             Object.class
         )),
@@ -99,13 +99,13 @@ class TypeStreamsTest extends TypeSugar {
             p(List.class, Integer.class),
             p(Collection.class, Integer.class),
             p(Iterable.class, Integer.class),
-            RandomAccess.class,
+            Serializable.class,
             Cloneable.class,
-            Serializable.class
+            RandomAccess.class
         )),
         arguments(a(p(ArrayList.class, Integer.class)), List.of(
-            Cloneable.class,
-            Serializable.class
+            Serializable.class,
+            Cloneable.class
         )),
         arguments(p(CTC7.class, CTC3.class), List.of(
         ))
