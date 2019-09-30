@@ -280,28 +280,28 @@ public interface Types {
     return nsp.length != sp.length && bounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, nsp));
   }
 
-  private static boolean isAssignable(Class<?> raw, Type t, Type s, Type[] tp, Type[] sp) {
-    final var tMap = resolveVars(t);
+  private static boolean isAssignable(Class<?> raw, ParameterizedType t, Type s, Type[] tp, Type[] sp) {
     final var sMap = resolveVars(s);
-    for (final var tVar : raw.getTypeParameters()) {
+    final var params = raw.getTypeParameters();
+    final var args = t.getActualTypeArguments();
+    assert args.length == params.length;
+    for (int i = 0; i < params.length; i++) {
+      final var tVar = params[i];
       final var sResolvedVar = sMap.get(tVar);
       if (sResolvedVar == null) {
         return false;
       }
-      final var tResolvedVar = tMap.get(tVar);
-      if (tResolvedVar == null) {
-        return false;
-      }
+      final var arg = args[i];
       if (VarianceProvider.checkCovariant(tVar)) {
-        if (!isAssignableFrom(tResolvedVar, sResolvedVar, tp, sp)) {
+        if (!isAssignableFrom(arg, sResolvedVar, tp, sp)) {
           return false;
         }
       } else {
-        if (tResolvedVar.equals(sResolvedVar)) {
+        if (arg.equals(sResolvedVar)) {
           continue;
         }
         if (sResolvedVar instanceof WildcardType) {
-          if (WildcardTypes.upperBounds((WildcardType) sResolvedVar).noneMatch(tResolvedVar::equals)) {
+          if (WildcardTypes.upperBounds((WildcardType) sResolvedVar).noneMatch(arg::equals)) {
             return false;
           }
         } else {

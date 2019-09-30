@@ -109,7 +109,7 @@ public class TypeResolution {
   public static Type resolve(@NotNull Type source, @NotNull Consumer<BiConsumer<@NotNull Type, @NotNull Type>> binder) {
     final var map = new LinkedHashMap<TypeVariable<?>, LinkedHashSet<Type>>();
     final var resolved = resolveVars(source);
-    binder.accept((from, to) -> resolve(from, to, map, resolved, Types.EMPTY_TYPES));
+    binder.accept((to, from) -> resolve(to, from, map, resolved, Types.EMPTY_TYPES));
     resolved.replaceAll((v, t) -> {
       final var set = map.get(v);
       if (set != null) {
@@ -121,36 +121,59 @@ public class TypeResolution {
     return Types.substitute(source, resolved::get);
   }
 
-  private static void resolve(Type from,
-                              Type to,
+  private static void resolve(Type to,
+                              Type from,
                               LinkedHashMap<TypeVariable<?>, LinkedHashSet<Type>> map,
                               LinkedHashMap<TypeVariable<?>, Type> resolved,
                               Type[] passed) {
-    if (!Types.isGround(to) || Types.isGround(from)) {
+    if (Types.isGround(to) || !Types.isGround(from)) {
       return;
     }
-    if (from instanceof TypeVariable<?>) {
-      resolve((TypeVariable<?>) from, to, map, resolved, passed);
+    if (to instanceof TypeVariable<?>) {
+      resolve((TypeVariable<?>) to, from, map, resolved, passed);
+    } else if (to instanceof ParameterizedType) {
+      resolve((ParameterizedType) to, from, map, resolved, passed);
     }
   }
 
-  private static void resolve(TypeVariable<?> from,
-                              Type to,
+  private static void resolve(TypeVariable<?> to,
+                              Type from,
                               LinkedHashMap<TypeVariable<?>, LinkedHashSet<Type>> map,
                               LinkedHashMap<TypeVariable<?>, Type> resolved,
                               Type[] passed) {
-    final var resolvedVar = resolved.get(from);
+    final var resolvedVar = resolved.get(to);
     if (resolvedVar != null) {
-      resolve(resolvedVar, to, map, resolved, passed);
+      resolve(resolvedVar, from, map, resolved, passed);
       return;
     }
-    final var newPassed = TypeUtils.add(passed, from);
+    final var newPassed = TypeUtils.add(passed, to);
     if (newPassed.length == passed.length) {
       return;
     }
-    map.computeIfAbsent(from, f -> new LinkedHashSet<>()).add(to);
-    for (final var b : from.getBounds()) {
-      resolve(b, to, map, resolved, newPassed);
+    map.computeIfAbsent(to, f -> new LinkedHashSet<>()).add(from);
+    for (final var b : to.getBounds()) {
+      resolve(to, b, map, resolved, newPassed);
+    }
+  }
+
+  private static void resolve(ParameterizedType to,
+                              Type from,
+                              LinkedHashMap<TypeVariable<?>, LinkedHashSet<Type>> map,
+                              LinkedHashMap<TypeVariable<?>, Type> resolved,
+                              Type[] passed) {
+    final var raw = (Class<?>) to.getRawType();
+    final var vars = raw.getTypeParameters();
+    final var args = to.getActualTypeArguments();
+    assert vars.length == args.length;
+    final var fromMap = resolveVars(from);
+    for (int i = 0; i < vars.length; i++) {
+      final var var = vars[i];
+      final var actual = fromMap.get(var);
+      if (actual == null) {
+        continue;
+      }
+      final var arg = args[i];
+      resolve(arg, actual, map, resolved, passed);
     }
   }
 }
