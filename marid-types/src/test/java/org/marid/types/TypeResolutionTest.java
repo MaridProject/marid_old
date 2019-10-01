@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -32,7 +32,13 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -178,6 +184,32 @@ class TypeResolutionTest extends TypeSugar {
   @MethodSource("commonTypesData")
   void commonTypes(List<Type> types, List<Type> expected) {
     final var actual = TypeResolution.commonTypes(types.toArray(Type[]::new));
+    assertEquals(expected, actual);
+  }
+
+  private static Stream<Arguments> resolveData() throws Exception {
+    return Stream.of(
+        arguments(String.class, String.class, List.of()),
+        arguments(p(ArrayList.class), p(ArrayList.class, Integer.class), List.of(
+            v(ArrayList.class, 0), Integer.class
+        )),
+        arguments(p(ArrayList.class), p(ArrayList.class, Integer.class), List.of(
+            v(List.class, 0), Integer.class
+        )),
+        arguments(p(ArrayList.class), p(ArrayList.class, Integer.class), List.of(
+            List.class.getMethod("addAll", Collection.class).getGenericParameterTypes()[0], p(List.class, Integer.class)
+        ))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("resolveData")
+  void resolve(Type source, Type expected, List<Type> types) {
+    final var actual = TypeResolution.resolve(source, resolver -> {
+      for (int i = 0; i < types.size() / 2; i++) {
+        resolver.accept(types.get(2 * i), types.get(2 * i + 1));
+      }
+    });
     assertEquals(expected, actual);
   }
 }

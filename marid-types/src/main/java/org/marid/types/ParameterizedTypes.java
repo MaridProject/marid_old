@@ -66,9 +66,9 @@ public interface ParameterizedTypes {
   }
 
   @NotNull
-  static Type parameterizedFromClass(@NotNull Class<?> type) {
+  static Type parameterized(@NotNull Class<?> type) {
     final var vars = type.getTypeParameters();
-    return vars.length > 0 ? parameterizedTypeFromClass(type) : type;
+    return vars.length > 0 ? parameterizedTypeWithOwner(type, type.getDeclaringClass(), vars) : type;
   }
 
   @NotNull

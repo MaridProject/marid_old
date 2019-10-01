@@ -23,9 +23,11 @@ package org.marid.types;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -37,13 +39,10 @@ import java.util.stream.Stream;
 
 import static org.marid.types.Types.isAssignableFrom;
 
-public class TypeResolution {
-
-  private TypeResolution() {
-  }
+public interface TypeResolution {
 
   @NotNull
-  public static LinkedHashMap<TypeVariable<?>, Type> resolveVars(@NotNull Type type) {
+  static LinkedHashMap<TypeVariable<?>, Type> resolveVars(@NotNull Type type) {
     final var map = new LinkedHashMap<TypeVariable<?>, Type>();
     resolveVars(type, map);
     map.replaceAll((k, v) -> Types.substitute(v, map::get));
@@ -79,12 +78,12 @@ public class TypeResolution {
   }
 
   @NotNull
-  public static List<@NotNull Type> commonTypes(@NotNull Type... types) {
+  static List<@NotNull Type> commonTypes(@NotNull Type... types) {
     return commonTypes(() -> Arrays.stream(types));
   }
 
   @NotNull
-  public static List<@NotNull Type> commonTypes(@NotNull Supplier<@NotNull Stream<@NotNull Type>> typesSupplier) {
+  static List<@NotNull Type> commonTypes(@NotNull Supplier<@NotNull Stream<@NotNull Type>> typesSupplier) {
     return Stream.concat(
         typesSupplier.get().flatMap(t -> TypeStreams.superclasses(t)
             .filter(s -> typesSupplier.get().filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
@@ -96,17 +95,17 @@ public class TypeResolution {
   }
 
   @NotNull
-  public static Type commonType(@NotNull Type... types) {
+  static Type commonType(@NotNull Type... types) {
     return commonType(() -> Arrays.stream(types));
   }
 
   @NotNull
-  public static Type commonType(@NotNull Supplier<@NotNull Stream<@NotNull Type>> typesSupplier) {
+  static Type commonType(@NotNull Supplier<@NotNull Stream<@NotNull Type>> typesSupplier) {
     return WildcardTypes.wildcard(commonTypes(typesSupplier));
   }
 
   @NotNull
-  public static Type resolve(@NotNull Type source, @NotNull Consumer<BiConsumer<@NotNull Type, @NotNull Type>> binder) {
+  static Type resolve(@NotNull Type source, @NotNull Consumer<BiConsumer<@NotNull Type, @NotNull Type>> binder) {
     final var map = new LinkedHashMap<TypeVariable<?>, LinkedHashSet<Type>>();
     final var resolved = resolveVars(source);
     binder.accept((to, from) -> resolve(to, from, map, resolved, Types.EMPTY_TYPES));
@@ -131,8 +130,24 @@ public class TypeResolution {
     }
     if (to instanceof TypeVariable<?>) {
       resolve((TypeVariable<?>) to, from, map, resolved, passed);
+    } else if (from instanceof WildcardType) {
+      for (final var b : ((WildcardType) from).getUpperBounds()) {
+        resolve(to, b, map, resolved, passed);
+      }
+      for (final var b : ((WildcardType) from).getLowerBounds()) {
+        resolve(to, b, map, resolved, passed);
+      }
     } else if (to instanceof ParameterizedType) {
       resolve((ParameterizedType) to, from, map, resolved, passed);
+    } else if (to instanceof GenericArrayType) {
+      resolve((GenericArrayType) to, from, map, resolved, passed);
+    } else if (to instanceof WildcardType) {
+      for (final var b : ((WildcardType) to).getUpperBounds()) {
+        resolve(b, from, map, resolved, passed);
+      }
+      for (final var b : ((WildcardType) to).getLowerBounds()) {
+        resolve(b, from, map, resolved, passed);
+      }
     }
   }
 
@@ -142,7 +157,7 @@ public class TypeResolution {
                               LinkedHashMap<TypeVariable<?>, Type> resolved,
                               Type[] passed) {
     final var resolvedVar = resolved.get(to);
-    if (resolvedVar != null) {
+    if (resolvedVar != null && !resolvedVar.equals(to)) {
       resolve(resolvedVar, from, map, resolved, passed);
       return;
     }
@@ -174,6 +189,21 @@ public class TypeResolution {
       }
       final var arg = args[i];
       resolve(arg, actual, map, resolved, passed);
+    }
+  }
+
+  private static void resolve(GenericArrayType to,
+                              Type from,
+                              LinkedHashMap<TypeVariable<?>, LinkedHashSet<Type>> map,
+                              LinkedHashMap<TypeVariable<?>, Type> resolved,
+                              Type[] passed) {
+    if (from instanceof Class<?>) {
+      final var f = (Class<?>) from;
+      if (f.isArray()) {
+        resolve(to.getGenericComponentType(), f.getComponentType(), map, resolved, passed);
+      }
+    } else if (from instanceof GenericArrayType) {
+      resolve(to.getGenericComponentType(), ((GenericArrayType) from).getGenericComponentType(), map, resolved, passed);
     }
   }
 }

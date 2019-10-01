@@ -24,17 +24,26 @@ package org.marid.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Executable;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class TypeSugar {
 
   @NotNull
-  protected static ParameterizedType p(@NotNull Class<?> raw, @NotNull Type... params) {
-    return ParameterizedTypes.parameterizedType(raw, params);
+  protected static Type p(@NotNull Class<?> raw, @NotNull Type... params) {
+    if (params.length == 0) {
+      return ParameterizedTypes.parameterized(raw);
+    } else {
+      return ParameterizedTypes.parameterizedType(raw, params);
+    }
   }
 
   @NotNull

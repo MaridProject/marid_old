@@ -41,12 +41,12 @@ final class WildcardTypeImpl implements WildcardType {
 
   @Override
   public Type[] getUpperBounds() {
-    return upperBounds.length == 0 ? upperBounds : upperBounds.clone();
+    return upperBounds.length == 0 ? upperBounds : Arrays.copyOf(upperBounds, upperBounds.length, Type[].class);
   }
 
   @Override
   public Type[] getLowerBounds() {
-    return lowerBounds.length == 0 ? lowerBounds : lowerBounds.clone();
+    return lowerBounds.length == 0 ? lowerBounds : Arrays.copyOf(lowerBounds, lowerBounds.length, Type[].class);
   }
 
   @Override
