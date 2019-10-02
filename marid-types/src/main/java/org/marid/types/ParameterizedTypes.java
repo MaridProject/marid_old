@@ -90,14 +90,6 @@ public interface ParameterizedTypes {
     if (c != 0) {
       return c;
     }
-    final var a1 = pt1.getActualTypeArguments();
-    final var a2 = pt2.getActualTypeArguments();
-    for (int i = 0; i < a1.length; i++) {
-      c = Types.compare(a1[i], a2[i]);
-      if (c != 0) {
-        return c;
-      }
-    }
-    return 0;
+    return TypeUtils.compare(pt1.getActualTypeArguments(), pt2.getActualTypeArguments());
   }
 }

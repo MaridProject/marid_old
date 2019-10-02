@@ -69,30 +69,10 @@ public interface WildcardTypes {
   }
 
   static int compare(@NotNull WildcardType t1, @NotNull WildcardType t2) {
-    final var lb1 = t1.getLowerBounds();
-    final var lb2 = t2.getLowerBounds();
-    int c = Integer.compare(lb1.length, lb2.length);
+    int c = TypeUtils.compare(t1.getLowerBounds(), t2.getLowerBounds());
     if (c != 0) {
       return c;
     }
-    final var ub1 = t1.getUpperBounds();
-    final var ub2 = t2.getUpperBounds();
-    c = Integer.compare(ub1.length, ub2.length);
-    if (c != 0) {
-      return c;
-    }
-    for (int i = 0; i < lb1.length; i++) {
-      c = Types.compare(lb1[i], lb2[i]);
-      if (c != 0) {
-        return c;
-      }
-    }
-    for (int i = 0; i < ub1.length; i++) {
-      c = Types.compare(ub1[i], ub2[i]);
-      if (c != 0) {
-        return c;
-      }
-    }
-    return 0;
+    return TypeUtils.compare(t1.getUpperBounds(), t2.getUpperBounds());
   }
 }

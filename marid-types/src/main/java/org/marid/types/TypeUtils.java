@@ -71,4 +71,18 @@ class TypeUtils {
       return r;
     });
   }
+
+  static int compare(@NotNull Type[] t1, @NotNull Type[] t2) {
+    int c = Integer.compare(t1.length, t2.length);
+    if (c != 0) {
+      return c;
+    }
+    for (int i = 0; i < t1.length; i++) {
+      c = Types.compare(t1[i], t2[i]);
+      if (c != 0) {
+        return c;
+      }
+    }
+    return 0;
+  }
 }
