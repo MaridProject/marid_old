@@ -19,12 +19,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.wildfly.common</groupId>
-      <artifactId>wildfly-common</artifactId>
-      <version>1.5.2.Final</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-ide-client</artifactId>
       <version>${project.version}</version>
@@ -45,6 +39,16 @@
       <artifactId>slf4j-jdk14</artifactId>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.wildfly.common</groupId>
+        <artifactId>wildfly-common</artifactId>
+        <version>1.5.2.Final</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <resources>

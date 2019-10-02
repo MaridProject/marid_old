@@ -179,6 +179,18 @@ public interface Classes {
     }
   }
 
+  /**
+   * Compares two classes:
+   * <ul>
+   *   <li>If {@code c1} equals to {@code c2} then {@code c1} is equal to {@code c2}</li>
+   *   <li>If {@code c1} is assignable from {@code c2} then {@code c1} is greater than {@code c2}</li>
+   *   <li>If {@code c2} is assignable from {@code c1} then {@code c1} is lesser than {@code c2}</li>
+   *   <li>If the declaring class of {@code c1} is not {@code null} but the declaring class of {@code c2} is null then {@code c1} is greater than {@code c1}</li>
+   * </ul>
+   * @param c1
+   * @param c2
+   * @return
+   */
   static int compare(@NotNull Class<?> c1, @NotNull Class<?> c2) {
     if (c1.equals(c2)) {
       return 0;
