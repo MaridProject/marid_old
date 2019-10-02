@@ -21,19 +21,27 @@ package org.marid.types;
  * #L%
  */
 
-import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
-import java.lang.reflect.Member;
-import java.lang.reflect.Modifier;
 
+/**
+ * Utility methods for classes.
+ */
 public interface Classes {
 
+  /**
+   * Empty reusable array of classes
+   */
   Class<?>[] EMPTY_CLASSES = {};
 
+  /**
+   * Checks whether the given type is public.
+   * @param type A type.
+   * @return True if the given class is accessible from the public lookup: {@link MethodHandles#publicLookup()}.
+   */
   static boolean isPublic(@NotNull Class<?> type) {
     try {
       MethodHandles.publicLookup().accessClass(type);
@@ -43,39 +51,22 @@ public interface Classes {
     }
   }
 
+  /**
+   * Constructs a new array instance based on the given component type.
+   * @param componentType A component type.
+   * @return Array class instance.
+   */
   @NotNull
   static Class<?> arrayClass(@NotNull Class<?> componentType) {
     return Array.newInstance(componentType, 0).getClass();
   }
 
-  static boolean notObject(@NotNull Class<?> type) {
-    return type != Object.class;
-  }
-
-  static boolean hasAll(@NotNull Class<?> type, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
-    return (type.getModifiers() & modifiers) == modifiers;
-  }
-
-  static boolean hasAll(@NotNull Member member, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
-    return (member.getModifiers() & modifiers) == modifiers;
-  }
-
-  static boolean hasAny(@NotNull Class<?> type, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
-    return (type.getModifiers() & modifiers) != 0;
-  }
-
-  static boolean hasAny(@NotNull Member member, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
-    return (member.getModifiers() & modifiers) != 0;
-  }
-
-  static boolean hasNone(@NotNull Class<?> type, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
-    return (type.getModifiers() & modifiers) == 0;
-  }
-
-  static boolean hasNone(@NotNull Member member, @MagicConstant(flagsFromClass = Modifier.class) int modifiers) {
-    return (member.getModifiers() & modifiers) == 0;
-  }
-
+  /**
+   * Checks whether the given type is a wrapper.
+   * @param type A class.
+   * @return {@code true} if the given type is a wrapper class, {@code false} otherwise.
+   * @see jdk.dynalink.linker.support.TypeUtilities#isWrapperType(Class)
+   */
   static boolean isWrapper(@NotNull Class<?> type) {
     return type == Integer.class
         || type == Long.class
@@ -88,6 +79,14 @@ public interface Classes {
         || type == Void.class;
   }
 
+  /**
+   * Returns a wrapper type for a primitive type or the given type itself. The main difference from
+   * the {@link jdk.dynalink.linker.support.TypeUtilities#getWrapperType(Class)} is that if the given
+   * type represents a non-primitive class then this class will be returned instead of {@code null}.
+   * @param type A class.
+   * @return A wrapper class for any primitive type or the passed type itself.
+   * @see jdk.dynalink.linker.support.TypeUtilities#getWrapperType(Class)
+   */
   @NotNull
   static Class<?> wrapper(@NotNull Class<?> type) {
     if (type.isPrimitive()) {
@@ -104,6 +103,12 @@ public interface Classes {
     return type;
   }
 
+  /**
+   * Returns a primitive class if the given type is a wrapper class.
+   * @param type A class.
+   * @return A primitive class if the given class is a wrapper class, {@code null} otherwise.
+   * @see jdk.dynalink.linker.support.TypeUtilities#getPrimitiveType(Class)
+   */
   @Nullable
   static Class<?> primitive(@NotNull Class<?> type) {
     if (type == Integer.class) return int.class;
@@ -118,6 +123,12 @@ public interface Classes {
     else return null;
   }
 
+  /**
+   * Checks whether the {@code target} is assignable from {@code source}
+   * @param target Target class.
+   * @param source Source class.
+   * @return {@code true} if the {@code target} is assignable from {@code source}; {@code false} otherwise.
+   */
   static boolean isAssignableFrom(@NotNull Class<?> target, @NotNull Class<?> source) {
     if (target.isAssignableFrom(source)) {
       return true;

@@ -75,14 +75,12 @@
     <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
 
     <java.version>13</java.version>
-    <test.java.version>13</test.java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
-    <maven.compiler.testRelease>${test.java.version}</maven.compiler.testRelease>
+    <maven.compiler.testRelease>${java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <maven.compiler.testSource>${test.java.version}</maven.compiler.testSource>
-    <maven.compiler.testTarget>${test.java.version}</maven.compiler.testTarget>
-    <kotlin.version>1.3.50</kotlin.version>
+    <maven.compiler.testSource>${java.version}</maven.compiler.testSource>
+    <maven.compiler.testTarget>${java.version}</maven.compiler.testTarget>
 
     <repo-id>sourceforge</repo-id>
     <repo-name>sourceforge</repo-name>
