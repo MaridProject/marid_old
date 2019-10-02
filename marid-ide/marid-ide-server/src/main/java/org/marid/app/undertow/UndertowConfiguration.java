@@ -35,7 +35,10 @@ import org.xnio.Options;
 
 import javax.net.ssl.SSLContext;
 
-import static io.undertow.UndertowOptions.*;
+import static io.undertow.UndertowOptions.ALWAYS_SET_KEEP_ALIVE;
+import static io.undertow.UndertowOptions.ENABLE_HTTP2;
+import static io.undertow.UndertowOptions.HTTP2_SETTINGS_ENABLE_PUSH;
+import static io.undertow.UndertowOptions.NO_REQUEST_TIMEOUT;
 import static io.undertow.security.api.AuthenticationMode.CONSTRAINT_DRIVEN;
 
 @Component
