@@ -163,11 +163,11 @@ class TypeResolutionTest extends TypeSugar {
         ),
         arguments(
             List.of(int.class, long.class),
-            TypeResolution.commonTypes(Integer.class, Long.class)
+            TypeResolution.commonTypes(List.of(Integer.class, Long.class)::stream)
         ),
         arguments(
             List.of(int.class, BigInteger.class),
-            TypeResolution.commonTypes(Integer.class, BigInteger.class)
+            TypeResolution.commonTypes(List.of(Integer.class, BigInteger.class)::stream)
         ),
         arguments(
             List.of(BigInteger.class, BigDecimal.class),
@@ -183,7 +183,7 @@ class TypeResolutionTest extends TypeSugar {
   @ParameterizedTest
   @MethodSource("commonTypesData")
   void commonTypes(List<Type> types, List<Type> expected) {
-    final var actual = TypeResolution.commonTypes(types.toArray(Type[]::new));
+    final var actual = TypeResolution.commonTypes(types::stream);
     assertEquals(expected, actual);
   }
 

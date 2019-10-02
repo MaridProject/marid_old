@@ -28,7 +28,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -78,12 +77,7 @@ public interface TypeResolution {
   }
 
   @NotNull
-  static List<@NotNull Type> commonTypes(@NotNull Type... types) {
-    return commonTypes(() -> Arrays.stream(types));
-  }
-
-  @NotNull
-  static List<@NotNull Type> commonTypes(@NotNull Supplier<@NotNull Stream<@NotNull Type>> typesSupplier) {
+  static List<@NotNull Type> commonTypes(@NotNull Supplier<@NotNull Stream<? extends @NotNull Type>> typesSupplier) {
     return Stream.concat(
         typesSupplier.get().flatMap(t -> TypeStreams.superclasses(t)
             .filter(s -> typesSupplier.get().filter(type -> type != t).allMatch(type -> isAssignableFrom(s, type)))
@@ -95,12 +89,7 @@ public interface TypeResolution {
   }
 
   @NotNull
-  static Type commonType(@NotNull Type... types) {
-    return commonType(() -> Arrays.stream(types));
-  }
-
-  @NotNull
-  static Type commonType(@NotNull Supplier<@NotNull Stream<@NotNull Type>> typesSupplier) {
+  static Type commonType(@NotNull Supplier<@NotNull Stream<? extends @NotNull Type>> typesSupplier) {
     return WildcardTypes.wildcard(commonTypes(typesSupplier));
   }
 
