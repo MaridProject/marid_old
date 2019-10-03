@@ -193,7 +193,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.5.1</version>
+        <version>5.5.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -299,7 +299,11 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.1.1</version>
+          <configuration>
+            <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+            <failOnError>false</failOnError>
+          </configuration>
         </plugin>
 
         <plugin>
@@ -353,6 +357,11 @@
         <plugin>
           <artifactId>maven-invoker-plugin</artifactId>
           <version>3.2.0</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-toolchains-plugin</artifactId>
+          <version>3.0.0</version>
         </plugin>
 
         <plugin>
@@ -488,6 +497,10 @@
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-toolchains-plugin</artifactId>
+      </plugin>
     </plugins>
     <extensions>
       <extension>
@@ -525,6 +538,17 @@
         <plugins>
           <plugin>
             <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
             <executions>
               <execution>
                 <goals>
