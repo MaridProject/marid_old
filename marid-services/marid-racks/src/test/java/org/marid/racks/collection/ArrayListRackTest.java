@@ -1,8 +1,8 @@
-package org.marid.runtime.model;
+package org.marid.racks.collection;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-racks
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,7 +21,14 @@ package org.marid.runtime.model;
  * #L%
  */
 
-public abstract class AbstractCellar {
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-  public abstract void run() throws Exception;
+@Tag("normal")
+class ArrayListRackTest {
+
+  @Test
+  void testInference() {
+    final var rack = new ArrayListRack<>("a", 1);
+  }
 }

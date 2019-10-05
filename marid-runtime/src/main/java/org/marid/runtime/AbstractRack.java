@@ -1,4 +1,4 @@
-package org.marid.runtime.model;
+package org.marid.runtime;
 
 /*-
  * #%L
@@ -23,32 +23,33 @@ package org.marid.runtime.model;
 
 import org.marid.runtime.exception.RackCreationException;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractRack<E> {
 
-  private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
-  private static final ClassValue<AtomicInteger> RACK_COUNTS = new ClassValue<>() {
-    @Override
-    protected AtomicInteger computeValue(Class<?> type) {
-      return new AtomicInteger();
-    }
-  };
-
-  public final Class<?> caller;
+  public final Class<? extends AbstractCellar> caller;
   protected final E instance;
-  protected final int index;
 
   public AbstractRack(Callable<E> instanceSupplier) {
-    this.caller = STACK_WALKER.getCallerClass();
-    this.index = RACK_COUNTS.get(caller).getAndIncrement();
+    caller = Deployment.STACK_WALKER.getCallerClass().asSubclass(AbstractCellar.class);
 
-    deployment().racks.add(this);
-
+    final AbstractCellar cellar;
     try {
-      this.instance = instanceSupplier.call();
+      final var handle = MethodHandles.publicLookup().findStatic(caller, "provider", MethodType.methodType(caller));
+      cellar = (AbstractCellar) handle.invokeExact(); // should be a singleton instance
     } catch (Throwable e) {
+      throw new IllegalStateException("Unable to find a 'provider' method of " + caller);
+    }
+    try {
+      instance = instanceSupplier.call();
+    } catch (Throwable e) {
+      try {
+        cellar.close();
+      } catch (Throwable ce) {
+        e.addSuppressed(ce);
+      }
       throw new RackCreationException(caller, e);
     }
   }
@@ -61,19 +62,6 @@ public abstract class AbstractRack<E> {
       }
     } catch (Throwable e) {
       throw new RackCreationException(caller, e);
-    }
-  }
-
-  protected Deployment deployment() {
-    return classLoader().deployment;
-  }
-
-  protected DeploymentClassLoader classLoader() {
-    final var current = getClass().getClassLoader();
-    if (current instanceof DeploymentClassLoader) {
-      return (DeploymentClassLoader) current;
-    } else {
-      return (DeploymentClassLoader) Thread.currentThread().getContextClassLoader();
     }
   }
 

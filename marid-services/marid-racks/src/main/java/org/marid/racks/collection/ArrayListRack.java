@@ -23,7 +23,7 @@ package org.marid.racks.collection;
 
 import org.marid.runtime.annotation.In;
 import org.marid.runtime.annotation.Rack;
-import org.marid.runtime.model.AbstractRack;
+import org.marid.runtime.AbstractRack;
 
 import java.util.ArrayList;
 import java.util.Arrays;

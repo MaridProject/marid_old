@@ -1,4 +1,4 @@
-package org.marid.runtime.model;
+package org.marid.runtime.exception;
 
 /*-
  * #%L
@@ -21,15 +21,16 @@ package org.marid.runtime.model;
  * #L%
  */
 
-import java.net.URL;
-import java.net.URLClassLoader;
+import org.marid.runtime.AbstractCellar;
 
-final class DeploymentClassLoader extends URLClassLoader {
+public class CellarCloseException extends RuntimeException {
 
-  final Deployment deployment;
+  public final Class<? extends AbstractCellar> cellarClass;
+  public final AbstractCellar cellar;
 
-  DeploymentClassLoader(URL[] urls, Deployment deployment) {
-    super(urls, Thread.currentThread().getContextClassLoader());
-    this.deployment = deployment;
+  public CellarCloseException(Class<? extends AbstractCellar> cellarClass, AbstractCellar cellar, Throwable cause) {
+    super("Cellar close exception: " + cellarClass.getSimpleName(), cause);
+    this.cellarClass = cellarClass;
+    this.cellar = cellar;
   }
 }

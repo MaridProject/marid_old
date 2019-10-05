@@ -24,7 +24,7 @@ package org.marid.racks.net;
 import org.marid.runtime.annotation.In;
 import org.marid.runtime.annotation.Out;
 import org.marid.runtime.annotation.Rack;
-import org.marid.runtime.model.AbstractRack;
+import org.marid.runtime.AbstractRack;
 
 import java.io.IOException;
 import java.net.InetAddress;

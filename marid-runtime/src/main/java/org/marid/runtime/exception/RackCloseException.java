@@ -21,7 +21,7 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.model.AbstractRack;
+import org.marid.runtime.AbstractRack;
 
 public class RackCloseException extends RuntimeException {
 

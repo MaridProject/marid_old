@@ -27,7 +27,11 @@ import org.marid.project.ivy.infrastructure.BaseMessageLogger;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 
-import static org.apache.ivy.util.Message.*;
+import static org.apache.ivy.util.Message.MSG_DEBUG;
+import static org.apache.ivy.util.Message.MSG_ERR;
+import static org.apache.ivy.util.Message.MSG_INFO;
+import static org.apache.ivy.util.Message.MSG_VERBOSE;
+import static org.apache.ivy.util.Message.MSG_WARN;
 
 @Component
 public class IvyLogHandler implements BaseMessageLogger {
@@ -47,18 +51,12 @@ public class IvyLogHandler implements BaseMessageLogger {
 
   private System.Logger.Level level(int level) {
     switch (level) {
-      case MSG_INFO:
-        return System.Logger.Level.INFO;
-      case MSG_ERR:
-        return System.Logger.Level.ERROR;
-      case MSG_DEBUG:
-        return System.Logger.Level.DEBUG;
-      case MSG_VERBOSE:
-        return System.Logger.Level.TRACE;
-      case MSG_WARN:
-        return System.Logger.Level.WARNING;
-      default:
-        return System.Logger.Level.OFF;
+      case MSG_INFO: return System.Logger.Level.INFO;
+      case MSG_ERR: return System.Logger.Level.ERROR;
+      case MSG_DEBUG: return System.Logger.Level.DEBUG;
+      case MSG_VERBOSE: return System.Logger.Level.TRACE;
+      case MSG_WARN: return System.Logger.Level.WARNING;
+      default: return System.Logger.Level.OFF;
     }
   }
 

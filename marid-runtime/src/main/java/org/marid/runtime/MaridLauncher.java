@@ -21,11 +21,10 @@
 
 package org.marid.runtime;
 
-import org.marid.runtime.model.Deployment;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author Dmitry Ovchinnikov
@@ -39,8 +38,22 @@ public class MaridLauncher {
     }
 
     try (final var deployment = new Deployment(new URL(args[0]), List.of(Arrays.copyOfRange(args, 1, args.length)))) {
-      final var thread = new Thread(null, deployment::run, "marid");
-      thread.join();
+      deployment.start();
+
+      final var scanner = new Scanner(System.in);
+      while (scanner.hasNextLine()) {
+        final var cmd = scanner.nextLine().trim();
+        switch (cmd) {
+          case "q":
+          case "quit":
+            deployment.stop();
+            break;
+          case "h":
+          case "halt":
+
+            break;
+        }
+      }
     }
   }
 }

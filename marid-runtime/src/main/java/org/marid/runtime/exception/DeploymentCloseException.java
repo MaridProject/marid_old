@@ -21,18 +21,14 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.model.Deployment;
+import org.marid.runtime.Deployment;
 
 public class DeploymentCloseException extends RuntimeException {
 
-  private final Deployment deployment;
+  public final Deployment deployment;
 
   public DeploymentCloseException(Deployment deployment) {
     super("Unable to close " + deployment);
     this.deployment = deployment;
-  }
-
-  public Deployment getDeployment() {
-    return deployment;
   }
 }

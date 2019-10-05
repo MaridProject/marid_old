@@ -1,4 +1,4 @@
-package org.marid.runtime.exception;
+package org.marid.runtime;
 
 /*-
  * #%L
@@ -21,18 +21,18 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.Deployment;
+import java.util.LinkedHashMap;
 
-public class DeploymentStartException extends RuntimeException {
+public abstract class AbstractCellar implements AutoCloseable {
 
-  private final Deployment deployment;
+  private final LinkedHashMap<String, AbstractRack<?>> racks = new LinkedHashMap<>();
 
-  public DeploymentStartException(Deployment deployment, Throwable e) {
-    super("Unable to start " + deployment, e);
-    this.deployment = deployment;
+  public final AbstractRack<?> $(String name) {
+    return racks.get(name);
   }
 
-  public Deployment getDeployment() {
-    return deployment;
+  @Override
+  public void close() {
+
   }
 }

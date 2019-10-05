@@ -1,4 +1,4 @@
-package org.marid.runtime.model;
+package org.marid.runtime;
 
 /*-
  * #%L
@@ -10,17 +10,18 @@ package org.marid.runtime.model;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.exception.DeploymentCloseException;
 import org.marid.runtime.exception.DeploymentStartException;
 
@@ -28,35 +29,50 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.io.UncheckedIOException;
+import java.lang.ref.Cleaner;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.zip.ZipInputStream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public final class Deployment implements AutoCloseable {
 
+  private static final InheritableThreadLocal<Deployment> DEPLOYMENT = new InheritableThreadLocal<>();
+  static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+
+  private final Cleaner cleaner = Cleaner.create();
   private final Path deployment;
   private final Path deps;
   private final Path resources;
-  private final DeploymentClassLoader classLoader;
-  final LinkedList<AbstractRack<?>> racks = new LinkedList<>();
+  private final URLClassLoader classLoader;
+  private final LinkedHashMap<Class<? extends AbstractCellar>, AbstractCellar> cellars = new LinkedHashMap<>();
+  private final ThreadPoolExecutor executor;
   public final List<String> args;
 
   public Deployment(URL zipFile, List<String> args) throws IOException {
     this.args = args;
     try {
       deployment = Files.createTempDirectory("marid");
+      executor = new ThreadPoolExecutor(1, 1, 0L, SECONDS, new SynchronousQueue<>(), r -> new Thread(r, getId()));
+      cleaner.register(this, executor::shutdown);
 
-      try (final var is = new ZipInputStream(zipFile.openStream(), StandardCharsets.UTF_8)) {
+      try (final var is = new ZipInputStream(zipFile.openStream(), UTF_8)) {
         unpack(is);
       }
 
@@ -112,14 +128,14 @@ public final class Deployment implements AutoCloseable {
     final var propsFile = deployment.resolve("system.properties");
     if (Files.isRegularFile(propsFile)) {
       final var props = new Properties();
-      try (final var reader = Files.newBufferedReader(propsFile, StandardCharsets.UTF_8)) {
+      try (final var reader = Files.newBufferedReader(propsFile, UTF_8)) {
         props.load(reader);
       }
       props.forEach(System.getProperties()::putIfAbsent);
     }
   }
 
-  private DeploymentClassLoader classLoader() throws IOException {
+  private URLClassLoader classLoader() throws IOException {
     final var urls = new ArrayList<URL>();
     urls.add(deployment.resolve("bundle.jar").toUri().toURL());
     urls.add(resources.toUri().toURL());
@@ -128,18 +144,48 @@ public final class Deployment implements AutoCloseable {
         urls.add(path.toUri().toURL());
       }
     }
-    return new DeploymentClassLoader(urls.toArray(URL[]::new), this);
+    return new URLClassLoader(urls.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
   }
 
   public String getId() {
     return deployment.getFileName().toString();
   }
 
-  public void run() {
+  public <C extends AbstractCellar> C get(Class<C> cellarClass) {
+    return cellarClass.cast(cellars.get(cellarClass));
+  }
+
+  public static Deployment $() {
+    return DEPLOYMENT.get();
+  }
+
+  public static Cleaner getCleaner() {
+    return DEPLOYMENT.get().cleaner;
+  }
+
+  public static <C extends AbstractCellar> C $(Class<C> cellarClass) {
+    return DEPLOYMENT.get().get(cellarClass);
+  }
+
+  void start() {
+    executor.execute(this::run);
+  }
+
+  boolean stop() {
+    try {
+      executor.execute(this::close);
+      return true;
+    } catch (RejectedExecutionException e) {
+      return false;
+    }
+  }
+
+  private void run() {
     Thread.currentThread().setContextClassLoader(classLoader);
+    DEPLOYMENT.set(this);
     try {
       for (final var cellar : ServiceLoader.load(AbstractCellar.class, classLoader)) {
-        cellar.run();
+        cellars.put(cellar.getClass(), cellar);
       }
     } catch (Throwable e) {
       final var exception = new DeploymentStartException(this, e);
@@ -157,14 +203,16 @@ public final class Deployment implements AutoCloseable {
   public void close() {
     final var exception = new DeploymentCloseException(this);
 
-    for (final var it = racks.descendingIterator(); it.hasNext(); ) {
-      final var rack = it.next();
+    final var entries = new LinkedList<>(cellars.entrySet());
+    cellars.clear();
+    for (final var it = entries.descendingIterator(); it.hasNext(); ) {
+      final var entry = it.next();
+      final var cellarClass = entry.getKey();
+      final var cellarInstance = entry.getValue();
       try {
-        if (rack instanceof AutoCloseable) {
-          ((AutoCloseable) rack).close();
-        }
-      } catch (Throwable x) {
-        exception.addSuppressed(x);
+        cellarInstance.close();
+      } catch (Throwable e) {
+        exception.addSuppressed(new CellarCloseException(cellarClass, cellarInstance, e));
       } finally {
         it.remove();
       }
@@ -189,8 +237,6 @@ public final class Deployment implements AutoCloseable {
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
           try {
             Files.deleteIfExists(file);
-          } catch (IOException e) {
-            exception.addSuppressed(new UncheckedIOException("Unable to delete " + file, e));
           } catch (Throwable e) {
             exception.addSuppressed(e);
           }
@@ -205,10 +251,11 @@ public final class Deployment implements AutoCloseable {
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+          if (exc != null) {
+            exception.addSuppressed(exc);
+          }
           try {
             Files.deleteIfExists(dir);
-          } catch (IOException e) {
-            exception.addSuppressed(new UncheckedIOException("Unable to delete " + dir, e));
           } catch (Throwable e) {
             exception.addSuppressed(e);
           }
