@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.exception;
 
 /*-
  * #%L
@@ -21,14 +21,9 @@ package org.marid.runtime;
  * #L%
  */
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+public class DeploymentBuildException extends RuntimeException {
 
-@Tag("normal")
-class CellarTest {
-
-  @Test
-  void test() {
-
+  public DeploymentBuildException() {
+    super("Deployment build exception");
   }
 }

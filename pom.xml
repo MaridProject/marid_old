@@ -266,7 +266,6 @@
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
             <parameters>true</parameters>
-            <compilerReuseStrategy>reuseSame</compilerReuseStrategy>
             <compilerArgs>
               <arg>-Xlint:unchecked</arg>
             </compilerArgs>

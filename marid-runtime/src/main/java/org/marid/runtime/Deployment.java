@@ -10,12 +10,12 @@ package org.marid.runtime;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -24,19 +24,16 @@ package org.marid.runtime;
 import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.exception.DeploymentCloseException;
 import org.marid.runtime.exception.DeploymentStartException;
+import org.marid.runtime.util.FileUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
-import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -60,6 +57,7 @@ public final class Deployment implements AutoCloseable {
   private final Path deployment;
   private final Path deps;
   private final Path resources;
+  private final Path classes;
   private final URLClassLoader classLoader;
   private final LinkedHashMap<Class<? extends AbstractCellar>, AbstractCellar> cellars = new LinkedHashMap<>();
   private final ThreadPoolExecutor executor;
@@ -76,6 +74,7 @@ public final class Deployment implements AutoCloseable {
         unpack(is);
       }
 
+      classes = deployment.resolve("classes");
       resources = deployment.resolve("resources");
       deps = deployment.resolve("deps");
 
@@ -137,7 +136,7 @@ public final class Deployment implements AutoCloseable {
 
   private URLClassLoader classLoader() throws IOException {
     final var urls = new ArrayList<URL>();
-    urls.add(deployment.resolve("bundle.jar").toUri().toURL());
+    urls.add(classes.toUri().toURL());
     urls.add(resources.toUri().toURL());
     try (final var dirStream = Files.newDirectoryStream(deps, "*.jar")) {
       for (final var path : dirStream) {
@@ -227,41 +226,7 @@ public final class Deployment implements AutoCloseable {
     }
 
     try {
-      Files.walkFileTree(deployment, new FileVisitor<>() {
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-          return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-          try {
-            Files.deleteIfExists(file);
-          } catch (Throwable e) {
-            exception.addSuppressed(e);
-          }
-          return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) {
-          exception.addSuppressed(new UncheckedIOException("Unable to visit " + file, exc));
-          return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-          if (exc != null) {
-            exception.addSuppressed(exc);
-          }
-          try {
-            Files.deleteIfExists(dir);
-          } catch (Throwable e) {
-            exception.addSuppressed(e);
-          }
-          return FileVisitResult.CONTINUE;
-        }
-      });
+      FileUtils.deleteFile(deployment, exception);
     } catch (Throwable e) {
       exception.addSuppressed(e);
     }

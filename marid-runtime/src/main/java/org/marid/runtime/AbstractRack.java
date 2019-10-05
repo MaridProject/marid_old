@@ -54,17 +54,6 @@ public abstract class AbstractRack<E> {
     }
   }
 
-  public void init(AutoCloseable initAction) {
-    try {
-      initAction.close();
-      if (this instanceof Runnable) {
-        ((Runnable) this).run();
-      }
-    } catch (Throwable e) {
-      throw new RackCreationException(caller, e);
-    }
-  }
-
   public final E get() {
     return instance;
   }

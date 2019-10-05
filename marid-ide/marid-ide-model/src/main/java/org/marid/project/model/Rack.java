@@ -33,14 +33,12 @@ import java.util.stream.Collectors;
 public final class Rack extends AbstractEntity {
 
   private final ArrayList<Argument> arguments;
-  private final ArrayList<RackInit> initializers;
 
   private String name;
 
   public Rack(@NotNull String name) {
     this.name = name;
     this.arguments = new ArrayList<>();
-    this.initializers = new ArrayList<>();
   }
 
   public Rack(@NotNull Element element) {
@@ -49,9 +47,6 @@ public final class Rack extends AbstractEntity {
     this.arguments = XmlStreams.elementsByTag(element, "args")
         .flatMap(e -> XmlStreams.children(e, Element.class))
         .map(ArgumentFactory::argument)
-        .collect(Collectors.toCollection(ArrayList::new));
-    this.initializers = XmlStreams.elementsByTag(element, "init")
-        .map(RackInit::new)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -71,17 +66,12 @@ public final class Rack extends AbstractEntity {
     return arguments;
   }
 
-  public ArrayList<RackInit> getInitializers() {
-    return initializers;
-  }
-
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
     if (!arguments.isEmpty()) {
       XmlUtils.append(element, "args", e -> arguments.forEach(a -> XmlUtils.appendTo(a, e)));
     }
-    initializers.forEach(i -> XmlUtils.appendTo(i, element));
   }
 
   @NotNull
@@ -92,7 +82,7 @@ public final class Rack extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, arguments, initializers);
+    return Objects.hash(name, arguments);
   }
 
   @Override
@@ -103,8 +93,7 @@ public final class Rack extends AbstractEntity {
     if (obj instanceof Rack) {
       final var that = (Rack) obj;
       return Objects.equals(this.name, that.name)
-          && Objects.equals(this.arguments, that.arguments)
-          && Objects.equals(this.initializers, that.initializers);
+          && Objects.equals(this.arguments, that.arguments);
     }
     return false;
   }

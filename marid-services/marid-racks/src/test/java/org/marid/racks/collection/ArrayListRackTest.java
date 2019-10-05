@@ -29,6 +29,5 @@ class ArrayListRackTest {
 
   @Test
   void testInference() {
-    final var rack = new ArrayListRack<>("a", 1);
   }
 }
