@@ -25,14 +25,15 @@ import org.marid.runtime.AbstractCellar;
 import org.marid.runtime.Deployment;
 import org.marid.runtime.exception.DeploymentBuildException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +54,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public final class DeploymentBuilder {
 
   private static final System.Logger LOGGER = System.getLogger(DeploymentBuilder.class.getName());
-  private static final int CHUNK_SIZE = 0xFFFF;
+  private static final int BUFFER_SIZE = 0xFFFF;
 
   private final String name;
   private final LinkedList<URL> deps = new LinkedList<>();
@@ -70,14 +71,51 @@ public final class DeploymentBuilder {
     return this;
   }
 
+  private DeploymentBuilder add(List<String> path, LinkedHashMap<List<String>, byte[]> map, Input stream) {
+    try {
+      final var bos = new ByteArrayOutputStream();
+      try (final var is = stream.inputStream()) {
+        is.transferTo(bos);
+      }
+      map.put(path, bos.toByteArray());
+      return this;
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
   public DeploymentBuilder addClass(List<String> path, byte[] content) {
     classes.put(path, content);
     return this;
   }
 
+  public DeploymentBuilder addClass(List<String> path, Path file) {
+    return add(path, classes, () -> Files.newInputStream(file));
+  }
+
+  public DeploymentBuilder addClass(List<String> path, File file) {
+    return add(path, classes, () -> new FileInputStream(file));
+  }
+
+  public DeploymentBuilder addClass(List<String> path, URL url) {
+    return add(path, classes, url::openStream);
+  }
+
   public DeploymentBuilder addResource(List<String> path, byte[] content) {
     resources.put(path, content);
     return this;
+  }
+
+  public DeploymentBuilder addResource(List<String> path, Path file) {
+    return add(path, resources, () -> Files.newInputStream(file));
+  }
+
+  public DeploymentBuilder addResource(List<String> path, File file) {
+    return add(path, resources, () -> new FileInputStream(file));
+  }
+
+  public DeploymentBuilder addResource(List<String> path, URL url) {
+    return add(path, resources, url::openStream);
   }
 
   public DeploymentBuilder addCellar(String cellar) {
@@ -169,36 +207,32 @@ public final class DeploymentBuilder {
 
         // create zip file
         final var outputZip = tempDir.resolve(name + ".zip");
-        final var crc = new CRC32();
         final var tempDirUri = tempDir.toUri();
         try (final var zos = new ZipOutputStream(Files.newOutputStream(outputZip), UTF_8)) {
           zos.setLevel(Deflater.BEST_COMPRESSION);
           try (final var stream = Files.walk(tempDir)) {
-            final byte[] chunk = new byte[CHUNK_SIZE];
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            final var crc = new CRC32();
             stream.filter(f -> !outputZip.equals(f)).forEach(file -> {
               final var relativePath = tempDirUri.relativize(file.toUri()).getPath();
               final var zipEntry = new ZipEntry(relativePath);
               try {
                 zos.putNextEntry(zipEntry);
                 if (Files.isRegularFile(file)) {
-                  try (final var channel = FileChannel.open(file, StandardOpenOption.READ)) {
-                    final int size = (int) channel.size();
-                    final var data = channel.map(FileChannel.MapMode.READ_ONLY, 0L, size);
+                  final var size = Files.size(file);
+                  try (final var is = Files.newInputStream(file)) {
+                    while (true) {
+                      final int n = is.read(buffer);
+                      if (n < 0) {
+                        break;
+                      }
+                      crc.update(buffer, 0, n);
+                      zos.write(buffer, 0, n);
+                    }
                     zipEntry.setSize(size);
                     zipEntry.setLastModifiedTime(Files.getLastModifiedTime(file));
-                    zipEntry.setCrc(crc32(crc, data));
-
-                    final int chunks = size / CHUNK_SIZE;
-                    for (int i = 0; i < chunks; i++) {
-                      data.get(i * CHUNK_SIZE, chunk);
-                      zos.write(chunk);
-                    }
-
-                    final int rest = size % CHUNK_SIZE;
-                    if (rest > 0) {
-                      data.get(size - rest - 1, chunk, 0, rest);
-                      zos.write(chunk, 0, rest);
-                    }
+                    zipEntry.setCrc(crc.getValue());
+                    crc.reset();
                   }
                 }
                 zos.closeEntry();
@@ -222,10 +256,8 @@ public final class DeploymentBuilder {
     }
   }
 
-  private long crc32(CRC32 crc32, ByteBuffer byteBuffer) {
-    crc32.update(byteBuffer);
-    final long result = crc32.getValue();
-    crc32.reset();
-    return result;
+  private interface Input {
+
+    InputStream inputStream() throws IOException;
   }
 }
