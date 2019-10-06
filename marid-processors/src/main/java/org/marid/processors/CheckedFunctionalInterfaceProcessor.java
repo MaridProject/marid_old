@@ -273,7 +273,7 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
   }
 
   @Override
-  public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
+  public Iterable<? extends Completion> getCompletions(Element e, AnnotationMirror a, ExecutableElement m, String text) {
     return List.of();
   }
 
