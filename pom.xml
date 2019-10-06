@@ -36,6 +36,7 @@
 
   <modules>
     <module>marid-test</module>
+    <module>marid-processors</module>
     <module>marid-services</module>
     <module>marid-util</module>
     <module>marid-runtime</module>
@@ -266,6 +267,7 @@
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
             <parameters>true</parameters>
+            <compilerReuseStrategy>reuseSame</compilerReuseStrategy>
             <compilerArgs>
               <arg>-Xlint:unchecked</arg>
             </compilerArgs>

@@ -19,6 +19,8 @@ ij_java_keep_simple_classes_in_one_line = true
 ij_java_keep_simple_methods_in_one_line = true
 ij_java_case_statement_on_separate_line = false
 ij_java_blank_lines_around_class = 0
+ij_java_blank_lines_around_method = 0
+ij_java_blank_lines_around_method_in_interface = 0
 
 [*.xml]
 indent_size = 2
