@@ -291,7 +291,8 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
     final var t = (TypeElement) type.asElement();
     final var args = type.getTypeArguments();
     final var vars = t.getTypeParameters().stream().map(TypeParameterElement::asType).collect(toList());
-    for (int i = 0; i < Math.min(vars.size(), args.size()); i++) {
+    final int l = Math.min(vars.size(), args.size());
+    for (int i = 0; i < l; i++) {
       map.put((TypeVariable) vars.get(i), args.get(i));
     }
     for (final var itf : t.getInterfaces()) {
