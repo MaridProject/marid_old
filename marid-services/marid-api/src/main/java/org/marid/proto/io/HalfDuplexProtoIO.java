@@ -21,8 +21,8 @@
 
 package org.marid.proto.io;
 
-import org.marid.io.IOBiConsumer;
-import org.marid.io.IOBiFunction;
+import org.marid.runtime.io.function.IOBiConsumer;
+import org.marid.runtime.io.function.IOBiFunction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,14 +51,14 @@ public class HalfDuplexProtoIO implements ProtoIO {
   }
 
   @Override
-  public void doWith(IOBiConsumer<InputStream, OutputStream> consumer) throws IOException {
+  public void doWith(IOBiConsumer<InputStream, OutputStream> consumer) {
     synchronized (delegate) {
       ProtoIO.super.doWith(consumer);
     }
   }
 
   @Override
-  public <T> T call(IOBiFunction<InputStream, OutputStream, T> function) throws IOException {
+  public <T> T call(IOBiFunction<InputStream, OutputStream, T> function) {
     synchronized (delegate) {
       return ProtoIO.super.call(function);
     }

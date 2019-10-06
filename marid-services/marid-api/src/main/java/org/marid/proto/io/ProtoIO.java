@@ -21,28 +21,27 @@
 
 package org.marid.proto.io;
 
-import org.marid.io.IOBiConsumer;
-import org.marid.io.IOBiFunction;
-import org.marid.io.IOCloseable;
+import org.marid.runtime.io.function.IOBiConsumer;
+import org.marid.runtime.io.function.IOBiFunction;
 
-import java.io.IOException;
+import java.io.Closeable;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
  * @author Dmitry Ovchinnikov
  */
-public interface ProtoIO extends IOCloseable {
+public interface ProtoIO extends Closeable {
 
   InputStream getInputStream();
 
   OutputStream getOutputStream();
 
-  default void doWith(IOBiConsumer<InputStream, OutputStream> consumer) throws IOException {
+  default void doWith(IOBiConsumer<InputStream, OutputStream> consumer) {
     consumer.accept(getInputStream(), getOutputStream());
   }
 
-  default <T> T call(IOBiFunction<InputStream, OutputStream, T> function) throws IOException {
+  default <T> T call(IOBiFunction<InputStream, OutputStream, T> function) {
     return function.apply(getInputStream(), getOutputStream());
   }
 }

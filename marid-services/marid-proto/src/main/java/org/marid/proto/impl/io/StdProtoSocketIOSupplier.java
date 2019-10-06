@@ -21,7 +21,7 @@
 
 package org.marid.proto.impl.io;
 
-import org.marid.io.IOSupplier;
+import org.marid.runtime.io.function.IOSupplier;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -43,7 +43,7 @@ public class StdProtoSocketIOSupplier implements IOSupplier<StdProtoSocketIO> {
   private Boolean keepAlive;
 
   @Override
-  public StdProtoSocketIO ioGet() throws IOException {
+  public StdProtoSocketIO getChecked() throws IOException {
     final Socket socket = new Socket();
     if (soTimeout > 0) {
       socket.setSoTimeout(soTimeout);

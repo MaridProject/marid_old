@@ -29,12 +29,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.marid.io.IOSupplier;
 import org.marid.proto.impl.StdProtoBus;
 import org.marid.proto.impl.StdProtoBusProps;
 import org.marid.proto.impl.StdProtoRoot;
 import org.marid.proto.impl.io.StdProtoSocketIO;
 import org.marid.proto.io.ProtoIO;
+import org.marid.runtime.io.function.IOSupplier;
 
 import java.lang.reflect.Field;
 import java.net.ServerSocket;

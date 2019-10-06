@@ -21,9 +21,9 @@
 
 package org.marid.proto;
 
-import org.marid.io.IOBiConsumer;
-import org.marid.io.IOBiFunction;
 import org.marid.proto.io.ProtoIO;
+import org.marid.runtime.io.function.IOBiConsumer;
+import org.marid.runtime.io.function.IOBiFunction;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
