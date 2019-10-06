@@ -23,6 +23,7 @@ package org.marid.processors;
 
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.Generated;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
@@ -47,6 +48,7 @@ import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -180,6 +182,11 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
               w.append("package ").append(targetPackageName).append(";\n\n");
 
               // interface header
+              w.append("@").append(Generated.class.getName())
+                  .append('(')
+                  .append("value = ").append('"').append("marid").append('"').append(", ")
+                  .append("date = ").append('"').append(Instant.now().toString()).append('"')
+                  .append(")\n");
               w.append('@').append(FunctionalInterface.class.getSimpleName()).append('\n');
               w.append("public interface ").append(name);
               final var typeVars = itfElement.getTypeParameters();
