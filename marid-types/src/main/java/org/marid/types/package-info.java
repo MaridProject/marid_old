@@ -8,6 +8,15 @@
  *   <li>get a type hierarchy (superclasses & interfaces) of the given generic type</li>
  * </ul>
  */
+@CheckedFunctionalInterface(
+    targetPackageName = "org.marid.types",
+    interfacePrefix = "Reflective",
+    checkedThrowableClasses = {ReflectiveOperationException.class},
+    wrapperExceptionClass = IllegalStateException.class,
+    functionalInterfaces = {
+        Supplier.class
+    }
+)
 package org.marid.types;
 /*-
  * #%L
@@ -29,3 +38,7 @@ package org.marid.types;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+
+import org.marid.processors.CheckedFunctionalInterface;
+
+import java.util.function.Supplier;

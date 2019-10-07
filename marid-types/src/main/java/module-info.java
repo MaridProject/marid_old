@@ -27,6 +27,7 @@ import org.marid.types.VarianceProvider;
 module marid.types {
 
   requires static org.jetbrains.annotations;
+  requires static marid.processors;
   requires static jdk.dynalink;
 
   exports org.marid.types;

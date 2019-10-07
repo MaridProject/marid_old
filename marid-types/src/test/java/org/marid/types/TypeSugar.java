@@ -92,7 +92,7 @@ public class TypeSugar {
 
   @NotNull
   protected static TypeVariable<?> v(@NotNull ReflectiveSupplier<? extends Executable> method, int index) {
-    return method.getSafe().getTypeParameters()[index];
+    return method.get().getTypeParameters()[index];
   }
 
   @NotNull
