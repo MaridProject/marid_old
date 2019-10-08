@@ -21,6 +21,10 @@ ij_java_case_statement_on_separate_line = false
 ij_java_blank_lines_around_class = 0
 ij_java_blank_lines_around_method = 0
 ij_java_blank_lines_around_method_in_interface = 0
+ij_java_blank_lines_around_field_in_interface = 0
+ij_java_blank_lines_after_anonymous_class_header = 0
+ij_java_blank_lines_around_field = 0
+ij_java_blank_lines_before_method_body = 0
 
 [*.xml]
 indent_size = 2
