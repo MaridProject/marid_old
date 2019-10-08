@@ -25,7 +25,7 @@ import org.marid.runtime.AbstractCellar;
 import org.marid.runtime.Deployment;
 import org.marid.runtime.exception.DeploymentBuildException;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -58,8 +58,8 @@ public final class DeploymentBuilder {
 
   private final String name;
   private final LinkedList<URL> deps = new LinkedList<>();
-  private final LinkedHashMap<List<String>, byte[]> classes = new LinkedHashMap<>();
-  private final LinkedHashMap<List<String>, byte[]> resources = new LinkedHashMap<>();
+  private final LinkedHashMap<List<String>, Input> classes = new LinkedHashMap<>();
+  private final LinkedHashMap<List<String>, Input> resources = new LinkedHashMap<>();
   private final LinkedList<String> cellars = new LinkedList<>();
 
   public DeploymentBuilder(String name) {
@@ -71,51 +71,44 @@ public final class DeploymentBuilder {
     return this;
   }
 
-  private DeploymentBuilder add(List<String> path, LinkedHashMap<List<String>, byte[]> map, Input stream) {
-    try {
-      final var bos = new ByteArrayOutputStream();
-      try (final var is = stream.inputStream()) {
-        is.transferTo(bos);
-      }
-      map.put(path, bos.toByteArray());
-      return this;
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
   public DeploymentBuilder addClass(List<String> path, byte[] content) {
-    classes.put(path, content);
+    classes.put(path, () -> new ByteArrayInputStream(content));
     return this;
   }
 
   public DeploymentBuilder addClass(List<String> path, Path file) {
-    return add(path, classes, () -> Files.newInputStream(file));
+    classes.put(path, () -> Files.newInputStream(file));
+    return this;
   }
 
   public DeploymentBuilder addClass(List<String> path, File file) {
-    return add(path, classes, () -> new FileInputStream(file));
+    classes.put(path, () -> new FileInputStream(file));
+    return this;
   }
 
   public DeploymentBuilder addClass(List<String> path, URL url) {
-    return add(path, classes, url::openStream);
+    classes.put(path, url::openStream);
+    return this;
   }
 
   public DeploymentBuilder addResource(List<String> path, byte[] content) {
-    resources.put(path, content);
+    resources.put(path, () -> new ByteArrayInputStream(content));
     return this;
   }
 
   public DeploymentBuilder addResource(List<String> path, Path file) {
-    return add(path, resources, () -> Files.newInputStream(file));
+    resources.put(path, () -> Files.newInputStream(file));
+    return this;
   }
 
   public DeploymentBuilder addResource(List<String> path, File file) {
-    return add(path, resources, () -> new FileInputStream(file));
+    resources.put(path, () -> new FileInputStream(file));
+    return this;
   }
 
   public DeploymentBuilder addResource(List<String> path, URL url) {
-    return add(path, resources, url::openStream);
+    resources.put(path, url::openStream);
+    return this;
   }
 
   public DeploymentBuilder addCellar(String cellar) {
@@ -156,7 +149,9 @@ public final class DeploymentBuilder {
             final var target = entry.getKey().stream().reduce(classes, Path::resolve, Path::resolve);
             if (target.startsWith(classes)) {
               Files.createDirectories(target.getParent());
-              Files.write(target, entry.getValue());
+              try (final var is = entry.getValue().inputStream()) {
+                Files.copy(is, target);
+              }
             } else {
               throw new IllegalArgumentException("Invalid class: " + entry.getKey().toString());
             }
@@ -181,7 +176,9 @@ public final class DeploymentBuilder {
             final var target = entry.getKey().stream().reduce(resources, Path::resolve, Path::resolve);
             if (target.startsWith(resources)) {
               Files.createDirectories(target.getParent());
-              Files.write(target, entry.getValue());
+              try (final var is = entry.getValue().inputStream()) {
+                Files.copy(is, target);
+              }
             } else {
               throw new IllegalArgumentException("Invalid resource: " + entry.getKey().toString());
             }
