@@ -245,7 +245,7 @@ public final class DeploymentBuilder {
           }
         }
 
-        return new Deployment(tempDir.toUri().toURL(), List.of(args));
+        return new Deployment(outputZip.toUri().toURL(), List.of(args));
       } finally {
         pool.shutdown();
         while (!pool.isTerminated()) {

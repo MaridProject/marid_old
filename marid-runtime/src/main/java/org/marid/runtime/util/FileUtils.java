@@ -29,6 +29,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -57,6 +58,9 @@ public interface FileUtils {
 
       @Override
       public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        if (exc instanceof NoSuchFileException) {
+          return FileVisitResult.CONTINUE;
+        }
         if (exceptionToFill != null) {
           exceptionToFill.addSuppressed(new UncheckedIOException("Unable to visit " + file, exc));
         } else {

@@ -10,12 +10,12 @@ package org.marid.runtime;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -40,13 +40,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.LinkedTransferQueue;
 import java.util.zip.ZipInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public final class Deployment implements AutoCloseable {
 
@@ -60,15 +57,48 @@ public final class Deployment implements AutoCloseable {
   private final Path classes;
   private final URLClassLoader classLoader;
   private final LinkedHashMap<Class<? extends AbstractCellar>, AbstractCellar> cellars = new LinkedHashMap<>();
-  private final ThreadPoolExecutor executor;
+  private final Thread thread;
+  private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
   public final List<String> args;
+
+  private volatile State state = State.NEW;
+  private volatile Throwable startError;
+  private volatile Throwable destroyError;
 
   public Deployment(URL zipFile, List<String> args) throws IOException {
     this.args = args;
     try {
       deployment = Files.createTempDirectory("marid");
-      executor = new ThreadPoolExecutor(1, 1, 0L, SECONDS, new SynchronousQueue<>(), r -> new Thread(r, getId()));
-      cleaner.register(this, executor::shutdown);
+      thread = new Thread(() -> {
+        try {
+          while (!Thread.currentThread().isInterrupted()) {
+            final var task = queue.poll();
+            if (task == null) {
+              Thread.onSpinWait();
+              continue;
+            }
+            switch (task) {
+              case START:
+                try {
+                  run();
+                } catch (Throwable e) {
+                  startError = e;
+                }
+                break;
+              case STOP:
+                try {
+                  destroy();
+                } catch (Throwable e) {
+                  destroyError = e;
+                }
+                break;
+            }
+          }
+        } finally {
+          destroy();
+        }
+      }, toString());
+      cleaner.register(this, thread::interrupt);
 
       try (final var is = new ZipInputStream(zipFile.openStream(), UTF_8)) {
         unpack(is);
@@ -84,7 +114,7 @@ public final class Deployment implements AutoCloseable {
       classLoader = classLoader();
     } catch (Throwable e) {
       try {
-        close();
+        destroy();
       } catch (Throwable x) {
         e.addSuppressed(x);
       }
@@ -99,6 +129,10 @@ public final class Deployment implements AutoCloseable {
 
         if (!target.startsWith(deployment)) {
           throw new StreamCorruptedException("Invalid entry: " + e.getName());
+        }
+
+        if (target.equals(deployment)) {
+          continue;
         }
 
         if (e.isDirectory()) {
@@ -116,10 +150,8 @@ public final class Deployment implements AutoCloseable {
   private void validate() throws IOException {
     Files.createDirectories(resources);
     Files.createDirectories(deps);
-
-    final var bundle = deployment.resolve("bundle.jar");
-    if (!Files.isRegularFile(bundle)) {
-      throw new FileNotFoundException(bundle.toString());
+    if (!Files.isDirectory(classes)) {
+      throw new FileNotFoundException(classes.toString());
     }
   }
 
@@ -166,40 +198,61 @@ public final class Deployment implements AutoCloseable {
     return DEPLOYMENT.get().get(cellarClass);
   }
 
-  void start() {
-    executor.execute(this::run);
-  }
-
-  boolean stop() {
-    try {
-      executor.execute(this::close);
-      return true;
-    } catch (RejectedExecutionException e) {
-      return false;
+  public void start() {
+    switch (thread.getState()) {
+      case NEW:
+        thread.start();
+        break;
+      case TERMINATED:
+        throw new IllegalStateException();
+    }
+    switch (state) {
+      case STARTING:
+      case RUNNING:
+      case TERMINATING:
+        return;
+      case NEW:
+      case TERMINATED:
+        queue.add(Command.START);
+        while (state != State.RUNNING || state != State.TERMINATED) {
+          Thread.onSpinWait();
+        }
+        if (startError != null) {
+          try {
+            throw startError;
+          } catch (RuntimeException | Error e) {
+            throw e;
+          } catch (Throwable e) {
+            throw new IllegalStateException(e);
+          }
+        }
+        break;
     }
   }
 
   private void run() {
+    state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
     DEPLOYMENT.set(this);
     try {
       for (final var cellar : ServiceLoader.load(AbstractCellar.class, classLoader)) {
         cellars.put(cellar.getClass(), cellar);
       }
+      state = State.RUNNING;
     } catch (Throwable e) {
       final var exception = new DeploymentStartException(this, e);
       try {
-        close();
+        destroy();
       } catch (Throwable ce) {
         exception.addSuppressed(ce);
       }
       throw exception;
     }
-    close();
+    destroy();
   }
 
-  @Override
-  public void close() {
+  private void destroy() {
+    state = State.TERMINATING;
     final var exception = new DeploymentCloseException(this);
 
     final var entries = new LinkedList<>(cellars.entrySet());
@@ -231,13 +284,35 @@ public final class Deployment implements AutoCloseable {
       exception.addSuppressed(e);
     }
 
+    state = State.TERMINATED;
+
     if (exception.getSuppressed().length > 0) {
       throw exception;
     }
   }
 
   @Override
-  public String toString() {
-    return deployment.toString();
+  public void close() throws Exception {
+    queue.add(Command.STOP);
+    while (state != State.TERMINATED) {
+      Thread.onSpinWait();
+    }
+    if (destroyError != null) {
+      try {
+        throw destroyError;
+      } catch (Exception | Error e) {
+        throw e;
+      } catch (Throwable e) {
+        throw new IllegalStateException(e);
+      }
+    }
   }
+
+  @Override
+  public String toString() {
+    return deployment.getFileName().toString();
+  }
+
+  public enum State {NEW, STARTING, RUNNING, TERMINATING, TERMINATED}
+  public enum Command {START, STOP}
 }

@@ -21,21 +21,20 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.marid.runtime.AbstractCellar;
 import org.marid.runtime.util.DeploymentBuilder;
 
 @Tag("normal")
-@Disabled
 class ArrayListRackTest {
 
   @Test
-  void testInference() {
+  void testInference() throws Exception {
     try (final var deployment = new DeploymentBuilder("test")
         .addCellar(TestCellar.class)
         .build()) {
+      deployment.start();
     }
   }
 

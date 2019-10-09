@@ -46,7 +46,7 @@ public class MaridLauncher {
         switch (cmd) {
           case "q":
           case "quit":
-            deployment.stop();
+            deployment.close();
             break;
           case "h":
           case "halt":
