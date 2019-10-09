@@ -10,6 +10,17 @@
 
   <artifactId>marid-spring</artifactId>
 
+  <properties>
+    <tests.opens>
+      --add-opens marid.spring/org.marid.spring=ALL-UNNAMED,spring.beans,spring.context
+      --add-opens marid.spring/org.marid.spring.annotation=ALL-UNNAMED,spring.beans,spring.context
+      --add-opens marid.spring/org.marid.spring.events=ALL-UNNAMED,spring.beans,spring.context
+      --add-opens marid.spring/org.marid.spring.init=ALL-UNNAMED,spring.beans,spring.context
+      --add-opens marid.spring/org.marid.spring.scope=ALL-UNNAMED,spring.core,spring.beans,spring.context
+      --add-opens marid.spring/org.marid.spring.utils=ALL-UNNAMED,spring.beans,spring.context
+    </tests.opens>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>

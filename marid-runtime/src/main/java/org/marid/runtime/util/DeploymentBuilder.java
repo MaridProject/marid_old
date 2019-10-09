@@ -116,6 +116,11 @@ public final class DeploymentBuilder {
     return this;
   }
 
+  public DeploymentBuilder addCellar(Class<?> cellar) {
+    cellars.add(cellar.getName());
+    return this;
+  }
+
   public Deployment build(String... args) {
     try {
       final var tasks = new LinkedList<Future<Path>>();

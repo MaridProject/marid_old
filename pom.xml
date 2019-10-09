@@ -92,6 +92,9 @@
     <test.groups>normal</test.groups>
 
     <license.licenseName>agpl_v3</license.licenseName>
+
+    <tests.opens/>
+    <tests.exports/>
   </properties>
 
   <dependencyManagement>
@@ -438,6 +441,7 @@
           <configuration>
             <forkCount>1</forkCount>
             <groups>${test.groups}</groups>
+            <argLine>${tests.opens} ${tests.exports}</argLine>
             <systemPropertyVariables>
               <java.util.logging.manager>org.marid.test.logging.TestLogManager</java.util.logging.manager>
               <java.util.logging.config.class>org.marid.test.logging.TestLogInitializer</java.util.logging.config.class>
@@ -447,6 +451,19 @@
               <java.util.logging.config.class>org.marid.test.logging.TestLogInitializer</java.util.logging.config.class>
             </systemProperties>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-java</artifactId>
+              <version>1.0.3</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.ow2.asm</groupId>
+              <artifactId>asm</artifactId>
+              <version>7.2</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
         <plugin>
@@ -464,6 +481,19 @@
               <java.util.logging.config.class>org.marid.test.logging.TestLogInitializer</java.util.logging.config.class>
             </systemProperties>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-java</artifactId>
+              <version>1.0.3</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.ow2.asm</groupId>
+              <artifactId>asm</artifactId>
+              <version>7.2</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>

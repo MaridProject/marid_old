@@ -10,6 +10,10 @@
 
   <artifactId>marid-util</artifactId>
 
+  <properties>
+    <tests.opens>--add-opens marid.util/org.marid.misc=ALL-UNNAMED</tests.opens>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.marid</groupId>
