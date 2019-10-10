@@ -24,7 +24,7 @@ package org.marid.runtime;
 import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.exception.DeploymentCloseException;
 import org.marid.runtime.exception.DeploymentStartException;
-import org.marid.runtime.util.FileUtils;
+import org.marid.runtime.io.MaridFiles;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -214,7 +214,7 @@ public final class Deployment implements AutoCloseable {
       case NEW:
       case TERMINATED:
         queue.add(Command.START);
-        while (state != State.RUNNING || state != State.TERMINATED) {
+        while (state != State.RUNNING && state != State.TERMINATED) {
           Thread.onSpinWait();
         }
         if (startError != null) {
@@ -248,10 +248,12 @@ public final class Deployment implements AutoCloseable {
       }
       throw exception;
     }
-    destroy();
   }
 
   private void destroy() {
+    if (state != State.RUNNING && state != State.STARTING) {
+      return;
+    }
     state = State.TERMINATING;
     final var exception = new DeploymentCloseException(this);
 
@@ -279,7 +281,7 @@ public final class Deployment implements AutoCloseable {
     }
 
     try {
-      FileUtils.deleteFile(deployment, exception);
+      MaridFiles.deleteRecursively(deployment);
     } catch (Throwable e) {
       exception.addSuppressed(e);
     }

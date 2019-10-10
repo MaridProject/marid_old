@@ -1,6 +1,8 @@
+package org.marid.runtime.io;
+
 /*-
  * #%L
- * marid-processors
+ * marid-runtime
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -19,16 +21,31 @@
  * #L%
  */
 
-import org.marid.processors.CheckedFunctionalInterfaceProcessor;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.processing.Processor;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-module marid.processors {
+public interface MaridFiles {
 
-  requires transitive java.compiler;
-  requires static org.jetbrains.annotations;
-
-  exports org.marid.processors;
-
-  provides Processor with CheckedFunctionalInterfaceProcessor;
+  static void deleteRecursively(@NotNull Path path) {
+    if (Files.isDirectory(path)) {
+      try (final var stream = Files.newDirectoryStream(path)) {
+        for (final var childPath : stream) {
+          deleteRecursively(childPath);
+        }
+        Files.deleteIfExists(path);
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    } else {
+      try {
+        Files.deleteIfExists(path);
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    }
+  }
 }
