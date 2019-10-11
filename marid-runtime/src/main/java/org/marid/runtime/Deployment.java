@@ -224,6 +224,8 @@ public final class Deployment implements AutoCloseable {
             throw e;
           } catch (Throwable e) {
             throw new IllegalStateException(e);
+          } finally {
+            startError = null;
           }
         }
         break;
@@ -306,6 +308,8 @@ public final class Deployment implements AutoCloseable {
         throw e;
       } catch (Throwable e) {
         throw new IllegalStateException(e);
+      } finally {
+        destroyError = null;
       }
     }
   }
