@@ -34,14 +34,7 @@ public abstract class AbstractRack<E> {
 
   public AbstractRack(Callable<E> instanceSupplier) {
     caller = Deployment.STACK_WALKER.getCallerClass().asSubclass(AbstractCellar.class);
-
-    final AbstractCellar cellar;
-    try {
-      final var handle = MethodHandles.publicLookup().findStatic(caller, "provider", MethodType.methodType(caller));
-      cellar = (AbstractCellar) handle.invokeExact(); // should be a singleton instance
-    } catch (Throwable e) {
-      throw new IllegalStateException("Unable to find a 'provider' method of " + caller);
-    }
+    final var cellar = getCellar();
     try {
       instance = instanceSupplier.call();
     } catch (Throwable e) {
@@ -51,6 +44,15 @@ public abstract class AbstractRack<E> {
         e.addSuppressed(ce);
       }
       throw new RackCreationException(caller, e);
+    }
+  }
+
+  public AbstractCellar getCellar() {
+    try {
+      final var handle = MethodHandles.publicLookup().findStatic(caller, "provider", MethodType.methodType(caller));
+      return  (AbstractCellar) handle.invokeExact(); // should be a singleton instance
+    } catch (Throwable e) {
+      throw new IllegalStateException("Unable to find a 'provider' method of " + caller);
     }
   }
 
