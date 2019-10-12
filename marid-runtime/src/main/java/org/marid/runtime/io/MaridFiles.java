@@ -22,11 +22,22 @@ package org.marid.runtime.io;
  */
 
 import org.jetbrains.annotations.NotNull;
+import org.marid.runtime.io.function.IOFunction;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.file.CopyOption;
+import java.nio.file.DirectoryStream;
+import java.nio.file.DirectoryStream.Filter;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.util.List;
+import java.util.stream.Stream;
 
 public interface MaridFiles {
 
@@ -46,6 +57,156 @@ public interface MaridFiles {
       } catch (IOException e) {
         throw new UncheckedIOException(e);
       }
+    }
+  }
+
+  static void delete(@NotNull Path path) {
+    try {
+      Files.delete(path);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static void deleteIfExists(@NotNull Path path) {
+    try {
+      Files.deleteIfExists(path);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static <T> T getWithDirectoryStream(@NotNull Path path, @NotNull IOFunction<DirectoryStream<Path>, T> callback) {
+    try (final var stream = Files.newDirectoryStream(path)) {
+      return callback.applyChecked(stream);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static <T> T getWithDirectoryStream(@NotNull Path path,
+                                      @NotNull String glob,
+                                      @NotNull IOFunction<DirectoryStream<Path>, T> callback) {
+    try (final var stream = Files.newDirectoryStream(path, glob)) {
+      return callback.applyChecked(stream);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static <T> T getWithDirectoryStream(@NotNull Path path,
+                                      @NotNull Filter<Path> filter,
+                                      @NotNull IOFunction<DirectoryStream<Path>, T> callback) {
+    try (final var stream = Files.newDirectoryStream(path, filter)) {
+      return callback.applyChecked(stream);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static Stream<Path> list(@NotNull Path path) {
+    try {
+      return Files.list(path);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static Stream<Path> walk(@NotNull Path path, int depth, @NotNull FileVisitOption... options) {
+    try {
+      return Files.walk(path, depth, options);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static long copy(@NotNull Path path, @NotNull OutputStream outputStream) {
+    try {
+      return Files.copy(path, outputStream);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static long copy(@NotNull InputStream inputStream, @NotNull Path path, @NotNull CopyOption... options) {
+    try {
+      return Files.copy(inputStream, path, options);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static Path copy(@NotNull Path source, @NotNull Path target, @NotNull CopyOption... options) {
+    try {
+      return Files.copy(source, target, options);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static Path move(@NotNull Path source, @NotNull Path target, @NotNull CopyOption... options) {
+    try {
+      return Files.move(source, target, options);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static byte[] readAllBytes(@NotNull Path path) {
+    try {
+      return Files.readAllBytes(path);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static String readString(@NotNull Path path, @NotNull Charset charset) {
+    try {
+      return Files.readString(path, charset);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static List<String> readLines(@NotNull Path path, @NotNull Charset charset) {
+    try {
+      return Files.readAllLines(path, charset);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @NotNull
+  static Stream<String> lines(@NotNull Path path, @NotNull Charset charset) {
+    try {
+      return Files.lines(path, charset);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static void createDirectory(@NotNull Path path, @NotNull FileAttribute<?>... attributes) {
+    try {
+      Files.createDirectory(path, attributes);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  static void createDirectories(@NotNull Path path, @NotNull FileAttribute<?>... attributes) {
+    try {
+      Files.createDirectories(path, attributes);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }
