@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.marid.runtime.AbstractCellar;
 import org.marid.runtime.util.DeploymentBuilder;
 
+import java.util.Objects;
+
 @Tag("normal")
 class ArrayListRackTest {
 
@@ -40,5 +42,10 @@ class ArrayListRackTest {
 
   public static class TestCellar extends AbstractCellar {
 
+    private static TestCellar provider;
+
+    public static synchronized TestCellar provider() {
+      return Objects.requireNonNullElseGet(provider, () -> provider = new TestCellar());
+    }
   }
 }
