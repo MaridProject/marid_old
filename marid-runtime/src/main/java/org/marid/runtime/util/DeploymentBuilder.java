@@ -167,11 +167,11 @@ public final class DeploymentBuilder {
 
         // create cellar entries
         final var metaInf = resources.resolve("META-INF");
-        final var services = metaInf.resolve("services");
+        final var maridServices = metaInf.resolve("marid");
         Files.createDirectory(metaInf);
-        Files.createDirectory(services);
+        Files.createDirectory(maridServices);
         tasks.add(pool.submit(() -> {
-          final var cellars = services.resolve(AbstractCellar.class.getName());
+          final var cellars = maridServices.resolve("cellars.list");
           Files.write(cellars, this.cellars, UTF_8);
           return cellars;
         }));

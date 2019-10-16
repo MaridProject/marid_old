@@ -44,6 +44,9 @@ class ArrayListRackTest {
 
     private static TestCellar provider;
 
+    public TestCellar() {
+    }
+
     public static synchronized TestCellar provider() {
       return Objects.requireNonNullElseGet(provider, () -> provider = new TestCellar());
     }

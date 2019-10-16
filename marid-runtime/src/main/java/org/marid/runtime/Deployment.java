@@ -39,10 +39,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ServiceLoader;
+import java.util.Scanner;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.zip.ZipInputStream;
 
+import static java.lang.invoke.MethodHandles.publicLookup;
+import static java.lang.invoke.MethodType.methodType;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class Deployment implements AutoCloseable {
@@ -55,6 +57,7 @@ public final class Deployment implements AutoCloseable {
   private final Path deps;
   private final Path resources;
   private final Path classes;
+  private final URL cellarsUrl;
   private final URLClassLoader classLoader;
   private final LinkedHashMap<Class<? extends AbstractCellar>, AbstractCellar> cellars = new LinkedHashMap<>();
   private final Thread thread;
@@ -112,6 +115,7 @@ public final class Deployment implements AutoCloseable {
       initialize();
 
       classLoader = classLoader();
+      cellarsUrl = classLoader.getResource("META-INF/marid/cellars.list");
     } catch (Throwable e) {
       try {
         destroy();
@@ -148,6 +152,9 @@ public final class Deployment implements AutoCloseable {
   }
 
   private void validate() throws IOException {
+    if (cellarsUrl == null) {
+      throw new NullPointerException("cellarsURL is null");
+    }
     Files.createDirectories(resources);
     Files.createDirectories(deps);
     if (!Files.isDirectory(classes)) {
@@ -236,9 +243,15 @@ public final class Deployment implements AutoCloseable {
     state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
     DEPLOYMENT.set(this);
-    try {
-      for (final var cellar : ServiceLoader.load(AbstractCellar.class, classLoader)) {
-        cellars.put(cellar.getClass(), cellar);
+    try (final var scanner = new Scanner(cellarsUrl.openStream(), UTF_8)) {
+      while (scanner.hasNextLine()) {
+        final var line = scanner.nextLine().trim();
+        if (line.startsWith("#") || line.isEmpty()) {
+          continue;
+        }
+        final var cellarClass = classLoader.loadClass(line).asSubclass(AbstractCellar.class);
+        final var providerMethod = publicLookup().findStatic(cellarClass, "provider", methodType(cellarClass));
+        cellars.put(cellarClass, cellarClass.cast(providerMethod.invokeExact()));
       }
       state = State.RUNNING;
     } catch (Throwable e) {
