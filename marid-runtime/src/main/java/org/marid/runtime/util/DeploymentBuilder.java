@@ -126,6 +126,7 @@ public final class DeploymentBuilder {
     try {
       final var tasks = new LinkedList<Future<Path>>();
       final var tempDir = Files.createTempDirectory("deploymentBuilder");
+      final var tempFile = Files.createTempFile("deployment", ".zip");
       final var pool = new ThreadPoolExecutor(0, 16, 1L, SECONDS, new SynchronousQueue<>(), new CallerRunsPolicy());
       try {
         final var deps = tempDir.resolve("deps");
@@ -166,12 +167,8 @@ public final class DeploymentBuilder {
         }
 
         // create cellar entries
-        final var metaInf = resources.resolve("META-INF");
-        final var maridServices = metaInf.resolve("marid");
-        Files.createDirectory(metaInf);
-        Files.createDirectory(maridServices);
         tasks.add(pool.submit(() -> {
-          final var cellars = maridServices.resolve("cellars.list");
+          final var cellars = tempDir.resolve("cellars.list");
           Files.write(cellars, this.cellars, UTF_8);
           return cellars;
         }));
@@ -209,14 +206,13 @@ public final class DeploymentBuilder {
         }
 
         // create zip file
-        final var outputZip = tempDir.resolve(name + ".zip");
         final var tempDirUri = tempDir.toUri();
-        try (final var zos = new ZipOutputStream(Files.newOutputStream(outputZip), UTF_8)) {
+        try (final var zos = new ZipOutputStream(Files.newOutputStream(tempFile), UTF_8)) {
           zos.setLevel(Deflater.BEST_COMPRESSION);
           try (final var stream = Files.walk(tempDir)) {
             final byte[] buffer = new byte[BUFFER_SIZE];
             final var crc = new CRC32();
-            stream.filter(f -> !outputZip.equals(f)).forEach(file -> {
+            stream.forEach(file -> {
               final var relativePath = tempDirUri.relativize(file.toUri()).getPath();
               final var zipEntry = new ZipEntry(relativePath);
               try {
@@ -246,12 +242,13 @@ public final class DeploymentBuilder {
           }
         }
 
-        return new Deployment(outputZip.toUri().toURL(), List.of(args));
+        return new Deployment(tempFile.toUri().toURL(), List.of(args));
       } finally {
         pool.shutdown();
         while (!pool.isTerminated()) {
           Thread.onSpinWait();
         }
+        Files.delete(tempFile);
         MaridFiles.deleteRecursively(tempDir);
       }
     } catch (IOException e) {

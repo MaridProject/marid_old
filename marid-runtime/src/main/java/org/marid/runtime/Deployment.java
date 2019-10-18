@@ -34,13 +34,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
 import static java.lang.invoke.MethodHandles.publicLookup;
@@ -57,7 +53,7 @@ public final class Deployment implements AutoCloseable {
   private final Path deps;
   private final Path resources;
   private final Path classes;
-  private final URL cellarsUrl;
+  private final Path cellarsFile;
   private final URLClassLoader classLoader;
   private final LinkedHashMap<Class<? extends AbstractCellar>, AbstractCellar> cellars = new LinkedHashMap<>();
   private final Thread thread;
@@ -107,6 +103,7 @@ public final class Deployment implements AutoCloseable {
         unpack(is);
       }
 
+      cellarsFile = deployment.resolve("cellars.list");
       classes = deployment.resolve("classes");
       resources = deployment.resolve("resources");
       deps = deployment.resolve("deps");
@@ -115,7 +112,6 @@ public final class Deployment implements AutoCloseable {
       initialize();
 
       classLoader = classLoader();
-      cellarsUrl = classLoader.getResource("META-INF/marid/cellars.list");
     } catch (Throwable e) {
       try {
         destroy();
@@ -152,8 +148,8 @@ public final class Deployment implements AutoCloseable {
   }
 
   private void validate() throws IOException {
-    if (cellarsUrl == null) {
-      throw new NullPointerException("cellarsURL is null");
+    if (!Files.isRegularFile(cellarsFile)) {
+      throw new NullPointerException("cellarsFile does not exist");
     }
     Files.createDirectories(resources);
     Files.createDirectories(deps);
@@ -243,15 +239,15 @@ public final class Deployment implements AutoCloseable {
     state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
     DEPLOYMENT.set(this);
-    try (final var scanner = new Scanner(cellarsUrl.openStream(), UTF_8)) {
-      while (scanner.hasNextLine()) {
-        final var line = scanner.nextLine().trim();
-        if (line.startsWith("#") || line.isEmpty()) {
-          continue;
-        }
+    try (final var cellarClasses = Files.lines(cellarsFile, UTF_8)) {
+      final var lines = cellarClasses
+          .map(String::trim)
+          .filter(l -> !l.startsWith("#") && !l.isEmpty())
+          .collect(Collectors.toCollection(LinkedHashSet::new));
+      for (final var line : lines) {
         final var cellarClass = classLoader.loadClass(line).asSubclass(AbstractCellar.class);
         final var providerMethod = publicLookup().findStatic(cellarClass, "provider", methodType(cellarClass));
-        cellars.put(cellarClass, cellarClass.cast(providerMethod.invokeExact()));
+        cellars.put(cellarClass, cellarClass.cast(providerMethod.invoke()));
       }
       state = State.RUNNING;
     } catch (Throwable e) {
