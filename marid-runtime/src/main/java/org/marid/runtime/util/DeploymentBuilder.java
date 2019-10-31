@@ -21,7 +21,6 @@ package org.marid.runtime.util;
  * #L%
  */
 
-import org.marid.runtime.AbstractCellar;
 import org.marid.runtime.Deployment;
 import org.marid.runtime.exception.DeploymentBuildException;
 import org.marid.runtime.io.MaridFiles;
