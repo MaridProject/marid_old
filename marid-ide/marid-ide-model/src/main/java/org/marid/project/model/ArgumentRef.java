@@ -20,35 +20,24 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 public final class ArgumentRef extends Argument {
 
-  private Type type;
-  private String cellar;
   private String ref;
 
-  public ArgumentRef(@NotNull Type type, @NotNull String cellar, @NotNull String ref) {
-    this.type = type;
-    this.cellar = cellar;
+  public ArgumentRef(@NotNull String ref) {
     this.ref = ref;
   }
 
   public ArgumentRef(@NotNull Element element) {
     super(element);
-    this.type = Type.valueOf(element.getAttribute("type").toUpperCase());
-    this.cellar = element.getAttribute("cellar");
     this.ref = element.getAttribute("ref");
   }
 
@@ -58,20 +47,12 @@ public final class ArgumentRef extends Argument {
 
   @Override
   public Expression getExpression() {
-    return type.ast.apply(this);
+    return new NameExpr(ref);
   }
 
   @Override
   public @NotNull String getTag() {
     return "ref";
-  }
-
-  public String getCellar() {
-    return cellar;
-  }
-
-  public void setCellar(String cellar) {
-    this.cellar = cellar;
   }
 
   public String getRef() {
@@ -84,14 +65,12 @@ public final class ArgumentRef extends Argument {
 
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("type", type.name().toLowerCase());
-    element.setAttribute("cellar", cellar);
     element.setAttribute("ref", ref);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, cellar, ref);
+    return ref.hashCode();
   }
 
   @Override
@@ -101,21 +80,8 @@ public final class ArgumentRef extends Argument {
     }
     if (obj instanceof ArgumentRef) {
       final var that = (ArgumentRef) obj;
-      return Objects.equals(this.type, that.type)
-          && Objects.equals(this.cellar, that.cellar)
-          && Objects.equals(this.ref, that.ref);
+      return Objects.equals(this.ref, that.ref);
     }
     return false;
-  }
-
-  public enum Type {
-    CONST(a -> new FieldAccessExpr(new ClassExpr(new ClassOrInterfaceType(null, a.cellar)), a.ref)),
-    LOCAL(a -> new MethodCallExpr(new NameExpr(a.ref), "get"));
-
-    private final Function<ArgumentRef, Expression> ast;
-
-    Type(Function<ArgumentRef, Expression> ast) {
-      this.ast = ast;
-    }
   }
 }

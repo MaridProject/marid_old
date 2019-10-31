@@ -20,7 +20,6 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.github.javaparser.ast.AccessSpecifier;
 import org.jetbrains.annotations.NotNull;
 import org.marid.xml.XmlStreams;
 import org.marid.xml.XmlUtils;
@@ -31,26 +30,22 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.github.javaparser.ast.AccessSpecifier.PRIVATE;
-import static com.github.javaparser.ast.AccessSpecifier.PUBLIC;
-
 public final class CellarConstant extends AbstractEntity {
 
-  private AccessType accessType;
-  private String cellar;
+  private String lib;
   private String name;
   private final ArrayList<ArgumentLiteral> arguments;
 
-  public CellarConstant(@NotNull String cellar, @NotNull String name) {
-    this.cellar = cellar;
+  public CellarConstant(@NotNull String lib, @NotNull String name) {
+    this.lib = lib;
     this.name = name;
     this.arguments = new ArrayList<>();
   }
 
   public CellarConstant(@NotNull Element element) {
     super(element);
+    this.lib = element.getAttribute("lib");
     this.name = element.getAttribute("name");
-    this.cellar = element.getAttribute("cellar");
     this.arguments = XmlStreams.children(element, Element.class)
         .map(ArgumentLiteral::new)
         .collect(Collectors.toCollection(ArrayList::new));
@@ -68,9 +63,8 @@ public final class CellarConstant extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("cellar", cellar);
+    element.setAttribute("lib", lib);
     element.setAttribute("name", name);
-    element.setAttribute("access", accessType.name().toLowerCase());
     arguments.forEach(e -> XmlUtils.appendTo(e, element));
   }
 
@@ -91,25 +85,17 @@ public final class CellarConstant extends AbstractEntity {
     this.name = name;
   }
 
-  public String getCellar() {
-    return cellar;
+  public String getLib() {
+    return lib;
   }
 
-  public void setCellar(String cellar) {
-    this.cellar = cellar;
-  }
-
-  public AccessType getAccessType() {
-    return accessType;
-  }
-
-  public void setAccessType(AccessType accessType) {
-    this.accessType = accessType;
+  public void setLib(String lib) {
+    this.lib = lib;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(accessType, cellar, name, arguments);
+    return Objects.hash(lib, name, arguments);
   }
 
   @Override
@@ -119,23 +105,10 @@ public final class CellarConstant extends AbstractEntity {
     }
     if (obj instanceof CellarConstant) {
       final var that = (CellarConstant) obj;
-      return Objects.equals(this.accessType, that.accessType)
-          && Objects.equals(this.cellar, that.cellar)
+      return Objects.equals(this.lib, that.lib)
           && Objects.equals(this.name, that.name)
           && Objects.equals(this.arguments, that.arguments);
     }
     return false;
-  }
-
-  public enum AccessType {
-
-    RACK(PRIVATE),
-    WINERY(PUBLIC);
-
-    public final AccessSpecifier accessSpecifier;
-
-    AccessType(AccessSpecifier accessSpecifier) {
-      this.accessSpecifier = accessSpecifier;
-    }
   }
 }
