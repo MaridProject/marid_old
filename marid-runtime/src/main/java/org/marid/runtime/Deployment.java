@@ -236,6 +236,9 @@ public final class Deployment implements AutoCloseable {
   }
 
   private void run() {
+    if (state == State.STARTING || state == State.RUNNING) {
+      return;
+    }
     state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
     DEPLOYMENT.set(this);
