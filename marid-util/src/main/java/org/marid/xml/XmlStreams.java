@@ -24,6 +24,8 @@ package org.marid.xml;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -35,6 +37,25 @@ public interface XmlStreams {
         .mapToObj(nodeList::item)
         .filter(Element.class::isInstance)
         .map(Element.class::cast);
+  }
+
+  static <T> Stream<T> children(Element node, Function<Element, T> func, Predicate<RuntimeException> emptyPredicate) {
+    return children(node, Element.class)
+        .flatMap(element -> {
+          try {
+            return Stream.of(func.apply(element));
+          } catch (RuntimeException e) {
+            if (emptyPredicate.test(e)) {
+              return Stream.empty();
+            } else {
+              throw e;
+            }
+          }
+        });
+  }
+
+  static <T> Stream<T> children(Element node, Function<Element, T> func) {
+    return children(node, func, e -> e instanceof IllegalArgumentException);
   }
 
   static Stream<Node> children(Node node) {

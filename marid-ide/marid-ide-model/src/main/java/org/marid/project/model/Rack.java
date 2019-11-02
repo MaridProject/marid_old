@@ -45,8 +45,7 @@ public final class Rack extends AbstractEntity {
     super(element);
     this.name = element.getAttribute("name");
     this.arguments = XmlStreams.elementsByTag(element, "args")
-        .flatMap(e -> XmlStreams.children(e, Element.class))
-        .map(ArgumentFactory::argument)
+        .flatMap(e -> XmlStreams.children(e, Element.class).map(ArgumentFactory::argument))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 

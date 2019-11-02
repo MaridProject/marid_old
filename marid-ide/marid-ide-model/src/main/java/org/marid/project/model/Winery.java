@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 public final class Winery extends AbstractEntity {
 
-  private final List<Cellar> cellars;
+  private final ArrayList<Cellar> cellars;
   private String name;
 
   public Winery(@NotNull String name) {
@@ -44,9 +44,7 @@ public final class Winery extends AbstractEntity {
   public Winery(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.cellars = XmlStreams.elementsByTag(element, "cellar")
-        .map(Cellar::new)
-        .collect(Collectors.toCollection(ArrayList::new));
+    this.cellars = XmlStreams.children(element, Cellar::new).collect(Collectors.toCollection(ArrayList::new));
   }
 
   public Winery(@NotNull InputSource inputSource) {

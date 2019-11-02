@@ -28,7 +28,8 @@ import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toCollection;
 
 public final class Cellar extends AbstractEntity {
 
@@ -46,12 +47,8 @@ public final class Cellar extends AbstractEntity {
   public Cellar(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.constants = XmlStreams.elementsByTag(element, "constant")
-        .map(CellarConstant::new)
-        .collect(Collectors.toCollection(ArrayList::new));
-    this.racks = XmlStreams.elementsByTag(element, "rack")
-        .map(Rack::new)
-        .collect(Collectors.toCollection(ArrayList::new));
+    this.constants = XmlStreams.children(element, CellarConstant::new).collect(toCollection(ArrayList::new));
+    this.racks = XmlStreams.elementsByTag(element, "rack").map(Rack::new).collect(toCollection(ArrayList::new));
   }
 
   public Cellar(@NotNull InputSource source) {
