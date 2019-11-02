@@ -23,14 +23,30 @@ package org.marid.project.model;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 interface ArgumentFactory {
 
+  private static Stream<Function<Element, Argument>> constructors() {
+    return Stream.of(
+        ArgumentRef::new,
+        ArgumentConstRef::new,
+        ArgumentLiteral::new
+    );
+  }
+
   static Argument argument(Element element) {
-    try {
-      return new ArgumentLiteral(element);
-    } catch (IllegalArgumentException ignore) {
-      return new ArgumentRef(element);
-    }
+    return constructors()
+        .flatMap(c -> {
+          try {
+            return Stream.of(c.apply(element));
+          } catch (IllegalArgumentException e) {
+            return Stream.empty();
+          }
+        })
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown argument: " + element.getTagName()));
   }
 
   static Argument argument(InputSource inputSource) {
