@@ -78,6 +78,7 @@
             </path>
           </annotationProcessorPaths>
         </configuration>
+        <inherited>true</inherited>
       </plugin>
     </plugins>
   </build>

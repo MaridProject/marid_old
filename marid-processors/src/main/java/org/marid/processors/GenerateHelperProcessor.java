@@ -21,6 +21,9 @@ package org.marid.processors;
  * #L%
  */
 
+import com.nqzero.permit.Permit;
+import com.nqzero.permit.Unsafer;
+
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -37,6 +40,8 @@ import javax.lang.model.util.Types;
 import javax.tools.JavaFileManager;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +55,7 @@ import java.util.stream.Collectors;
 import static javax.lang.model.element.ElementKind.ANNOTATION_TYPE;
 import static javax.tools.Diagnostic.Kind.NOTE;
 import static javax.tools.StandardLocation.CLASS_OUTPUT;
+import static javax.tools.StandardLocation.CLASS_PATH;
 
 public class GenerateHelperProcessor implements Processor {
 
@@ -78,6 +84,7 @@ public class GenerateHelperProcessor implements Processor {
 
   private void initTypes(String typeName, ClassLoader classLoader) throws IOException {
     annotationTypes.add(typeName);
+
     for (final var e = classLoader.getResources("marid/annotations/" + typeName); e.hasMoreElements(); ) {
       final var url = e.nextElement();
       try (final var scanner = new Scanner(url.openStream(), StandardCharsets.UTF_8)) {
@@ -101,15 +108,31 @@ public class GenerateHelperProcessor implements Processor {
     elements = processingEnv.getElementUtils();
 
     try {
-      initTypes(GenerateHelper.class.getName(), getClass().getClassLoader());
+      final var unsafe = Unsafer.uu;
+      final var privateLookup = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+      final var privateLookupAddr = unsafe.staticFieldOffset(privateLookup);
+      final var lookup = (MethodHandles.Lookup) unsafe.getObject(MethodHandles.Lookup.class, privateLookupAddr);
+
+      final var getContextMethod = lookup.unreflect(processingEnv.getClass().getDeclaredMethod("getContext"));
+      final var context = getContextMethod.invokeWithArguments(processingEnv);
+      final var contextGetMethod = lookup.unreflect(context.getClass().getMethod("get", Class.class));
+      final var manager = contextGetMethod.invokeWithArguments(context, JavaFileManager.class);
+      fileManager = (JavaFileManager) manager;
+
+      final var classLoader = fileManager.getClassLoader(CLASS_PATH);
+
+      initTypes(GenerateHelper.class.getName(), classLoader);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
+    } catch (Throwable e) {
+      throw new IllegalStateException(e);
     }
   }
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
     final var map = new HashMap<TypeElement, Set<TypeElement>>();
+    final var targetElements = new HashSet<TypeElement>();
 
     for (var anns = annotations; !anns.isEmpty(); ) {
       messager.printMessage(NOTE, "Processing " + anns);
@@ -122,6 +145,13 @@ public class GenerateHelperProcessor implements Processor {
           )
           .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
+      els.values().forEach(vs -> vs.stream()
+          .filter(e -> e.getKind() != ANNOTATION_TYPE)
+          .filter(TypeElement.class::isInstance)
+          .map(TypeElement.class::cast)
+          .forEach(targetElements::add)
+      );
+
       anns = els.values().stream()
           .flatMap(es -> es.stream().filter(a -> a.getKind() == ANNOTATION_TYPE).map(TypeElement.class::cast))
           .collect(Collectors.toUnmodifiableSet());
@@ -130,6 +160,7 @@ public class GenerateHelperProcessor implements Processor {
     map.forEach((ann, nested) -> {
       messager.printMessage(NOTE, "Adding nested annotations", ann);
       try {
+        annotationTypes.add(ann.getQualifiedName().toString());
         final var file = filer.createResource(CLASS_OUTPUT, "marid.annotations", ann.getQualifiedName().toString());
         try (final var writer = file.openWriter()) {
           for (final var nestedType : nested) {
@@ -141,6 +172,10 @@ public class GenerateHelperProcessor implements Processor {
         throw new UncheckedIOException(e);
       }
     });
+
+    for (final var targetElement : targetElements) {
+
+    }
 
     return true;
   }
