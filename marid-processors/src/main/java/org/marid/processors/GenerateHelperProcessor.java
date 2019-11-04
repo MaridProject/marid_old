@@ -114,9 +114,9 @@ public class GenerateHelperProcessor implements Processor {
       final var lookup = (MethodHandles.Lookup) unsafe.getObject(MethodHandles.Lookup.class, privateLookupAddr);
 
       final var getContextMethod = lookup.unreflect(processingEnv.getClass().getDeclaredMethod("getContext"));
-      final var context = getContextMethod.invokeWithArguments(processingEnv);
+      final var context = getContextMethod.invoke(processingEnv);
       final var contextGetMethod = lookup.unreflect(context.getClass().getMethod("get", Class.class));
-      final var manager = contextGetMethod.invokeWithArguments(context, JavaFileManager.class);
+      final var manager = contextGetMethod.invoke(context, JavaFileManager.class);
       fileManager = (JavaFileManager) manager;
 
       final var classLoader = fileManager.getClassLoader(CLASS_PATH);
