@@ -1,6 +1,8 @@
+package org.marid.processors;
+
 /*-
  * #%L
- * marid-types
+ * marid-processors
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -19,20 +21,14 @@
  * #L%
  */
 
-import org.marid.types.VarianceProvider;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * Advanced generic type processing utilities: {@link org.marid.types}.
- */
-module marid.types {
+@Target({ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.CLASS)
+public @interface GenerateHelper {
 
-  requires java.compiler;
-
-  requires static org.jetbrains.annotations;
-  requires static marid.processors;
-  requires static jdk.dynalink;
-
-  exports org.marid.types;
-
-  uses VarianceProvider;
+  String suffix() default "Helper";
 }

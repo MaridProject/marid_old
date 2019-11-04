@@ -33,6 +33,7 @@
         <configuration>
           <annotationProcessors>
             <processor>org.marid.processors.CheckedFunctionalInterfaceProcessor</processor>
+            <processor>org.marid.processors.GenerateHelperProcessor</processor>
           </annotationProcessors>
           <annotationProcessorPaths>
             <path>
