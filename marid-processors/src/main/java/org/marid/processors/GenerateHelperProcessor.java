@@ -21,9 +21,6 @@ package org.marid.processors;
  * #L%
  */
 
-import com.nqzero.permit.Permit;
-import com.nqzero.permit.Unsafer;
-
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -40,8 +37,6 @@ import javax.lang.model.util.Types;
 import javax.tools.JavaFileManager;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,6 +51,7 @@ import static javax.lang.model.element.ElementKind.ANNOTATION_TYPE;
 import static javax.tools.Diagnostic.Kind.NOTE;
 import static javax.tools.StandardLocation.CLASS_OUTPUT;
 import static javax.tools.StandardLocation.CLASS_PATH;
+import static org.marid.processors.Unsafer.LOOKUP;
 
 public class GenerateHelperProcessor implements Processor {
 
@@ -108,14 +104,9 @@ public class GenerateHelperProcessor implements Processor {
     elements = processingEnv.getElementUtils();
 
     try {
-      final var unsafe = Unsafer.uu;
-      final var privateLookup = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-      final var privateLookupAddr = unsafe.staticFieldOffset(privateLookup);
-      final var lookup = (MethodHandles.Lookup) unsafe.getObject(MethodHandles.Lookup.class, privateLookupAddr);
-
-      final var getContextMethod = lookup.unreflect(processingEnv.getClass().getDeclaredMethod("getContext"));
+      final var getContextMethod = LOOKUP.unreflect(processingEnv.getClass().getDeclaredMethod("getContext"));
       final var context = getContextMethod.invoke(processingEnv);
-      final var contextGetMethod = lookup.unreflect(context.getClass().getMethod("get", Class.class));
+      final var contextGetMethod = LOOKUP.unreflect(context.getClass().getMethod("get", Class.class));
       final var manager = contextGetMethod.invoke(context, JavaFileManager.class);
       fileManager = (JavaFileManager) manager;
 
