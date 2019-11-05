@@ -1,7 +1,5 @@
 package org.marid.processors;
 
-import sun.misc.Unsafe;
-
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
@@ -13,7 +11,8 @@ class Unsafer {
   public static final Lookup LOOKUP;
   static {
     try {
-      final var field = Unsafe.class.getDeclaredField("theUnsafe");
+      final var unsafeClass = Class.forName("sun.misc.Unsafe");
+      final var field = unsafeClass.getDeclaredField("theUnsafe");
       field.setAccessible(true);
       final var unsafe = field.get(null);
       final var staticFieldOffsetMethod = publicLookup().findVirtual(
