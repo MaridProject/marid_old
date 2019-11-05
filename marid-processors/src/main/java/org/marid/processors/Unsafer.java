@@ -25,7 +25,6 @@ class Unsafer {
       final var privateLookup = Lookup.class.getDeclaredField("IMPL_LOOKUP");
       final var privateLookupAddr = (long) staticFieldOffsetMethod.invoke(unsafe, privateLookup);
 
-
       LOOKUP = (Lookup) getObjectMethod.invoke(unsafe, Lookup.class, privateLookupAddr);
     } catch (Throwable e) {
       throw new IllegalStateException(e);
