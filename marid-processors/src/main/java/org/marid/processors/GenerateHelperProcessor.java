@@ -31,7 +31,9 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileManager;
@@ -40,6 +42,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -47,7 +50,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Stream.concat;
 import static javax.lang.model.element.ElementKind.ANNOTATION_TYPE;
+import static javax.lang.model.element.ElementKind.CONSTRUCTOR;
 import static javax.tools.Diagnostic.Kind.NOTE;
 import static javax.tools.StandardLocation.CLASS_OUTPUT;
 import static javax.tools.StandardLocation.CLASS_PATH;
@@ -123,25 +129,24 @@ public class GenerateHelperProcessor implements Processor {
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
     final var map = new HashMap<TypeElement, Set<TypeElement>>();
-    final var targetElements = new HashSet<TypeElement>();
+    final var targetElements = new HashMap<TypeElement, Set<TypeElement>>();
 
     for (var anns = annotations; !anns.isEmpty(); ) {
       messager.printMessage(NOTE, "Processing " + anns);
       final var els = anns.stream()
           .map(a -> Map.entry(a, env.getElementsAnnotatedWith(a)))
           .peek(e -> e.getValue().stream()
-              .filter(a -> a.getKind() == ANNOTATION_TYPE)
+              .filter(TypeElement.class::isInstance)
               .map(TypeElement.class::cast)
-              .forEach(t -> map.computeIfAbsent(e.getKey(), v -> new HashSet<>()).add(t))
+              .forEach(a -> {
+                if (a.getKind() == ANNOTATION_TYPE) {
+                  map.computeIfAbsent(e.getKey(), v -> new HashSet<>()).add(a);
+                } else {
+                  targetElements.computeIfAbsent(e.getKey(), v -> new HashSet<>()).add(a);
+                }
+              })
           )
           .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
-
-      els.values().forEach(vs -> vs.stream()
-          .filter(e -> e.getKind() != ANNOTATION_TYPE)
-          .filter(TypeElement.class::isInstance)
-          .map(TypeElement.class::cast)
-          .forEach(targetElements::add)
-      );
 
       anns = els.values().stream()
           .flatMap(es -> es.stream().filter(a -> a.getKind() == ANNOTATION_TYPE).map(TypeElement.class::cast))
@@ -164,9 +169,85 @@ public class GenerateHelperProcessor implements Processor {
       }
     });
 
-    for (final var targetElement : targetElements) {
+    final var passed = new HashSet<TypeElement>();
+    targetElements.forEach((ann, els) -> {
+      for (final var el : els) {
+        if (passed.add(el)) {
+          final var constructors = elements.getAllMembers(el).stream()
+              .filter(m -> m.getKind() == CONSTRUCTOR)
+              .map(ExecutableElement.class::cast)
+              .filter(c -> c.getModifiers().contains(Modifier.PUBLIC))
+              .toArray(ExecutableElement[]::new);
 
-    }
+          if (constructors.length == 0) {
+            continue;
+          }
+
+          try {
+            final var helperFile = filer.createSourceFile(el.getQualifiedName() + "Factory");
+            try (final var w = helperFile.openWriter()) {
+              w.write("package ");
+              w.write(elements.getPackageOf(el).getQualifiedName().toString());
+              w.write(";\n");
+              w.write("public interface ");
+              w.write(el.getSimpleName() + "Factory {\n\n");
+              for (final var constructor : constructors) {
+                final var params = concat(el.getTypeParameters().stream(), constructor.getTypeParameters().stream())
+                    .map(t -> {
+                      var s = t.getSimpleName().toString();
+                      final var bounds = new LinkedHashSet<>(t.getBounds());
+                      bounds.removeIf(v -> v.toString().equals(Object.class.getName()));
+                      if (!bounds.isEmpty()) {
+                        s += bounds.stream()
+                            .map(TypeMirror::toString)
+                            .collect(joining(",", " extends ", ""));
+                      }
+                      return s;
+                    })
+                    .collect(Collectors.toList());
+                final var throwns = constructor.getThrownTypes();
+
+                w.write("static");
+                if (!params.isEmpty()) {
+                  w.write(" <");
+                  w.write(String.join(",", params));
+                  w.write('>');
+                }
+                w.write(' ');
+                w.write(el.getSimpleName().toString());
+                w.write(' ');
+                w.write(" $(");
+                w.write(constructor.getParameters().stream()
+                    .map(p -> p.asType() + " " + p.getSimpleName())
+                    .collect(joining(", "))
+                );
+                w.write(") ");
+                if (!throwns.isEmpty()) {
+                  w.write(throwns.stream()
+                      .map(TypeMirror::toString)
+                      .collect(joining(",", "throws ", ""))
+                  );
+                }
+                w.write(" {\n");
+                w.write(" return new ");
+                w.write(el.getSimpleName().toString());
+                if (!params.isEmpty()) {
+                  w.write("<>");
+                }
+                w.write(constructor.getParameters().stream()
+                    .map(p -> p.getSimpleName().toString())
+                    .collect(joining(",", "(", ");\n"))
+                );
+                w.write("}\n\n");
+              }
+              w.write("}");
+            }
+          } catch (IOException e) {
+            throw new UncheckedIOException(e);
+          }
+        }
+      }
+    });
 
     return true;
   }
