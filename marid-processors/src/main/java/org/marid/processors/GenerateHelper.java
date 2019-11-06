@@ -29,6 +29,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.CLASS)
 public @interface GenerateHelper {
-
-  String suffix() default "Helper";
 }

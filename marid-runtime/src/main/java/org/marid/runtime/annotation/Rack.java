@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.RUNTIME)
-@GenerateHelper(suffix = "Invoker")
+@GenerateHelper
 public @interface Rack {
 
   String title() default "";
