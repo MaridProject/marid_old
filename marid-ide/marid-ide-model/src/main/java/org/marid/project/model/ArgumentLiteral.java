@@ -20,25 +20,13 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.github.javaparser.ast.expr.BooleanLiteralExpr;
-import com.github.javaparser.ast.expr.CastExpr;
-import com.github.javaparser.ast.expr.CharLiteralExpr;
-import com.github.javaparser.ast.expr.ClassExpr;
-import com.github.javaparser.ast.expr.DoubleLiteralExpr;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import com.github.javaparser.ast.expr.LongLiteralExpr;
-import com.github.javaparser.ast.expr.StringLiteralExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import org.eclipse.xtext.xbase.XExpression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.Objects;
 import java.util.function.Function;
-
-import static com.github.javaparser.ast.type.PrimitiveType.byteType;
-import static com.github.javaparser.ast.type.PrimitiveType.shortType;
 
 public final class ArgumentLiteral extends Argument {
 
@@ -61,8 +49,8 @@ public final class ArgumentLiteral extends Argument {
   }
 
   @Override
-  public Expression getExpression() {
-    return type.ast.apply(this);
+  public XExpression getExpression() {
+    return null;
   }
 
   public Type getType() {
@@ -99,21 +87,21 @@ public final class ArgumentLiteral extends Argument {
 
   public enum Type {
 
-    BYTE(byte.class, a -> new CastExpr(byteType(), new IntegerLiteralExpr(a.value))),
-    SHORT(short.class, a -> new CastExpr(shortType(), new IntegerLiteralExpr(a.value))),
-    INT(int.class, a -> new IntegerLiteralExpr(a.value)),
-    LONG(long.class, a -> new LongLiteralExpr(a.value)),
-    FLOAT(float.class, a -> new DoubleLiteralExpr(a.value)),
-    DOUBLE(double.class, a -> new DoubleLiteralExpr(a.value)),
-    CHAR(char.class, a -> new CharLiteralExpr(a.value)),
-    BOOLEAN(boolean.class, a -> new BooleanLiteralExpr("true".equalsIgnoreCase(a.value))),
-    STRING(String.class, a -> new StringLiteralExpr(a.value)),
-    CLASS(Class.class, a -> new ClassExpr(new ClassOrInterfaceType(null, a.value)));
+    BYTE(byte.class, a -> null),
+    SHORT(short.class, a -> null),
+    INT(int.class, a -> null),
+    LONG(long.class, a -> null),
+    FLOAT(float.class, a -> null),
+    DOUBLE(double.class, a -> null),
+    CHAR(char.class, a -> null),
+    BOOLEAN(boolean.class, a -> null),
+    STRING(String.class, a -> null),
+    CLASS(Class.class, a -> null);
 
     public final Class<?> type;
-    public final Function<ArgumentLiteral, Expression> ast;
+    public final Function<ArgumentLiteral, XExpression> ast;
 
-    Type(Class<?> type, Function<ArgumentLiteral, Expression> ast) {
+    Type(Class<?> type, Function<ArgumentLiteral, @NotNull XExpression> ast) {
       this.type = type;
       this.ast = ast;
     }

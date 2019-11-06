@@ -20,7 +20,7 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.github.javaparser.ast.expr.Expression;
+import org.eclipse.xtext.xbase.XExpression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -33,5 +33,5 @@ public abstract class Argument extends AbstractEntity {
     super(element);
   }
 
-  public abstract Expression getExpression();
+  public abstract XExpression getExpression();
 }

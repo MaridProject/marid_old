@@ -20,8 +20,7 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.NameExpr;
+import org.eclipse.xtext.xbase.XExpression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -46,8 +45,8 @@ public final class ArgumentRef extends Argument {
   }
 
   @Override
-  public Expression getExpression() {
-    return new NameExpr(ref);
+  public XExpression getExpression() {
+    return null;
   }
 
   @Override

@@ -20,9 +20,7 @@ package org.marid.project.model;
  * #L%
  */
 
-import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.TypeExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import org.eclipse.xtext.xbase.XExpression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -45,8 +43,8 @@ public final class ArgumentConstRef extends Argument {
   }
 
   @Override
-  public FieldAccessExpr getExpression() {
-    return new FieldAccessExpr(new TypeExpr(new ClassOrInterfaceType(null, cellar)), name);
+  public XExpression getExpression() {
+    return null;
   }
 
   @Override
