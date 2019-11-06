@@ -1,0 +1,10 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
+class X {
+
+    def x() {
+        return new ArrayList(Arrays.asList(1, "a"));
+    }
+
+}

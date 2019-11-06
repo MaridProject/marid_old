@@ -10,6 +10,10 @@
 
   <artifactId>marid-ide-model</artifactId>
 
+  <properties>
+    <tests.opens>--add-opens java.base/java.lang=ALL-UNNAMED</tests.opens>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -34,6 +38,12 @@
         <groupId>org.eclipse.platform</groupId>
         <artifactId>org.eclipse.core.runtime</artifactId>
         <version>3.16.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>4.2.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
