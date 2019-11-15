@@ -20,7 +20,7 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -49,7 +49,7 @@ public final class ArgumentLiteral extends Argument {
   }
 
   @Override
-  public XExpression getExpression() {
+  public Expression getExpression() {
     return null;
   }
 
@@ -99,9 +99,9 @@ public final class ArgumentLiteral extends Argument {
     CLASS(Class.class, a -> null);
 
     public final Class<?> type;
-    public final Function<ArgumentLiteral, XExpression> ast;
+    public final Function<ArgumentLiteral, Expression> ast;
 
-    Type(Class<?> type, Function<ArgumentLiteral, @NotNull XExpression> ast) {
+    Type(Class<?> type, Function<ArgumentLiteral, @NotNull Expression> ast) {
       this.type = type;
       this.ast = ast;
     }

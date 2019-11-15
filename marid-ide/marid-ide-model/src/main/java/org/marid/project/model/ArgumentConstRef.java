@@ -20,7 +20,7 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -43,7 +43,7 @@ public final class ArgumentConstRef extends Argument {
   }
 
   @Override
-  public XExpression getExpression() {
+  public Expression getExpression() {
     return null;
   }
 
