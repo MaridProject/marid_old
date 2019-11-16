@@ -29,6 +29,7 @@ module marid.processors {
   requires java.compiler;
   requires jdk.compiler;
   requires jdk.unsupported;
+  requires jdk.dynalink;
 
   exports org.marid.processors;
 

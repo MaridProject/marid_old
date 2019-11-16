@@ -35,7 +35,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import javax.tools.JavaFileManager;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -63,9 +62,7 @@ public class GenerateHelperProcessor implements Processor {
 
   private Filer filer;
   private Messager messager;
-  private Types types;
   private Elements elements;
-  private JavaFileManager fileManager;
 
   private final ConcurrentSkipListSet<String> annotationTypes = new ConcurrentSkipListSet<>();
 
@@ -106,17 +103,15 @@ public class GenerateHelperProcessor implements Processor {
   public void init(ProcessingEnvironment processingEnv) {
     filer = processingEnv.getFiler();
     messager = processingEnv.getMessager();
-    types = processingEnv.getTypeUtils();
     elements = processingEnv.getElementUtils();
 
     try {
       final var getContextMethod = LOOKUP.unreflect(processingEnv.getClass().getDeclaredMethod("getContext"));
       final var context = getContextMethod.invoke(processingEnv);
       final var contextGetMethod = LOOKUP.unreflect(context.getClass().getMethod("get", Class.class));
-      final var manager = contextGetMethod.invoke(context, JavaFileManager.class);
-      fileManager = (JavaFileManager) manager;
+      final var manager = (JavaFileManager) contextGetMethod.invoke(context, JavaFileManager.class);
 
-      final var classLoader = fileManager.getClassLoader(CLASS_PATH);
+      final var classLoader = manager.getClassLoader(CLASS_PATH);
 
       initTypes(GenerateHelper.class.getName(), classLoader);
     } catch (IOException e) {
