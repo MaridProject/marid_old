@@ -20,7 +20,6 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -32,6 +31,4 @@ public abstract class Argument extends AbstractEntity {
   Argument(@NotNull Element element) {
     super(element);
   }
-
-  public abstract Expression getExpression();
 }

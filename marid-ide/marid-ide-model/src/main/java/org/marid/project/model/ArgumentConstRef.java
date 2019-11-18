@@ -20,7 +20,6 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -40,11 +39,6 @@ public final class ArgumentConstRef extends Argument {
     super(element);
     this.cellar = element.getAttribute("cellar");
     this.name = element.getAttribute("name");
-  }
-
-  @Override
-  public Expression getExpression() {
-    return null;
   }
 
   @Override

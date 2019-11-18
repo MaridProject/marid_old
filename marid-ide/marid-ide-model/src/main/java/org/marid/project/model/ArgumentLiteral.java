@@ -20,7 +20,6 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -46,11 +45,6 @@ public final class ArgumentLiteral extends Argument {
 
   public ArgumentLiteral(@NotNull InputSource inputSource) {
     this(element(inputSource));
-  }
-
-  @Override
-  public Expression getExpression() {
-    return null;
   }
 
   public Type getType() {
@@ -99,9 +93,9 @@ public final class ArgumentLiteral extends Argument {
     CLASS(Class.class, a -> null);
 
     public final Class<?> type;
-    public final Function<ArgumentLiteral, Expression> ast;
+    public final Function<ArgumentLiteral, Object> ast;
 
-    Type(Class<?> type, Function<ArgumentLiteral, @NotNull Expression> ast) {
+    Type(Class<?> type, Function<ArgumentLiteral, @NotNull Object> ast) {
       this.type = type;
       this.ast = ast;
     }

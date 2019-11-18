@@ -20,7 +20,6 @@ package org.marid.project.model;
  * #L%
  */
 
-import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -42,11 +41,6 @@ public final class ArgumentRef extends Argument {
 
   public ArgumentRef(@NotNull InputSource inputSource) {
     this(element(inputSource));
-  }
-
-  @Override
-  public Expression getExpression() {
-    return null;
   }
 
   @Override
