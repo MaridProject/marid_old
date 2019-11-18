@@ -24,7 +24,7 @@ package org.marid.runtime;
 import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.exception.DeploymentCloseException;
 import org.marid.runtime.exception.DeploymentStartException;
-import org.marid.runtime.io.MaridFiles;
+import org.marid.io.MaridFiles;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

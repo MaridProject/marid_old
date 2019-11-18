@@ -21,8 +21,8 @@
 
 package org.marid.proto.impl;
 
+import org.marid.io.function.IOSupplier;
 import org.marid.proto.io.ProtoIO;
-import org.marid.runtime.io.function.IOSupplier;
 
 /**
  * @author Dmitry Ovchinnikov

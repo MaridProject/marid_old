@@ -21,7 +21,7 @@
 
 package org.marid.proto.impl.io;
 
-import org.marid.runtime.io.function.IOSupplier;
+import org.marid.io.function.IOSupplier;
 
 import java.io.IOException;
 import java.net.ConnectException;

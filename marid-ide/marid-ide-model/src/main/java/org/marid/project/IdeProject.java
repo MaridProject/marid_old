@@ -121,7 +121,7 @@ public class IdeProject implements AutoCloseable {
     }
 
     try {
-      MaridFiles.delete(directory);
+      MaridFiles.deleteRecursively(directory);
     } catch (Throwable e) {
       if (contextException == null) {
         contextException = e;

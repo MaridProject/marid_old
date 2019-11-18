@@ -1,5 +1,5 @@
 @CheckedFunctionalInterface(
-    targetPackageName = "org.marid.runtime.io.function",
+    targetPackageName = "org.marid.io.function",
     interfacePrefix = "IO",
     checkedThrowableClasses = {IOException.class},
     wrapperExceptionClass = UncheckedIOException.class,
@@ -65,7 +65,7 @@
     }
 )
 @CheckedFunctionalInterface(
-    targetPackageName = "org.marid.runtime.io",
+    targetPackageName = "org.marid.io",
     interfacePrefix = "IO",
     checkedThrowableClasses = {IOException.class},
     wrapperExceptionClass = UncheckedIOException.class,
@@ -73,7 +73,7 @@
         Runnable.class
     }
 )
-package org.marid.runtime;
+package org.marid.io;
 
 /*-
  * #%L

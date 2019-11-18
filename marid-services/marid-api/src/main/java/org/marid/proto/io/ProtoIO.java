@@ -21,8 +21,8 @@
 
 package org.marid.proto.io;
 
-import org.marid.runtime.io.function.IOBiConsumer;
-import org.marid.runtime.io.function.IOBiFunction;
+import org.marid.io.function.IOBiConsumer;
+import org.marid.io.function.IOBiFunction;
 
 import java.io.Closeable;
 import java.io.InputStream;

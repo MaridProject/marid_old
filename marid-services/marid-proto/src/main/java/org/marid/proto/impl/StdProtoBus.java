@@ -21,13 +21,13 @@
 
 package org.marid.proto.impl;
 
+import org.marid.io.function.IOSupplier;
 import org.marid.proto.Proto;
 import org.marid.proto.ProtoBus;
 import org.marid.proto.ProtoBusTaskRunner;
 import org.marid.proto.ProtoDriver;
 import org.marid.proto.ProtoRoot;
 import org.marid.proto.io.ProtoIO;
-import org.marid.runtime.io.function.IOSupplier;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

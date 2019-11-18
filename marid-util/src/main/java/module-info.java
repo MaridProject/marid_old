@@ -23,6 +23,8 @@ module marid.util {
 
   requires transitive java.logging;
 
+  requires static marid.processors;
+  requires static java.compiler;
   requires static java.desktop;
   requires static org.jetbrains.annotations;
 

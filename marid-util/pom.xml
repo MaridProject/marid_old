@@ -17,9 +17,36 @@
   <dependencies>
     <dependency>
       <groupId>org.marid</groupId>
+      <artifactId>marid-processors</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.marid</groupId>
       <artifactId>marid-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessors>
+            <processor>org.marid.processors.CheckedFunctionalInterfaceProcessor</processor>
+          </annotationProcessors>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.marid</groupId>
+              <artifactId>marid-processors</artifactId>
+              <version>${project.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
