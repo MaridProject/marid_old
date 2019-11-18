@@ -23,6 +23,9 @@ package org.marid.project.model;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.marid.misc.Builder;
+import org.marid.runtime.model.Cellar;
+import org.marid.runtime.model.Rack;
+import org.marid.runtime.model.Winery;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.stream.StreamResult;

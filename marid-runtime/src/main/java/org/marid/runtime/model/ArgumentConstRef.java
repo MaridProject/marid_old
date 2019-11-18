@@ -1,4 +1,4 @@
-package org.marid.project.model;
+package org.marid.runtime.model;
 
 /*-
  * #%L
@@ -22,48 +22,39 @@ package org.marid.project.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 import java.util.Objects;
 
-public final class ArgumentRef extends Argument {
+public final class ArgumentConstRef extends Argument {
 
-  private String ref;
+  private String cellar;
+  private String name;
 
-  public ArgumentRef(@NotNull String ref) {
-    this.ref = ref;
+  public ArgumentConstRef(@NotNull String cellar, @NotNull String name) {
+    this.cellar = cellar;
+    this.name = name;
   }
 
-  public ArgumentRef(@NotNull Element element) {
+  public ArgumentConstRef(@NotNull Element element) {
     super(element);
-    this.ref = element.getAttribute("ref");
-  }
-
-  public ArgumentRef(@NotNull InputSource inputSource) {
-    this(element(inputSource));
+    this.cellar = element.getAttribute("cellar");
+    this.name = element.getAttribute("name");
   }
 
   @Override
   public @NotNull String getTag() {
-    return "ref";
-  }
-
-  public String getRef() {
-    return ref;
-  }
-
-  public void setRef(String ref) {
-    this.ref = ref;
+    return "const-ref";
   }
 
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("ref", ref);
+    element.setAttribute("cellar", cellar);
+    element.setAttribute("name", name);
   }
 
   @Override
   public int hashCode() {
-    return ref.hashCode();
+    return Objects.hash(cellar, name);
   }
 
   @Override
@@ -71,9 +62,9 @@ public final class ArgumentRef extends Argument {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ArgumentRef) {
-      final var that = (ArgumentRef) obj;
-      return Objects.equals(this.ref, that.ref);
+    if (obj instanceof ArgumentConstRef) {
+      final var that = (ArgumentConstRef) obj;
+      return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.name, that.name);
     }
     return false;
   }

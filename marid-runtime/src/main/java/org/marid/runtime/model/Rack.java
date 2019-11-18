@@ -1,4 +1,4 @@
-package org.marid.project.model;
+package org.marid.runtime.model;
 
 /*-
  * #%L

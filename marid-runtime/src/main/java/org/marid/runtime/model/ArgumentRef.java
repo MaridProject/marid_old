@@ -1,4 +1,4 @@
-package org.marid.project.model;
+package org.marid.runtime.model;
 
 /*-
  * #%L
@@ -22,39 +22,48 @@ package org.marid.project.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import java.util.Objects;
 
-public final class ArgumentConstRef extends Argument {
+public final class ArgumentRef extends Argument {
 
-  private String cellar;
-  private String name;
+  private String ref;
 
-  public ArgumentConstRef(@NotNull String cellar, @NotNull String name) {
-    this.cellar = cellar;
-    this.name = name;
+  public ArgumentRef(@NotNull String ref) {
+    this.ref = ref;
   }
 
-  public ArgumentConstRef(@NotNull Element element) {
+  public ArgumentRef(@NotNull Element element) {
     super(element);
-    this.cellar = element.getAttribute("cellar");
-    this.name = element.getAttribute("name");
+    this.ref = element.getAttribute("ref");
+  }
+
+  public ArgumentRef(@NotNull InputSource inputSource) {
+    this(element(inputSource));
   }
 
   @Override
   public @NotNull String getTag() {
-    return "const-ref";
+    return "ref";
+  }
+
+  public String getRef() {
+    return ref;
+  }
+
+  public void setRef(String ref) {
+    this.ref = ref;
   }
 
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("cellar", cellar);
-    element.setAttribute("name", name);
+    element.setAttribute("ref", ref);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cellar, name);
+    return ref.hashCode();
   }
 
   @Override
@@ -62,9 +71,9 @@ public final class ArgumentConstRef extends Argument {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ArgumentConstRef) {
-      final var that = (ArgumentConstRef) obj;
-      return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.name, that.name);
+    if (obj instanceof ArgumentRef) {
+      final var that = (ArgumentRef) obj;
+      return Objects.equals(this.ref, that.ref);
     }
     return false;
   }
