@@ -31,7 +31,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.marid.runtime.test.impl.TestBean;
 
-import static java.lang.invoke.MethodHandles.publicLookup;
+import java.lang.invoke.MethodHandles;
+
 import static java.lang.invoke.MethodType.methodType;
 import static jdk.dynalink.StandardNamespace.METHOD;
 import static jdk.dynalink.StandardNamespace.PROPERTY;
@@ -55,36 +56,35 @@ class DynalinkTest {
 
   @Test
   void get() throws Throwable {
-    final var op = GET.withNamespace(PROPERTY).named("x");
-    final var csd = new CallSiteDescriptor(publicLookup(), op, methodType(Object.class, Object.class));
+    final var actual = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+        MethodHandles.publicLookup(),
+        GET.withNamespace(PROPERTY).named("x"),
+        methodType(Object.class, Object.class)))
+    ).dynamicInvoker().bindTo(new TestBean()).invoke();
 
-    final var site = linker.link(new SimpleRelinkableCallSite(csd));
-    final var mh = site.dynamicInvoker().bindTo(new TestBean());
-
-    assertEquals("x", mh.invoke());
+    assertEquals("x", actual);
   }
 
   @Test
   void constructor() throws Throwable {
-    final var op = NEW.named("new");
-    final var csd = new CallSiteDescriptor(publicLookup(), op, methodType(Object.class, StaticClass.class));
+    final var actual = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+        MethodHandles.publicLookup(),
+        NEW.named("new"),
+        methodType(Object.class, StaticClass.class)))
+    ).dynamicInvoker().invoke(StaticClass.forClass(TestBean.class));
 
-    final var site = linker.link(new SimpleRelinkableCallSite(csd));
-    final var mh = site.dynamicInvoker();
-
-    assertTrue(mh.invoke(StaticClass.forClass(TestBean.class)) instanceof TestBean);
+    assertTrue(actual instanceof TestBean);
   }
 
   @Test
   void setter() throws Throwable {
-    final var op = SET.withNamespace(PROPERTY).named("length");
-    final var csd = new CallSiteDescriptor(publicLookup(), op, methodType(void.class, Object.class, Object.class));
-
     final var builder = new StringBuilder();
-    final var site = linker.link(new SimpleRelinkableCallSite(csd));
-    final var mh = site.dynamicInvoker().bindTo(builder);
 
-    mh.invoke(3);
+    linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+        MethodHandles.publicLookup(),
+        SET.withNamespace(PROPERTY).named("length"),
+        methodType(void.class, Object.class, Object.class)))
+    ).dynamicInvoker().bindTo(builder).invoke(3);
 
     assertEquals(3, builder.length());
   }
@@ -94,13 +94,13 @@ class DynalinkTest {
     final var builder = new StringBuilder("abcde");
 
     final var callable = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-        publicLookup(),
+        MethodHandles.publicLookup(),
         GET.withNamespace(METHOD).named("replace"),
         methodType(Object.class, Object.class)
     ))).dynamicInvoker().bindTo(builder).invoke();
 
     linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-        publicLookup(),
+        MethodHandles.publicLookup(),
         CALL,
         methodType(Object.class, Object.class, Object.class, Object.class, Object.class, Object.class)
     ))).dynamicInvoker().invoke(callable, builder, 0, 2, "");
