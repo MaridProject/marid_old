@@ -21,7 +21,14 @@
 
 package org.marid.io;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.StreamCorruptedException;
+import java.io.UncheckedIOException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -30,7 +37,6 @@ import java.util.function.Consumer;
  */
 public class ProcessManager implements Closeable {
 
-  private final String name;
   private final Process process;
   private final long timeout;
   private final TimeUnit timeUnit;
@@ -39,27 +45,25 @@ public class ProcessManager implements Closeable {
   private final Thread outConsumer;
   private final Thread errConsumer;
 
-  public ProcessManager(String name,
-                        Process process,
+  public ProcessManager(Process process,
                         Consumer<String> outLineConsumer,
                         Consumer<String> errLineConsumer,
                         int bufferSize,
                         long timeout,
                         TimeUnit timeUnit) {
-    this.name = name;
     this.process = process;
     this.timeout = timeout;
     this.timeUnit = timeUnit;
     this.out = process.getInputStream();
     this.err = process.getErrorStream();
-    this.outConsumer = new ConsumerThread(name + "(out)", out, bufferSize, outLineConsumer);
-    this.errConsumer = new ConsumerThread(name + "(err)", err, bufferSize, errLineConsumer);
+    this.outConsumer = new ConsumerThread(this + "(out)", out, bufferSize, outLineConsumer);
+    this.errConsumer = new ConsumerThread(this + "(err)", err, bufferSize, errLineConsumer);
     outConsumer.start();
     errConsumer.start();
   }
 
-  public ProcessManager(String name, Process process, Consumer<String> out, Consumer<String> err) {
-    this(name, process, out, err, 65536, 1L, TimeUnit.SECONDS);
+  public ProcessManager(Process process, Consumer<String> out, Consumer<String> err) {
+    this(process, out, err, 65536, 1L, TimeUnit.SECONDS);
   }
 
   private void awaitThreads(IOException iox) throws IOException {
@@ -86,12 +90,17 @@ public class ProcessManager implements Closeable {
   }
 
   @Override
+  public String toString() {
+    return "pid(" + process.pid() + ")";
+  }
+
+  @Override
   public void close() throws IOException {
     if (process.isAlive()) {
       process.destroy();
       try {
         if (!process.waitFor(timeout, timeUnit) || !process.destroyForcibly().waitFor(timeout, timeUnit)) {
-          awaitThreads(new StreamCorruptedException(name));
+          awaitThreads(new StreamCorruptedException(toString()));
         }
       } catch (InterruptedException x) {
         awaitThreads(new InterruptedIOException(process.toString()));
