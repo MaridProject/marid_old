@@ -21,6 +21,13 @@ package org.marid.processors;
  * #L%
  */
 
+import jdk.dynalink.CallSiteDescriptor;
+import jdk.dynalink.DynamicLinkerFactory;
+import jdk.dynalink.StandardNamespace;
+import jdk.dynalink.StandardOperation;
+import jdk.dynalink.beans.BeansLinker;
+import jdk.dynalink.support.SimpleRelinkableCallSite;
+
 import javax.annotation.processing.Completion;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -38,6 +45,8 @@ import javax.lang.model.util.Elements;
 import javax.tools.JavaFileManager;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
