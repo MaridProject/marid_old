@@ -9,23 +9,50 @@ package org.marid.runtime.model;
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- * 
+ *
  * This Source Code may also be made available under the following Secondary
  * Licenses when the conditions for such availability set forth in the Eclipse
  * Public License, v. 2.0 are satisfied: GNU General Public License, version 2
  * with the GNU Classpath Exception which is
  * available at https://www.gnu.org/software/classpath/license.html.
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
 
 import org.jetbrains.annotations.NotNull;
+import org.marid.io.function.IOBiFunction;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.URL;
+import java.nio.file.Path;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.MonthDay;
+import java.time.Period;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Base64;
+import java.util.BitSet;
+import java.util.Currency;
+import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.TimeZone;
+import java.util.function.BiFunction;
 
 public final class ArgumentLiteral extends Argument {
 
@@ -81,23 +108,77 @@ public final class ArgumentLiteral extends Argument {
 
   public enum Type {
 
-    BYTE(byte.class, a -> null),
-    SHORT(short.class, a -> null),
-    INT(int.class, a -> null),
-    LONG(long.class, a -> null),
-    FLOAT(float.class, a -> null),
-    DOUBLE(double.class, a -> null),
-    CHAR(char.class, a -> null),
-    BOOLEAN(boolean.class, a -> null),
-    STRING(String.class, a -> null),
-    CLASS(Class.class, a -> null);
+    BYTE(byte.class, (s, cl) -> Byte.parseByte(s)),
+    SHORT(short.class, (s, cl) -> Short.parseShort(s)),
+    INT(int.class, (s, cl) -> Integer.parseInt(s)),
+    LONG(long.class, (s, cl) -> Long.parseLong(s)),
+    FLOAT(float.class, (s, cl) -> Float.parseFloat(s)),
+    DOUBLE(double.class, (s, cl) -> Double.parseDouble(s)),
+    CHAR(char.class, (s, cl) -> s.charAt(0)),
+    BOOLEAN(boolean.class, (s, cl) -> Boolean.parseBoolean(s)),
+    STRING(String.class, (s, cl) -> s),
+    BIGDECIMAL(BigDecimal.class, (s, cl) -> {
+      switch (s) {
+        case "0":
+        case "0.0": return BigDecimal.ZERO;
+        case "1":
+        case "1.0": return BigDecimal.ONE;
+        case "10":
+        case "10.0": return BigDecimal.TEN;
+        default: return new BigDecimal(s);
+      }
+    }),
+    BIGINT(BigInteger.class, (s, cl) -> {
+      switch (s) {
+        case "0": return BigInteger.ZERO;
+        case "1": return BigInteger.ONE;
+        case "2": return BigInteger.TWO;
+        case "10": return BigInteger.TEN;
+        default: return new BigInteger(s);
+      }
+    }),
+    BITSET(BitSet.class, (s, cl) -> BitSet.valueOf(new BigInteger(s, 2).toByteArray())),
+    UUID(java.util.UUID.class, (s, cl) -> java.util.UUID.fromString(s)),
+    LOCALE(Locale.class, (s, cl) -> Locale.forLanguageTag(s)),
+    CURRENCY(Currency.class, (s, cl) -> Currency.getInstance(s)),
+    TIMEZONE(TimeZone.class, (s, cl) -> TimeZone.getTimeZone(s)),
+    ZONEID(ZoneId.class, (s, cl) -> ZoneId.of(s)),
+    TIMESTAMP(Timestamp.class, (s, cl) -> Timestamp.valueOf(s)),
+    TIME(Time.class, (s, cl) -> Time.valueOf(s)),
+    DATE(Date.class, (s, cl) -> Date.valueOf(s)),
+    INSTANT(Instant.class, (s, cl) -> Instant.parse(s)),
+    DURATION(Duration.class, (s, cl) -> Duration.parse(s)),
+    LOCALDATE(LocalDate.class, (s, cl) -> LocalDate.parse(s)),
+    LOCALTIME(LocalTime.class, (s, cl) -> LocalTime.parse(s)),
+    LOCALDATETIME(LocalDateTime.class, (s, cl) -> LocalDateTime.parse(s)),
+    PERIOD(Period.class, (s, cl) -> Period.parse(s)),
+    MONTHDAY(MonthDay.class, (s, cl) -> MonthDay.parse(s)),
+    YEAR(Year.class, (s, cl) -> Year.parse(s)),
+    YEARMONTH(YearMonth.class, (s, cl) -> YearMonth.parse(s)),
+    ZONEDDATETIME(ZonedDateTime.class, (s, cl) -> ZonedDateTime.parse(s)),
+    ZONEOFFSET(ZoneOffset.class, (s, cl) -> ZoneOffset.of(s)),
+    BASE64(byte[].class, (s, cl) -> Base64.getDecoder().decode(s)),
+    BASE64URL(byte[].class, (s, cl) -> Base64.getUrlDecoder().decode(s)),
+    BASE64MIME(byte[].class, (s, cl) -> Base64.getMimeDecoder().decode(s)),
+    URI(java.net.URI.class, (s, cl) -> java.net.URI.create(s)),
+    URL(java.net.URL.class, IOBiFunction.of((s, cl) -> new URL(s))),
+    INETADDRESS(InetAddress.class, IOBiFunction.of((s, cl) -> InetAddress.getByName(s))),
+    PATH(Path.class, (s, cl) -> Path.of(s)),
+    FILE(File.class, (s, cl) -> new File(s)),
+    CLASS(Class.class, (s, cl) -> {
+      try {
+        return cl.loadClass(s);
+      } catch (ClassNotFoundException e) {
+        throw new IllegalArgumentException(s);
+      }
+    });
 
     public final Class<?> type;
-    public final Function<ArgumentLiteral, Object> ast;
+    public final BiFunction<@NotNull String, @NotNull ClassLoader, @NotNull Object> converter;
 
-    Type(Class<?> type, Function<ArgumentLiteral, @NotNull Object> ast) {
+    Type(Class<?> type, BiFunction<String, ClassLoader, Object> converter) {
       this.type = type;
-      this.ast = ast;
+      this.converter = converter;
     }
   }
 }

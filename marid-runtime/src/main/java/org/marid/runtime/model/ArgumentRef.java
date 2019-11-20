@@ -21,6 +21,7 @@ package org.marid.runtime.model;
  */
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
@@ -28,14 +29,16 @@ import java.util.Objects;
 
 public final class ArgumentRef extends Argument {
 
+  private String cellar;
   private String ref;
 
-  public ArgumentRef(@NotNull String ref) {
+  public ArgumentRef(@Nullable String cellar, @NotNull String ref) {
     this.ref = ref;
   }
 
   public ArgumentRef(@NotNull Element element) {
     super(element);
+    this.ref = element.getAttribute("cellar");
     this.ref = element.getAttribute("ref");
   }
 
@@ -56,14 +59,27 @@ public final class ArgumentRef extends Argument {
     this.ref = ref;
   }
 
+  public String getCellar() {
+    return cellar;
+  }
+
+  public void setCellar(String cellar) {
+    this.cellar = cellar;
+  }
+
   @Override
   public void writeTo(@NotNull Element element) {
+    if (cellar != null) {
+      element.setAttribute("cellar", cellar);
+    } else {
+      element.removeAttribute("cellar");
+    }
     element.setAttribute("ref", ref);
   }
 
   @Override
   public int hashCode() {
-    return ref.hashCode();
+    return Objects.hash(cellar, ref);
   }
 
   @Override
@@ -73,7 +89,7 @@ public final class ArgumentRef extends Argument {
     }
     if (obj instanceof ArgumentRef) {
       final var that = (ArgumentRef) obj;
-      return Objects.equals(this.ref, that.ref);
+      return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.ref, that.ref);
     }
     return false;
   }

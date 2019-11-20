@@ -32,7 +32,8 @@ interface ArgumentFactory {
     return Stream.of(
         ArgumentRef::new,
         ArgumentConstRef::new,
-        ArgumentLiteral::new
+        ArgumentLiteral::new,
+        ArgumentNull::new
     );
   }
 
