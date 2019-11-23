@@ -206,11 +206,7 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
                   .append(substitute(sam.getReturnType(), resolvedVars).toString()).append(' ')
                   .append(sam.getSimpleName()).append("Checked")
                   .append(sam.getParameters().stream()
-                      .map(p -> {
-                        final var t = p.asType();
-                        final var m = substitute(t, resolvedVars);
-                        return m + " " + p.getSimpleName();
-                      })
+                      .map(p -> substitute(p.asType(), resolvedVars) + " " + p.getSimpleName())
                       .collect(joining(", ", "(", ")")))
                   .append(" throws ")
                   .append(checkedThrowableClasses.stream()
@@ -222,11 +218,7 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
                   .append(substitute(sam.getReturnType(), resolvedVars).toString()).append(' ')
                   .append(sam.getSimpleName())
                   .append(sam.getParameters().stream()
-                      .map(p -> {
-                        final var t = p.asType();
-                        final var m = substitute(t, resolvedVars);
-                        return m + " " + p.getSimpleName();
-                      })
+                      .map(p -> substitute(p.asType(), resolvedVars) + " " + p.getSimpleName())
                       .collect(joining(", ", "(", ")")));
               final var throwsOriginal = sam.getThrownTypes();
               if (!throwsOriginal.isEmpty()) {
