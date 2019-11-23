@@ -10,12 +10,12 @@ package org.marid.processors;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -50,7 +50,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +113,7 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
   }
 
   private static AnnotationValue value(Map<? extends ExecutableElement, ? extends AnnotationValue> map, Method method) {
-    return map.entrySet().stream()
+    return map.entrySet().parallelStream()
         .filter(e -> e.getKey().getSimpleName().contentEquals(method.getName()))
         .map(Map.Entry::getValue)
         .findFirst()
@@ -137,7 +136,7 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
       messager.printMessage(NOTE, "Processing", element);
       final var pkg = (PackageElement) element;
 
-      final var anns = pkg.getAnnotationMirrors().stream()
+      final var anns = pkg.getAnnotationMirrors().parallelStream()
           .flatMap(a -> {
             final var name = a.getAnnotationType().asElement().getSimpleName();
             if (name.contentEquals(CheckedFunctionalInterface.class.getSimpleName())) {
@@ -159,124 +158,123 @@ public class CheckedFunctionalInterfaceProcessor implements Processor {
         final var interfacePrefix = value(methods, interfacePrefixMethod).getValue().toString();
         final var checkedThrowableClasses = ((List<?>) value(methods, checkedThrowableClassesMethod).getValue()).stream()
             .map(v -> (TypeMirror) ((AnnotationValue) v).getValue())
-            .toArray(TypeMirror[]::new);
+            .collect(Collectors.toUnmodifiableList());
         final var wrapperExceptionClass = (TypeMirror) value(methods, wrapperExceptionClassMethod).getValue();
 
         ((List<?>) value(methods, functionalInterfacesMethod).getValue()).parallelStream()
-            .map(v -> (TypeMirror) ((AnnotationValue) v).getValue())
-            .forEach(itf -> {
-              final var itfElement = (TypeElement) types.asElement(itf);
-              final var sam = sam(itfElement);
-              if (sam == null) {
-                synchronized (this) {
-                  messager.printMessage(WARNING, itf + " is not a FunctionalInterface", element);
-                }
-                return;
+            .map(v -> (TypeMirror) ((AnnotationValue) v).getValue()).forEach(itf -> {
+          final var itfElement = (TypeElement) types.asElement(itf);
+          final var sam = sam(itfElement);
+          if (sam == null) {
+            synchronized (this) {
+              messager.printMessage(WARNING, itf + " is not a FunctionalInterface", element);
+            }
+            return;
+          }
+          synchronized (this) {
+            messager.printMessage(NOTE, "Processing " + itf + "." + sam, element);
+          }
+          final var name = interfacePrefix + itfElement.getSimpleName().toString();
+
+          try {
+            final var resolvedVars = resolveVars((DeclaredType) itf);
+
+            final JavaFileObject resource;
+            synchronized (this) {
+              resource = filer.createSourceFile(targetPackageName + "." + name);
+            }
+
+            try (final var w = resource.openWriter()) {
+              w.append("package ").append(targetPackageName).append(";\n\n");
+
+              // interface header
+              w.append("@").append(Generated.class.getName())
+                  .append('(')
+                  .append("value = ").append('"').append("marid").append('"').append(", ")
+                  .append("date = ").append('"').append(Instant.now().toString()).append('"')
+                  .append(")\n");
+              w.append('@').append(FunctionalInterface.class.getSimpleName()).append('\n');
+              w.append("public interface ").append(name);
+              final var typeVars = itfElement.getTypeParameters();
+              addTypeVariables(typeVars, w);
+              w.append(" extends ").append(itfElement.getQualifiedName());
+              addTypeVariables(typeVars, w);
+              w.append(" {\n\n");
+
+              // checked method
+              w.append(' ')
+                  .append(substitute(sam.getReturnType(), resolvedVars).toString()).append(' ')
+                  .append(sam.getSimpleName()).append("Checked")
+                  .append(sam.getParameters().stream()
+                      .map(p -> {
+                        final var t = p.asType();
+                        final var m = substitute(t, resolvedVars);
+                        return m + " " + p.getSimpleName();
+                      })
+                      .collect(joining(", ", "(", ")")))
+                  .append(" throws ")
+                  .append(checkedThrowableClasses.stream()
+                      .map(TypeMirror::toString)
+                      .collect(joining(", ", "", ";\n\n")));
+
+              // default method
+              w.append(" default ")
+                  .append(substitute(sam.getReturnType(), resolvedVars).toString()).append(' ')
+                  .append(sam.getSimpleName())
+                  .append(sam.getParameters().stream()
+                      .map(p -> {
+                        final var t = p.asType();
+                        final var m = substitute(t, resolvedVars);
+                        return m + " " + p.getSimpleName();
+                      })
+                      .collect(joining(", ", "(", ")")));
+              final var throwsOriginal = sam.getThrownTypes();
+              if (!throwsOriginal.isEmpty()) {
+                w.append(" throws ").append(throwsOriginal.stream()
+                    .map(TypeMirror::toString)
+                    .collect(joining(", ")));
               }
-              synchronized (this) {
-                messager.printMessage(NOTE, "Processing " + itf + "." + sam, element);
+              w.append(" {\n");
+              w.append("  try {\n");
+
+              w.append("    ");
+              if (!types.getNoType(TypeKind.VOID).equals(sam.getReturnType())) {
+                w.append("return ");
               }
-              final var name = interfacePrefix + itfElement.getSimpleName().toString();
+              w.append(sam.getSimpleName()).append("Checked")
+                  .append(sam.getParameters().stream()
+                      .map(VariableElement::getSimpleName)
+                      .collect(joining(", ", "(", ");\n")));
+              w.append("  } catch ")
+                  .append(checkedThrowableClasses.stream()
+                      .map(TypeMirror::toString)
+                      .collect(joining(" | ", "(", " e) {\n")));
+              w.append("    throw new ")
+                  .append(wrapperExceptionClass.toString())
+                  .append("(e);\n")
+                  .append("  }\n");
+              w.append(" }\n\n");
 
-              try {
-                final var resolvedVars = resolveVars((DeclaredType) itf);
+              // static helper
+              w.append(" static ");
+              addTypeVariables(typeVars, w);
+              w.append(' ').append(name);
+              addTypeVariables(typeVars, w);
+              w.append(" of(");
+              w.append(name);
+              addTypeVariables(typeVars, w);
+              w.append(" value) { return value; }\n\n");
 
-                final JavaFileObject resource;
-                synchronized (this) {
-                  resource = filer.createSourceFile(targetPackageName + "." + name);
-                }
-
-                try (final var w = resource.openWriter()) {
-                  w.append("package ").append(targetPackageName).append(";\n\n");
-
-                  // interface header
-                  w.append("@").append(Generated.class.getName())
-                      .append('(')
-                      .append("value = ").append('"').append("marid").append('"').append(", ")
-                      .append("date = ").append('"').append(Instant.now().toString()).append('"')
-                      .append(")\n");
-                  w.append('@').append(FunctionalInterface.class.getSimpleName()).append('\n');
-                  w.append("public interface ").append(name);
-                  final var typeVars = itfElement.getTypeParameters();
-                  addTypeVariables(typeVars, w);
-                  w.append(" extends ").append(itfElement.getQualifiedName());
-                  addTypeVariables(typeVars, w);
-                  w.append(" {\n\n");
-
-                  // checked method
-                  w.append(' ')
-                      .append(substitute(sam.getReturnType(), resolvedVars).toString()).append(' ')
-                      .append(sam.getSimpleName()).append("Checked")
-                      .append(sam.getParameters().stream()
-                          .map(p -> {
-                            final var t = p.asType();
-                            final var m = substitute(t, resolvedVars);
-                            return m + " " + p.getSimpleName();
-                          })
-                          .collect(joining(", ", "(", ")")))
-                      .append(" throws ")
-                      .append(Arrays.stream(checkedThrowableClasses)
-                          .map(TypeMirror::toString)
-                          .collect(joining(", ", "", ";\n\n")));
-
-                  // default method
-                  w.append(" default ")
-                      .append(substitute(sam.getReturnType(), resolvedVars).toString()).append(' ')
-                      .append(sam.getSimpleName())
-                      .append(sam.getParameters().stream()
-                          .map(p -> {
-                            final var t = p.asType();
-                            final var m = substitute(t, resolvedVars);
-                            return m + " " + p.getSimpleName();
-                          })
-                          .collect(joining(", ", "(", ")")));
-                  final var throwsOriginal = sam.getThrownTypes();
-                  if (!throwsOriginal.isEmpty()) {
-                    w.append(" throws ").append(throwsOriginal.stream()
-                        .map(TypeMirror::toString)
-                        .collect(joining(", ")));
-                  }
-                  w.append(" {\n");
-                  w.append("  try {\n");
-
-                  w.append("    ");
-                  if (!types.getNoType(TypeKind.VOID).equals(sam.getReturnType())) {
-                    w.append("return ");
-                  }
-                  w.append(sam.getSimpleName()).append("Checked")
-                      .append(sam.getParameters().stream()
-                          .map(VariableElement::getSimpleName)
-                          .collect(joining(", ", "(", ");\n")));
-                  w.append("  } catch ")
-                      .append(Arrays.stream(checkedThrowableClasses)
-                          .map(TypeMirror::toString)
-                          .collect(joining(" | ", "(", " e) {\n")));
-                  w.append("    throw new ")
-                      .append(wrapperExceptionClass.toString())
-                      .append("(e);\n")
-                      .append("  }\n");
-                  w.append(" }\n\n");
-
-                  // static helper
-                  w.append(" static ");
-                  addTypeVariables(typeVars, w);
-                  w.append(' ').append(name);
-                  addTypeVariables(typeVars, w);
-                  w.append(" of(");
-                  w.append(name);
-                  addTypeVariables(typeVars, w);
-                  w.append(" value) { return value; }\n\n");
-
-                  // end of class
-                  w.append("}\n");
-                }
-              } catch (Throwable e) {
-                synchronized (this) {
-                  messager.printMessage(ERROR, "Unexpected error: " + e.getMessage(), element);
-                  e.printStackTrace();
-                }
-              }
-            });
+              // end of class
+              w.append("}\n");
+            }
+          } catch (Throwable e) {
+            synchronized (this) {
+              messager.printMessage(ERROR, "Unexpected error: " + e.getMessage(), element);
+              e.printStackTrace();
+            }
+          }
+        });
       }
     }
     return true;
