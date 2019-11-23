@@ -16,6 +16,15 @@
     ),
     @CheckedFunctionalInterface(
         targetPackageName = "org.marid.misc",
+        interfacePrefix = "Security",
+        wrapperExceptionClass = IllegalArgumentException.class,
+        checkedThrowableClasses = {NoSuchAlgorithmException.class},
+        functionalInterfaces = {
+            Supplier.class
+        }
+    ),
+    @CheckedFunctionalInterface(
+        targetPackageName = "org.marid.misc",
         interfacePrefix = "Invocation",
         wrapperExceptionClass = UndeclaredThrowableException.class,
         checkedThrowableClasses = {Throwable.class},
@@ -153,6 +162,7 @@ import org.marid.processors.CheckedFunctionalInterface;
 import org.marid.processors.CheckedFunctionalInterfaces;
 
 import java.lang.reflect.UndeclaredThrowableException;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;

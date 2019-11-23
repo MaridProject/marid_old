@@ -22,17 +22,26 @@
 package org.marid.db.hsqldb;
 
 import org.hsqldb.jdbc.JDBCPool;
+import org.jetbrains.annotations.NotNull;
 import org.marid.db.dao.DaqReader;
 import org.marid.db.data.DataRecord;
-import org.marid.misc.Digests;
+import org.marid.misc.SecuritySupplier;
 
-import org.jetbrains.annotations.NotNull;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.LongStream;
 
 /**
@@ -133,7 +142,10 @@ public abstract class HsqldbDaqAbstractReader<T extends Serializable> implements
         while (rs.next()) {
           final Long tag = rs.getLong(1);
           final Timestamp ts = rs.getTimestamp(2);
-          final MessageDigest digest = digestMap.computeIfAbsent(tag, t -> Digests.digest(algorithm));
+          final MessageDigest digest = digestMap.computeIfAbsent(
+              tag,
+              t -> SecuritySupplier.of(() -> MessageDigest.getInstance(algorithm)).get()
+          );
           digest.update(ByteBuffer.allocate(8).putLong(0, ts.getTime()));
           if (includeData) {
             digest.update(toByteArray(getValue(rs, 3)));
