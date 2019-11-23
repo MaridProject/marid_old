@@ -22,10 +22,12 @@ package org.marid.runtime.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.marid.io.function.IOBiFunction;
+import org.marid.misc.ClassLoadingSupplier;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.io.File;
+import java.lang.invoke.MethodType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -117,26 +119,8 @@ public final class ArgumentLiteral extends Argument {
     CHAR(char.class, (s, cl) -> s.charAt(0)),
     BOOLEAN(boolean.class, (s, cl) -> Boolean.parseBoolean(s)),
     STRING(String.class, (s, cl) -> s),
-    BIGDECIMAL(BigDecimal.class, (s, cl) -> {
-      switch (s) {
-        case "0":
-        case "0.0": return BigDecimal.ZERO;
-        case "1":
-        case "1.0": return BigDecimal.ONE;
-        case "10":
-        case "10.0": return BigDecimal.TEN;
-        default: return new BigDecimal(s);
-      }
-    }),
-    BIGINT(BigInteger.class, (s, cl) -> {
-      switch (s) {
-        case "0": return BigInteger.ZERO;
-        case "1": return BigInteger.ONE;
-        case "2": return BigInteger.TWO;
-        case "10": return BigInteger.TEN;
-        default: return new BigInteger(s);
-      }
-    }),
+    BIGDECIMAL(BigDecimal.class, (s, cl) -> convertBigDecimal(s)),
+    BIGINT(BigInteger.class, (s, cl) -> convertBigInt(s)),
     BITSET(BitSet.class, (s, cl) -> BitSet.valueOf(new BigInteger(s, 2).toByteArray())),
     UUID(java.util.UUID.class, (s, cl) -> java.util.UUID.fromString(s)),
     LOCALE(Locale.class, (s, cl) -> Locale.forLanguageTag(s)),
@@ -166,13 +150,8 @@ public final class ArgumentLiteral extends Argument {
     INETADDRESS(InetAddress.class, IOBiFunction.of((s, cl) -> InetAddress.getByName(s))),
     PATH(Path.class, (s, cl) -> Path.of(s)),
     FILE(File.class, (s, cl) -> new File(s)),
-    CLASS(Class.class, (s, cl) -> {
-      try {
-        return cl.loadClass(s);
-      } catch (ClassNotFoundException e) {
-        throw new IllegalArgumentException(s);
-      }
-    });
+    CLASS(Class.class, (s, cl) -> ClassLoadingSupplier.of(() -> cl.loadClass(s))),
+    METHODTYPE(MethodType.class, MethodType::fromMethodDescriptorString);
 
     public final Class<?> type;
     public final BiFunction<@NotNull String, @NotNull ClassLoader, @NotNull Object> converter;
@@ -180,6 +159,28 @@ public final class ArgumentLiteral extends Argument {
     Type(Class<?> type, BiFunction<String, ClassLoader, Object> converter) {
       this.type = type;
       this.converter = converter;
+    }
+
+    private static BigDecimal convertBigDecimal(String s) {
+      switch (s) {
+        case "0":
+        case "0.0": return BigDecimal.ZERO;
+        case "1":
+        case "1.0": return BigDecimal.ONE;
+        case "10":
+        case "10.0": return BigDecimal.TEN;
+        default: return new BigDecimal(s);
+      }
+    }
+
+    private static BigInteger convertBigInt(String s) {
+      switch (s) {
+        case "0": return BigInteger.ZERO;
+        case "1": return BigInteger.ONE;
+        case "2": return BigInteger.TWO;
+        case "10": return BigInteger.TEN;
+        default: return new BigInteger(s);
+      }
     }
   }
 }
