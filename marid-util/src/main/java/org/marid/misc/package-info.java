@@ -16,6 +16,72 @@
     ),
     @CheckedFunctionalInterface(
         targetPackageName = "org.marid.misc",
+        interfacePrefix = "Invocation",
+        wrapperExceptionClass = UndeclaredThrowableException.class,
+        checkedThrowableClasses = {Throwable.class},
+        functionalInterfaces = {
+            // consumers
+            Consumer.class,
+            IntConsumer.class,
+            LongConsumer.class,
+            DoubleConsumer.class,
+
+            // bi consumers
+            BiConsumer.class,
+            ObjIntConsumer.class,
+            ObjLongConsumer.class,
+            ObjDoubleConsumer.class,
+
+            // functions
+            Function.class,
+            IntFunction.class,
+            LongFunction.class,
+            DoubleFunction.class,
+            ToIntFunction.class,
+            ToLongFunction.class,
+            ToDoubleFunction.class,
+            IntToLongFunction.class,
+            IntToDoubleFunction.class,
+            LongToIntFunction.class,
+            LongToDoubleFunction.class,
+            DoubleToIntFunction.class,
+            DoubleToLongFunction.class,
+
+            // bi functions
+            BiFunction.class,
+            ToIntBiFunction.class,
+            ToLongBiFunction.class,
+            ToDoubleBiFunction.class,
+
+            // operators
+            BinaryOperator.class,
+            UnaryOperator.class,
+            DoubleBinaryOperator.class,
+            DoubleUnaryOperator.class,
+            IntBinaryOperator.class,
+            IntUnaryOperator.class,
+            LongBinaryOperator.class,
+            LongUnaryOperator.class,
+
+            // predicates
+            Predicate.class,
+            IntPredicate.class,
+            LongPredicate.class,
+            DoublePredicate.class,
+
+            // bi predicates
+            BiPredicate.class,
+
+            // suppliers
+            Supplier.class,
+            BooleanSupplier.class,
+            IntSupplier.class,
+            LongSupplier.class,
+            DoubleSupplier.class
+        }
+    ),
+    @CheckedFunctionalInterface(
+        targetPackageName = "org.marid.misc",
         interfacePrefix = "Reflective",
         wrapperExceptionClass = IllegalStateException.class,
         checkedThrowableClasses = {ReflectiveOperationException.class},
@@ -86,6 +152,7 @@ package org.marid.misc;
 import org.marid.processors.CheckedFunctionalInterface;
 import org.marid.processors.CheckedFunctionalInterfaces;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
