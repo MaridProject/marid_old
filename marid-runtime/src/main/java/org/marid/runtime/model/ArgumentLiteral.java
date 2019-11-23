@@ -160,6 +160,7 @@ public final class ArgumentLiteral extends Argument {
     BASE64(byte[].class, (s, cl) -> Base64.getDecoder().decode(s)),
     BASE64URL(byte[].class, (s, cl) -> Base64.getUrlDecoder().decode(s)),
     BASE64MIME(byte[].class, (s, cl) -> Base64.getMimeDecoder().decode(s)),
+    HEX(byte[].class, (s, cl) -> new BigInteger(s.replaceAll("\\s++", ""), 16).toByteArray()),
     URI(java.net.URI.class, (s, cl) -> java.net.URI.create(s)),
     URL(java.net.URL.class, IOBiFunction.of((s, cl) -> new URL(s))),
     INETADDRESS(InetAddress.class, IOBiFunction.of((s, cl) -> InetAddress.getByName(s))),
