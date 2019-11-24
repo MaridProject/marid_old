@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test;
 import org.marid.runtime.test.impl.TestBean;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static java.lang.invoke.MethodType.methodType;
 import static jdk.dynalink.StandardNamespace.METHOD;
@@ -66,6 +68,17 @@ class DynalinkTest {
   }
 
   @Test
+  void getStatic() throws Throwable {
+    final var actual = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+        MethodHandles.publicLookup(),
+        GET.withNamespace(PROPERTY).named("LONG"),
+        methodType(Object.class, StaticClass.class)))
+    ).dynamicInvoker().bindTo(StaticClass.forClass(TimeZone.class)).invoke();
+
+    assertEquals(TimeZone.LONG, actual);
+  }
+
+  @Test
   void constructor() throws Throwable {
     final var actual = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
         MethodHandles.publicLookup(),
@@ -95,7 +108,7 @@ class DynalinkTest {
 
     final var callable = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
         MethodHandles.publicLookup(),
-        GET.withNamespace(METHOD).named("replace"),
+        GET.withNamespace(METHOD).named(StringBuilder.class.getMethod("replace", int.class, int.class, String.class).getName()),
         methodType(Object.class, Object.class)
     ))).dynamicInvoker().bindTo(builder).invoke();
 
@@ -106,5 +119,22 @@ class DynalinkTest {
     ))).dynamicInvoker().invoke(callable, builder, 0, 2, "");
 
     assertEquals("cde", builder.toString());
+  }
+
+  @Test
+  void callStatic() throws Throwable {
+    final var callable = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+        MethodHandles.publicLookup(),
+        GET.withNamespace(METHOD).named(Locale.class.getMethod("forLanguageTag", String.class).getName()),
+        methodType(Object.class, StaticClass.class)
+    ))).dynamicInvoker().bindTo(StaticClass.forClass(Locale.class)).invoke();
+
+    final var actual = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+        MethodHandles.publicLookup(),
+        CALL,
+        methodType(Object.class, Object.class, Object.class, Object.class)
+    ))).dynamicInvoker().invoke(callable, null, "es");
+
+    assertEquals(Locale.forLanguageTag("es"), actual);
   }
 }

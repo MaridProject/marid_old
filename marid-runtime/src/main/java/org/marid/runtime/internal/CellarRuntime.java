@@ -21,20 +21,13 @@ package org.marid.runtime.internal;
  * #L%
  */
 
-import jdk.dynalink.CallSiteDescriptor;
-import jdk.dynalink.beans.StaticClass;
-import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.exception.CellarStartException;
 import org.marid.runtime.model.Cellar;
+import org.marid.runtime.model.CellarConstant;
 
-import java.lang.invoke.MethodHandles;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-
-import static java.lang.invoke.MethodType.methodType;
-import static jdk.dynalink.StandardNamespace.METHOD;
-import static jdk.dynalink.StandardOperation.GET;
 
 public class CellarRuntime implements AutoCloseable {
 
@@ -48,31 +41,23 @@ public class CellarRuntime implements AutoCloseable {
     this.winery = winery;
     this.name = name;
 
-    for (final var constant : cellar.getConstants()) {
-      try {
-        final var constantFactoryClass = winery.classLoader.loadClass(constant.getLib());
-
-        final var args = new Object[constant.getArguments().size()];
-        for (int i = 0; i < args.length; i++) {
-          final var argument = constant.getArguments().get(i);
-          args[i] = argument.getType().converter.apply(argument.getValue(), winery.classLoader);
-        }
-
-        final var callable = winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-            MethodHandles.publicLookup(),
-            GET.withNamespace(METHOD).named("replace"),
-            methodType(Object.class, StaticClass.class)
-        ))).dynamicInvoker().bindTo(StaticClass.forClass(constantFactoryClass)).invoke();
-      } catch (Throwable e) {
-        final var ex = new CellarStartException(this, e);
-        try {
-          winery.close();
-        } catch (Throwable x) {
-          e.addSuppressed(x);
-        }
-        throw ex;
+    try {
+      for (final var rack: cellar.getRacks()) {
+        this.racks.put(rack.getName(), new RackRuntime(this, rack));
       }
+    } catch (Throwable e) {
+      final var ex = new CellarStartException(this, e);
+      try {
+        close();
+      } catch (Throwable x) {
+        ex.addSuppressed(x);
+      }
+      throw ex;
     }
+  }
+
+  private Object constant(CellarConstant constant) throws Throwable {
+    return null;
   }
 
   @Override

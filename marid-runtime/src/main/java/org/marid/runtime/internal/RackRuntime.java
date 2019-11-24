@@ -24,6 +24,7 @@ package org.marid.runtime.internal;
 import jdk.dynalink.CallSiteDescriptor;
 import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.marid.runtime.exception.RackCloseException;
+import org.marid.runtime.model.Rack;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -42,11 +43,11 @@ public class RackRuntime implements AutoCloseable {
   private final Object instance;
   private final LinkedHashMap<String, Object[]> destroyers;
 
-  RackRuntime(CellarRuntime cellar, String name, Object instance, LinkedHashMap<String, Object[]> destroyers) {
+  RackRuntime(CellarRuntime cellar, Rack rack) {
     this.cellar = cellar;
-    this.name = name;
-    this.instance = instance;
-    this.destroyers = destroyers;
+    this.name = rack.getName();
+    this.instance = null;
+    this.destroyers = null;
   }
 
   @Override
