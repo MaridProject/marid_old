@@ -35,24 +35,31 @@ public class ServerSocketRack {
 
   private final ServerSocket serverSocket;
 
-  public ServerSocketRack(@In(title = "Socket port to bind") int port,
-                          @In(title = "Requested maximum length of the queue of incoming connections") int backlog,
-                          @In(title = "Bind address", code = "bind") InetAddress bindAddress) throws IOException {
-    this.serverSocket =  new ServerSocket(port, backlog, bindAddress);
+  public ServerSocketRack(
+      @In(code = "PORT", title = "Socket port to bind") int port,
+      @In(code = "BACKLOG", title = "Requested maximum length of the queue of incoming connections") int backlog,
+      @In(code = "BIND", title = "Bind address") InetAddress bindAddress
+  ) throws IOException {
+    this.serverSocket = new ServerSocket(port, backlog, bindAddress);
   }
 
-  @In(code = "IBS")
-  public void inputBufferSize(int size) throws IOException {
+  @In(code = "IBS", title = "Input buffer size")
+  public void setInputBufferSize(int size) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_RCVBUF, size);
   }
 
-  @In(code = "OBS")
-  public void outputBufferSize(int size) throws IOException {
+  @In(code = "OBS", title = "Output buffer size")
+  public void setOutputBufferSize(int size) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_SNDBUF, size);
   }
 
-  @Out(title = "Actual port")
-  public int port() {
+  @Out(code = "PORT", title = "Actual port")
+  public int getPort() {
     return serverSocket.getLocalPort();
+  }
+
+  @Out(code = "SOCK", title = "Server socket")
+  public ServerSocket getServerSocket() {
+    return serverSocket;
   }
 }

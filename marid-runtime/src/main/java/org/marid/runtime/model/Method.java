@@ -28,77 +28,63 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toCollection;
-
-public final class Cellar extends AbstractEntity {
-
-  private final ArrayList<Rack> racks;
-  private final ArrayList<CellarConstant> constants;
+public abstract class Method<M extends Method<M>> extends AbstractEntity {
 
   private String name;
+  private final ArrayList<Argument> arguments;
 
-  public Cellar(@NotNull String name) {
+  Method(@NotNull String name) {
     this.name = name;
-    this.racks = new ArrayList<>();
-    this.constants = new ArrayList<>();
+    this.arguments = new ArrayList<>();
   }
 
-  public Cellar(@NotNull Element element) {
+  Method(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.constants = XmlStreams.children(element, CellarConstant::new).collect(toCollection(ArrayList::new));
-    this.racks = XmlStreams.elementsByTag(element, "rack").map(Rack::new).collect(toCollection(ArrayList::new));
+    this.arguments = XmlStreams.elementsByTag(element, "args")
+        .flatMap(e -> XmlStreams.children(e, Element.class).map(ArgumentFactory::argument))
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public Cellar(@NotNull InputSource source) {
-    this(element(source));
-  }
-
-  public Cellar addConstant(CellarConstant constant) {
-    constants.add(constant);
-    return this;
-  }
-
-  public Cellar addRack(Rack rack) {
-    racks.add(rack);
-    return this;
+  Method(@NotNull InputSource inputSource) {
+    this(element(inputSource));
   }
 
   public String getName() {
     return name;
   }
 
-  public Cellar setName(String name) {
+  @SuppressWarnings("unchecked")
+  public M setName(String name) {
     this.name = name;
-    return this;
+    return (M) this;
   }
 
-  public ArrayList<CellarConstant> getConstants() {
-    return constants;
+  @SuppressWarnings("unchecked")
+  public M addArguments(Argument... arguments) {
+    this.arguments.addAll(Arrays.asList(arguments));
+    return (M) this;
   }
 
-  public ArrayList<Rack> getRacks() {
-    return racks;
+  public ArrayList<Argument> getArguments() {
+    return arguments;
   }
 
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
-    constants.forEach(r -> XmlUtils.appendTo(r, element));
-    racks.forEach(r -> XmlUtils.appendTo(r, element));
-  }
-
-  @NotNull
-  @Override
-  public String getTag() {
-    return "cellar";
+    if (!arguments.isEmpty()) {
+      XmlUtils.append(element, "args", e -> arguments.forEach(a -> XmlUtils.appendTo(a, e)));
+    }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, constants, racks);
+    return Objects.hash(name, arguments);
   }
 
   @Override
@@ -106,11 +92,11 @@ public final class Cellar extends AbstractEntity {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof Cellar) {
-      final var that = (Cellar) obj;
-      return Objects.equals(this.name, that.name)
-          && Objects.equals(this.constants, that.constants)
-          && Objects.equals(this.racks, that.racks);
+    if (obj instanceof Method) {
+      final var that = (Method<?>) obj;
+      return this.getClass() == that.getClass()
+          && Objects.equals(this.name, that.name)
+          && Objects.equals(this.arguments, that.arguments);
     }
     return false;
   }

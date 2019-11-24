@@ -31,15 +31,19 @@ import java.util.Objects;
 public final class ArgumentRef extends Argument {
 
   private String cellar;
+  private String rack;
   private String ref;
 
-  public ArgumentRef(@Nullable String cellar, @NotNull String ref) {
+  public ArgumentRef(@Nullable String cellar, @NotNull String rack, @NotNull String ref) {
+    this.cellar = cellar;
+    this.rack = rack;
     this.ref = ref;
   }
 
   public ArgumentRef(@NotNull Element element) {
     super(element);
-    this.ref = element.getAttribute("cellar");
+    this.cellar = element.getAttribute("cellar");
+    this.rack = element.getAttribute("rack");
     this.ref = element.getAttribute("ref");
   }
 
@@ -75,6 +79,7 @@ public final class ArgumentRef extends Argument {
     } else {
       element.removeAttribute("cellar");
     }
+    element.setAttribute("rack", rack);
     element.setAttribute("ref", ref);
   }
 
