@@ -21,16 +21,14 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.AbstractCellar;
+import org.marid.runtime.internal.CellarRuntime;
 
 public class CellarCloseException extends RuntimeException {
 
-  public final Class<? extends AbstractCellar> cellarClass;
-  public final AbstractCellar cellar;
+  public final CellarRuntime cellar;
 
-  public CellarCloseException(Class<? extends AbstractCellar> cellarClass, AbstractCellar cellar, Throwable cause) {
-    super("Cellar close exception: " + cellarClass.getSimpleName(), cause);
-    this.cellarClass = cellarClass;
+  public CellarCloseException(CellarRuntime cellar) {
+    super("Cellar close exception: " + cellar.name);
     this.cellar = cellar;
   }
 }

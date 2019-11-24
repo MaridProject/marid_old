@@ -21,9 +21,9 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-public class DeploymentBuildException extends RuntimeException {
+public class WineryBuildException extends RuntimeException {
 
-  public DeploymentBuildException() {
+  public WineryBuildException() {
     super("Deployment build exception");
   }
 }

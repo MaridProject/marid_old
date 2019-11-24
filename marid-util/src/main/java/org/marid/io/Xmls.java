@@ -24,17 +24,22 @@ package org.marid.io;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -53,26 +58,44 @@ import static java.nio.file.Files.newBufferedReader;
  */
 public interface Xmls {
 
+  Consumer<Transformer> FORMATTED_TRANSFORMER_CONFIGURER = t -> {
+    t.setOutputProperty(OutputKeys.INDENT, "yes");
+    t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+    t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+  };
+
   static void write(Consumer<DocumentBuilderFactory> documentBuilderFactoryConfigurer,
                     Consumer<DocumentBuilder> documentBuilderConfigurer,
                     Consumer<Document> documentConfigurer,
                     Consumer<TransformerFactory> transformerFactoryConfigurer,
                     Consumer<Transformer> transformerConfigurer,
                     Result result) {
-    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    final var factory = DocumentBuilderFactory.newInstance();
     documentBuilderFactoryConfigurer.accept(factory);
-    final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    final Document document;
+    try {
+      final var builder = factory.newDocumentBuilder();
+      documentBuilderConfigurer.accept(builder);
+      document = builder.newDocument();
+      documentConfigurer.accept(document);
+    } catch (ParserConfigurationException e) {
+      throw new IllegalStateException(e);
+    }
+    write(document, transformerFactoryConfigurer, transformerConfigurer, result);
+  }
+
+  static void write(Document document,
+                    Consumer<TransformerFactory> transformerFactoryConfigurer,
+                    Consumer<Transformer> transformerConfigurer,
+                    Result result) {
+    final var transformerFactory = TransformerFactory.newInstance();
     transformerFactoryConfigurer.accept(transformerFactory);
     try {
-      final DocumentBuilder builder = factory.newDocumentBuilder();
-      documentBuilderConfigurer.accept(builder);
-      final Document document = builder.newDocument();
-      documentConfigurer.accept(document);
-      final Transformer transformer = transformerFactory.newTransformer();
+      final var transformer = transformerFactory.newTransformer();
       transformerConfigurer.accept(transformer);
       transformer.transform(new DOMSource(document), result);
-    } catch (ParserConfigurationException | TransformerException x) {
-      throw new IllegalStateException(x);
+    } catch (TransformerException e) {
+      throw new IllegalStateException(e);
     }
   }
 
@@ -80,12 +103,12 @@ public interface Xmls {
                     Consumer<DocumentBuilder> documentBuilderConfigurer,
                     Function<Document, T> documentReader,
                     InputSource source) {
-    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    final var factory = DocumentBuilderFactory.newInstance();
     documentBuilderFactoryConfigurer.accept(factory);
     try {
-      final DocumentBuilder builder = factory.newDocumentBuilder();
+      final var builder = factory.newDocumentBuilder();
       documentBuilderConfigurer.accept(builder);
-      final Document document = builder.parse(source);
+      final var document = builder.parse(source);
       return documentReader.apply(document);
     } catch (ParserConfigurationException | SAXException x) {
       throw new IllegalStateException(x);
@@ -94,16 +117,24 @@ public interface Xmls {
     }
   }
 
+  static void writeFormatted(Document document, Result result) {
+    write(document, f -> {}, FORMATTED_TRANSFORMER_CONFIGURER, result);
+  }
+
+  static void writeFormatted(Document document, Path file) {
+    try (final var writer = Files.newBufferedWriter(file, UTF_8)) {
+      writeFormatted(document, new StreamResult(writer));
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
   static void writeFormatted(Consumer<Document> documentConsumer, Result result) {
-    write(f -> {}, b -> {}, documentConsumer, f -> {}, t -> {
-      t.setOutputProperty(OutputKeys.INDENT, "yes");
-      t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-      t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-    }, result);
+    write(f -> {}, b -> {}, documentConsumer, f -> {}, FORMATTED_TRANSFORMER_CONFIGURER, result);
   }
 
   static void writeFormatted(Consumer<Document> documentConsumer, Path file) {
-    try (final BufferedWriter writer = Files.newBufferedWriter(file, UTF_8)) {
+    try (final var writer = Files.newBufferedWriter(file, UTF_8)) {
       writeFormatted(documentConsumer, new StreamResult(writer));
     } catch (IOException x) {
       throw new UncheckedIOException(x);
@@ -112,14 +143,14 @@ public interface Xmls {
 
   static void writeFormatted(String documentElement, Consumer<Element> elementConsumer, Result result) {
     writeFormatted(d -> {
-      final Element element = d.createElement(documentElement);
+      final var element = d.createElement(documentElement);
       elementConsumer.accept(element);
       d.appendChild(element);
     }, result);
   }
 
   static void writeFormatted(String documentElement, Consumer<Element> elementConsumer, Path path) {
-    try (final BufferedWriter writer = Files.newBufferedWriter(path, UTF_8)) {
+    try (final var writer = Files.newBufferedWriter(path, UTF_8)) {
       writeFormatted(documentElement, elementConsumer, new StreamResult(writer));
     } catch (IOException x) {
       throw new UncheckedIOException(x);
@@ -127,7 +158,7 @@ public interface Xmls {
   }
 
   static <T> T read(Function<Document, T> documentReader, Path file) {
-    try (final BufferedReader reader = newBufferedReader(file, UTF_8)) {
+    try (final var reader = newBufferedReader(file, UTF_8)) {
       return read(documentReader, reader);
     } catch (IOException x) {
       throw new UncheckedIOException(x);
@@ -155,7 +186,7 @@ public interface Xmls {
   }
 
   static <E extends Node> Stream<E> nodes(Node node, Class<E> type) {
-    final NodeList children = node.getChildNodes();
+    final var children = node.getChildNodes();
     return IntStream.range(0, children.getLength())
         .mapToObj(children::item)
         .filter(type::isInstance)
@@ -192,12 +223,12 @@ public interface Xmls {
 
   @SafeVarargs
   static Element create(Node parent, String tag, Consumer<Element>... consumers) {
-    final Document document = parent instanceof Document ? ((Document) parent) : parent.getOwnerDocument();
-    final Element element = document.createElement(tag);
+    final var document = parent instanceof Document ? ((Document) parent) : parent.getOwnerDocument();
+    final var element = document.createElement(tag);
 
     parent.appendChild(element);
 
-    for (final Consumer<Element> consumer : consumers) {
+    for (final var consumer : consumers) {
       consumer.accept(element);
     }
 

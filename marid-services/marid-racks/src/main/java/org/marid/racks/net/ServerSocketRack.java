@@ -24,7 +24,6 @@ package org.marid.racks.net;
 import org.marid.runtime.annotation.In;
 import org.marid.runtime.annotation.Out;
 import org.marid.runtime.annotation.Rack;
-import org.marid.runtime.AbstractRack;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -32,26 +31,28 @@ import java.net.ServerSocket;
 import java.net.StandardSocketOptions;
 
 @Rack(title = "Server socket")
-public class ServerSocketRack extends AbstractRack<ServerSocket> {
+public class ServerSocketRack {
+
+  private final ServerSocket serverSocket;
 
   public ServerSocketRack(@In(title = "Socket port to bind") int port,
                           @In(title = "Requested maximum length of the queue of incoming connections") int backlog,
-                          @In(title = "Bind address", code = "bind") InetAddress bindAddress) {
-    super(() -> new ServerSocket(port, backlog, bindAddress));
+                          @In(title = "Bind address", code = "bind") InetAddress bindAddress) throws IOException {
+    this.serverSocket =  new ServerSocket(port, backlog, bindAddress);
   }
 
   @In(code = "IBS")
   public void inputBufferSize(int size) throws IOException {
-    instance.setOption(StandardSocketOptions.SO_RCVBUF, size);
+    serverSocket.setOption(StandardSocketOptions.SO_RCVBUF, size);
   }
 
   @In(code = "OBS")
   public void outputBufferSize(int size) throws IOException {
-    instance.setOption(StandardSocketOptions.SO_SNDBUF, size);
+    serverSocket.setOption(StandardSocketOptions.SO_SNDBUF, size);
   }
 
   @Out(title = "Actual port")
   public int port() {
-    return instance.getLocalPort();
+    return serverSocket.getLocalPort();
   }
 }

@@ -21,18 +21,18 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.AbstractRack;
+import org.marid.runtime.internal.RackRuntime;
 
 public class RackCloseException extends RuntimeException {
 
-  private final AbstractRack<?> rack;
+  private final RackRuntime rack;
 
-  public RackCloseException(AbstractRack<?> rack) {
-    super("Unable to close " + rack.caller.getName());
+  public RackCloseException(RackRuntime rack) {
+    super("Unable to close " + rack.name);
     this.rack = rack;
   }
 
-  public AbstractRack<?> getRack() {
+  public RackRuntime getRack() {
     return rack;
   }
 }

@@ -2,21 +2,22 @@ package org.marid.runtime.model;
 
 /*-
  * #%L
- * marid-ide-model
+ * marid-runtime
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  * 
- * This Source Code may also be made available under the following Secondary
- * Licenses when the conditions for such availability set forth in the Eclipse
- * Public License, v. 2.0 are satisfied: GNU General Public License, version 2
- * with the GNU Classpath Exception which is
- * available at https://www.gnu.org/software/classpath/license.html.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  * 
- * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -27,6 +28,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -35,15 +37,18 @@ public final class Rack extends AbstractEntity {
   private final ArrayList<Argument> arguments;
 
   private String name;
+  private String factory;
 
-  public Rack(@NotNull String name) {
+  public Rack(@NotNull String name, @NotNull String factory) {
     this.name = name;
+    this.factory = factory;
     this.arguments = new ArrayList<>();
   }
 
   public Rack(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
+    this.factory = element.getAttribute("factory");
     this.arguments = XmlStreams.elementsByTag(element, "args")
         .flatMap(e -> XmlStreams.children(e, Element.class).map(ArgumentFactory::argument))
         .collect(Collectors.toCollection(ArrayList::new));
@@ -57,8 +62,23 @@ public final class Rack extends AbstractEntity {
     return name;
   }
 
-  public void setName(String name) {
+  public Rack setName(String name) {
     this.name = name;
+    return this;
+  }
+
+  public String getFactory() {
+    return factory;
+  }
+
+  public Rack setFactory(String factory) {
+    this.factory = factory;
+    return this;
+  }
+
+  public Rack addArguments(Argument... arguments) {
+    this.arguments.addAll(Arrays.asList(arguments));
+    return this;
   }
 
   public ArrayList<Argument> getArguments() {
@@ -68,6 +88,7 @@ public final class Rack extends AbstractEntity {
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
+    element.setAttribute("factory", factory);
     if (!arguments.isEmpty()) {
       XmlUtils.append(element, "args", e -> arguments.forEach(a -> XmlUtils.appendTo(a, e)));
     }
@@ -81,7 +102,7 @@ public final class Rack extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, arguments);
+    return Objects.hash(name, factory, arguments);
   }
 
   @Override
@@ -92,6 +113,7 @@ public final class Rack extends AbstractEntity {
     if (obj instanceof Rack) {
       final var that = (Rack) obj;
       return Objects.equals(this.name, that.name)
+          && Objects.equals(this.factory, that.factory)
           && Objects.equals(this.arguments, that.arguments);
     }
     return false;

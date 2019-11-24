@@ -23,32 +23,12 @@ package org.marid.racks.collection;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.marid.runtime.AbstractCellar;
-import org.marid.runtime.util.DeploymentBuilder;
-
-import java.util.Objects;
 
 @Tag("normal")
 class ArrayListRackTest {
 
   @Test
   void testInference() throws Exception {
-    try (final var deployment = new DeploymentBuilder("test")
-        .addCellar(TestCellar.class)
-        .build()) {
-      deployment.start();
-    }
-  }
 
-  public static class TestCellar extends AbstractCellar {
-
-    private static TestCellar provider;
-
-    public TestCellar() {
-    }
-
-    public static synchronized TestCellar provider() {
-      return Objects.requireNonNullElseGet(provider, () -> provider = new TestCellar());
-    }
   }
 }

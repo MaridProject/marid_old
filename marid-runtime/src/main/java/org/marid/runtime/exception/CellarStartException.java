@@ -1,8 +1,8 @@
-package org.marid.racks.collection;
+package org.marid.runtime.exception;
 
 /*-
  * #%L
- * marid-racks
+ * marid-runtime
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,16 +21,14 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.marid.runtime.annotation.Out;
+import org.marid.runtime.internal.CellarRuntime;
 
-import java.util.Collection;
+public class CellarStartException extends RuntimeException {
 
-public interface CollectionRack<E, C extends Collection<E>> {
+  public final CellarRuntime cellar;
 
-  C get();
-
-  @Out(title = "size")
-  default int size() {
-    return get().size();
+  public CellarStartException(CellarRuntime cellar, Throwable cause) {
+    super("Unable to create cellar " + cellar.name, cause);
+    this.cellar = cellar;
   }
 }

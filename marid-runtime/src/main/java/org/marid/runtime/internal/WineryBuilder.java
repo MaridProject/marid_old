@@ -1,4 +1,4 @@
-package org.marid.runtime.util;
+package org.marid.runtime.internal;
 
 /*-
  * #%L
@@ -10,20 +10,21 @@ package org.marid.runtime.util;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import org.marid.io.MaridFiles;
-import org.marid.runtime.Deployment;
-import org.marid.runtime.exception.DeploymentBuildException;
+import org.marid.io.Xmls;
+import org.marid.runtime.exception.WineryBuildException;
+import org.marid.runtime.model.Winery;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -51,77 +52,66 @@ import static java.lang.System.Logger.Level.INFO;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public final class DeploymentBuilder {
+public final class WineryBuilder {
 
-  private static final System.Logger LOGGER = System.getLogger(DeploymentBuilder.class.getName());
+  private static final System.Logger LOGGER = System.getLogger(WineryBuilder.class.getName());
   private static final int BUFFER_SIZE = 0xFFFF;
 
-  private final String name;
+  private final Winery winery;
   private final LinkedList<URL> deps = new LinkedList<>();
   private final LinkedHashMap<List<String>, Input> classes = new LinkedHashMap<>();
   private final LinkedHashMap<List<String>, Input> resources = new LinkedHashMap<>();
-  private final LinkedList<String> cellars = new LinkedList<>();
 
-  public DeploymentBuilder(String name) {
-    this.name = name;
+  public WineryBuilder(Winery winery) {
+    this.winery = winery;
   }
 
-  public DeploymentBuilder addDependency(URL url) {
+  public WineryBuilder addDependency(URL url) {
     deps.add(url);
     return this;
   }
 
-  public DeploymentBuilder addClass(List<String> path, byte[] content) {
+  public WineryBuilder addClass(List<String> path, byte[] content) {
     classes.put(path, () -> new ByteArrayInputStream(content));
     return this;
   }
 
-  public DeploymentBuilder addClass(List<String> path, Path file) {
+  public WineryBuilder addClass(List<String> path, Path file) {
     classes.put(path, () -> Files.newInputStream(file));
     return this;
   }
 
-  public DeploymentBuilder addClass(List<String> path, File file) {
+  public WineryBuilder addClass(List<String> path, File file) {
     classes.put(path, () -> new FileInputStream(file));
     return this;
   }
 
-  public DeploymentBuilder addClass(List<String> path, URL url) {
+  public WineryBuilder addClass(List<String> path, URL url) {
     classes.put(path, url::openStream);
     return this;
   }
 
-  public DeploymentBuilder addResource(List<String> path, byte[] content) {
+  public WineryBuilder addResource(List<String> path, byte[] content) {
     resources.put(path, () -> new ByteArrayInputStream(content));
     return this;
   }
 
-  public DeploymentBuilder addResource(List<String> path, Path file) {
+  public WineryBuilder addResource(List<String> path, Path file) {
     resources.put(path, () -> Files.newInputStream(file));
     return this;
   }
 
-  public DeploymentBuilder addResource(List<String> path, File file) {
+  public WineryBuilder addResource(List<String> path, File file) {
     resources.put(path, () -> new FileInputStream(file));
     return this;
   }
 
-  public DeploymentBuilder addResource(List<String> path, URL url) {
+  public WineryBuilder addResource(List<String> path, URL url) {
     resources.put(path, url::openStream);
     return this;
   }
 
-  public DeploymentBuilder addCellar(String cellar) {
-    cellars.add(cellar);
-    return this;
-  }
-
-  public DeploymentBuilder addCellar(Class<?> cellar) {
-    cellars.add(cellar.getName());
-    return this;
-  }
-
-  public Deployment build(String... args) {
+  public WineryRuntime build(String... args) {
     try {
       final var tasks = new LinkedList<Future<Path>>();
       final var tempDir = Files.createTempDirectory("deploymentBuilder");
@@ -165,11 +155,11 @@ public final class DeploymentBuilder {
           }));
         }
 
-        // create cellar entries
+        // create winery.xml
         tasks.add(pool.submit(() -> {
-          final var cellars = tempDir.resolve("cellars.list");
-          Files.write(cellars, this.cellars, UTF_8);
-          return cellars;
+          final var wineryXml = tempDir.resolve("winery.xml");
+          Xmls.writeFormatted("winery", winery::writeTo, wineryXml);
+          return wineryXml;
         }));
 
         // copy resources
@@ -189,7 +179,7 @@ public final class DeploymentBuilder {
         }
 
         // join tasks
-        final var exception = new DeploymentBuildException();
+        final var exception = new WineryBuildException();
         for (final var task : tasks) {
           try {
             final var path = task.get();
@@ -241,7 +231,7 @@ public final class DeploymentBuilder {
           }
         }
 
-        return new Deployment(tempFile.toUri().toURL(), List.of(args));
+        return new WineryRuntime(tempFile.toUri().toURL(), List.of(args));
       } finally {
         pool.shutdown();
         while (!pool.isTerminated()) {

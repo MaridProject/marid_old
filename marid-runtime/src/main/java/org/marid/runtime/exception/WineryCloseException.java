@@ -21,18 +21,14 @@ package org.marid.runtime.exception;
  * #L%
  */
 
-import org.marid.runtime.Deployment;
+import org.marid.runtime.internal.WineryRuntime;
 
-public class DeploymentStartException extends RuntimeException {
+public class WineryCloseException extends RuntimeException {
 
-  private final Deployment deployment;
+  public final WineryRuntime wineryRuntime;
 
-  public DeploymentStartException(Deployment deployment, Throwable e) {
-    super("Unable to start " + deployment, e);
-    this.deployment = deployment;
-  }
-
-  public Deployment getDeployment() {
-    return deployment;
+  public WineryCloseException(WineryRuntime wineryRuntime) {
+    super("Unable to close " + wineryRuntime);
+    this.wineryRuntime = wineryRuntime;
   }
 }

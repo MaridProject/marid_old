@@ -1,4 +1,4 @@
-package org.marid.runtime;
+package org.marid.runtime.internal;
 
 /*-
  * #%L
@@ -21,10 +21,11 @@ package org.marid.runtime;
  * #L%
  */
 
-import org.marid.runtime.exception.CellarCloseException;
-import org.marid.runtime.exception.DeploymentCloseException;
-import org.marid.runtime.exception.DeploymentStartException;
+import jdk.dynalink.DynamicLinker;
+import jdk.dynalink.DynamicLinkerFactory;
+import jdk.dynalink.beans.BeansLinker;
 import org.marid.io.MaridFiles;
+import org.marid.runtime.exception.WineryCloseException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,38 +35,43 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.LinkedTransferQueue;
-import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
-import static java.lang.invoke.MethodHandles.publicLookup;
-import static java.lang.invoke.MethodType.methodType;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public final class Deployment implements AutoCloseable {
-
-  private static final InheritableThreadLocal<Deployment> DEPLOYMENT = new InheritableThreadLocal<>();
-  static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+public final class WineryRuntime implements AutoCloseable {
 
   private final Cleaner cleaner = Cleaner.create();
   private final Path deployment;
   private final Path deps;
   private final Path resources;
   private final Path classes;
-  private final Path cellarsFile;
-  private final URLClassLoader classLoader;
-  private final LinkedHashMap<Class<? extends AbstractCellar>, AbstractCellar> cellars = new LinkedHashMap<>();
+  private final Path winery;
   private final Thread thread;
   private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
-  public final List<String> args;
+
+  final DynamicLinker linker;
+  final List<String> args;
+  final URLClassLoader classLoader;
+  final LinkedHashMap<String, CellarRuntime> cellars = new LinkedHashMap<>();
 
   private volatile State state = State.NEW;
   private volatile Throwable startError;
   private volatile Throwable destroyError;
 
-  public Deployment(URL zipFile, List<String> args) throws IOException {
+  public WineryRuntime(URL zipFile, List<String> args) throws IOException {
     this.args = args;
+
+    final var linkerFactory = new DynamicLinkerFactory();
+    linkerFactory.setPrioritizedLinker(new BeansLinker());
+    this.linker = linkerFactory.createLinker();
+
     try {
       deployment = Files.createTempDirectory("marid");
       thread = new Thread(() -> {
@@ -103,10 +109,10 @@ public final class Deployment implements AutoCloseable {
         unpack(is);
       }
 
-      cellarsFile = deployment.resolve("cellars.list");
       classes = deployment.resolve("classes");
       resources = deployment.resolve("resources");
       deps = deployment.resolve("deps");
+      winery = deployment.resolve("winery.xml");
 
       validate();
       initialize();
@@ -148,9 +154,6 @@ public final class Deployment implements AutoCloseable {
   }
 
   private void validate() throws IOException {
-    if (!Files.isRegularFile(cellarsFile)) {
-      throw new NullPointerException("cellarsFile does not exist");
-    }
     Files.createDirectories(resources);
     Files.createDirectories(deps);
     if (!Files.isDirectory(classes)) {
@@ -183,22 +186,6 @@ public final class Deployment implements AutoCloseable {
 
   public String getId() {
     return deployment.getFileName().toString();
-  }
-
-  public <C extends AbstractCellar> C get(Class<C> cellarClass) {
-    return cellarClass.cast(cellars.get(cellarClass));
-  }
-
-  public static Deployment $() {
-    return DEPLOYMENT.get();
-  }
-
-  public static Cleaner getCleaner() {
-    return DEPLOYMENT.get().cleaner;
-  }
-
-  public static <C extends AbstractCellar> C $(Class<C> cellarClass) {
-    return DEPLOYMENT.get().get(cellarClass);
   }
 
   public void start() {
@@ -241,27 +228,6 @@ public final class Deployment implements AutoCloseable {
     }
     state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
-    DEPLOYMENT.set(this);
-    try (final var cellarClasses = Files.lines(cellarsFile, UTF_8)) {
-      final var lines = cellarClasses
-          .map(String::trim)
-          .filter(l -> !l.startsWith("#") && !l.isEmpty())
-          .collect(Collectors.toCollection(LinkedHashSet::new));
-      for (final var line : lines) {
-        final var cellarClass = classLoader.loadClass(line).asSubclass(AbstractCellar.class);
-        final var providerMethod = publicLookup().findStatic(cellarClass, "provider", methodType(cellarClass));
-        cellars.put(cellarClass, cellarClass.cast(providerMethod.invoke()));
-      }
-      state = State.RUNNING;
-    } catch (Throwable e) {
-      final var exception = new DeploymentStartException(this, e);
-      try {
-        destroy();
-      } catch (Throwable ce) {
-        exception.addSuppressed(ce);
-      }
-      throw exception;
-    }
   }
 
   private void destroy() {
@@ -269,18 +235,16 @@ public final class Deployment implements AutoCloseable {
       return;
     }
     state = State.TERMINATING;
-    final var exception = new DeploymentCloseException(this);
+    final var exception = new WineryCloseException(this);
 
     final var entries = new LinkedList<>(cellars.entrySet());
     cellars.clear();
     for (final var it = entries.descendingIterator(); it.hasNext(); ) {
       final var entry = it.next();
-      final var cellarClass = entry.getKey();
-      final var cellarInstance = entry.getValue();
       try {
-        cellarInstance.close();
+        entry.getValue().close();
       } catch (Throwable e) {
-        exception.addSuppressed(new CellarCloseException(cellarClass, cellarInstance, e));
+        exception.addSuppressed(e);
       } finally {
         it.remove();
       }

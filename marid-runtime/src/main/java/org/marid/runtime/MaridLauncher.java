@@ -21,6 +21,8 @@
 
 package org.marid.runtime;
 
+import org.marid.runtime.internal.WineryRuntime;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +39,7 @@ public class MaridLauncher {
       return;
     }
 
-    try (final var deployment = new Deployment(new URL(args[0]), List.of(Arrays.copyOfRange(args, 1, args.length)))) {
+    try (final var deployment = new WineryRuntime(new URL(args[0]), List.of(Arrays.copyOfRange(args, 1, args.length)))) {
       deployment.start();
 
       final var scanner = new Scanner(System.in);

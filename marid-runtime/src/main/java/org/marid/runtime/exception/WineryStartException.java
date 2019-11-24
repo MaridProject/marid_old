@@ -1,8 +1,8 @@
-package org.marid.racks.collection;
+package org.marid.runtime.exception;
 
 /*-
  * #%L
- * marid-racks
+ * marid-runtime
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
@@ -21,15 +21,18 @@ package org.marid.racks.collection;
  * #L%
  */
 
-import org.marid.runtime.annotation.Out;
+import org.marid.runtime.internal.WineryRuntime;
 
-import java.util.List;
-import java.util.function.IntFunction;
+public class WineryStartException extends RuntimeException {
 
-public interface ListRack<E, L extends List<E>> extends CollectionRack<E, L> {
+  private final WineryRuntime wineryRuntime;
 
-  @Out(title = "Function: get element by index")
-  default IntFunction<E> getByIndex() {
-    return get()::get;
+  public WineryStartException(WineryRuntime wineryRuntime, Throwable e) {
+    super("Unable to start " + wineryRuntime, e);
+    this.wineryRuntime = wineryRuntime;
+  }
+
+  public WineryRuntime getWineryRuntime() {
+    return wineryRuntime;
   }
 }

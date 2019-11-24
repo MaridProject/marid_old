@@ -44,9 +44,9 @@ class SerializationTest {
     final var winery = Builder.build(new Winery("winery1"));
     final var cellar1 = Builder.build(new Cellar("cellar1"));
     final var cellar2 = Builder.build(new Cellar("cellar2"));
-    final var rack11 = Builder.build(new Rack("rack11"));
-    final var rack21 = Builder.build(new Rack("rack21"));
-    final var rack22 = Builder.build(new Rack("rack22"));
+    final var rack11 = Builder.build(new Rack("rack11", "f1"));
+    final var rack21 = Builder.build(new Rack("rack21", "f2"));
+    final var rack22 = Builder.build(new Rack("rack22", "f3"));
 
     winery.getCellars().addAll(Arrays.asList(cellar1, cellar2));
     cellar1.getRacks().addAll(Collections.singletonList(rack11));

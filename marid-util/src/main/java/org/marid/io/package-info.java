@@ -77,7 +77,7 @@ package org.marid.io;
 
 /*-
  * #%L
- * marid-runtime
+ * marid-util
  * %%
  * Copyright (C) 2012 - 2019 MARID software development group
  * %%
