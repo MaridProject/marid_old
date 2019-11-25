@@ -35,22 +35,6 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <annotationProcessors>
-            <processor>org.marid.processors.GenerateHelperProcessor</processor>
-          </annotationProcessors>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.marid</groupId>
-              <artifactId>marid-processors</artifactId>
-              <version>${project.version}</version>
-            </path>
-          </annotationProcessorPaths>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
