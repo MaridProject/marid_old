@@ -35,7 +35,7 @@ public final class CellarConstant extends AbstractEntity {
 
   private String lib;
   private String name;
-  private final ArrayList<ArgumentLiteral> arguments;
+  private final ArrayList<ConstantArgument> arguments;
 
   public CellarConstant(@NotNull String lib, @NotNull String name) {
     this.lib = lib;
@@ -48,7 +48,7 @@ public final class CellarConstant extends AbstractEntity {
     this.lib = element.getAttribute("lib");
     this.name = element.getAttribute("name");
     this.arguments = XmlStreams.children(element, Element.class)
-        .map(ArgumentLiteral::new)
+        .map(ConstantArgument::argument)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -74,7 +74,7 @@ public final class CellarConstant extends AbstractEntity {
     return this;
   }
 
-  public ArrayList<ArgumentLiteral> getArguments() {
+  public ArrayList<ConstantArgument> getArguments() {
     return arguments;
   }
 

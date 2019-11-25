@@ -57,7 +57,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.function.BiFunction;
 
-public final class ArgumentLiteral extends Argument {
+public final class ArgumentLiteral extends ConstantArgument {
 
   private final Type type;
   private String value;

@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 
 import java.util.Objects;
 
-public final class ArgumentConstRef extends Argument {
+public final class ArgumentConstRef extends ConstantArgument {
 
   private String cellar;
   private String name;
