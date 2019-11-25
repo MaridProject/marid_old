@@ -47,6 +47,24 @@ public final class ArgumentConstRef extends ConstantArgument {
     return "const-ref";
   }
 
+  public @NotNull String getCellar() {
+    return cellar;
+  }
+
+  public @NotNull ArgumentConstRef setCellar(@NotNull String cellar) {
+    this.cellar = cellar;
+    return this;
+  }
+
+  public @NotNull String getName() {
+    return name;
+  }
+
+  public @NotNull ArgumentConstRef setName(@NotNull String name) {
+    this.name = name;
+    return this;
+  }
+
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("cellar", cellar);

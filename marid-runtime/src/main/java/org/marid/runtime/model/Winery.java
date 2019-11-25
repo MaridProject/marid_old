@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -52,13 +53,23 @@ public final class Winery extends AbstractEntity {
     this(element(inputSource));
   }
 
-  public Winery addCellar(Cellar cellar) {
+  @NotNull
+  public Winery addCellar(@NotNull Cellar cellar) {
     cellars.add(cellar);
     return this;
   }
 
+  @NotNull
   public List<Cellar> getCellars() {
     return cellars;
+  }
+
+  @NotNull
+  public Cellar getCellar(@NotNull String name) {
+    return cellars.stream()
+        .filter(c -> name.equals(c.getName()))
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException(name));
   }
 
   @Override
@@ -67,12 +78,15 @@ public final class Winery extends AbstractEntity {
     cellars.forEach(c -> XmlUtils.appendTo(c, element));
   }
 
+  @NotNull
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  @NotNull
+  public Winery setName(String name) {
     this.name = name;
+    return this;
   }
 
   @NotNull

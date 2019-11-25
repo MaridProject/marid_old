@@ -25,7 +25,9 @@ import jdk.dynalink.DynamicLinker;
 import jdk.dynalink.DynamicLinkerFactory;
 import jdk.dynalink.beans.BeansLinker;
 import org.marid.io.MaridFiles;
+import org.marid.io.Xmls;
 import org.marid.runtime.exception.WineryCloseException;
+import org.marid.runtime.model.Winery;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -226,8 +229,30 @@ public final class WineryRuntime implements AutoCloseable {
     if (state == State.STARTING || state == State.RUNNING) {
       return;
     }
+
     state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
+
+    try {
+      final var winery = Xmls.read(this.winery, Winery::new);
+      for (final var cellar : winery.getCellars()) {
+        cellars.put(cellar.getName(), new CellarRuntime(this, cellar));
+      }
+
+      for (final var cellar : winery.getCellars()) {
+        final var cellarRuntime = cellars.get(cellar.getName());
+        for (final var constant : cellar.getConstants()) {
+          cellarRuntime.getOrCreateConst(winery, cellar, constant, new LinkedHashSet<>());
+        }
+      }
+    } catch (Throwable e) {
+      try {
+        destroy();
+      } catch (Throwable x) {
+        e.addSuppressed(x);
+      }
+      throw e;
+    }
   }
 
   private void destroy() {

@@ -34,10 +34,11 @@ import java.util.stream.Collectors;
 public final class CellarConstant extends AbstractEntity {
 
   private String lib;
+  private String selector;
   private String name;
   private final ArrayList<ConstantArgument> arguments;
 
-  public CellarConstant(@NotNull String lib, @NotNull String name) {
+  public CellarConstant(@NotNull String lib, @NotNull String selector, @NotNull String name) {
     this.lib = lib;
     this.name = name;
     this.arguments = new ArrayList<>();
@@ -46,6 +47,7 @@ public final class CellarConstant extends AbstractEntity {
   public CellarConstant(@NotNull Element element) {
     super(element);
     this.lib = element.getAttribute("lib");
+    this.selector = element.getAttribute("selector");
     this.name = element.getAttribute("name");
     this.arguments = XmlStreams.children(element, Element.class)
         .map(ConstantArgument::argument)
@@ -65,15 +67,18 @@ public final class CellarConstant extends AbstractEntity {
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("lib", lib);
+    element.setAttribute("selector", selector);
     element.setAttribute("name", name);
     arguments.forEach(e -> XmlUtils.appendTo(e, element));
   }
 
+  @NotNull
   public CellarConstant addArg(ArgumentLiteral arg) {
     arguments.add(arg);
     return this;
   }
 
+  @NotNull
   public ArrayList<ConstantArgument> getArguments() {
     return arguments;
   }
@@ -82,21 +87,37 @@ public final class CellarConstant extends AbstractEntity {
     return name;
   }
 
-  public void setName(String name) {
+  @NotNull
+  public CellarConstant setName(String name) {
     this.name = name;
+    return this;
   }
 
+  @NotNull
   public String getLib() {
     return lib;
   }
 
-  public void setLib(String lib) {
+  @NotNull
+  public CellarConstant setLib(String lib) {
     this.lib = lib;
+    return this;
+  }
+
+  @NotNull
+  public String getSelector() {
+    return selector;
+  }
+
+  @NotNull
+  public CellarConstant setSelector(String selector) {
+    this.selector = selector;
+    return this;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(lib, name, arguments);
+    return Objects.hash(lib, selector, name, arguments);
   }
 
   @Override
@@ -107,6 +128,7 @@ public final class CellarConstant extends AbstractEntity {
     if (obj instanceof CellarConstant) {
       final var that = (CellarConstant) obj;
       return Objects.equals(this.lib, that.lib)
+          && Objects.equals(this.selector, that.selector)
           && Objects.equals(this.name, that.name)
           && Objects.equals(this.arguments, that.arguments);
     }

@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toCollection;
@@ -56,11 +57,13 @@ public final class Cellar extends AbstractEntity {
     this(element(source));
   }
 
+  @NotNull
   public Cellar addConstant(CellarConstant constant) {
     constants.add(constant);
     return this;
   }
 
+  @NotNull
   public Cellar addRack(Rack rack) {
     racks.add(rack);
     return this;
@@ -70,6 +73,7 @@ public final class Cellar extends AbstractEntity {
     return name;
   }
 
+  @NotNull
   public Cellar setName(String name) {
     this.name = name;
     return this;
@@ -79,8 +83,25 @@ public final class Cellar extends AbstractEntity {
     return constants;
   }
 
+  @NotNull
+  public CellarConstant getConstant(@NotNull String name) {
+    return constants.stream()
+        .filter(c -> name.equals(c.getName()))
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException(name));
+  }
+
+  @NotNull
   public ArrayList<Rack> getRacks() {
     return racks;
+  }
+
+  @NotNull
+  public Rack getRack(@NotNull String name) {
+    return racks.stream()
+        .filter(r -> name.equals(r.getName()))
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException(name));
   }
 
   @Override

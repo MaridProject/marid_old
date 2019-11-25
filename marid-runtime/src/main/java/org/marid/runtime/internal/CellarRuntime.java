@@ -10,24 +10,41 @@ package org.marid.runtime.internal;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import jdk.dynalink.CallSiteDescriptor;
+import jdk.dynalink.beans.StaticClass;
+import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.marid.runtime.exception.CellarCloseException;
-import org.marid.runtime.exception.CellarStartException;
+import org.marid.runtime.model.ArgumentConstRef;
+import org.marid.runtime.model.ArgumentLiteral;
 import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.CellarConstant;
+import org.marid.runtime.model.Winery;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static java.lang.invoke.MethodType.methodType;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Stream.concat;
+import static jdk.dynalink.StandardNamespace.METHOD;
+import static jdk.dynalink.StandardOperation.CALL;
+import static jdk.dynalink.StandardOperation.GET;
 
 public class CellarRuntime implements AutoCloseable {
 
@@ -37,27 +54,59 @@ public class CellarRuntime implements AutoCloseable {
   final LinkedHashMap<String, RackRuntime> racks = new LinkedHashMap<>();
   final LinkedHashMap<String, Object> constants = new LinkedHashMap<>();
 
-  CellarRuntime(WineryRuntime winery, String name, Cellar cellar) {
+  CellarRuntime(WineryRuntime winery, Cellar cellar) {
     this.winery = winery;
-    this.name = name;
-
-    try {
-      for (final var rack: cellar.getRacks()) {
-        this.racks.put(rack.getName(), new RackRuntime(this, rack));
-      }
-    } catch (Throwable e) {
-      final var ex = new CellarStartException(this, e);
-      try {
-        close();
-      } catch (Throwable x) {
-        ex.addSuppressed(x);
-      }
-      throw ex;
-    }
+    this.name = cellar.getName();
   }
 
-  private Object constant(CellarConstant constant) throws Throwable {
-    return null;
+  private final Object getOrCreateConst(Winery winery, Cellar cellar, String name, Set<String> passed) {
+    return constants.computeIfAbsent(name, n -> getOrCreateConst(winery, cellar, cellar.getConstant(name), passed));
+  }
+
+  final Object getOrCreateConst(Winery winery, Cellar cellar, CellarConstant constant, Set<String> passed) {
+    return constants.computeIfAbsent(constant.getName(), name -> {
+      final var constKey = cellar.getName() + "/" + name;
+      if (passed.add(constKey)) {
+        try {
+          final var libClass = this.winery.classLoader.loadClass(constant.getLib());
+          final var callable = this.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+              MethodHandles.publicLookup(),
+              GET.withNamespace(METHOD).named(constant.getSelector()),
+              methodType(Object.class, StaticClass.class)
+          ))).dynamicInvoker().bindTo(StaticClass.forClass(libClass)).invoke();
+          final var args = new Object[constant.getArguments().size() + 2];
+          args[0] = callable;
+          args[1] = null;
+          for (int i = 0; i < constant.getArguments().size(); i++) {
+            final var argument = constant.getArguments().get(i);
+            if (argument instanceof ArgumentLiteral) {
+              final var literal = (ArgumentLiteral) argument;
+              args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
+            } else if (argument instanceof ArgumentConstRef) {
+              final var ref = (ArgumentConstRef) argument;
+              final var tCellar = winery.getCellar(ref.getCellar());
+              final var tCellarRuntime = this.winery.cellars.get(ref.getCellar());
+              args[i + 2] = tCellarRuntime.getOrCreateConst(winery, tCellar, ref.getName(), new LinkedHashSet<>());
+            } else {
+              throw new IllegalArgumentException(
+                  "Illegal argument [" + i + "] of constant " + constKey + ": " + argument.getClass()
+              );
+            }
+          }
+          return this.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+              MethodHandles.publicLookup(),
+              CALL,
+              MethodType.genericMethodType(args.length)
+          ))).dynamicInvoker().invoke(args);
+        } catch (Throwable e) {
+          throw new IllegalStateException("Unable to create constant: " + constKey);
+        }
+      } else {
+        throw new IllegalStateException(
+            concat(passed.stream(), Stream.of(constKey)).collect(joining(",", "Circular constant reference: [", "]"))
+        );
+      }
+    });
   }
 
   @Override
