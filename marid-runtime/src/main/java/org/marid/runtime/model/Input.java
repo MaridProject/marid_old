@@ -21,10 +21,7 @@ public final class Input extends AbstractEntity {
   public Input(@NotNull Element element) {
     super(element);
     this.name = element.getAttribute("name");
-    this.argument = XmlStreams.elementsByTag(element, "arg")
-        .findFirst()
-        .map(ArgumentFactory::argument)
-        .orElseThrow();
+    this.argument = XmlStreams.elementsByTag(element, "arg").findFirst().map(Argument::argument).orElseThrow();
   }
 
   public Input(@NotNull InputSource inputSource) {

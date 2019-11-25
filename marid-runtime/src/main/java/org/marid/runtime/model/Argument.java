@@ -23,6 +23,10 @@ package org.marid.runtime.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public abstract class Argument extends AbstractEntity {
 
@@ -31,5 +35,31 @@ public abstract class Argument extends AbstractEntity {
 
   Argument(@NotNull Element element) {
     super(element);
+  }
+
+  private static Stream<Function<Element, Argument>> constructors() {
+    return Stream.of(
+        ArgumentRef::new,
+        ArgumentConstRef::new,
+        ArgumentLiteral::new,
+        ArgumentNull::new
+    );
+  }
+
+  static Argument argument(Element element) {
+    return constructors()
+        .flatMap(c -> {
+          try {
+            return Stream.of(c.apply(element));
+          } catch (IllegalArgumentException e) {
+            return Stream.empty();
+          }
+        })
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown argument: " + element.getTagName()));
+  }
+
+  static Argument argument(InputSource inputSource) {
+    return argument(AbstractEntity.element(inputSource));
   }
 }
