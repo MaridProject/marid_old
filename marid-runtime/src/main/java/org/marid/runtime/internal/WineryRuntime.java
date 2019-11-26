@@ -59,7 +59,7 @@ public final class WineryRuntime implements AutoCloseable {
 
   private final Thread thread;
   private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
-  private final LinkedHashMap<String, CellarRuntime> cellars = new LinkedHashMap<>();
+  private final LinkedHashMap<String, CellarRuntime> cellars;
   private final AutoCloseable destroyAction;
 
   final DynamicLinker linker;
@@ -74,6 +74,7 @@ public final class WineryRuntime implements AutoCloseable {
     final var linkerFactory = new DynamicLinkerFactory();
     linkerFactory.setPrioritizedLinker(new BeansLinker());
     linkerFactory.setFallbackLinkers();
+    this.cellars = new LinkedHashMap<>(params.winery.getCellars().size());
     this.linker = linkerFactory.createLinker();
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;

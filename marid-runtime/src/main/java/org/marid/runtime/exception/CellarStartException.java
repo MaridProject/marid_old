@@ -28,7 +28,7 @@ public class CellarStartException extends RuntimeException {
   public final CellarRuntime cellar;
 
   public CellarStartException(CellarRuntime cellar, Throwable cause) {
-    super("Unable to create cellar " + cellar.name, cause);
+    super("Unable to create cellar " + cellar.getName(), cause);
     this.cellar = cellar;
   }
 }

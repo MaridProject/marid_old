@@ -49,21 +49,18 @@ import static jdk.dynalink.StandardOperation.GET;
 
 public class CellarRuntime implements AutoCloseable {
 
-  public final String name;
-
   final WineryRuntime winery;
+  final Cellar cellar;
   final LinkedHashMap<String, RackRuntime> racks = new LinkedHashMap<>();
   final LinkedHashMap<String, Object> constants = new LinkedHashMap<>();
 
   CellarRuntime(WineryRuntime winery, Cellar cellar) {
     this.winery = winery;
-    this.name = cellar.getName();
+    this.cellar = cellar;
   }
 
   private Object getOrCreateConst(String name, LinkedHashSet<String> passed) {
-    final var cellar = winery.winery.getCellar(this.name);
-    final var constant = cellar.getConstant(name);
-    return getOrCreateConst(constant, passed);
+    return getOrCreateConst(cellar.getConstant(name), passed);
   }
 
   Object getOrCreateConst(CellarConstant constant, LinkedHashSet<String> passed) {
@@ -71,7 +68,7 @@ public class CellarRuntime implements AutoCloseable {
     if (current != null) {
       return current;
     }
-    final var constKey = name + "/" + constant.getName();
+    final var constKey = getName() + "/" + constant.getName();
     if (passed.add(constKey)) {
       try {
         final var libClass = this.winery.classLoader.loadClass(constant.getLib());
@@ -132,6 +129,10 @@ public class CellarRuntime implements AutoCloseable {
 
   public @NotNull Set<@NotNull String> getRackNames() {
     return new LinkedHashSet<>(racks.keySet());
+  }
+
+  public @NotNull String getName() {
+    return cellar.getName();
   }
 
   @Override

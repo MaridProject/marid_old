@@ -28,7 +28,7 @@ public class CellarCloseException extends RuntimeException {
   public final CellarRuntime cellar;
 
   public CellarCloseException(CellarRuntime cellar) {
-    super("Cellar close exception: " + cellar.name);
+    super("Cellar close exception: " + cellar.getName());
     this.cellar = cellar;
   }
 }
