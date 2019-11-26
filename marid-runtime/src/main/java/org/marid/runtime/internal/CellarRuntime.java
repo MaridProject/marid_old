@@ -10,12 +10,12 @@ package org.marid.runtime.internal;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -24,19 +24,19 @@ package org.marid.runtime.internal;
 import jdk.dynalink.CallSiteDescriptor;
 import jdk.dynalink.beans.StaticClass;
 import jdk.dynalink.support.SimpleRelinkableCallSite;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.model.ArgumentConstRef;
 import org.marid.runtime.model.ArgumentLiteral;
 import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.CellarConstant;
-import org.marid.runtime.model.Winery;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodType.methodType;
@@ -59,11 +59,11 @@ public class CellarRuntime implements AutoCloseable {
     this.name = cellar.getName();
   }
 
-  private final Object getOrCreateConst(Winery winery, Cellar cellar, String name, Set<String> passed) {
-    return constants.computeIfAbsent(name, n -> getOrCreateConst(winery, cellar, cellar.getConstant(name), passed));
+  private Object getOrCreateConst(Cellar cellar, String name, LinkedHashSet<String> passed) {
+    return constants.computeIfAbsent(name, n -> getOrCreateConst(cellar, cellar.getConstant(name), passed));
   }
 
-  final Object getOrCreateConst(Winery winery, Cellar cellar, CellarConstant constant, Set<String> passed) {
+  Object getOrCreateConst(Cellar cellar, CellarConstant constant, LinkedHashSet<String> passed) {
     return constants.computeIfAbsent(constant.getName(), name -> {
       final var constKey = cellar.getName() + "/" + name;
       if (passed.add(constKey)) {
@@ -76,7 +76,7 @@ public class CellarRuntime implements AutoCloseable {
           ))).dynamicInvoker().bindTo(StaticClass.forClass(libClass)).invoke();
           final var args = new Object[constant.getArguments().size() + 2];
           args[0] = callable;
-          args[1] = null;
+          args[1] = StaticClass.forClass(libClass);
           for (int i = 0; i < constant.getArguments().size(); i++) {
             final var argument = constant.getArguments().get(i);
             if (argument instanceof ArgumentLiteral) {
@@ -84,9 +84,9 @@ public class CellarRuntime implements AutoCloseable {
               args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
             } else if (argument instanceof ArgumentConstRef) {
               final var ref = (ArgumentConstRef) argument;
-              final var tCellar = winery.getCellar(ref.getCellar());
+              final var tCellar = winery.winery.getCellar(ref.getCellar());
               final var tCellarRuntime = this.winery.cellars.get(ref.getCellar());
-              args[i + 2] = tCellarRuntime.getOrCreateConst(winery, tCellar, ref.getName(), new LinkedHashSet<>());
+              args[i + 2] = tCellarRuntime.getOrCreateConst(tCellar, ref.getName(), passed);
             } else {
               throw new IllegalArgumentException(
                   "Illegal argument [" + i + "] of constant " + constKey + ": " + argument.getClass()
@@ -97,9 +97,9 @@ public class CellarRuntime implements AutoCloseable {
               MethodHandles.publicLookup(),
               CALL,
               MethodType.genericMethodType(args.length)
-          ))).dynamicInvoker().invoke(args);
+          ))).dynamicInvoker().invokeWithArguments(args);
         } catch (Throwable e) {
-          throw new IllegalStateException("Unable to create constant: " + constKey);
+          throw new IllegalStateException("Unable to create constant: " + constKey, e);
         }
       } else {
         throw new IllegalStateException(
@@ -107,6 +107,14 @@ public class CellarRuntime implements AutoCloseable {
         );
       }
     });
+  }
+
+  public @Nullable Object getConstant(@NotNull String name) {
+    return constants.get(name);
+  }
+
+  public @Nullable RackRuntime getRack(@NotNull String name) {
+    return racks.get(name);
   }
 
   @Override

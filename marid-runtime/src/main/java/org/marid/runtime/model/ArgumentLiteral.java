@@ -62,7 +62,7 @@ public final class ArgumentLiteral extends ConstantArgument {
   private final Type type;
   private String value;
 
-  public ArgumentLiteral(Type type, String value) {
+  public ArgumentLiteral(@NotNull Type type, @NotNull String value) {
     this.type = type;
     this.value = value;
   }
@@ -77,15 +77,15 @@ public final class ArgumentLiteral extends ConstantArgument {
     this(element(inputSource));
   }
 
-  public Type getType() {
+  public @NotNull Type getType() {
     return type;
   }
 
-  public String getValue() {
+  public @NotNull String getValue() {
     return value;
   }
 
-  public ArgumentLiteral setValue(String value) {
+  public @NotNull ArgumentLiteral setValue(String value) {
     this.value = value;
     return this;
   }

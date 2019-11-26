@@ -10,12 +10,12 @@ package org.marid.runtime.internal;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -23,6 +23,9 @@ package org.marid.runtime.internal;
 
 import jdk.dynalink.DynamicLinker;
 import jdk.dynalink.DynamicLinkerFactory;
+import jdk.dynalink.beans.BeansLinker;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
 import org.marid.io.Xmls;
@@ -53,8 +56,9 @@ public final class WineryRuntime implements AutoCloseable {
   private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
   private final AutoCloseable destroyAction;
 
-  final DynamicLinker linker = new DynamicLinkerFactory().createLinker();
+  final DynamicLinker linker;
   final URLClassLoader classLoader;
+  final Winery winery;
   final LinkedHashMap<String, CellarRuntime> cellars = new LinkedHashMap<>();
 
   private volatile State state = State.NEW;
@@ -62,9 +66,13 @@ public final class WineryRuntime implements AutoCloseable {
   private volatile Throwable destroyError;
 
   private WineryRuntime(WineryParams params) {
+    final var linkerFactory = new DynamicLinkerFactory();
+    linkerFactory.setPrioritizedLinker(new BeansLinker());
+    linkerFactory.setFallbackLinkers();
+    this.linker = linkerFactory.createLinker();
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;
-    final var winery = params.winery;
+    this.winery = params.winery;
     this.thread = new Thread(() -> {
       try {
         while (!Thread.currentThread().isInterrupted()) {
@@ -76,7 +84,7 @@ public final class WineryRuntime implements AutoCloseable {
           switch (task) {
             case START:
               try {
-                run(winery);
+                run();
               } catch (Throwable e) {
                 startError = e;
               }
@@ -103,6 +111,16 @@ public final class WineryRuntime implements AutoCloseable {
   @TestOnly
   public WineryRuntime(String name, ClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
     this(new WineryParams(name, new URLClassLoader(new URL[0], classLoader), winery, destroyAction));
+  }
+
+  @TestOnly
+  public WineryRuntime(String name, Winery winery, AutoCloseable destroyAction) {
+    this(name, Thread.currentThread().getContextClassLoader(), winery, destroyAction);
+  }
+
+  @TestOnly
+  public WineryRuntime(String name, Winery winery) {
+    this(name, winery, () -> {});
   }
 
   private static void unpack(Path deployment, ZipInputStream zipInputStream) throws IOException {
@@ -147,7 +165,7 @@ public final class WineryRuntime implements AutoCloseable {
       }
       props.forEach(System.getProperties()::putIfAbsent);
     }
-    for (final var arg: args) {
+    for (final var arg : args) {
       if (arg.startsWith("--") && arg.contains("=")) {
         final var eqi = arg.indexOf('=');
         final var key = arg.substring(2, eqi);
@@ -159,6 +177,10 @@ public final class WineryRuntime implements AutoCloseable {
 
   public String getId() {
     return thread.getName();
+  }
+
+  public @Nullable CellarRuntime getCellar(@NotNull String name) {
+    return cellars.get(name);
   }
 
   public void start() {
@@ -195,7 +217,7 @@ public final class WineryRuntime implements AutoCloseable {
     }
   }
 
-  private void run(Winery winery) {
+  private void run() {
     if (state == State.STARTING || state == State.RUNNING) {
       return;
     }
@@ -211,9 +233,11 @@ public final class WineryRuntime implements AutoCloseable {
       for (final var cellar : winery.getCellars()) {
         final var cellarRuntime = cellars.get(cellar.getName());
         for (final var constant : cellar.getConstants()) {
-          cellarRuntime.getOrCreateConst(winery, cellar, constant, new LinkedHashSet<>());
+          cellarRuntime.getOrCreateConst(cellar, constant, new LinkedHashSet<>());
         }
       }
+
+      state = State.RUNNING;
     } catch (Throwable e) {
       try {
         destroy();

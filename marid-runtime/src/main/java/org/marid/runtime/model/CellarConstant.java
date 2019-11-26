@@ -27,6 +27,7 @@ import org.marid.xml.XmlUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -40,8 +41,13 @@ public final class CellarConstant extends AbstractEntity {
 
   public CellarConstant(@NotNull String lib, @NotNull String selector, @NotNull String name) {
     this.lib = lib;
+    this.selector = selector;
     this.name = name;
     this.arguments = new ArrayList<>();
+  }
+
+  public CellarConstant(@NotNull Executable executable, @NotNull String name) {
+    this(executable.getDeclaringClass().getName(), executable.getName(), name);
   }
 
   public CellarConstant(@NotNull Element element) {
@@ -73,7 +79,7 @@ public final class CellarConstant extends AbstractEntity {
   }
 
   @NotNull
-  public CellarConstant addArg(ArgumentLiteral arg) {
+  public CellarConstant addArg(ConstantArgument arg) {
     arguments.add(arg);
     return this;
   }
