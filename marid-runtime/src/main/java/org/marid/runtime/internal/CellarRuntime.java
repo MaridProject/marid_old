@@ -37,6 +37,7 @@ import java.lang.invoke.MethodType;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodType.methodType;
@@ -59,62 +60,78 @@ public class CellarRuntime implements AutoCloseable {
     this.name = cellar.getName();
   }
 
-  private Object getOrCreateConst(Cellar cellar, String name, LinkedHashSet<String> passed) {
-    return constants.computeIfAbsent(name, n -> getOrCreateConst(cellar, cellar.getConstant(name), passed));
+  private Object getOrCreateConst(String name, LinkedHashSet<String> passed) {
+    final var cellar = winery.winery.getCellar(this.name);
+    final var constant = cellar.getConstant(name);
+    return getOrCreateConst(constant, passed);
   }
 
-  Object getOrCreateConst(Cellar cellar, CellarConstant constant, LinkedHashSet<String> passed) {
-    return constants.computeIfAbsent(constant.getName(), name -> {
-      final var constKey = cellar.getName() + "/" + name;
-      if (passed.add(constKey)) {
-        try {
-          final var libClass = this.winery.classLoader.loadClass(constant.getLib());
-          final var callable = this.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-              MethodHandles.publicLookup(),
-              GET.withNamespace(METHOD).named(constant.getSelector()),
-              methodType(Object.class, StaticClass.class)
-          ))).dynamicInvoker().bindTo(StaticClass.forClass(libClass)).invoke();
-          final var args = new Object[constant.getArguments().size() + 2];
-          args[0] = callable;
-          args[1] = StaticClass.forClass(libClass);
-          for (int i = 0; i < constant.getArguments().size(); i++) {
-            final var argument = constant.getArguments().get(i);
-            if (argument instanceof ArgumentLiteral) {
-              final var literal = (ArgumentLiteral) argument;
-              args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
-            } else if (argument instanceof ArgumentConstRef) {
-              final var ref = (ArgumentConstRef) argument;
-              final var tCellar = winery.winery.getCellar(ref.getCellar());
-              final var tCellarRuntime = this.winery.cellars.get(ref.getCellar());
-              args[i + 2] = tCellarRuntime.getOrCreateConst(tCellar, ref.getName(), passed);
-            } else {
-              throw new IllegalArgumentException(
-                  "Illegal argument [" + i + "] of constant " + constKey + ": " + argument.getClass()
-              );
-            }
+  Object getOrCreateConst(CellarConstant constant, LinkedHashSet<String> passed) {
+    var current = constants.get(constant.getName());
+    if (current != null) {
+      return current;
+    }
+    final var constKey = name + "/" + constant.getName();
+    if (passed.add(constKey)) {
+      try {
+        final var libClass = this.winery.classLoader.loadClass(constant.getLib());
+        final var callable = this.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+            MethodHandles.publicLookup(),
+            GET.withNamespace(METHOD).named(constant.getSelector()),
+            methodType(Object.class, StaticClass.class)
+        ))).dynamicInvoker().bindTo(StaticClass.forClass(libClass)).invoke();
+        final var args = new Object[constant.getArguments().size() + 2];
+        args[0] = callable;
+        args[1] = StaticClass.forClass(libClass);
+        for (int i = 0; i < constant.getArguments().size(); i++) {
+          final var argument = constant.getArguments().get(i);
+          if (argument instanceof ArgumentLiteral) {
+            final var literal = (ArgumentLiteral) argument;
+            args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
+          } else if (argument instanceof ArgumentConstRef) {
+            final var ref = (ArgumentConstRef) argument;
+            final var cellar = this.winery.getOrCreateCellar(ref.getCellar(), new LinkedHashSet<>());
+            args[i + 2] = cellar.getOrCreateConst(ref.getName(), passed);
+          } else {
+            throw new IllegalArgumentException(
+                "Illegal argument [" + i + "] of constant " + constKey + ": " + argument.getClass()
+            );
           }
-          return this.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-              MethodHandles.publicLookup(),
-              CALL,
-              MethodType.genericMethodType(args.length)
-          ))).dynamicInvoker().invokeWithArguments(args);
-        } catch (Throwable e) {
-          throw new IllegalStateException("Unable to create constant: " + constKey, e);
         }
-      } else {
-        throw new IllegalStateException(
-            concat(passed.stream(), Stream.of(constKey)).collect(joining(",", "Circular constant reference: [", "]"))
+        final var callSite = new SimpleRelinkableCallSite(new CallSiteDescriptor(
+            MethodHandles.publicLookup(),
+            CALL,
+            MethodType.genericMethodType(args.length)
+        ));
+        constants.put(
+            constant.getName(),
+            current = winery.linker.link(callSite).dynamicInvoker().invokeWithArguments(args)
         );
+        return current;
+      } catch (Throwable e) {
+        throw new IllegalStateException("Unable to create constant: " + constKey, e);
       }
-    });
+    } else {
+      throw new IllegalStateException(
+          concat(passed.stream(), Stream.of(constKey)).collect(joining(",", "Circular constant reference: [", "]"))
+      );
+    }
   }
 
   public @Nullable Object getConstant(@NotNull String name) {
     return constants.get(name);
   }
 
+  public @NotNull Set<@NotNull String> getConstantNames() {
+    return new LinkedHashSet<>(constants.keySet());
+  }
+
   public @Nullable RackRuntime getRack(@NotNull String name) {
     return racks.get(name);
+  }
+
+  public @NotNull Set<@NotNull String> getRackNames() {
+    return new LinkedHashSet<>(racks.keySet());
   }
 
   @Override
