@@ -30,8 +30,6 @@ import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.CellarConstant;
 import org.marid.runtime.model.Winery;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.marid.runtime.model.ArgumentLiteral.Type.BYTE;
@@ -51,7 +49,7 @@ class BasicConstantsTest {
                 .addArg(new ArgumentLiteral(INT, "23"))
             )
         );
-    try (final var runtime = new WineryRuntime("test", winery)) {
+    try (final var runtime = new WineryRuntime(winery)) {
       runtime.start();
 
       final var testCellar1 = runtime.getCellar("testCellar1");
@@ -81,7 +79,7 @@ class BasicConstantsTest {
                 .addArg(new ArgumentConstRef("testCellar1", "c1"))
             )
         );
-    try (final var runtime = new WineryRuntime("test", winery)) {
+    try (final var runtime = new WineryRuntime(winery)) {
       runtime.start();
 
       final var testCellar1 = runtime.getCellar("testCellar1");

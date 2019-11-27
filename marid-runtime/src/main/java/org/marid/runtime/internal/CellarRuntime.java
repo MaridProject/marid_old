@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -59,10 +58,6 @@ public class CellarRuntime implements AutoCloseable {
   CellarRuntime(WineryRuntime winery, Cellar cellar) {
     this.winery = winery;
     this.cellar = cellar;
-  }
-
-  private Object getOrCreateConst(String name, LinkedHashSet<String> passed) {
-    return getOrCreateConst(cellar.getConstant(name), passed);
   }
 
   Object getOrCreateConst(CellarConstant constant, LinkedHashSet<String> passed) {
@@ -89,11 +84,9 @@ public class CellarRuntime implements AutoCloseable {
             args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
           } else if (argument instanceof ArgumentConstRef) {
             final var ref = (ArgumentConstRef) argument;
-            final var cellar = Objects.requireNonNull(
-                this.winery.getCellar(ref.getCellar()),
-                () -> "No such cellar: " + ref.getCellar()
-            );
-            args[i + 2] = cellar.getOrCreateConst(ref.getName(), passed);
+            final var cellar = this.winery.getCellar(ref.getCellar());
+            final var cellarConstant = cellar.cellar.getConstant(ref.getName());
+            args[i + 2] = cellar.getOrCreateConst(cellarConstant, passed);
           } else {
             throw new IllegalArgumentException(
                 "Illegal argument [" + i + "] of constant " + constKey + ": " + argument.getClass()

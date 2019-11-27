@@ -25,7 +25,6 @@ import jdk.dynalink.DynamicLinker;
 import jdk.dynalink.DynamicLinkerFactory;
 import jdk.dynalink.beans.BeansLinker;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
 import org.marid.io.Xmls;
@@ -45,6 +44,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.LinkedTransferQueue;
@@ -62,6 +63,7 @@ public final class WineryRuntime implements AutoCloseable {
   final DynamicLinker linker;
   final URLClassLoader classLoader;
   final Winery winery;
+  final ArrayList<Map.Entry<String, String>> racks;
 
   private volatile State state = State.NEW;
   private volatile Throwable startError;
@@ -76,6 +78,7 @@ public final class WineryRuntime implements AutoCloseable {
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;
     this.winery = params.winery;
+    this.racks = new ArrayList<>(winery.getCellars().stream().mapToInt(c -> c.getRacks().size()).sum());
     this.thread = new Thread(() -> {
       try {
         while (!Thread.currentThread().isInterrupted()) {
@@ -104,7 +107,7 @@ public final class WineryRuntime implements AutoCloseable {
       } finally {
         destroy();
       }
-    }, params.name);
+    }, winery.getName());
   }
 
   public WineryRuntime(URL zipFile, List<String> args) {
@@ -112,18 +115,18 @@ public final class WineryRuntime implements AutoCloseable {
   }
 
   @TestOnly
-  public WineryRuntime(String name, ClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
-    this(new WineryParams(name, new URLClassLoader(new URL[0], classLoader), winery, destroyAction));
+  public WineryRuntime(ClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
+    this(new WineryParams(new URLClassLoader(new URL[0], classLoader), winery, destroyAction));
   }
 
   @TestOnly
-  public WineryRuntime(String name, Winery winery, AutoCloseable destroyAction) {
-    this(name, Thread.currentThread().getContextClassLoader(), winery, destroyAction);
+  public WineryRuntime(Winery winery, AutoCloseable destroyAction) {
+    this(Thread.currentThread().getContextClassLoader(), winery, destroyAction);
   }
 
   @TestOnly
-  public WineryRuntime(String name, Winery winery) {
-    this(name, winery, () -> {});
+  public WineryRuntime(Winery winery) {
+    this(winery, () -> {});
   }
 
   private static void unpack(Path deployment, ZipInputStream zipInputStream) throws IOException {
@@ -179,11 +182,11 @@ public final class WineryRuntime implements AutoCloseable {
   }
 
   public String getId() {
-    return thread.getName();
+    return winery.getName();
   }
 
-  public @Nullable CellarRuntime getCellar(@NotNull String name) {
-    return cellars.get(name);
+  public @NotNull CellarRuntime getCellar(@NotNull String name) {
+    return Objects.requireNonNull(cellars.get(name), () -> "No such cellar in " + winery.getName() + ": " + name);
   }
 
   public @NotNull Set<@NotNull String> getCellarNames() {
@@ -317,7 +320,6 @@ public final class WineryRuntime implements AutoCloseable {
 
   private static class WineryParams {
 
-    private final String name;
     private final URLClassLoader classLoader;
     private final Winery winery;
     private AutoCloseable destroyAction;
@@ -326,7 +328,6 @@ public final class WineryRuntime implements AutoCloseable {
       final Path deployment;
       try {
         deployment = Files.createTempDirectory("marid");
-        this.name = deployment.getFileName().toString();
         this.destroyAction = () -> MaridFiles.deleteRecursively(deployment);
 
         try (final var is = new ZipInputStream(zipFile.openStream(), UTF_8)) {
@@ -356,8 +357,7 @@ public final class WineryRuntime implements AutoCloseable {
       }
     }
 
-    private WineryParams(String name, URLClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
-      this.name = name;
+    private WineryParams(URLClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
       this.classLoader = classLoader;
       this.winery = winery;
       this.destroyAction = destroyAction;
