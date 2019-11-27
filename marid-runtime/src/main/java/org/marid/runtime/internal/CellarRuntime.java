@@ -22,7 +22,6 @@ package org.marid.runtime.internal;
  */
 
 import jdk.dynalink.CallSiteDescriptor;
-import jdk.dynalink.beans.StaticClass;
 import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,12 +40,9 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodType.methodType;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.concat;
-import static jdk.dynalink.StandardNamespace.METHOD;
 import static jdk.dynalink.StandardOperation.CALL;
-import static jdk.dynalink.StandardOperation.GET;
 
 public class CellarRuntime implements AutoCloseable {
 
@@ -69,14 +65,10 @@ public class CellarRuntime implements AutoCloseable {
     if (passed.add(constKey)) {
       try {
         final var libClass = this.winery.classLoader.loadClass(constant.getLib());
-        final var callable = this.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-            MethodHandles.publicLookup(),
-            GET.withNamespace(METHOD).named(constant.getSelector()),
-            methodType(Object.class, StaticClass.class)
-        ))).dynamicInvoker().bindTo(StaticClass.forClass(libClass)).invoke();
+        final var callable = winery.linkMethod(libClass, constant.getSelector());
         final var args = new Object[constant.getArguments().size() + 2];
         args[0] = callable;
-        args[1] = StaticClass.forClass(libClass);
+        args[1] = null;
         for (int i = 0; i < constant.getArguments().size(); i++) {
           final var argument = constant.getArguments().get(i);
           if (argument instanceof ArgumentLiteral) {

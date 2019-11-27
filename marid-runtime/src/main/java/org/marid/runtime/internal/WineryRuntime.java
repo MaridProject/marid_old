@@ -21,9 +21,11 @@ package org.marid.runtime.internal;
  * #L%
  */
 
-import jdk.dynalink.DynamicLinker;
-import jdk.dynalink.DynamicLinkerFactory;
-import jdk.dynalink.beans.BeansLinker;
+import jdk.dynalink.CallSiteDescriptor;
+import jdk.dynalink.StandardNamespace;
+import jdk.dynalink.StandardOperation;
+import jdk.dynalink.beans.StaticClass;
+import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
@@ -34,6 +36,8 @@ import org.marid.runtime.model.Winery;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -53,14 +57,13 @@ import java.util.zip.ZipInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public final class WineryRuntime implements AutoCloseable {
+public final class WineryRuntime extends LinkerSupport implements AutoCloseable {
 
   private final Thread thread;
   private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
   private final LinkedHashMap<String, CellarRuntime> cellars;
   private final AutoCloseable destroyAction;
 
-  final DynamicLinker linker;
   final URLClassLoader classLoader;
   final Winery winery;
   final ArrayList<Map.Entry<String, String>> racks;
@@ -70,11 +73,7 @@ public final class WineryRuntime implements AutoCloseable {
   private volatile Throwable destroyError;
 
   private WineryRuntime(WineryParams params) {
-    final var linkerFactory = new DynamicLinkerFactory();
-    linkerFactory.setPrioritizedLinker(new BeansLinker());
-    linkerFactory.setFallbackLinkers();
     this.cellars = new LinkedHashMap<>(params.winery.getCellars().size());
-    this.linker = linkerFactory.createLinker();
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;
     this.winery = params.winery;
