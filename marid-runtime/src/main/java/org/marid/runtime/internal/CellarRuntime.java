@@ -10,12 +10,12 @@ package org.marid.runtime.internal;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -34,9 +34,11 @@ import org.marid.runtime.model.CellarConstant;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -87,7 +89,10 @@ public class CellarRuntime implements AutoCloseable {
             args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
           } else if (argument instanceof ArgumentConstRef) {
             final var ref = (ArgumentConstRef) argument;
-            final var cellar = this.winery.getOrCreateCellar(ref.getCellar(), new LinkedHashSet<>());
+            final var cellar = Objects.requireNonNull(
+                this.winery.getCellar(ref.getCellar()),
+                () -> "No such cellar: " + ref.getCellar()
+            );
             args[i + 2] = cellar.getOrCreateConst(ref.getName(), passed);
           } else {
             throw new IllegalArgumentException(
@@ -120,7 +125,7 @@ public class CellarRuntime implements AutoCloseable {
   }
 
   public @NotNull Set<@NotNull String> getConstantNames() {
-    return new LinkedHashSet<>(constants.keySet());
+    return Collections.unmodifiableSet(constants.keySet());
   }
 
   public @Nullable RackRuntime getRack(@NotNull String name) {
@@ -128,7 +133,7 @@ public class CellarRuntime implements AutoCloseable {
   }
 
   public @NotNull Set<@NotNull String> getRackNames() {
-    return new LinkedHashSet<>(racks.keySet());
+    return Collections.unmodifiableSet(racks.keySet());
   }
 
   public @NotNull String getName() {

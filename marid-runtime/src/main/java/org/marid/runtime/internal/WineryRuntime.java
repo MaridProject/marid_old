@@ -30,7 +30,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
 import org.marid.io.Xmls;
 import org.marid.runtime.exception.WineryCloseException;
-import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.Winery;
 
 import java.io.FileNotFoundException;
@@ -41,6 +40,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -48,12 +48,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.LinkedTransferQueue;
-import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Stream.concat;
 
 public final class WineryRuntime implements AutoCloseable {
 
@@ -190,31 +187,7 @@ public final class WineryRuntime implements AutoCloseable {
   }
 
   public @NotNull Set<@NotNull String> getCellarNames() {
-    return new LinkedHashSet<>(cellars.keySet());
-  }
-
-  CellarRuntime getOrCreateCellar(String name, LinkedHashSet<String> passed) {
-    return getOrCreateCellar(winery.getCellar(name), passed);
-  }
-
-  CellarRuntime getOrCreateCellar(Cellar cellar, LinkedHashSet<String> passed) {
-    var current = cellars.get(cellar.getName());
-    if (current != null) {
-      return current;
-    }
-    if (passed.add(cellar.getName())) {
-      cellars.put(cellar.getName(), current = new CellarRuntime(this, cellar));
-      for (final var constant : cellar.getConstants()) {
-        current.getOrCreateConst(constant, new LinkedHashSet<>());
-      }
-      cellars.remove(cellar.getName());
-      cellars.put(cellar.getName(), current);
-      return current;
-    } else {
-      throw new IllegalStateException(
-          concat(passed.stream(), Stream.of(cellar.getName())).collect(joining(",", "Circular cellar reference: [", "]"))
-      );
-    }
+    return Collections.unmodifiableSet(cellars.keySet());
   }
 
   public void start() {
@@ -260,9 +233,8 @@ public final class WineryRuntime implements AutoCloseable {
     Thread.currentThread().setContextClassLoader(classLoader);
 
     try {
-      for (final var cellar : winery.getCellars()) {
-        getOrCreateCellar(cellar, new LinkedHashSet<>());
-      }
+      winery.getCellars().forEach(c -> cellars.put(c.getName(), new CellarRuntime(this, c)));
+      cellars.forEach((name, c) -> c.cellar.getConstants().forEach(cs -> c.getOrCreateConst(cs, new LinkedHashSet<>())));
 
       state = State.RUNNING;
     } catch (Throwable e) {

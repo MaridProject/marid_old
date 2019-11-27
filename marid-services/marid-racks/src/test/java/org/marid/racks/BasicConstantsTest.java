@@ -97,42 +97,4 @@ class BasicConstantsTest {
       assertEquals(23, testCellar2.getConstant("c1"));
     }
   }
-
-  @Test
-  void orderOfCellars() throws Exception {
-    final var winery = new Winery("testWinery")
-        .addCellar(new Cellar("testCellar2")
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("intConstant", int.class), "c1")
-                .addArg(new ArgumentConstRef("testCellar1", "c2"))
-            )
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c2")
-                .addArg(new ArgumentConstRef("testCellar1", "c1"))
-            )
-        )
-        .addCellar(new Cellar("testCellar1")
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
-                .addArg(new ArgumentLiteral(BYTE, "12"))
-            )
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("intConstant", int.class), "c2")
-                .addArg(new ArgumentLiteral(INT, "23"))
-            )
-        );
-    try (final var runtime = new WineryRuntime("test", winery)) {
-      runtime.start();
-
-      final var testCellar1 = runtime.getCellar("testCellar1");
-
-      assertNotNull(testCellar1);
-      assertEquals((byte) 12, testCellar1.getConstant("c1"));
-      assertEquals(23, testCellar1.getConstant("c2"));
-
-      final var testCellar2 = runtime.getCellar("testCellar2");
-
-      assertNotNull(testCellar2);
-      assertEquals((byte) 12, testCellar2.getConstant("c2"));
-      assertEquals(23, testCellar2.getConstant("c1"));
-
-      assertEquals(List.of("testCellar1", "testCellar2"), List.copyOf(runtime.getCellarNames()));
-    }
-  }
 }
