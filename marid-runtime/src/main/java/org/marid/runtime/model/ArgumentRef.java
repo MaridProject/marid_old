@@ -60,16 +60,27 @@ public final class ArgumentRef extends Argument {
     return ref;
   }
 
-  public void setRef(String ref) {
+  public @NotNull ArgumentRef setRef(@NotNull String ref) {
     this.ref = ref;
+    return this;
   }
 
-  public String getCellar() {
+  public @Nullable String getCellar() {
     return cellar;
   }
 
-  public void setCellar(String cellar) {
+  public @NotNull ArgumentRef setCellar(@Nullable String cellar) {
     this.cellar = cellar;
+    return this;
+  }
+
+  public @NotNull String getRack() {
+    return rack;
+  }
+
+  public @NotNull ArgumentRef setRack(@NotNull String rack) {
+    this.rack = rack;
+    return this;
   }
 
   @Override

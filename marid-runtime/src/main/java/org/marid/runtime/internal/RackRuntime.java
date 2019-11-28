@@ -21,68 +21,27 @@ package org.marid.runtime.internal;
  * #L%
  */
 
-import jdk.dynalink.CallSiteDescriptor;
-import jdk.dynalink.support.SimpleRelinkableCallSite;
-import org.marid.runtime.exception.RackCloseException;
+import org.jetbrains.annotations.NotNull;
 import org.marid.runtime.model.Rack;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.util.LinkedHashMap;
-
-import static java.lang.invoke.MethodType.methodType;
-import static jdk.dynalink.StandardNamespace.METHOD;
-import static jdk.dynalink.StandardOperation.CALL;
-import static jdk.dynalink.StandardOperation.GET;
 
 public class RackRuntime implements AutoCloseable {
 
-  public final String name;
-
   private final CellarRuntime cellar;
-  private final Object instance;
-  private final LinkedHashMap<String, Object[]> destroyers;
+  private final Rack rack;
+  final Object instance;
 
-  RackRuntime(CellarRuntime cellar, Rack rack) {
+  RackRuntime(CellarRuntime cellar, Rack rack, Object instance) {
     this.cellar = cellar;
-    this.name = rack.getName();
-    this.instance = null;
-    this.destroyers = null;
+    this.rack = rack;
+    this.instance = instance;
+  }
+
+  public @NotNull String getName() {
+    return rack.getName();
   }
 
   @Override
   public void close() {
-    final var ex = new RackCloseException(this);
-    final var entries = destroyers.entrySet();
-    for (final var it = entries.iterator(); it.hasNext(); ) {
-      final var entry = it.next();
-      final var methodName = entry.getKey();
-      final var args = entry.getValue();
-      try {
-        final var callable = cellar.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-            MethodHandles.publicLookup(),
-            GET.withNamespace(METHOD).named(methodName),
-            methodType(Object.class, Object.class)
-        ))).dynamicInvoker().bindTo(instance).invoke();
 
-        final var actualArgs = new Object[args.length + 2];
-        System.arraycopy(args, 0, actualArgs, 2, args.length);
-        actualArgs[0] = callable;
-        actualArgs[1] = instance;
-
-        cellar.winery.linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
-            MethodHandles.publicLookup(),
-            CALL,
-            MethodType.genericMethodType(actualArgs.length)
-        ))).dynamicInvoker().invoke(actualArgs);
-      } catch (Throwable e) {
-        ex.addSuppressed(new IllegalStateException("Unable to call " + methodName, e));
-      } finally {
-        it.remove();
-      }
-    }
-    if (ex.getSuppressed().length > 0) {
-      throw ex;
-    }
   }
 }

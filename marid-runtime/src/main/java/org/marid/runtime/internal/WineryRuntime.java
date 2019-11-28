@@ -229,7 +229,8 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
 
     try {
       winery.getCellars().forEach(c -> cellars.put(c.getName(), new CellarRuntime(this, c)));
-      cellars.forEach((name, c) -> c.cellar.getConstants().forEach(cs -> c.getOrCreateConst(cs, new LinkedHashSet<>())));
+      cellars.forEach((name, c) -> c.cellar.getConstants().forEach(e -> c.getOrCreateConst(e, new LinkedHashSet<>())));
+      cellars.forEach((name, c) -> c.cellar.getRacks().forEach(e -> c.getOrCreateRack(e, new LinkedHashSet<>())));
 
       state = State.RUNNING;
     } catch (Throwable e) {

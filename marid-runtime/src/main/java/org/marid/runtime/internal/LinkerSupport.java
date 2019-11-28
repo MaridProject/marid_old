@@ -29,7 +29,7 @@ abstract class LinkerSupport {
     final var op = StandardOperation.GET.withNamespace(StandardNamespace.METHOD).named(name);
     final var callSiteDescriptor = new CallSiteDescriptor(publicLookup(), op, methodType);
     final var callSite = new SimpleRelinkableCallSite(callSiteDescriptor);
-    return linker.link(callSite).dynamicInvoker().bindTo(StaticClass.forClass(type)).invoke();
+    return linker.link(callSite).dynamicInvoker().bindTo(StaticClass.forClass(type)).invokeExact();
   }
 
   Object call(Object callable, Object... args) throws Throwable {
@@ -37,5 +37,20 @@ abstract class LinkerSupport {
     final var callSiteDescriptor = new CallSiteDescriptor(publicLookup(), StandardOperation.CALL, methodType);
     final var callSite = new SimpleRelinkableCallSite(callSiteDescriptor);
     return linker.link(callSite).dynamicInvoker().bindTo(callable).bindTo(null).invokeWithArguments(args);
+  }
+
+  Object construct(Class<?> type, Object... args) throws Throwable {
+    final var methodType = MethodType.genericMethodType(args.length + 1);
+    final var callSiteDescriptor = new CallSiteDescriptor(publicLookup(), StandardOperation.NEW, methodType);
+    final var callSite = new SimpleRelinkableCallSite(callSiteDescriptor);
+    return linker.link(callSite).dynamicInvoker().bindTo(StaticClass.forClass(type)).invokeWithArguments(args);
+  }
+
+  Object get(Object target, String name) throws Throwable {
+    final var methodType = MethodType.methodType(Object.class, Object.class);
+    final var op = StandardOperation.GET.withNamespace(StandardNamespace.PROPERTY).named(name);
+    final var callSiteDescriptor = new CallSiteDescriptor(publicLookup(), op, methodType);
+    final var callSite = new SimpleRelinkableCallSite(callSiteDescriptor);
+    return linker.link(callSite).dynamicInvoker().bindTo(target).invokeExact();
   }
 }

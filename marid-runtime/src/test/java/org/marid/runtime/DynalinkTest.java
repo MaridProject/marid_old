@@ -83,7 +83,7 @@ class DynalinkTest {
     final var actual = linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
         MethodHandles.publicLookup(),
         NEW.named("new"),
-        methodType(Object.class, StaticClass.class)))
+        methodType(Object.class, Object.class)))
     ).dynamicInvoker().invoke(StaticClass.forClass(TestBean.class));
 
     assertTrue(actual instanceof TestBean);

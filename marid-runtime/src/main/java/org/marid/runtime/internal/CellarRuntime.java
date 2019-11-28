@@ -26,14 +26,18 @@ import org.jetbrains.annotations.Nullable;
 import org.marid.runtime.exception.CellarCloseException;
 import org.marid.runtime.model.ArgumentConstRef;
 import org.marid.runtime.model.ArgumentLiteral;
+import org.marid.runtime.model.ArgumentNull;
+import org.marid.runtime.model.ArgumentRef;
 import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.CellarConstant;
+import org.marid.runtime.model.Rack;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.joining;
@@ -44,8 +48,8 @@ public class CellarRuntime implements AutoCloseable {
 
   final WineryRuntime winery;
   final Cellar cellar;
-  final LinkedHashMap<String, RackRuntime> racks = new LinkedHashMap<>();
-  final LinkedHashMap<String, Object> constants = new LinkedHashMap<>();
+  final ConcurrentHashMap<String, RackRuntime> racks = new ConcurrentHashMap<>();
+  final ConcurrentHashMap<String, Object> constants = new ConcurrentHashMap<>();
 
   CellarRuntime(WineryRuntime winery, Cellar cellar) {
     this.winery = winery;
@@ -53,38 +57,81 @@ public class CellarRuntime implements AutoCloseable {
   }
 
   Object getOrCreateConst(CellarConstant constant, LinkedHashSet<String> passed) {
-    var current = constants.get(constant.getName());
-    if (current != null) {
-      return current;
-    }
     final var k = getName() + "/" + constant.getName();
     if (!passed.add(k)) {
       throw new IllegalStateException(concat(passed.stream(), of(k)).collect(joining(",", "Circular const [", "]")));
     }
-    try {
-      final var libClass = winery.classLoader.loadClass(constant.getLib());
-      final var callable = winery.linkMethod(libClass, constant.getSelector());
-      final var args = IntStream.range(0, constant.getArguments().size())
-          .mapToObj(i -> {
-            final var arg = constant.getArguments().get(i);
-            if (arg instanceof ArgumentLiteral) {
-              final var literal = (ArgumentLiteral) arg;
-              return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
-            } else if (arg instanceof ArgumentConstRef) {
-              final var ref = (ArgumentConstRef) arg;
-              final var cellar = winery.getCellar(ref.getCellar());
-              final var cellarConstant = cellar.cellar.getConstant(ref.getName());
-              return cellar.getOrCreateConst(cellarConstant, passed);
-            } else {
-              throw new IllegalArgumentException("Illegal arg[" + i + "] of constant " + k + ": " + arg.getClass());
-            }
-          })
-          .toArray();
-      constants.put(constant.getName(), current = winery.call(callable, args));
-      return current;
-    } catch (Throwable e) {
-      throw new IllegalStateException("Unable to create constant: " + k, e);
+    return constants.computeIfAbsent(constant.getName(), name -> {
+      try {
+        final var libClass = winery.classLoader.loadClass(constant.getLib());
+        final var callable = winery.linkMethod(libClass, constant.getSelector());
+        final var args = IntStream.range(0, constant.getArguments().size())
+            .mapToObj(i -> {
+              final var arg = constant.getArguments().get(i);
+              if (arg instanceof ArgumentLiteral) {
+                final var literal = (ArgumentLiteral) arg;
+                return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
+              } else if (arg instanceof ArgumentConstRef) {
+                final var ref = (ArgumentConstRef) arg;
+                final var cellar = winery.getCellar(ref.getCellar());
+                final var cellarConstant = cellar.cellar.getConstant(ref.getName());
+                return cellar.getOrCreateConst(cellarConstant, passed);
+              } else {
+                throw new IllegalArgumentException("Illegal arg[" + i + "] of constant " + k + ": " + arg.getClass());
+              }
+            })
+            .toArray();
+        return winery.call(callable, args);
+      } catch (Throwable e) {
+        throw new IllegalStateException("Unable to create constant " + k, e);
+      }
+    });
+  }
+
+  RackRuntime getOrCreateRack(Rack rack, LinkedHashSet<String> passed) {
+    final var k = getName() + "/" + rack.getName();
+    if (!passed.add(k)) {
+      throw new IllegalStateException(concat(passed.stream(), of(k)).collect(joining(",", "Circular rack [", "]")));
     }
+    return racks.computeIfAbsent(rack.getName(), name -> {
+      try {
+        final var args =  IntStream.range(0, rack.getArguments().size())
+            .mapToObj(i -> {
+              final var arg = rack.getArguments().get(i);
+              if (arg instanceof ArgumentLiteral) {
+                final var literal = (ArgumentLiteral) arg;
+                return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
+              } else if (arg instanceof ArgumentConstRef) {
+                final var ref = (ArgumentConstRef) arg;
+                final var cellar = winery.getCellar(ref.getCellar());
+                return cellar.getConstant(ref.getName());
+              } else if (arg instanceof ArgumentNull) {
+                return null;
+              } else if (arg instanceof ArgumentRef) {
+                final var ref = (ArgumentRef) arg;
+                final var cellar = ref.getCellar() == null ? this : winery.getCellar(ref.getCellar());
+                final var cellarRack = cellar.cellar.getRack(ref.getRack());
+                final var rackRuntime = cellar.getOrCreateRack(cellarRack, passed);
+                try {
+                  return winery.get(rackRuntime.instance, ref.getRef());
+                } catch (RuntimeException | Error e) {
+                  throw e;
+                } catch (Throwable e) {
+                  throw new IllegalStateException(e);
+                }
+              } else {
+                throw new IllegalArgumentException("Illegal arg[" + i + "] of constant " + k + ": " + arg.getClass());
+              }
+            })
+            .toArray();
+        final var rackClass = winery.classLoader.loadClass(rack.getFactory());
+        final var instance = winery.construct(rackClass, args);
+        winery.racks.add(Map.entry(getName(), name));
+        return new RackRuntime(this, rack, instance);
+      } catch (Throwable e) {
+        throw new IllegalStateException("Unable to create rack " + k, e);
+      }
+    });
   }
 
   public @Nullable Object getConstant(@NotNull String name) {

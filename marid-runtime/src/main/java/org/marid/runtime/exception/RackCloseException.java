@@ -28,7 +28,7 @@ public class RackCloseException extends RuntimeException {
   private final RackRuntime rack;
 
   public RackCloseException(RackRuntime rack) {
-    super("Unable to close " + rack.name);
+    super("Unable to close " + rack.getName());
     this.rack = rack;
   }
 
