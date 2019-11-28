@@ -21,8 +21,6 @@ package org.marid.runtime.internal;
  * #L%
  */
 
-import jdk.dynalink.CallSiteDescriptor;
-import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.marid.runtime.exception.CellarCloseException;
@@ -31,18 +29,16 @@ import org.marid.runtime.model.ArgumentLiteral;
 import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.CellarConstant;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.concat;
-import static jdk.dynalink.StandardOperation.CALL;
+import static java.util.stream.Stream.of;
 
 public class CellarRuntime implements AutoCloseable {
 
@@ -61,47 +57,33 @@ public class CellarRuntime implements AutoCloseable {
     if (current != null) {
       return current;
     }
-    final var constKey = getName() + "/" + constant.getName();
-    if (passed.add(constKey)) {
-      try {
-        final var libClass = this.winery.classLoader.loadClass(constant.getLib());
-        final var callable = winery.linkMethod(libClass, constant.getSelector());
-        final var args = new Object[constant.getArguments().size() + 2];
-        args[0] = callable;
-        args[1] = null;
-        for (int i = 0; i < constant.getArguments().size(); i++) {
-          final var argument = constant.getArguments().get(i);
-          if (argument instanceof ArgumentLiteral) {
-            final var literal = (ArgumentLiteral) argument;
-            args[i + 2] = literal.getType().converter.apply(literal.getValue(), this.winery.classLoader);
-          } else if (argument instanceof ArgumentConstRef) {
-            final var ref = (ArgumentConstRef) argument;
-            final var cellar = this.winery.getCellar(ref.getCellar());
-            final var cellarConstant = cellar.cellar.getConstant(ref.getName());
-            args[i + 2] = cellar.getOrCreateConst(cellarConstant, passed);
-          } else {
-            throw new IllegalArgumentException(
-                "Illegal argument [" + i + "] of constant " + constKey + ": " + argument.getClass()
-            );
-          }
-        }
-        final var callSite = new SimpleRelinkableCallSite(new CallSiteDescriptor(
-            MethodHandles.publicLookup(),
-            CALL,
-            MethodType.genericMethodType(args.length)
-        ));
-        constants.put(
-            constant.getName(),
-            current = winery.linker.link(callSite).dynamicInvoker().invokeWithArguments(args)
-        );
-        return current;
-      } catch (Throwable e) {
-        throw new IllegalStateException("Unable to create constant: " + constKey, e);
-      }
-    } else {
-      throw new IllegalStateException(
-          concat(passed.stream(), Stream.of(constKey)).collect(joining(",", "Circular constant reference: [", "]"))
-      );
+    final var k = getName() + "/" + constant.getName();
+    if (!passed.add(k)) {
+      throw new IllegalStateException(concat(passed.stream(), of(k)).collect(joining(",", "Circular const [", "]")));
+    }
+    try {
+      final var libClass = winery.classLoader.loadClass(constant.getLib());
+      final var callable = winery.linkMethod(libClass, constant.getSelector());
+      final var args = IntStream.range(0, constant.getArguments().size())
+          .mapToObj(i -> {
+            final var arg = constant.getArguments().get(i);
+            if (arg instanceof ArgumentLiteral) {
+              final var literal = (ArgumentLiteral) arg;
+              return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
+            } else if (arg instanceof ArgumentConstRef) {
+              final var ref = (ArgumentConstRef) arg;
+              final var cellar = winery.getCellar(ref.getCellar());
+              final var cellarConstant = cellar.cellar.getConstant(ref.getName());
+              return cellar.getOrCreateConst(cellarConstant, passed);
+            } else {
+              throw new IllegalArgumentException("Illegal arg[" + i + "] of constant " + k + ": " + arg.getClass());
+            }
+          })
+          .toArray();
+      constants.put(constant.getName(), current = winery.call(callable, args));
+      return current;
+    } catch (Throwable e) {
+      throw new IllegalStateException("Unable to create constant: " + k, e);
     }
   }
 

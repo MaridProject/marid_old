@@ -21,11 +21,6 @@ package org.marid.runtime.internal;
  * #L%
  */
 
-import jdk.dynalink.CallSiteDescriptor;
-import jdk.dynalink.StandardNamespace;
-import jdk.dynalink.StandardOperation;
-import jdk.dynalink.beans.StaticClass;
-import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
@@ -36,8 +31,6 @@ import org.marid.runtime.model.Winery;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
