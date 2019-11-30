@@ -44,6 +44,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -69,12 +70,11 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
     this.destroyAction = params.destroyAction;
     this.winery = params.winery;
     this.racks = new ArrayList<>(winery.getCellars().stream().mapToInt(c -> c.getRacks().size()).sum());
-    this.thread = new Thread(() -> {
+    this.thread = new Thread(null, () -> {
       try {
         while (!Thread.currentThread().isInterrupted()) {
-          final var task = queue.poll();
+          final var task = queue.poll(10L, TimeUnit.MILLISECONDS);
           if (task == null) {
-            Thread.onSpinWait();
             continue;
           }
           switch (task) {
@@ -94,10 +94,12 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
               break;
           }
         }
+      } catch (InterruptedException e) {
+        // exit thread
       } finally {
         destroy();
       }
-    }, winery.getName());
+    }, winery.getName(), 96L << 10);
   }
 
   public WineryRuntime(URL zipFile, List<String> args) {

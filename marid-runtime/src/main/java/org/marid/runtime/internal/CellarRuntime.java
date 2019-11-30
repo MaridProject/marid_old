@@ -141,7 +141,7 @@ public class CellarRuntime implements AutoCloseable {
     return rackRuntime;
   }
 
-  private Object arg(Argument arg, LinkedHashSet<String> passed) {
+  Object arg(Argument arg, LinkedHashSet<String> passed) {
     if (arg instanceof ArgumentLiteral) {
       final var literal = (ArgumentLiteral) arg;
       return literal.getType().converter.apply(literal.getValue(), winery.classLoader);

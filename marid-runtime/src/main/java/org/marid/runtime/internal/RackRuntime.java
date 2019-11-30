@@ -26,6 +26,9 @@ import org.marid.runtime.model.Cellar;
 import org.marid.runtime.model.Rack;
 import org.marid.runtime.model.Winery;
 
+import java.util.LinkedHashSet;
+import java.util.stream.IntStream;
+
 public class RackRuntime implements AutoCloseable {
 
   private final CellarRuntime cellar;
@@ -69,7 +72,25 @@ public class RackRuntime implements AutoCloseable {
 
   @Override
   public void close() {
-    final var exception = new IllegalStateException("Unable to close rack " + cellar.winery.getId());
+    final var exception = new IllegalStateException("Unable to close rack " + getId());
+    IntStream.range(0, rack.getDestroyers().size()).forEach(i -> {
+      final var destroyer = rack.getDestroyers().get(i);
+      try {
+        final var callable = cellar.winery.linkMethod(instance.getClass(), destroyer.getName());
+        final var args = IntStream.range(0, destroyer.getArguments().size())
+            .mapToObj(j -> {
+              try {
+                return cellar.arg(destroyer.getArguments().get(j), new LinkedHashSet<>());
+              } catch (Throwable e) {
+                throw new IllegalArgumentException("Illegal argument [" + j + "] of destroyer [" + i + "]", e);
+              }
+            })
+            .toArray();
+        cellar.winery.call(callable, args);
+      } catch (Throwable e) {
+        exception.addSuppressed(new IllegalStateException("Unable to call destroyer [" + i + "]", e));
+      }
+    });
     if (instance instanceof AutoCloseable) {
       try {
         ((AutoCloseable) instance).close();

@@ -123,6 +123,10 @@ public final class Rack extends AbstractEntity {
     return initializers;
   }
 
+  public @NotNull ArrayList<Destroyer> getDestroyers() {
+    return destroyers;
+  }
+
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("name", name);
