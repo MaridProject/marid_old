@@ -53,4 +53,12 @@ abstract class LinkerSupport {
     final var callSite = new SimpleRelinkableCallSite(callSiteDescriptor);
     return linker.link(callSite).dynamicInvoker().bindTo(target).invokeExact();
   }
+
+  void set(Object target, String name, Object value) throws Throwable {
+    final var methodType = MethodType.methodType(void.class, Object.class, Object.class);
+    final var op = StandardOperation.SET.withNamespace(StandardNamespace.PROPERTY).named(name);
+    final var callSiteDescriptor = new CallSiteDescriptor(publicLookup(), op, methodType);
+    final var callSite = new SimpleRelinkableCallSite(callSiteDescriptor);
+    linker.link(callSite).dynamicInvoker().bindTo(target).invokeExact(value);
+  }
 }

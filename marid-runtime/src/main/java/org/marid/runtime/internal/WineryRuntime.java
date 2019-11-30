@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
 import org.marid.io.Xmls;
-import org.marid.runtime.exception.WineryCloseException;
 import org.marid.runtime.model.Winery;
 
 import java.io.FileNotFoundException;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -248,20 +246,22 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
       return;
     }
     state = State.TERMINATING;
-    final var exception = new WineryCloseException(this);
+    final var exception = new IllegalStateException("Unable to close winery " + getId());
 
-    final var entries = new LinkedList<>(cellars.entrySet());
-    cellars.clear();
-    for (final var it = entries.descendingIterator(); it.hasNext(); ) {
-      final var entry = it.next();
+    for (int i = racks.size() - 1; i >= 0; i--) {
+      final var rackEntry = racks.get(i);
+      final var cellar = getCellar(rackEntry.getKey());
+      final var rack = cellar.getRack(rackEntry.getValue());
       try {
-        entry.getValue().close();
+        rack.close();
       } catch (Throwable e) {
         exception.addSuppressed(e);
-      } finally {
-        it.remove();
       }
     }
+    racks.clear();
+
+    cellars.forEach((name, c) -> c.close());
+    cellars.clear();
 
     if (classLoader != null) {
       try {

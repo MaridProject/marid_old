@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 
 public final class CellarConstant extends AbstractEntity {
 
-  private String lib;
+  private String factory;
   private String selector;
   private String name;
   private final ArrayList<ConstantArgument> arguments;
 
-  public CellarConstant(@NotNull String lib, @NotNull String selector, @NotNull String name) {
-    this.lib = lib;
+  public CellarConstant(@NotNull String factory, @NotNull String selector, @NotNull String name) {
+    this.factory = factory;
     this.selector = selector;
     this.name = name;
     this.arguments = new ArrayList<>();
@@ -52,7 +52,7 @@ public final class CellarConstant extends AbstractEntity {
 
   public CellarConstant(@NotNull Element element) {
     super(element);
-    this.lib = element.getAttribute("lib");
+    this.factory = element.getAttribute("factory");
     this.selector = element.getAttribute("selector");
     this.name = element.getAttribute("name");
     this.arguments = XmlStreams.children(element, Element.class)
@@ -72,7 +72,7 @@ public final class CellarConstant extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
-    element.setAttribute("lib", lib);
+    element.setAttribute("factory", factory);
     element.setAttribute("selector", selector);
     element.setAttribute("name", name);
     arguments.forEach(e -> XmlUtils.appendTo(e, element));
@@ -100,13 +100,13 @@ public final class CellarConstant extends AbstractEntity {
   }
 
   @NotNull
-  public String getLib() {
-    return lib;
+  public String getFactory() {
+    return factory;
   }
 
   @NotNull
-  public CellarConstant setLib(String lib) {
-    this.lib = lib;
+  public CellarConstant setFactory(String factory) {
+    this.factory = factory;
     return this;
   }
 
@@ -123,7 +123,7 @@ public final class CellarConstant extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(lib, selector, name, arguments);
+    return Objects.hash(factory, selector, name, arguments);
   }
 
   @Override
@@ -133,7 +133,7 @@ public final class CellarConstant extends AbstractEntity {
     }
     if (obj instanceof CellarConstant) {
       final var that = (CellarConstant) obj;
-      return Objects.equals(this.lib, that.lib)
+      return Objects.equals(this.factory, that.factory)
           && Objects.equals(this.selector, that.selector)
           && Objects.equals(this.name, that.name)
           && Objects.equals(this.arguments, that.arguments);

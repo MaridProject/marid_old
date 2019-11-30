@@ -29,12 +29,4 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Out {
-
-  String code() default "";
-
-  String title() default "";
-
-  String description() default "";
-
-  String icon() default "";
 }

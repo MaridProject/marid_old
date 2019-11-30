@@ -69,7 +69,7 @@ public final class ArgumentLiteral extends ConstantArgument {
 
   public ArgumentLiteral(@NotNull Element element) {
     super(element);
-    type = Type.valueOf(element.getTagName().toUpperCase());
+    type = Type.valueOf(element.getTagName());
     value = element.getTextContent();
   }
 
@@ -92,7 +92,7 @@ public final class ArgumentLiteral extends ConstantArgument {
 
   @Override
   public @NotNull String getTag() {
-    return type.name().toLowerCase();
+    return type.name();
   }
 
   @Override

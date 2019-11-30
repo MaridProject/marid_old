@@ -21,45 +21,63 @@ package org.marid.racks.net;
  * #L%
  */
 
+import org.marid.io.function.IOSupplier;
 import org.marid.runtime.annotation.In;
 import org.marid.runtime.annotation.Out;
 import org.marid.runtime.annotation.Rack;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.StandardSocketOptions;
 
 @Rack(title = "Server socket")
-public class ServerSocketRack {
+public class ServerSocketRack implements Closeable {
 
   private final ServerSocket serverSocket;
 
-  public ServerSocketRack(
-      @In(code = "PORT", title = "Socket port to bind") int port,
-      @In(code = "BACKLOG", title = "Requested maximum length of the queue of incoming connections") int backlog,
-      @In(code = "BIND", title = "Bind address") InetAddress bindAddress
-  ) throws IOException {
-    this.serverSocket = new ServerSocket(port, backlog, bindAddress);
+  public ServerSocketRack(int port, int backlog, InetAddress bindAddress) throws IOException {
+    if (bindAddress == null) {
+      this.serverSocket = new ServerSocket(port, backlog);
+    } else {
+      this.serverSocket = new ServerSocket(port, backlog, bindAddress);
+    }
   }
 
-  @In(code = "IBS", title = "Input buffer size")
+  @In
   public void setInputBufferSize(int size) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_RCVBUF, size);
   }
 
-  @In(code = "OBS", title = "Output buffer size")
+  @In
   public void setOutputBufferSize(int size) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_SNDBUF, size);
   }
 
-  @Out(code = "PORT", title = "Actual port")
+  @In
+  public void setSoBroadcast(boolean broadcast) throws IOException {
+    serverSocket.setOption(StandardSocketOptions.SO_BROADCAST, broadcast);
+  }
+
+  @Out
   public int getPort() {
     return serverSocket.getLocalPort();
   }
 
-  @Out(code = "SOCK", title = "Server socket")
+  @Out
   public ServerSocket getServerSocket() {
     return serverSocket;
+  }
+
+  @Out
+  public IOSupplier<Socket> getSocketSupplier() {
+    return serverSocket::accept;
+  }
+
+  @Override
+  public void close() throws IOException {
+    serverSocket.close();
   }
 }

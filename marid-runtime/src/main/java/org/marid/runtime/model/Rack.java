@@ -101,18 +101,26 @@ public final class Rack extends AbstractEntity {
     return this;
   }
 
-  public Rack addInitializers(Initializer... initializers) {
+  public @NotNull Rack addInitializers(Initializer... initializers) {
     this.initializers.addAll(Arrays.asList(initializers));
     return this;
   }
 
-  public Rack addDestroyers(Destroyer... destroyers) {
+  public @NotNull Rack addDestroyers(Destroyer... destroyers) {
     this.destroyers.addAll(Arrays.asList(destroyers));
     return this;
   }
 
-  public ArrayList<Argument> getArguments() {
+  public @NotNull ArrayList<Argument> getArguments() {
     return arguments;
+  }
+
+  public @NotNull ArrayList<Input> getInputs() {
+    return inputs;
+  }
+
+  public @NotNull ArrayList<Initializer> getInitializers() {
+    return initializers;
   }
 
   @Override

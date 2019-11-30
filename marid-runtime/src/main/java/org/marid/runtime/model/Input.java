@@ -31,8 +31,8 @@ import java.util.Objects;
 
 public final class Input extends AbstractEntity {
 
-  public String name;
-  public Argument argument;
+  private String name;
+  private Argument argument;
 
   public Input(@NotNull String name, @NotNull Argument argument) {
     this.name = name;
@@ -52,6 +52,24 @@ public final class Input extends AbstractEntity {
   @Override
   public @NotNull String getTag() {
     return "in";
+  }
+
+  public @NotNull String getName() {
+    return name;
+  }
+
+  public @NotNull Input setName(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public @NotNull Argument getArgument() {
+    return argument;
+  }
+
+  public @NotNull Input setArgument(Argument argument) {
+    this.argument = argument;
+    return this;
   }
 
   @Override
