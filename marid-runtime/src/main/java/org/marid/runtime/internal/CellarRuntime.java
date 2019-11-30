@@ -112,8 +112,8 @@ public class CellarRuntime implements AutoCloseable {
       }
     });
     for (final var input : rack.getInputs()) {
-      final Object inputArg = arg(input.getArgument(), passed);
       try {
+        final var inputArg = arg(input.getArgument(), passed);
         winery.set(rackRuntime.instance, input.getName(), inputArg);
       } catch (Throwable e) {
         throw new IllegalArgumentException("Illegal input " + input.getName() + " of " + k, e);
