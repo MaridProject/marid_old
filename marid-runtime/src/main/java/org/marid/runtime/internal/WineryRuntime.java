@@ -173,7 +173,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
     }
   }
 
-  public String getId() {
+  public @NotNull String getId() {
     return winery.getName();
   }
 
@@ -306,7 +306,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
   }
 
   @Override
-  public String toString() {
+  public @NotNull String toString() {
     return getId();
   }
 

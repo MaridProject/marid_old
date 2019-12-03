@@ -51,7 +51,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
 
   @Override
   protected Method[] computeValue(Class<?> type) {
-    final Method[] methods = Stream.of(type.getMethods())
+    final var methods = Stream.of(type.getMethods())
         .filter(m -> Stream.of(annotations).anyMatch(m::isAnnotationPresent))
         .filter(AccessibleObject::trySetAccessible)
         .toArray(Method[]::new);
@@ -63,12 +63,12 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
     final var maxMethod = new AtomicInteger();
     final var maxLine = new AtomicInteger("unknown".length());
 
-    final IdentityHashMap<Class<?>, LinkedHashMap<String, Integer>> linesMap = Stream.of(methods)
+    final var linesMap = Stream.of(methods)
         .peek(m -> {
           final var className = m.getDeclaringClass().getName().length();
           final var name = m.getName().length();
-          maxClass.updateAndGet(v -> className > v ? className : v);
-          maxMethod.updateAndGet(v -> name > v ? name : v);
+          maxClass.updateAndGet(v -> Math.max(className, v));
+          maxMethod.updateAndGet(v -> Math.max(name, v));
         })
         .map(Method::getDeclaringClass)
         .distinct()
@@ -90,7 +90,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
                   public void visitLineNumber(int line, Label start) {
                     map.computeIfAbsent(name, k -> {
                       final int len = Integer.toString(line).length();
-                      maxLine.updateAndGet(v -> len > v ? len : v);
+                      maxLine.updateAndGet(v -> Math.max(len, v));
                       return line;
                     });
                   }
@@ -117,7 +117,7 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
     };
     Arrays.sort(methods, comparator);
 
-    final String format = String.format("| %%-%ss | %%-%ss | %%%ss |%n", maxClass, maxMethod, maxLine);
+    final var format = String.format("| %%-%ss | %%-%ss | %%%ss |%n", maxClass, maxMethod, maxLine);
 
     final var infoBuilder = new StringBuilder();
     final var line = new char[maxClass.get() + maxMethod.get() + maxLine.get() + 10];
