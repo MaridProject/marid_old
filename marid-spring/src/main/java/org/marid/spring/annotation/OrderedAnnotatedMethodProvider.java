@@ -29,9 +29,15 @@ import org.springframework.asm.MethodVisitor;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Formatter;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,8 +57,8 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
 
   @Override
   protected Method[] computeValue(Class<?> type) {
-    final var methods = Stream.of(type.getMethods())
-        .filter(m -> Stream.of(annotations).anyMatch(m::isAnnotationPresent))
+    final var methods = Arrays.stream(type.getMethods())
+        .filter(m -> Arrays.stream(annotations).anyMatch(m::isAnnotationPresent))
         .filter(AccessibleObject::trySetAccessible)
         .toArray(Method[]::new);
     if (methods.length == 0) {
@@ -66,29 +72,22 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
     final var linesMap = Stream.of(methods)
         .peek(m -> {
           final var className = m.getDeclaringClass().getName().length();
-          final var name = m.getName().length();
+          final var signature = methodSignature(m).length();
           maxClass.updateAndGet(v -> Math.max(className, v));
-          maxMethod.updateAndGet(v -> Math.max(name, v));
+          maxMethod.updateAndGet(v -> Math.max(signature, v));
         })
         .map(Method::getDeclaringClass)
         .distinct()
         .collect(Collectors.toMap(c -> c, c -> {
-          final var methodNames = Stream.of(methods)
-              .filter(m -> m.getDeclaringClass() == c)
-              .map(Method::getName)
-              .collect(Collectors.toUnmodifiableSet());
-          final var map = new LinkedHashMap<String, Integer>(methodNames.size());
+          final var map = new LinkedHashMap<String, Integer>(methods.length);
           try (final var is = c.getResourceAsStream(getClassFileName(c))) {
             new ClassReader(is).accept(new ClassVisitor(ASM_VERSION) {
               @Override
               public MethodVisitor visitMethod(int acc, String name, String desc, String signature, String[] xs) {
-                if (!methodNames.contains(name)) {
-                  return null;
-                }
                 return new MethodVisitor(ASM_VERSION) {
                   @Override
                   public void visitLineNumber(int line, Label start) {
-                    map.computeIfAbsent(name, k -> {
+                    map.computeIfAbsent(name + desc, k -> {
                       final int len = Integer.toString(line).length();
                       maxLine.updateAndGet(v -> Math.max(len, v));
                       return line;
@@ -106,8 +105,10 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
     final Comparator<Method> comparator = (m1, m2) -> {
       if (m1.getDeclaringClass() == m2.getDeclaringClass()) {
         final var map = linesMap.get(m1.getDeclaringClass());
-        final var l1 = map.getOrDefault(m1.getName(), Integer.MAX_VALUE);
-        final var l2 = map.getOrDefault(m2.getName(), Integer.MAX_VALUE);
+        final var s1 = methodSignature(m1);
+        final var s2 = methodSignature(m2);
+        final var l1 = map.getOrDefault(s1, Integer.MAX_VALUE);
+        final var l2 = map.getOrDefault(s2, Integer.MAX_VALUE);
         return l1.compareTo(l2);
       } else if (m1.getDeclaringClass().isAssignableFrom(m2.getDeclaringClass())) {
         return -1;
@@ -128,12 +129,12 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
 
       for (final var method : methods) {
         final var className = method.getDeclaringClass().getName();
-        final var name = method.getName();
-        final var lineNumber = Optional.ofNullable(linesMap.get(method.getDeclaringClass()).get(name))
+        final var signature = methodSignature(method);
+        final var lineNumber = Optional.ofNullable(linesMap.get(method.getDeclaringClass()).get(signature))
             .map(Object::toString)
             .orElse("unknown");
 
-        formatter.format(format, className, name, lineNumber);
+        formatter.format(format, className, signature, lineNumber);
       }
       formatter.format("%s%n", String.valueOf(line));
     }
@@ -142,5 +143,14 @@ public final class OrderedAnnotatedMethodProvider extends ClassValue<Method[]> {
     log.info("Method order: " + infoBuilder);
 
     return methods;
+  }
+
+  private String methodSignature(Method method) {
+    try {
+      final var handle = MethodHandles.publicLookup().unreflect(method);
+      return method.getName() + handle.bindTo(null).type().toMethodDescriptorString();
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }
