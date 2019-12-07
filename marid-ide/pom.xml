@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>marid-ide-fx</module>
+  </modules>
 
   <parent>
     <groupId>org.marid</groupId>
@@ -11,39 +14,113 @@
   <artifactId>marid-ide</artifactId>
   <packaging>pom</packaging>
 
-  <modules>
-    <module>marid-ide-client</module>
-    <module>marid-ide-server</module>
-    <module>marid-ide-desktop</module>
-    <module>marid-ide-model</module>
-  </modules>
-
   <properties>
-    <swt.version>3.111.0</swt.version>
-    <license.licenseName>epl_v2</license.licenseName>
+    <javafx.version>13.0.1</javafx.version>
+    <scala.binary.version>2.13</scala.binary.version>
+    <scala.version>${scala.binary.version}.1</scala.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.eclipse.rap</groupId>
-        <artifactId>org.eclipse.rap.jface</artifactId>
-        <version>3.10.0</version>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>${javafx.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>org.eclipse.platform</groupId>
-        <artifactId>org.eclipse.swt</artifactId>
-        <version>${swt.version}</version>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-reflect</artifactId>
+        <version>${scala.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.marid</groupId>
-      <artifactId>marid-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-compile</id>
+              <phase>none</phase>
+            </execution>
+
+            <execution>
+              <id>default-testCompile</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-test</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>4.3.0</version>
+          <executions>
+            <execution>
+              <id>scala-compile</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>scala-testCompile</id>
+              <goals>
+                <goal>testCompile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
+            <target>${java.version}</target>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.scala-lang</groupId>
+              <artifactId>scala-library</artifactId>
+              <version>2.12.10</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.scala-lang</groupId>
+              <artifactId>scala-reflect</artifactId>
+              <version>2.12.10</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest-maven-plugin</artifactId>
+          <version>2.0.0</version>
+          <executions>
+            <execution>
+              <id>test</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
