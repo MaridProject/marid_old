@@ -166,7 +166,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>5.2.1.RELEASE</version>
+        <version>5.2.2.RELEASE</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -288,7 +288,7 @@
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
             <parameters>true</parameters>
-            <compilerReuseStrategy>reuseSame</compilerReuseStrategy>
+            <fork>false</fork>
             <compilerArgs>
               <arg>-Xlint:unchecked</arg>
             </compilerArgs>
@@ -474,19 +474,6 @@
               <java.util.logging.config.class>org.marid.test.logging.TestLogInitializer</java.util.logging.config.class>
             </systemProperties>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.codehaus.plexus</groupId>
-              <artifactId>plexus-java</artifactId>
-              <version>1.0.3</version>
-            </dependency>
-
-            <dependency>
-              <groupId>org.ow2.asm</groupId>
-              <artifactId>asm</artifactId>
-              <version>7.2</version>
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>
@@ -504,19 +491,6 @@
               <java.util.logging.config.class>org.marid.test.logging.TestLogInitializer</java.util.logging.config.class>
             </systemProperties>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.codehaus.plexus</groupId>
-              <artifactId>plexus-java</artifactId>
-              <version>1.0.3</version>
-            </dependency>
-
-            <dependency>
-              <groupId>org.ow2.asm</groupId>
-              <artifactId>asm</artifactId>
-              <version>7.2</version>
-            </dependency>
-          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>

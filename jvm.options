@@ -1,2 +1,13 @@
 --add-opens java.base/java.lang=ALL-UNNAMED
 --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+-XX:TieredStopAtLevel=1
+-XX:+UseParallelGC
+-dsa
+-XX:-UseContainerSupport
+-XX:AllocatePrefetchStyle=2
+-XX:ReservedCodeCacheSize=375m
+-XX:+SegmentedCodeCache
+-XX:+UseCMoveUnconditionally
+-XX:+ParallelRefProcEnabled
+-XX:+DisableExplicitGC
+-XX:-PreserveFramePointer
