@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <modules>
-    <module>marid-ide-fx</module>
-  </modules>
 
   <parent>
     <groupId>org.marid</groupId>
@@ -14,10 +11,16 @@
   <artifactId>marid-ide</artifactId>
   <packaging>pom</packaging>
 
+  <modules>
+    <module>marid-ide-fx</module>
+  </modules>
+
   <properties>
     <javafx.version>13.0.1</javafx.version>
     <scala.binary.version>2.13</scala.binary.version>
     <scala.version>${scala.binary.version}.1</scala.version>
+    <scala.plugin.version>2.12.10</scala.plugin.version>
+    <scala.test.groups>org.marid.test.Normal</scala.test.groups>
   </properties>
 
   <dependencyManagement>
@@ -42,6 +45,15 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.scalatestplus</groupId>
+      <artifactId>junit-4-12_${scala.binary.version}</artifactId>
+      <version>3.1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -62,12 +74,12 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>default-test</id>
-              <phase>none</phase>
-            </execution>
-          </executions>
+          <configuration>
+            <groups>${scala.test.groups}</groups>
+            <includes>
+              <include>**/*Spec.*</include>
+            </includes>
+          </configuration>
         </plugin>
 
         <plugin>
@@ -89,36 +101,33 @@
             </execution>
           </executions>
           <configuration>
+            <displayCmd>true</displayCmd>
+            <fork>true</fork>
+            <scalaVersion>${scala.version}</scalaVersion>
             <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
             <target>${java.version}</target>
+            <recompileMode>all</recompileMode>
+            <charset>${project.build.sourceEncoding}</charset>
           </configuration>
           <dependencies>
             <dependency>
               <groupId>org.scala-lang</groupId>
               <artifactId>scala-library</artifactId>
-              <version>2.12.10</version>
+              <version>${scala.plugin.version}</version>
             </dependency>
 
             <dependency>
               <groupId>org.scala-lang</groupId>
               <artifactId>scala-reflect</artifactId>
-              <version>2.12.10</version>
+              <version>${scala.plugin.version}</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.scala-lang</groupId>
+              <artifactId>scala-compiler</artifactId>
+              <version>${scala.plugin.version}</version>
             </dependency>
           </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.scalatest</groupId>
-          <artifactId>scalatest-maven-plugin</artifactId>
-          <version>2.0.0</version>
-          <executions>
-            <execution>
-              <id>test</id>
-              <goals>
-                <goal>test</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
