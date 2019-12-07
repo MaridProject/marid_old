@@ -17,10 +17,7 @@
 
   <properties>
     <javafx.version>13.0.1</javafx.version>
-    <scala.binary.version>2.13</scala.binary.version>
-    <scala.version>${scala.binary.version}.1</scala.version>
-    <scala.plugin.version>2.12.10</scala.plugin.version>
-    <scala.test.groups>org.marid.test.Normal</scala.test.groups>
+    <kotlin.version>1.3.61</kotlin.version>
   </properties>
 
   <dependencyManagement>
@@ -32,24 +29,42 @@
       </dependency>
 
       <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-library</artifactId>
-        <version>${scala.version}</version>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-media</artifactId>
+        <version>${javafx.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-reflect</artifactId>
-        <version>${scala.version}</version>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-web</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-swing</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-graphics</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-reflect</artifactId>
+        <version>${kotlin.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
     <dependency>
-      <groupId>org.scalatestplus</groupId>
-      <artifactId>junit-4-12_${scala.binary.version}</artifactId>
-      <version>3.1.0.0</version>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-test</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -73,61 +88,31 @@
         </plugin>
 
         <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <groups>${scala.test.groups}</groups>
-            <includes>
-              <include>**/*Spec.*</include>
-            </includes>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>net.alchim31.maven</groupId>
-          <artifactId>scala-maven-plugin</artifactId>
-          <version>4.3.0</version>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-maven-plugin</artifactId>
+          <version>${kotlin.version}</version>
           <executions>
             <execution>
-              <id>scala-compile</id>
+              <id>kotlin-compile</id>
               <goals>
                 <goal>compile</goal>
               </goals>
             </execution>
             <execution>
-              <id>scala-testCompile</id>
+              <id>kotlin-testCompile</id>
               <goals>
-                <goal>testCompile</goal>
+                <goal>test-compile</goal>
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
           <configuration>
-            <displayCmd>true</displayCmd>
-            <fork>true</fork>
-            <scalaVersion>${scala.version}</scalaVersion>
-            <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
-            <target>${java.version}</target>
-            <recompileMode>all</recompileMode>
-            <charset>${project.build.sourceEncoding}</charset>
+            <roots>src/main/kotlin,src/test/kotlin</roots>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.scala-lang</groupId>
-              <artifactId>scala-library</artifactId>
-              <version>${scala.plugin.version}</version>
-            </dependency>
-
-            <dependency>
-              <groupId>org.scala-lang</groupId>
-              <artifactId>scala-reflect</artifactId>
-              <version>${scala.plugin.version}</version>
-            </dependency>
-
-            <dependency>
-              <groupId>org.scala-lang</groupId>
-              <artifactId>scala-compiler</artifactId>
-              <version>${scala.plugin.version}</version>
-            </dependency>
-          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>

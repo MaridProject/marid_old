@@ -12,19 +12,23 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.scalafx</groupId>
-      <artifactId>scalafx_${scala.binary.version}</artifactId>
-      <version>12.0.2-R18</version>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId>
     </dependency>
   </dependencies>
 
   <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <sourceDirectory>src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>src/test/kotlin</testSourceDirectory>
     <plugins>
       <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
