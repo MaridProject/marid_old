@@ -23,6 +23,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>13.0.1</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-test</artifactId>
       <version>${project.version}</version>

@@ -28,6 +28,8 @@ module marid.util {
   requires static java.desktop;
   requires static org.jetbrains.annotations;
 
+  requires transitive static javafx.swing;
+
   exports org.marid.collections;
   exports org.marid.concurrent;
   exports org.marid.image;
