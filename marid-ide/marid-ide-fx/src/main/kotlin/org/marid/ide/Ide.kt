@@ -21,6 +21,48 @@
 
 package org.marid.ide
 
-fun main(args: Array<String>) {
+import javafx.application.Application
+import javafx.stage.Stage
+import org.marid.logging.MaridConsoleLogHandler
+import org.marid.logging.MaridLogFormatter
+import org.marid.logging.MaridLogManager
+import org.marid.spring.LoggingPostProcessor
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import java.util.logging.LogManager
+import java.util.logging.Logger
 
+class Ide : Application() {
+
+  private val context = AnnotationConfigApplicationContext()
+
+  override fun init() {
+    initLogging()
+    with(context) {
+      setAllowCircularReferences(false)
+      setAllowBeanDefinitionOverriding(false)
+      defaultListableBeanFactory.addBeanPostProcessor(LoggingPostProcessor())
+      register(IdeContext::class.java)
+    }
+  }
+
+  override fun start(primaryStage: Stage) = with(context) {
+    defaultListableBeanFactory.registerSingleton("_primaryStage_", primaryStage)
+    refresh()
+    start()
+    primaryStage.show()
+  }
+
+  override fun stop() {
+    context.close()
+  }
+
+  private fun initLogging() {
+    System.setProperty("java.util.logging.manager", MaridLogManager::class.java.name)
+
+    LogManager.getLogManager().reset()
+
+    with(Logger.getLogger("")) {
+      addHandler(MaridConsoleLogHandler().also { it.formatter = MaridLogFormatter() })
+    }
+  }
 }
