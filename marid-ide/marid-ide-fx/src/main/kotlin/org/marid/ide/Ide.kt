@@ -59,9 +59,7 @@ class Ide : Application() {
 
   private fun initLogging() {
     System.setProperty("java.util.logging.manager", MaridLogManager::class.java.name)
-
     LogManager.getLogManager().reset()
-
     with(Logger.getLogger("")) {
       addHandler(MaridConsoleLogHandler().also { it.formatter = MaridLogFormatter() })
     }

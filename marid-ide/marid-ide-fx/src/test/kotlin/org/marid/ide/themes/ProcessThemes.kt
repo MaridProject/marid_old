@@ -8,10 +8,7 @@ import java.nio.file.Path
 
 object ProcessThemes {
   @JvmStatic fun main(args: Array<String>) {
-    listOf(
-      "com/sun/javafx/scene/control/skin/caspian/caspian.css",
-      "com/sun/javafx/scene/control/skin/modena/modena.css"
-    ).forEach { path ->
+    listOf("com/sun/javafx/scene/control/skin/modena/modena.css").forEach { path ->
       val url = currentThread().contextClassLoader.getResource(path)
       val text = url?.readText(UTF_8).orEmpty()
 
