@@ -38,7 +38,7 @@ object ProcessThemes {
           val parts = trimmed.split(':').map { it.trim() }
           when (parts[0]) {
             "-fx-base" ->
-              lines[i] = line.replace(parts[1], "#020202;")
+              lines[i] = line.replace(parts[1], "#121212;")
           }
         }
       }
