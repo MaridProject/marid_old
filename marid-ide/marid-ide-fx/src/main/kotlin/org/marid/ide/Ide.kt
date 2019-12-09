@@ -46,6 +46,7 @@ class Ide : Application() {
   }
 
   override fun start(primaryStage: Stage) = with(context) {
+    setUserAgentStylesheet(STYLESHEET_MODENA)
     defaultListableBeanFactory.registerSingleton("_primaryStage_", primaryStage)
     refresh()
     start()
