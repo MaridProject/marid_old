@@ -1,8 +1,8 @@
 package org.marid.ide.main
 
-import org.controlsfx.control.StatusBar
+import javafx.scene.layout.HBox
 import org.springframework.stereotype.Component
 
 @Component
-class IdeStatusBar : StatusBar() {
+class IdeStatusBar : HBox() {
 }
