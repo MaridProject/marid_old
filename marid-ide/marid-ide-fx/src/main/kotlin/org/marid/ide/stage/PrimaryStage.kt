@@ -4,9 +4,11 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 import org.marid.ide.main.IdePane
 import org.marid.image.MaridIconFx
+import org.marid.spring.annotation.InternalComponent
 import org.springframework.beans.factory.annotation.Autowired
 
-data class PrimaryStage(val stage: Stage) {
+@InternalComponent
+data class PrimaryStage @Suppress("SpringJavaInjectionPointsAutowiringInspection") constructor(val stage: Stage) {
   init {
     stage.title = "Marid IDE"
     stage.isMaximized = true
@@ -15,6 +17,6 @@ data class PrimaryStage(val stage: Stage) {
 
   @Autowired
   fun initScene(pane: IdePane) {
-    stage.scene = Scene(pane)
+    stage.scene = Scene(pane, 1024.0, 768.0)
   }
 }
