@@ -8,7 +8,9 @@ import org.marid.spring.annotation.InternalComponent
 import org.springframework.beans.factory.annotation.Autowired
 
 @InternalComponent
-data class PrimaryStage @Suppress("SpringJavaInjectionPointsAutowiringInspection") constructor(val stage: Stage) {
+data class PrimaryStage(
+  @Suppress("SpringJavaInjectionPointsAutowiringInspection") val stage: Stage
+) {
   init {
     stage.title = "Marid IDE"
     stage.isMaximized = true
