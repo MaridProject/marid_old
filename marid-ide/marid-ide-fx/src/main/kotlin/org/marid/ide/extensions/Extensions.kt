@@ -1,8 +1,12 @@
 package org.marid.ide.extensions
 
 import javafx.application.Platform
+import javafx.beans.binding.Bindings
+import javafx.beans.binding.ObjectBinding
+import javafx.beans.binding.StringBinding
 import javafx.beans.property.*
 import javafx.beans.value.*
+import java.util.concurrent.Callable
 import java.util.concurrent.CompletableFuture
 import java.util.prefs.Preferences
 

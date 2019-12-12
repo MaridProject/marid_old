@@ -6,12 +6,16 @@ import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import org.marid.ide.IdeLog
+import org.marid.ide.extensions.color
+import org.marid.ide.extensions.map
 import org.springframework.stereotype.Component
 
 @Component
-class IdeStatusBar : HBox(4.0) {
+class IdeStatusBar(
+  private val ideLog: IdeLog
+) : HBox(4.0) {
 
   init {
     isFillHeight = true
@@ -23,7 +27,7 @@ class IdeStatusBar : HBox(4.0) {
     .also { setHgrow(it, Priority.ALWAYS) }
     .also { it.maxWidth = Double.MAX_VALUE }
     .also { setMargin(it, Insets(5.0)) }
-    .also { it.graphic = Circle(5.0, Color.GREEN) }
+    .also { it.graphic = Circle(5.0).also { c -> c.fillProperty().bind(ideLog.lastLevel.map { l -> l.color }) } }
     .also { it.graphicTextGap = 5.0 }
 
   private val progressBar = ProgressBar(0.0)

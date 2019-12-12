@@ -28,8 +28,8 @@ import org.marid.logging.MaridLogFormatter
 import org.marid.logging.MaridLogManager
 import org.marid.spring.LoggingPostProcessor
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
+import java.util.function.Supplier
 import java.util.logging.LogManager
-import java.util.logging.Logger
 
 class Ide : Application() {
 
@@ -60,7 +60,9 @@ class Ide : Application() {
   private fun initLogging() {
     System.setProperty("java.util.logging.manager", MaridLogManager::class.java.name)
     LogManager.getLogManager().reset()
-    with(Logger.getLogger("")) {
+    val ideLog = IdeLog()
+    context.registerBean(IdeLog::class.java, Supplier { ideLog })
+    with(IdeLog.rootLogger()) {
       addHandler(MaridConsoleLogHandler().also { it.formatter = MaridLogFormatter() })
     }
   }
