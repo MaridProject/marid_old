@@ -1,9 +1,10 @@
-package org.marid.ide
+package org.marid.ide.log
 
 import javafx.application.Platform
 import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import org.marid.ide.extensions.pref
 import org.marid.spring.annotation.InternalComponent
 import java.util.logging.Handler
@@ -16,7 +17,7 @@ import javax.annotation.PreDestroy
 class IdeLog internal constructor() {
 
   private val maxLogRecordsPref = pref("maxLogRecords", 10_000)
-  private val logList = FXCollections.observableArrayList<LogRecord>()
+  private val recordList = FXCollections.observableArrayList<LogRecord>()
   private val lastLevelProperty = ReadOnlyObjectWrapper<Level>(this, "lastLevel", Level.ALL)
   private val logHandler = object : Handler() {
     override fun publish(record: LogRecord) {
@@ -40,9 +41,9 @@ class IdeLog internal constructor() {
 
   private fun add(record: LogRecord) {
     val maxLogRecords = this@IdeLog.maxLogRecordsPref.get()
-    logList.add(record)
-    while (logList.size > maxLogRecords) {
-      logList.removeAt(0)
+    recordList.add(record)
+    while (recordList.size > maxLogRecords) {
+      recordList.removeAt(0)
     }
     if (record.level.intValue() > lastLevelProperty.get().intValue()) {
       lastLevelProperty.set(record.level)
@@ -60,6 +61,8 @@ class IdeLog internal constructor() {
   var maxLogRecords: Int
     get() = maxLogRecordsPref.get()
     set(value) = maxLogRecordsPref.set(value)
+  val records: ObservableList<LogRecord>
+    get() = FXCollections.unmodifiableObservableList(recordList)
 
   companion object {
     internal fun rootLogger() = Logger.getLogger("")
