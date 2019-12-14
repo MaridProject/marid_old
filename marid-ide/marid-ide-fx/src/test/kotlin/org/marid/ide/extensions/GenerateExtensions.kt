@@ -8,21 +8,9 @@ import java.nio.file.Path
 
 object GenerateExtensions {
 
-  private val types = listOf(
-    "Double",
-    "Float",
-    "Long",
-    "Int",
-    "String",
-    "Boolean"
-  )
-
-  private val numericTypes = listOf(
-    "Double",
-    "Float",
-    "Long",
-    "Int"
-  )
+  private val numericTypes = listOf("Double", "Float", "Long", "Int")
+  private val types = numericTypes + listOf("String", "Boolean")
+  private val cmpTypes = numericTypes + listOf("String")
 
   private val numericOps = linkedMapOf(
     "minus" to "subtract",
@@ -39,15 +27,9 @@ object GenerateExtensions {
 
     Files.createDirectories(extensionsDir)
 
-    PrintWriter(extensionsDir.resolve("BindingExtensions.kt").toFile(), StandardCharsets.UTF_8).use { file ->
-      file.format("package %s.%s%n", Ide.javaClass.packageName, extensionsDir.fileName.toString())
-      file.println()
-      file.format("import javafx.beans.binding.*%n")
-      file.format("import javafx.beans.binding.Bindings.*%n")
-      file.format("import javafx.beans.value.*%n")
+    gen(extensionsDir.resolve("BindingExtensions.kt")) { file ->
       file.format("import java.util.concurrent.Callable%n")
       file.println()
-
       file.format("fun <T, R> ObservableValue<T>.map(func: (T) -> R): ObjectBinding<R> = createObjectBinding(Callable { func(value)}, this)%n")
       for (p in types) {
         val t = mt(p)
@@ -61,7 +43,9 @@ object GenerateExtensions {
           }
         }
       }
+    }
 
+    gen(extensionsDir.resolve("BindingNumericOpsExtensions.kt")) { file ->
       for ((op, method) in numericOps) {
         file.println()
         file.format("// %s --> %s%n", op, method)
@@ -74,6 +58,18 @@ object GenerateExtensions {
           }
         }
       }
+    }
+  }
+
+  private fun gen(path: Path, code: (PrintWriter) -> Unit) {
+    PrintWriter(path.toFile(), StandardCharsets.UTF_8).use { file ->
+      file.format("package %s.%s%n", Ide.javaClass.packageName, path.parent.fileName.toString())
+      file.println()
+      file.format("import javafx.beans.binding.*%n")
+      file.format("import javafx.beans.binding.Bindings.*%n")
+      file.format("import javafx.beans.value.*%n")
+      file.println()
+      code(file)
     }
   }
 
