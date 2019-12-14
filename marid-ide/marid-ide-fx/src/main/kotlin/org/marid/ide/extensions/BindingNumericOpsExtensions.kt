@@ -4,7 +4,6 @@ import javafx.beans.binding.*
 import javafx.beans.binding.Bindings.*
 import javafx.beans.value.*
 
-
 // minus --> subtract
 fun ObservableDoubleValue.minus(v: Double): DoubleBinding = subtract(this, v) as DoubleBinding
 fun Double.minus(v: ObservableDoubleValue): DoubleBinding = subtract(this, v) as DoubleBinding
@@ -204,3 +203,4 @@ fun ObservableIntegerValue.div(v: ObservableLongValue): LongBinding = divide(thi
 fun ObservableIntegerValue.div(v: Int): IntegerBinding = divide(this, v) as IntegerBinding
 fun Int.div(v: ObservableIntegerValue): IntegerBinding = divide(this, v) as IntegerBinding
 fun ObservableIntegerValue.div(v: ObservableIntegerValue): IntegerBinding = divide(this, v) as IntegerBinding
+

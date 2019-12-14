@@ -28,18 +28,16 @@ object GenerateExtensions {
     Files.createDirectories(extensionsDir)
 
     gen(extensionsDir.resolve("BindingExtensions.kt")) { file ->
-      file.format("import java.util.concurrent.Callable%n")
-      file.println()
-      file.format("fun <T, R> ObservableValue<T>.map(func: (T) -> R): ObjectBinding<R> = createObjectBinding(Callable { func(value)}, this)%n")
+      file.format("fun <T, R> ObservableValue<T>.map(func: (T) -> R): ObjectBinding<R> = createObjectBinding(java.util.concurrent.Callable { func(value)}, this)%n")
       for (p in types) {
         val t = mt(p)
-        file.format("fun <T> ObservableValue<T>.map${p}(func: (T) -> $p): ${t}Binding = create${t}Binding(Callable { func(value) }, this)%n")
+        file.format("fun <T> ObservableValue<T>.map${p}(func: (T) -> $p): ${t}Binding = create${t}Binding(java.util.concurrent.Callable { func(value) }, this)%n")
         for (pn in types) {
           if (pn == p) {
-            file.format("fun Observable${t}Value.map(func: ($p) -> $p): ${t}Binding = create${t}Binding(Callable { func(get()) }, this)%n")
+            file.format("fun Observable${t}Value.map(func: ($p) -> $p): ${t}Binding = create${t}Binding(java.util.concurrent.Callable { func(get()) }, this)%n")
           } else {
             val tn = mt(pn)
-            file.format("fun Observable${t}Value.map${pn}(func: ($p) -> $pn): ${tn}Binding = create${tn}Binding(Callable { func(get()) }, this)%n")
+            file.format("fun Observable${t}Value.map${pn}(func: ($p) -> $pn): ${tn}Binding = create${tn}Binding(java.util.concurrent.Callable { func(get()) }, this)%n")
           }
         }
       }
@@ -47,7 +45,6 @@ object GenerateExtensions {
 
     gen(extensionsDir.resolve("BindingNumericOpsExtensions.kt")) { file ->
       for ((op, method) in numericOps) {
-        file.println()
         file.format("// %s --> %s%n", op, method)
         for (p in numericTypes) {
           for (pn in numericTypes) {
@@ -57,6 +54,7 @@ object GenerateExtensions {
             file.format("fun Observable${mt(p)}Value.$op(v: Observable${mt(pn)}Value): ${rt}Binding = $method(this, v) as ${rt}Binding%n")
           }
         }
+        file.println()
       }
     }
   }

@@ -73,7 +73,6 @@
           </executions>
           <configuration>
             <jvmTarget>12</jvmTarget>
-            <myIncremental>true</myIncremental>
           </configuration>
         </plugin>
 
