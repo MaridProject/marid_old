@@ -95,6 +95,9 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
+        <configuration>
+          <metaInfo>false</metaInfo>
+        </configuration>
       </plugin>
     </plugins>
   </build>

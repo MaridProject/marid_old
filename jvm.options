@@ -7,7 +7,6 @@
 -XX:AllocatePrefetchStyle=2
 -XX:ReservedCodeCacheSize=375m
 -XX:+SegmentedCodeCache
--XX:+UseCMoveUnconditionally
 -XX:+ParallelRefProcEnabled
 -XX:+DisableExplicitGC
 -XX:-PreserveFramePointer
