@@ -68,21 +68,59 @@
       </plugin>
 
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-scripts</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <compileSourceRoots>
+                <root>${project.basedir}/src/script/java</root>
+              </compileSourceRoots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>generateSources</id>
             <goals>
-              <goal>exec</goal>
+              <goal>java</goal>
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <executable>${java.home}/bin/java</executable>
+              <mainClass>script.GenerateSources</mainClass>
               <arguments>
-                <argument>${project.basedir}/src/script/java/GenerateSources.java</argument>
                 <argument>${project.build.directory}/generated-sources</argument>
               </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clear-script-classes</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              <filesets>
+                <fileset>
+                  <directory>${project.build.outputDirectory}/script</directory>
+                </fileset>
+              </filesets>
             </configuration>
           </execution>
         </executions>
