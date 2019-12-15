@@ -5,7 +5,7 @@ import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.marid.ide.extensions.pref
+import org.marid.fx.extensions.pref
 import org.marid.spring.annotation.InternalComponent
 import java.util.logging.Handler
 import java.util.logging.Level

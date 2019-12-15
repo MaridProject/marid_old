@@ -1,4 +1,4 @@
-package org.marid.ide.extensions
+package org.marid.fx.extensions
 
 import javafx.scene.paint.Color
 import java.util.logging.Level
