@@ -7,8 +7,10 @@ import javafx.scene.control.ProgressBar
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.shape.Circle
-import org.marid.fx.extensions.map
+import org.marid.fx.extensions.bLast
 import org.marid.fx.extensions.color
+import org.marid.fx.extensions.map
+import org.marid.fx.extensions.mapString
 import org.marid.ide.log.IdeLog
 import org.springframework.stereotype.Component
 
@@ -23,7 +25,7 @@ class IdeStatusBar(
   }
 
   private val statusText = Label()
-    .also {  }
+    .also { it.textProperty().bind(ideLog.records.bLast.mapString { r -> r.message }) }
     .also { children += it }
     .also { setHgrow(it, Priority.ALWAYS) }
     .also { it.maxWidth = Double.MAX_VALUE }

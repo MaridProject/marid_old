@@ -9,7 +9,7 @@ import java.util.prefs.Preferences
 // preference nodes
 
 inline fun <reified T> T.pref(name: String, default: String): StringProperty {
-  val node = Preferences.systemNodeForPackage(T::class.java).node(T::class.simpleName)
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleStringProperty(this, name, node.get(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.get(name, default)) } }
   prop.addListener { _, _, n -> node.put(name, n) }
@@ -17,7 +17,7 @@ inline fun <reified T> T.pref(name: String, default: String): StringProperty {
 }
 
 inline fun <reified T> T.pref(name: String, default: Int): IntegerProperty {
-  val node = Preferences.systemNodeForPackage(T::class.java).node(T::class.simpleName)
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleIntegerProperty(this, name, node.getInt(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.getInt(name, default)) } }
   prop.addListener { _, _, n -> node.putInt(name, n.toInt()) }
@@ -25,7 +25,7 @@ inline fun <reified T> T.pref(name: String, default: Int): IntegerProperty {
 }
 
 inline fun <reified T> T.pref(name: String, default: Double): DoubleProperty {
-  val node = Preferences.systemNodeForPackage(T::class.java).node(T::class.simpleName)
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleDoubleProperty(this, name, node.getDouble(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.getDouble(name, default)) } }
   prop.addListener { _, _, n -> node.putDouble(name, n.toDouble()) }
@@ -33,7 +33,7 @@ inline fun <reified T> T.pref(name: String, default: Double): DoubleProperty {
 }
 
 inline fun <reified T> T.pref(name: String, default: Float): FloatProperty {
-  val node = Preferences.systemNodeForPackage(T::class.java).node(T::class.simpleName)
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleFloatProperty(this, name, node.getFloat(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.getFloat(name, default)) } }
   prop.addListener { _, _, n -> node.putFloat(name, n.toFloat()) }
@@ -41,7 +41,7 @@ inline fun <reified T> T.pref(name: String, default: Float): FloatProperty {
 }
 
 inline fun <reified T> T.pref(name: String, default: Boolean): BooleanProperty {
-  val node = Preferences.systemNodeForPackage(T::class.java).node(T::class.simpleName)
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleBooleanProperty(this, name, node.getBoolean(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.getBoolean(name, default)) } }
   prop.addListener { _, _, n -> node.putBoolean(name, n) }
@@ -49,7 +49,7 @@ inline fun <reified T> T.pref(name: String, default: Boolean): BooleanProperty {
 }
 
 inline fun <reified T> T.pref(name: String, default: ByteArray): ObjectProperty<ByteArray> {
-  val node = Preferences.systemNodeForPackage(T::class.java).node(T::class.simpleName)
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleObjectProperty(this, name, node.getByteArray(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.getByteArray(name, default)) } }
   prop.addListener { _, _, n -> node.putByteArray(name, n) }
