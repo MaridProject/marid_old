@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class IdeStatusBar(
-  private val ideLog: IdeLog
+  private val ideLog: IdeLog,
+  private val ideServices: IdeServices
 ) : HBox(4.0) {
 
   init {
@@ -25,11 +26,11 @@ class IdeStatusBar(
   }
 
   private val statusText = Label()
-    .also { it.textProperty().bind(ideLog.records.bLast.mapString { r -> r.message }) }
     .also { children += it }
     .also { setHgrow(it, Priority.ALWAYS) }
     .also { it.maxWidth = Double.MAX_VALUE }
     .also { setMargin(it, Insets(5.0)) }
+    .also { it.textProperty().bind(ideLog.records.bLast.mapString { r -> r.message }) }
     .also { it.graphic = Circle(5.0).also { c -> c.fillProperty().bind(ideLog.lastLevel.map { l -> l.color }) } }
     .also { it.graphicTextGap = 5.0 }
 
@@ -38,4 +39,5 @@ class IdeStatusBar(
     .also { setHgrow(it, Priority.NEVER) }
     .also { it.minWidth = 100.0 }
     .also { setMargin(it, Insets(5.0)) }
+    .also { it.progressProperty().bind(ideServices.progress) }
 }
