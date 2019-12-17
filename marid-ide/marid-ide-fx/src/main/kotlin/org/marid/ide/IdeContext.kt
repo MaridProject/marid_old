@@ -1,15 +1,13 @@
 package org.marid.ide
 
-import javafx.stage.Stage
-import org.marid.ide.stage.PrimaryStage
-import org.springframework.context.annotation.Bean
+import org.marid.spring.beans.InternalBean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 
 @Configuration
 @ComponentScan
+@Import(InternalBean::class)
 open class IdeContext {
 
-  @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-  @Bean open fun primaryStage(_primaryStage_: Stage): PrimaryStage = PrimaryStage(_primaryStage_)
 }

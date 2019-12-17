@@ -8,12 +8,12 @@
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -21,6 +21,7 @@
 
 package org.marid.spring;
 
+import org.marid.spring.beans.InternalBean;
 import org.marid.spring.events.BroadcastEvent;
 import org.marid.spring.events.ForwardingEvent;
 import org.marid.spring.events.PropagatedEvent;
@@ -36,10 +37,14 @@ import java.util.function.BiConsumer;
 public interface ContextUtils {
 
   @SafeVarargs
-  static GenericApplicationContext context(AbstractApplicationContext parent,
-                                           BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext>... configurers) {
+  static GenericApplicationContext context(
+      AbstractApplicationContext parent,
+      BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext>... configurers
+  ) {
     final var context = new GenericApplicationContext();
     final var beanDefinitionReader = new AnnotatedBeanDefinitionReader(context);
+
+    beanDefinitionReader.register(InternalBean.class);
 
     final var beanFactory = context.getDefaultListableBeanFactory();
     beanFactory.setAllowBeanDefinitionOverriding(false);

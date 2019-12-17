@@ -24,6 +24,7 @@ package org.marid.ide
 import javafx.application.Application
 import javafx.stage.Stage
 import org.marid.ide.log.IdeLog
+import org.marid.image.MaridIconFx
 import org.marid.logging.MaridConsoleLogHandler
 import org.marid.logging.MaridLogFormatter
 import org.marid.logging.MaridLogManager
@@ -46,12 +47,19 @@ class IdeApp : Application() {
     }
   }
 
-  override fun start(primaryStage: Stage) = with(context) {
-    setUserAgentStylesheet(STYLESHEET_MODENA)
-    defaultListableBeanFactory.registerSingleton("_primaryStage_", primaryStage)
-    refresh()
-    start()
-    primaryStage.show()
+  override fun start(primaryStage: Stage) {
+    with(primaryStage) {
+      title = "Marid IDE"
+      isMaximized = true
+      icons.addAll(MaridIconFx.getIcons(22, 24, 32))
+    }
+    with(context) {
+      setUserAgentStylesheet(STYLESHEET_MODENA)
+      defaultListableBeanFactory.registerSingleton("primaryStage", primaryStage)
+      refresh()
+      start()
+      primaryStage.show()
+    }
   }
 
   override fun stop() {

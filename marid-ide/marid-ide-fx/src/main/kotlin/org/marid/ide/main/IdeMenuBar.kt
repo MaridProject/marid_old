@@ -5,7 +5,7 @@ import javafx.scene.control.MenuBar
 import org.springframework.stereotype.Component
 
 @Component
-class IdeMenuBar : MenuBar() {
+class IdeMenuBar() : MenuBar() {
 
   val ide = Menu("IDE").also { menus += it }
   val project = Menu("Project").also { menus += it }
