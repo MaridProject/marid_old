@@ -1,4 +1,4 @@
-package org.marid.ide.i18n
+package org.marid.fx.i18n
 
 import javafx.beans.Observable
 import javafx.beans.binding.Bindings
@@ -6,7 +6,7 @@ import javafx.beans.binding.StringBinding
 import javafx.beans.value.ObservableValue
 import java.util.concurrent.Callable
 
-val String.bind: StringBinding
+val String.localized: StringBinding
   get() = Bindings.createStringBinding(Callable {
     val bundle = I18n.textsBundle()
     try {
@@ -16,7 +16,7 @@ val String.bind: StringBinding
     }
   }, I18n.locale)
 
-fun String.bind(vararg args: Any): StringBinding {
+fun String.localized(vararg args: Any): StringBinding {
   val observables = args.flatMap { if (it is Observable) listOf(it) else emptyList() }.toTypedArray()
   return Bindings.createStringBinding(Callable{
     val bundle = I18n.textsBundle()

@@ -1,4 +1,4 @@
-package org.marid.ide.i18n
+package org.marid.fx.i18n
 
 import org.marid.fx.extensions.pref
 import java.lang.Thread.currentThread
