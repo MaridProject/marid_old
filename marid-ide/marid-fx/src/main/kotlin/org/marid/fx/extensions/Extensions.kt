@@ -3,6 +3,7 @@ package org.marid.fx.extensions
 import javafx.application.Platform
 import javafx.beans.property.*
 import javafx.beans.value.*
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.prefs.Preferences
 
@@ -11,7 +12,7 @@ import java.util.prefs.Preferences
 inline fun <reified T> T.pref(name: String, default: String): StringProperty {
   val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
   val prop = SimpleStringProperty(this, name, node.get(name, default))
-  node.addPreferenceChangeListener { Platform.runLater { prop.set(node.get(name, default)) } }
+  node.addPreferenceChangeListener { e -> Platform.runLater { prop.set(e.newValue) } }
   prop.addListener { _, _, n -> node.put(name, n) }
   return prop
 }
@@ -53,6 +54,14 @@ inline fun <reified T> T.pref(name: String, default: ByteArray): ObjectProperty<
   val prop = SimpleObjectProperty(this, name, node.getByteArray(name, default))
   node.addPreferenceChangeListener { Platform.runLater { prop.set(node.getByteArray(name, default)) } }
   prop.addListener { _, _, n -> node.putByteArray(name, n) }
+  return prop
+}
+
+inline fun <reified T> T.pref(name: String, default: Locale): ObjectProperty<Locale> {
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
+  val prop = SimpleObjectProperty(this, name, Locale.forLanguageTag(node.get(name, default.toLanguageTag())))
+  node.addPreferenceChangeListener { e -> Platform.runLater { prop.set(Locale.forLanguageTag(e.newValue)) } }
+  prop.addListener { _, _, n -> node.put(name, n.toLanguageTag()) }
   return prop
 }
 
