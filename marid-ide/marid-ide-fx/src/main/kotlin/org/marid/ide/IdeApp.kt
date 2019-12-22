@@ -29,6 +29,7 @@ import org.marid.logging.MaridConsoleLogHandler
 import org.marid.logging.MaridLogFormatter
 import org.marid.logging.MaridLogManager
 import org.marid.spring.LoggingPostProcessor
+import org.marid.spring.init.InitBeanPostProcessor
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.function.Supplier
 import java.util.logging.LogManager
@@ -43,6 +44,7 @@ class IdeApp : Application() {
       setAllowCircularReferences(false)
       setAllowBeanDefinitionOverriding(false)
       defaultListableBeanFactory.addBeanPostProcessor(LoggingPostProcessor())
+      defaultListableBeanFactory.addBeanPostProcessor(InitBeanPostProcessor(context))
       register(IdeContext::class.java)
     }
   }
