@@ -2,12 +2,8 @@ package org.marid.fx.extensions
 
 import javafx.application.Platform
 import javafx.beans.property.*
-import javafx.beans.value.*
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import java.util.prefs.Preferences
-
-// preference nodes
 
 inline fun <reified T> T.pref(name: String, default: String): StringProperty {
   val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
@@ -64,68 +60,3 @@ inline fun <reified T> T.pref(name: String, default: Locale): ObjectProperty<Loc
   prop.addListener { _, _, n -> node.put(name, n.toLanguageTag()) }
   return prop
 }
-
-// properties
-
-val ObservableIntegerValue.safe: CompletableFuture<Int>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(get())
-  } else {
-    val future = CompletableFuture<Int>()
-    Platform.runLater { future.complete(get()) }
-    future
-  }
-
-val ObservableLongValue.safe: CompletableFuture<Long>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(get())
-  } else {
-    val future = CompletableFuture<Long>()
-    Platform.runLater { future.complete(get()) }
-    future
-  }
-
-val ObservableFloatValue.safe: CompletableFuture<Float>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(get())
-  } else {
-    val future = CompletableFuture<Float>()
-    Platform.runLater { future.complete(get()) }
-    future
-  }
-
-val ObservableDoubleValue.safe: CompletableFuture<Double>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(get())
-  } else {
-    val future = CompletableFuture<Double>()
-    Platform.runLater { future.complete(get()) }
-    future
-  }
-
-val ObservableStringValue.safe: CompletableFuture<String>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(get())
-  } else {
-    val future = CompletableFuture<String>()
-    Platform.runLater { future.complete(get()) }
-    future
-  }
-
-val ObservableBooleanValue.safe: CompletableFuture<Boolean>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(get())
-  } else {
-    val future = CompletableFuture<Boolean>()
-    Platform.runLater { future.complete(get()) }
-    future
-  }
-
-val <T> ObservableValue<T>.safe: CompletableFuture<T>
-  get() = if (Platform.isFxApplicationThread()) {
-    CompletableFuture.completedFuture(value)
-  } else {
-    val future = CompletableFuture<T>()
-    Platform.runLater { future.complete(value) }
-    future
-  }

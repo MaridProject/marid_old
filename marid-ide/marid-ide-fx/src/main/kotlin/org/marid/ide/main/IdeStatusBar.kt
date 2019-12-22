@@ -30,8 +30,8 @@ class IdeStatusBar(
     .also { setHgrow(it, Priority.ALWAYS) }
     .also { it.maxWidth = Double.MAX_VALUE }
     .also { setMargin(it, Insets(5.0)) }
-    .also { it.textProperty().bind(ideLog.records.bLast.mapString { r -> r.message }) }
-    .also { it.graphic = Circle(5.0).also { c -> c.fillProperty().bind(ideLog.lastLevel.map { l -> l.color }) } }
+    .also { it.textProperty().bind(ideLog.records.bLast.mapString { r -> r?.message }) }
+    .also { it.graphic = Circle(5.0).also { c -> c.fillProperty().bind(ideLog.lastLevel.map { l -> l?.color }) } }
     .also { it.graphicTextGap = 5.0 }
 
   private val progressBar = ProgressBar(0.0)
