@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Inherited
 @Component
-public @interface InternalComponent {
+public @interface InjectedComponent {
 
   @AliasFor(annotation = Component.class, attribute = "value")
   String value() default "";

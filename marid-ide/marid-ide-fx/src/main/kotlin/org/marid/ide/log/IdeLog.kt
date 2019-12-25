@@ -7,7 +7,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import org.marid.fx.extensions.pref
-import org.marid.spring.annotation.InternalComponent
+import org.marid.spring.annotation.InjectedComponent
 import java.util.logging.Handler
 import java.util.logging.Level
 import java.util.logging.LogRecord
@@ -15,7 +15,7 @@ import java.util.logging.Logger
 import javax.annotation.PreDestroy
 import kotlin.math.max
 
-@InternalComponent
+@InjectedComponent
 class IdeLog internal constructor() {
 
   private val maxLogRecordsPref = pref("maxLogRecords", 10_000)

@@ -36,11 +36,7 @@ import java.util.function.BiConsumer;
 
 public interface ContextUtils {
 
-  @SafeVarargs
-  static GenericApplicationContext context(
-      AbstractApplicationContext parent,
-      BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext>... configurers
-  ) {
+  static GenericApplicationContext context(AbstractApplicationContext parent, BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> configurer) {
     final var context = new GenericApplicationContext();
     final var beanDefinitionReader = new AnnotatedBeanDefinitionReader(context);
 
@@ -81,9 +77,7 @@ public interface ContextUtils {
       }
     });
 
-    for (final var configurer : configurers) {
-      configurer.accept(beanDefinitionReader, context);
-    }
+    configurer.accept(beanDefinitionReader, context);
 
     return context;
   }

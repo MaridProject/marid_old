@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 
 @PrototypeScoped
-@Component
+@Component("$internalBean")
 public final class InternalBean<T> {
 
   public final T bean;
