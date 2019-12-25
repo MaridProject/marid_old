@@ -35,11 +35,11 @@ class FxAction private constructor(
     SimpleBooleanProperty().also { if (selected != null) it.bindBidirectional(selected) }
   )
 
-  operator fun component1(): String = text.get()
-  operator fun component2(): String = icon.get()
-  operator fun component3(): String = description.get()
-  operator fun component4(): KeyCombination = accelerator.get()
-  operator fun component5(): EventHandler<ActionEvent> = handler.get()
+  operator fun component1(): String? = text.get()
+  operator fun component2(): String? = icon.get()
+  operator fun component3(): String? = description.get()
+  operator fun component4(): KeyCombination? = accelerator.get()
+  operator fun component5(): EventHandler<ActionEvent>? = handler.get()
 
   override fun hashCode(): Int = Objects.hash(component1(), component2(), component3(), component4(), component5())
   override fun equals(other: Any?): Boolean = when (other) {
