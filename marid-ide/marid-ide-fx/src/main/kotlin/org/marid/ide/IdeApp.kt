@@ -53,11 +53,12 @@ class IdeApp : Application() {
     with(primaryStage) {
       title = "Marid IDE"
       isMaximized = true
-      icons.addAll(MaridIconFx.getIcons(22, 24, 32))
+      icons.setAll(*MaridIconFx.getIcons(22, 24, 32))
     }
     with(context) {
       setUserAgentStylesheet(STYLESHEET_MODENA)
       defaultListableBeanFactory.registerSingleton("primaryStage", primaryStage)
+      defaultListableBeanFactory.registerSingleton("application", this@IdeApp)
       refresh()
       start()
       primaryStage.show()
