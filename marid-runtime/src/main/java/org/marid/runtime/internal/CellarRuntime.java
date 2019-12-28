@@ -73,7 +73,7 @@ public class CellarRuntime implements AutoCloseable {
               } else if (arg instanceof ArgumentConstRef) {
                 final var ref = (ArgumentConstRef) arg;
                 final var cellar = winery.getCellar(ref.getCellar());
-                final var cellarConstant = cellar.cellar.getConstant(ref.getName());
+                final var cellarConstant = cellar.cellar.getConstant(ref.getRef());
                 return cellar.getOrCreateConst(cellarConstant, passed);
               } else {
                 throw new IllegalArgumentException("Illegal arg[" + i + "] of constant " + k + ": " + arg.getClass());
@@ -148,7 +148,7 @@ public class CellarRuntime implements AutoCloseable {
     } else if (arg instanceof ArgumentConstRef) {
       final var ref = (ArgumentConstRef) arg;
       final var cellar = winery.getCellar(ref.getCellar());
-      return cellar.getConstant(ref.getName());
+      return cellar.getConstant(ref.getRef());
     } else if (arg instanceof ArgumentNull) {
       return null;
     } else if (arg instanceof ArgumentRef) {

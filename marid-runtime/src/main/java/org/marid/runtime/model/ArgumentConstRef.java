@@ -29,17 +29,17 @@ import java.util.Objects;
 public final class ArgumentConstRef extends ConstantArgument {
 
   private String cellar;
-  private String name;
+  private String ref;
 
-  public ArgumentConstRef(@NotNull String cellar, @NotNull String name) {
+  public ArgumentConstRef(@NotNull String cellar, @NotNull String ref) {
     this.cellar = cellar;
-    this.name = name;
+    this.ref = ref;
   }
 
   public ArgumentConstRef(@NotNull Element element) {
     super(element);
     this.cellar = element.getAttribute("cellar");
-    this.name = element.getAttribute("name");
+    this.ref = element.getAttribute("ref");
   }
 
   @Override
@@ -56,24 +56,24 @@ public final class ArgumentConstRef extends ConstantArgument {
     return this;
   }
 
-  public @NotNull String getName() {
-    return name;
+  public @NotNull String getRef() {
+    return ref;
   }
 
-  public @NotNull ArgumentConstRef setName(@NotNull String name) {
-    this.name = name;
+  public @NotNull ArgumentConstRef setRef(@NotNull String ref) {
+    this.ref = ref;
     return this;
   }
 
   @Override
   public void writeTo(@NotNull Element element) {
     element.setAttribute("cellar", cellar);
-    element.setAttribute("name", name);
+    element.setAttribute("ref", ref);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cellar, name);
+    return Objects.hash(cellar, ref);
   }
 
   @Override
@@ -83,7 +83,7 @@ public final class ArgumentConstRef extends ConstantArgument {
     }
     if (obj instanceof ArgumentConstRef) {
       final var that = (ArgumentConstRef) obj;
-      return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.name, that.name);
+      return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.ref, that.ref);
     }
     return false;
   }

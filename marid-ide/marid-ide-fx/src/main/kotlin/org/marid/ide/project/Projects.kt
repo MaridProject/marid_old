@@ -10,6 +10,7 @@ class Projects(directories: Directories) {
   val items = FXCollections.observableArrayList<Project> { it.observables }
 
   fun save(project: Project) {
+    items.find { it.id == project.id } ?: items.add(project)
 
   }
 }
