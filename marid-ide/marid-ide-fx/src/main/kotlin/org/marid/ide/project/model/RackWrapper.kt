@@ -4,7 +4,16 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import org.marid.runtime.model.Rack
 
-class RackWrapper {
+class RackWrapper() {
+
+  constructor(rack: Rack) : this() {
+    name.set(rack.name)
+    factory.set(rack.factory)
+    arguments.setAll(rack.arguments.map(ArgumentWrapperFactory::argumentWrapper))
+    inputs.setAll(rack.inputs.map(::InputWrapper))
+    initializers.setAll(rack.initializers.map(::InitializerWrapper))
+    destroyers.setAll(rack.destroyers.map(::DestroyerWrapper))
+  }
 
   val name = SimpleStringProperty(this, "name", "rack")
   val factory = SimpleStringProperty(this, "factory", "")
@@ -18,8 +27,8 @@ class RackWrapper {
 
   val rack
     get() = Rack(name.get(), factory.get())
-      .also { it.arguments.addAll(arguments.map { a -> a.argument }) }
-      .also { it.inputs.addAll(inputs.map { i -> i.input }) }
-      .also { it.initializers.addAll(initializers.map { i -> i.initializer }) }
-      .also { it.destroyers.addAll(destroyers.map { d -> d.destroyer }) }
+      .also { it.arguments.addAll(arguments.map(ArgumentWrapper::argument)) }
+      .also { it.inputs.addAll(inputs.map(InputWrapper::input)) }
+      .also { it.initializers.addAll(initializers.map(InitializerWrapper::initializer)) }
+      .also { it.destroyers.addAll(destroyers.map(DestroyerWrapper::destroyer)) }
 }

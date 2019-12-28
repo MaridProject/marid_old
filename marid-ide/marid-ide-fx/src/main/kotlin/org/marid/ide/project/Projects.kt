@@ -5,12 +5,16 @@ import org.marid.ide.common.Directories
 import org.springframework.stereotype.Component
 
 @Component
-class Projects(directories: Directories) {
+class Projects(private val directories: Directories) {
 
-  val items = FXCollections.observableArrayList<Project> { it.observables }
+  val items = FXCollections.observableArrayList(Project::observables)
 
   fun save(project: Project) {
-    items.find { it.id == project.id } ?: items.add(project)
+    if (!items.contains(project))
+      items.add(project)
+
+    val winery = project.winery
+
 
   }
 }

@@ -5,7 +5,12 @@ import javafx.beans.property.SimpleStringProperty
 import org.marid.fx.property.NestedObservableProperty
 import org.marid.runtime.model.Input
 
-class InputWrapper {
+class InputWrapper() {
+
+  constructor(input: Input) : this() {
+    name.set(input.name)
+    argument.set(ArgumentWrapperFactory.argumentWrapper(input.argument))
+  }
 
   val name = SimpleStringProperty(this, "name", "")
   val argument = NestedObservableProperty<ArgumentWrapper>(this, "argument", ArgumentNullWrapper())
