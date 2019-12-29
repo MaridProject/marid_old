@@ -3,8 +3,8 @@ package org.marid.ide.main
 import javafx.collections.ListChangeListener
 import javafx.scene.control.TabPane
 import org.marid.ide.child.project.ProjectTab
-import org.marid.ide.project.Project
 import org.marid.ide.project.Projects
+import org.marid.ide.project.Projects.Project
 import org.marid.spring.ContextUtils
 import org.marid.spring.LoggingPostProcessor
 import org.springframework.beans.factory.annotation.Autowired
