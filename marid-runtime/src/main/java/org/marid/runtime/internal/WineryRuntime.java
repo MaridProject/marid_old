@@ -10,12 +10,12 @@ package org.marid.runtime.internal;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
 import org.marid.io.Xmls;
+import org.marid.io.function.IOSupplier;
 import org.marid.runtime.model.Winery;
 
 import java.io.FileNotFoundException;
@@ -313,18 +314,27 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
   public enum State {NEW, STARTING, RUNNING, TERMINATING, TERMINATED}
   public enum Command {START, STOP}
 
-  private static class WineryParams {
+  private static final class WineryParams {
 
     private final URLClassLoader classLoader;
     private final Winery winery;
-    private AutoCloseable destroyAction;
+    private final AutoCloseable destroyAction;
 
     private WineryParams(URL zipFile, List<String> args) {
-      final Path deployment;
+      final var deployment = IOSupplier.of(() -> Files.createTempDirectory("marid")).get();
+      destroyAction = () -> {
+        final var p = this;
+        if (p.classLoader != null) {
+          try {
+            p.classLoader.close();
+          } finally {
+            MaridFiles.deleteRecursively(deployment);
+          }
+        } else {
+          MaridFiles.deleteRecursively(deployment);
+        }
+      };
       try {
-        deployment = Files.createTempDirectory("marid");
-        this.destroyAction = () -> MaridFiles.deleteRecursively(deployment);
-
         try (final var is = new ZipInputStream(zipFile.openStream(), UTF_8)) {
           unpack(deployment, is);
         }
@@ -341,12 +351,10 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
 
         classLoader = classLoader(classes, resources, deps);
       } catch (Throwable e) {
-        if (destroyAction != null) {
-          try {
-            destroyAction.close();
-          } catch (Throwable x) {
-            e.addSuppressed(x);
-          }
+        try {
+          destroyAction.close();
+        } catch (Throwable x) {
+          e.addSuppressed(x);
         }
         throw new IllegalStateException(e);
       }

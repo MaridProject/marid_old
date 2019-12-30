@@ -2,7 +2,7 @@ package org.marid.ide.child.project
 
 import javafx.scene.control.Tab
 import javafx.scene.image.ImageView
-import org.marid.ide.project.Projects.Project
+import org.marid.ide.project.Project
 import org.marid.spring.beans.InternalBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.ComponentScan
