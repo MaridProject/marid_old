@@ -2,18 +2,15 @@ package org.marid.ide.project
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import org.marid.fx.i18n.localized
 import org.marid.ide.project.model.CellarWrapper
 import org.marid.io.Xmls
 import org.marid.runtime.model.Winery
 import java.nio.file.Files
-import java.util.*
 import javax.xml.transform.stream.StreamResult
 
-class Project(projects: Projects) {
+class Project(projects: Projects, val id: String, winery: Winery) {
 
-  val id = UUID.randomUUID().toString()
-  val name = SimpleStringProperty(this, "name", "New project".localized.get())
+  val name = SimpleStringProperty(this, "name", winery.name)
   val cellars = FXCollections.observableArrayList(CellarWrapper::observables)
 
   val observables = arrayOf(name, cellars)
@@ -28,6 +25,8 @@ class Project(projects: Projects) {
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
     Files.createDirectories(depsDirectory)
+
+    cellars.setAll(winery.cellars.map(::CellarWrapper))
   }
 
   val winery
