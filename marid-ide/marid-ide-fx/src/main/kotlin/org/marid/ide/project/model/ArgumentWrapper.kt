@@ -53,6 +53,9 @@ class ArgumentLiteralWrapper(val type: ArgumentLiteral.Type) : ConstantArgumentW
 class ArgumentRefWrapper() : ArgumentWrapper() {
 
   constructor(ref: ArgumentRef) : this() {
+    this.cellar.set(ref.cellar)
+    this.rack.set(ref.rack)
+    this.ref.set(ref.ref)
   }
 
   val cellar = SimpleStringProperty(this, "cellar", "")
