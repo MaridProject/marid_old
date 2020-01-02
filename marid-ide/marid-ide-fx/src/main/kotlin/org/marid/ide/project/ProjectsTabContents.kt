@@ -40,8 +40,8 @@ class ProjectsTabContents(projects: Projects, tabs: IdeTabs) : BorderPane() {
       TableColumn<Project, FlowPane>()
         .apply {
           textProperty().bind("Actions".localized)
-          minWidth = 256.0
-          prefWidth = 256.0
+          minWidth = 300.0
+          prefWidth = 300.0
           maxWidth = 400.0
           cellValueFactory = Callback { params ->
             val buttons = arrayOf(

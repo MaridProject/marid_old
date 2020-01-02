@@ -7,9 +7,15 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object ProcessThemes {
+
+  private val cssFiles = listOf(
+    "com/sun/javafx/scene/control/skin/modena/modena.css",
+    "com/sun/javafx/scene/control/skin/caspian/caspian.css"
+  )
+
   @JvmStatic fun main(args: Array<String>) {
-    listOf("com/sun/javafx/scene/control/skin/modena/modena.css").forEach { path ->
-      val url = currentThread().contextClassLoader.getResource(path)
+    cssFiles.forEach { path ->
+      val url = currentThread().contextClassLoader.getResources(path).toList().last()
       val text = url?.readText(UTF_8).orEmpty()
 
       val file = Path.of(javaClass.protectionDomain.codeSource.location.toURI())
@@ -34,11 +40,15 @@ object ProcessThemes {
           break
         }
 
+        val passed = HashSet<String>()
         if (trimmed.startsWith("-fx-") && trimmed.endsWith(";")) {
           val parts = trimmed.split(':').map { it.trim() }
-          when (parts[0]) {
-            "-fx-base" ->
-              lines[i] = line.replace(parts[1], "#121212;")
+          if (passed.add(parts[0])) {
+            when (parts[0]) {
+              "-fx-base" -> lines[i] = line.replace(parts[1], "#121212;")
+             "-fx-background" -> lines[i] = line.replace(parts[1], "derive(-fx-base,26.4%);")
+             "-fx-control-inner-background" -> lines[i] = line.replace(parts[1], "derive(-fx-base,80%);")
+            }
           }
         }
       }
