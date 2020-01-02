@@ -40,22 +40,44 @@ class ProjectsTabContents(projects: Projects, tabs: IdeTabs) : BorderPane() {
       TableColumn<Project, FlowPane>()
         .apply {
           textProperty().bind("Actions".localized)
-          minWidth = 128.0
-          prefWidth = 128.0
+          minWidth = 256.0
+          prefWidth = 256.0
           maxWidth = 400.0
           cellValueFactory = Callback { params ->
+            val buttons = arrayOf(
+              Button().configure(FxAction(
+                icon = "icons/delete.png",
+                description = "Delete project"
+              ), 20),
+              Button().configure(FxAction(
+                icon = "icons/open.png",
+                description = "Open project",
+                handler = { tabs.addProject(params.value) }
+              ), 20),
+              Button().configure(FxAction(
+                icon = "icons/edit.png",
+                description = "Edit project",
+                handler = { }
+              ), 20),
+              Button().configure(FxAction(
+                icon = "icons/build.png",
+                description = "Build project",
+                handler = { }
+              ), 20),
+              Button().configure(FxAction(
+                icon = "icons/run.png",
+                description = "Run project",
+                handler = { }
+              ), 20),
+              Button().configure(FxAction(
+                icon = "icons/monitor.png",
+                description = "Monitor project",
+                handler = { }
+              ), 20)
+            )
+            buttons.forEach { it.isFocusTraversable = false }
             SimpleObjectProperty(
-              FlowPane(3.0, 0.0,
-                Button().configure(FxAction(
-                  icon = "icons/delete.png",
-                  description = "Delete project"
-                ), 20),
-                Button().configure(FxAction(
-                  icon = "icons/open.png",
-                  description = "Open project",
-                  handler = { tabs.addProject(params.value) }
-                ), 20)
-              ).apply {
+              FlowPane(3.0, 0.0, *buttons).apply {
                 prefWrapLength = Double.MAX_VALUE
                 alignment = Pos.BASELINE_CENTER
                 prefHeight = Region.USE_PREF_SIZE
