@@ -5,6 +5,8 @@ import java.lang.Thread.currentThread
 import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.text.RegexOption.DOT_MATCHES_ALL
+import kotlin.text.RegexOption.MULTILINE
 
 object ProcessThemes {
 
@@ -18,6 +20,17 @@ object ProcessThemes {
       val url = currentThread().contextClassLoader.getResources(path).toList().last()
       val text = url?.readText(UTF_8).orEmpty()
 
+      val normalized = text
+        .replace(Regex("/[*].+?[*]/", setOf(MULTILINE, DOT_MATCHES_ALL)), "")
+        .replace(Regex("[ ]++"), " ")
+        .lineSequence()
+        .filter(String::isNotBlank)
+        .map(String::trimEnd)
+        .joinToString(separator = "\n")
+        .replace(Regex("[(][^;]+[)];")) {it.value.replace(Regex("\\s++"), " ").trim()}
+        .replace(Regex("[\\n^]([^{}]+)[{]([^{}]+)[}]")) {"\n" + it.groupValues[1].trim().replace(Regex("\\s++"), " ") + " {" + it.groupValues[2] + "}"}
+      println(normalized)
+
       val file = Path.of(javaClass.protectionDomain.codeSource.location.toURI())
         .parent
         .parent
@@ -26,7 +39,7 @@ object ProcessThemes {
         .resolve("resources")
         .resolve(path)
 
-      val lines = ArrayList(text.lines())
+      val lines = ArrayList(normalized.lines())
       var replaceEnable = false
       for (i in lines.indices) {
         val line = lines[i]
@@ -46,8 +59,8 @@ object ProcessThemes {
           if (passed.add(parts[0])) {
             when (parts[0]) {
               "-fx-base" -> lines[i] = line.replace(parts[1], "#121212;")
-             "-fx-background" -> lines[i] = line.replace(parts[1], "derive(-fx-base,26.4%);")
-             "-fx-control-inner-background" -> lines[i] = line.replace(parts[1], "derive(-fx-base,80%);")
+              "-fx-background" -> lines[i] = line.replace(parts[1], "derive(-fx-base,26.4%);")
+              "-fx-control-inner-background" -> lines[i] = line.replace(parts[1], "derive(-fx-base,80%);")
             }
           }
         }

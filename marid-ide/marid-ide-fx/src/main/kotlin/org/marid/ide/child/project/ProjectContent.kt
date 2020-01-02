@@ -6,6 +6,9 @@ import org.marid.spring.beans.InternalBean
 import org.springframework.stereotype.Component
 
 @Component
-class ProjectContent(project: InternalBean<Project>) : BorderPane() {
+class ProjectContent(
+  project: InternalBean<Project>,
+  tabs: ProjectTabTabs
+) : BorderPane(tabs) {
   private val project = project.bean
 }
