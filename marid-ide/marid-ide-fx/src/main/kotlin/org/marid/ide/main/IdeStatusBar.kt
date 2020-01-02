@@ -27,7 +27,7 @@ class IdeStatusBar(
     .also { setHgrow(it, Priority.ALWAYS) }
     .also { setMargin(it, Insets(5.0)) }
     .apply { maxWidth = Double.MAX_VALUE }
-    .apply { textProperty().bind(ideLog.records.nonMultiLine { it.message }.last_.mapString { it?.message }) }
+    .apply { textProperty().bind(ideLog.records.singleLined { it.message }.bindLast.mapString { it?.message }) }
     .apply { graphic = Circle(5.0).apply { fillProperty().bind(ideLog.lastLevel.map { it?.color }) } }
     .apply { graphicTextGap = 5.0 }
 

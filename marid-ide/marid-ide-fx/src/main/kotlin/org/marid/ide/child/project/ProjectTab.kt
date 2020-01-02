@@ -2,6 +2,7 @@ package org.marid.ide.child.project
 
 import javafx.scene.control.Tab
 import javafx.scene.image.ImageView
+import org.marid.ide.main.IdeTabs
 import org.marid.ide.project.Project
 import org.marid.spring.beans.InternalBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,7 @@ class ProjectTab(projectContent: ProjectContent, project: InternalBean<Project>)
   private val project = project.bean
 
   init {
+    id = project.bean.id
     textProperty().bind(this.project.name)
     graphic = ImageView("icons/project.png")
     isClosable = true
@@ -28,5 +30,11 @@ class ProjectTab(projectContent: ProjectContent, project: InternalBean<Project>)
         context.close()
       }
     }
+  }
+
+  @Autowired
+  private fun initTabs(tabs: IdeTabs) {
+    tabs.tabs += this
+    tabs.selectionModel.select(this)
   }
 }

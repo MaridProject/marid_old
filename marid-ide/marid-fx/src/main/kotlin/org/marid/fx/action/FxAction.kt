@@ -1,6 +1,9 @@
 package org.marid.fx.action
 
-import javafx.beans.property.*
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -12,12 +15,12 @@ import java.util.*
 typealias Handler = EventHandler<ActionEvent>
 
 class FxAction private constructor(
-  val text: StringProperty = SimpleStringProperty(),
-  val icon: StringProperty = SimpleStringProperty(),
-  val description: StringProperty = SimpleStringProperty(),
-  val accelerator: ObjectProperty<KeyCombination> = SimpleObjectProperty(),
-  val handler: ObjectProperty<Handler> = SimpleObjectProperty(),
-  val selected: BooleanProperty = SimpleBooleanProperty()
+  val text: SimpleStringProperty = SimpleStringProperty(),
+  val icon: SimpleStringProperty = SimpleStringProperty(),
+  val description: SimpleStringProperty = SimpleStringProperty(),
+  val accelerator: SimpleObjectProperty<KeyCombination> = SimpleObjectProperty(),
+  val handler: SimpleObjectProperty<Handler> = SimpleObjectProperty(),
+  val selected: SimpleBooleanProperty = SimpleBooleanProperty()
 ) {
   constructor(
     text: String? = null,
@@ -26,14 +29,14 @@ class FxAction private constructor(
     key: String? = null,
     handler: ((ActionEvent) -> Unit)? = null,
     selected: Property<Boolean?>? = null
-  ) : this(
-    SimpleStringProperty().also { if (text != null) it.bind(text.localized) },
-    SimpleStringProperty().also { if (icon != null) it.bind(SimpleStringProperty(icon)) },
-    SimpleStringProperty().also { if (description != null) it.bind(description.localized) },
-    SimpleObjectProperty<KeyCombination>().also { if (key != null) it.bind(SimpleObjectProperty(keyCombination(key))) },
-    SimpleObjectProperty<Handler>().also { if (handler != null) it.bind(SimpleObjectProperty(EventHandler(handler))) },
-    SimpleBooleanProperty().also { if (selected != null) it.bindBidirectional(selected) }
-  )
+  ) : this(text = SimpleStringProperty()) {
+    text?.also { this.text.bind(it.localized) }
+    icon?.also { this.icon.bind(SimpleStringProperty(it)) }
+    description?.also { this.description.bind(SimpleStringProperty(it)) }
+    key?.also { this.accelerator.bind(SimpleObjectProperty(keyCombination(it))) }
+    handler?.also { this.handler.bind(SimpleObjectProperty(EventHandler(it))) }
+    selected?.also { this.selected.bindBidirectional(it) }
+  }
 
   operator fun component1(): String? = text.get()
   operator fun component2(): String? = icon.get()
