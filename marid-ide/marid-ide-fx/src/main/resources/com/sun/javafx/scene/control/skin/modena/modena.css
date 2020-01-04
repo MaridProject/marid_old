@@ -1,16 +1,16 @@
 .root {
--fx-base: #121212;
--fx-background: derive(-fx-base,26.4%);
--fx-control-inner-background: derive(-fx-base,80%);
--fx-control-inner-background-alt: derive(-fx-control-inner-background,-2%);
--fx-dark-text-color: black;
--fx-mid-text-color: #333;
--fx-light-text-color: white;
--fx-accent: #0096C9;
+-fx-base: rgb(50, 50, 50);
+-fx-background: derive(-fx-base, -10%);
+-fx-control-inner-background: rgb(20, 20, 20);
+-fx-control-inner-background-alt: derive(-fx-control-inner-background, 5%);
+-fx-dark-text-color: rgb(20, 20, 20);
+-fx-mid-text-color: rgb(100, 100, 100);
+-fx-light-text-color: rgb(220, 220, 220);
+-fx-accent: rgb(0, 80, 100);
 -fx-default-button: #ABD8ED;
 -fx-focus-color: #039ED3;
 -fx-faint-focus-color: #039ED322;
--fx-color: -fx-base;
+-fx-color: rgb(40, 40, 40);
 CHART_COLOR_1: #f3622d;
 CHART_COLOR_2: #fba71b;
 CHART_COLOR_3: #57b757;
@@ -51,9 +51,9 @@ CHART_COLOR_8_TRANS_70: #888888b3;
 -fx-text-base-color: ladder( -fx-color, -fx-light-text-color 45%, -fx-dark-text-color 46%, -fx-dark-text-color 59%, -fx-mid-text-color 60% );
 -fx-text-inner-color: ladder( -fx-control-inner-background, -fx-light-text-color 45%, -fx-dark-text-color 46%, -fx-dark-text-color 59%, -fx-mid-text-color 60% );
 -fx-mark-color: ladder( -fx-color, white 30%, derive(-fx-color,-63%) 31% );
--fx-mark-highlight-color: ladder( -fx-color, derive(-fx-color,80%) 60%, white 70% );
+-fx-mark-highlight-color: derive(-fx-base, 40%);
 -fx-selection-bar: -fx-accent;
--fx-selection-bar-non-focused: lightgrey;
+-fx-selection-bar-non-focused: derive(-fx-base, 20%);
 -fx-selection-bar-text: -fx-text-background-color;
 -fx-background-color: -fx-background;
 -fx-background-radius: inherit;
@@ -114,7 +114,7 @@ CHART_COLOR_8_TRANS_70: #888888b3;
 .hyperlink:show-mnemonics > .mnemonic-underline {
 -fx-stroke: -fx-text-fill;
 }
-.radio-button:selected > .radio > .dot,.check-box:selected > .box > .mark,.check-box:indeterminate  > .box > .mark {
+.radio-button:selected > .radio > .dot,.check-box:selected > .box > .mark,.check-box:indeterminate > .box > .mark {
 -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
 -fx-background-insets: 1 0 -1 0, 0;
 }
@@ -241,7 +241,7 @@ CHART_COLOR_8_TRANS_70: #888888b3;
 .check-box:indeterminate > .box {
 -fx-padding: 0;
 }
-.check-box:indeterminate  > .box > .mark {
+.check-box:indeterminate > .box > .mark {
 -fx-shape: "M0,0H10V2H0Z";
 -fx-scale-shape: false;
 -fx-padding: 0.666667em;
@@ -772,7 +772,7 @@ TOP-COLOR: ladder( -fx-base, derive(-fx-base,0%) 0%, derive(-fx-base,46%) 100% )
 -fx-background: -fx-selection-bar;
 -fx-background-color: -fx-background;
 }
-.menu-bar > .container > .menu-button:hover > .label,.menu-bar > .container > .menu-button:focused > .label,.menu-bar > .container > .menu-button:showing  > .label {
+.menu-bar > .container > .menu-button:hover > .label,.menu-bar > .container > .menu-button:focused > .label,.menu-bar > .container > .menu-button:showing > .label {
 -fx-text-fill: -fx-text-background-color;
 }
 .menu-item {
@@ -785,7 +785,7 @@ TOP-COLOR: ladder( -fx-base, derive(-fx-base,0%) 0%, derive(-fx-base,46%) 100% )
 .menu-item > .graphic-container {
 -fx-padding: 0em 0.333em 0em 0em;
 }
-.menu-item >.label {
+.menu-item > .label {
 -fx-padding: 0em 0.5em 0em 0em;
 -fx-text-fill: -fx-text-base-color;
 }
@@ -972,7 +972,7 @@ TOP-COLOR: ladder( -fx-base, derive(-fx-base,0%) 0%, derive(-fx-base,46%) 100% )
 -fx-background: -fx-accent;
 -fx-background-color: -fx-selection-bar;
 }
-.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
 -fx-background: -fx-accent;
 -fx-background-color: -fx-background, -fx-cell-focus-inner-border, -fx-background;
 -fx-background-insets: 0, 1, 2;
@@ -1041,6 +1041,9 @@ TOP-COLOR: ladder( -fx-base, derive(-fx-base,0%) 0%, derive(-fx-base,46%) 100% )
 -fx-padding: 0.5em 0.667em 0.5em 0;
 }
 .color-picker.split-button > .arrow-button {
+-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+-fx-background-insets: 1 1 1 0, 1, 2;
+-fx-background-radius: 0 3 3 0, 0 2 2 0, 0 1 1 0;
 -fx-padding: 0.5em 0.667em 0.5em 0.667em;
 }
 .color-picker.split-button:focused > .arrow-button {

@@ -30,16 +30,27 @@ object ProcessThemes {
       val ast = Regex("(?:\\n|^)([^{}]+)[{]([^{}]+)[}]\\n", setOf(MULTILINE, DOT_MATCHES_ALL))
         .findAll(normalized)
         .map { match ->
-          val key = LinkedHashSet(match.groupValues[1].splitToSequence(',').map(String::trim).toMutableList())
+          val key = LinkedHashSet(
+            match.groupValues[1].splitToSequence(',')
+              .map(String::trim)
+              .map { it.replace(Regex("\\s*+>\\s*+"), " > ") }
+              .toMutableList()
+          )
           val values = match.groupValues[2].splitToSequence(';')
             .map(String::trim)
             .filter(String::isNotEmpty)
             .map { it.split(delimiters = *charArrayOf(':'), limit = 2) }
             .map { Pair(it[0].trim(), it[1].replace(Regex("\\s++"), " ").trim()) }
-            .fold(LinkedHashMap<String, String>()) { acc, (k, v) -> acc[k] = v; acc }
+            .fold(LinkedHashMap<String, String>()) { acc, (k, v) -> acc.apply { put(k, v) } }
           Pair(key, values)
         }
-        .fold(LinkedHashMap<LinkedHashSet<String>, LinkedHashMap<String, String>>()) { a, (k, v) -> a[k] = v; a }
+        .fold(LinkedHashMap<LinkedHashSet<String>, LinkedHashMap<String, String>>()) { a, (k, v) ->
+          a.apply {
+            compute(k) { _, old ->
+              old?.also { it.putAll(v) } ?: v
+            }
+          }
+        }
 
       val file = Path.of(javaClass.protectionDomain.codeSource.location.toURI())
         .parent
@@ -49,10 +60,18 @@ object ProcessThemes {
         .resolve("resources")
         .resolve(path)
 
-      ast[setOf(".root")]?.apply {
-        this["-fx-base"] = "#121212"
-        this["-fx-background"] = "derive(-fx-base,26.4%)"
-        this["-fx-control-inner-background"] = "derive(-fx-base,80%)"
+      ast[setOf(".root")]!!.apply {
+        this["-fx-base"] = "rgb(50, 50, 50)"
+        this["-fx-background"] = "derive(-fx-base, -10%)"
+        this["-fx-color"] = "rgb(40, 40, 40)"
+        this["-fx-control-inner-background"] = "rgb(20, 20, 20)"
+        this["-fx-control-inner-background-alt"] = "derive(-fx-control-inner-background, 5%)"
+        this["-fx-light-text-color"] = "rgb(220, 220, 220)"
+        this["-fx-mid-text-color"] = "rgb(100, 100, 100)"
+        this["-fx-dark-text-color"] = "rgb(20, 20, 20)"
+        this["-fx-accent"] = "rgb(0, 80, 100)"
+        this["-fx-selection-bar-non-focused"] = "derive(-fx-base, 20%)"
+        this["-fx-mark-highlight-color"] = "derive(-fx-base, 40%)"
       }
 
       val transformed = ast

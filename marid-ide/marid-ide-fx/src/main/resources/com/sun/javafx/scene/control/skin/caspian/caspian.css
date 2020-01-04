@@ -1,13 +1,13 @@
 .root {
--fx-base: #121212;
--fx-background: derive(-fx-base,26.4%);
--fx-control-inner-background: derive(-fx-base,80%);
--fx-dark-text-color: black;
--fx-mid-text-color: #292929;
--fx-light-text-color: white;
--fx-accent: #0093ff;
+-fx-base: rgb(50, 50, 50);
+-fx-background: derive(-fx-base, -10%);
+-fx-control-inner-background: rgb(20, 20, 20);
+-fx-dark-text-color: rgb(20, 20, 20);
+-fx-mid-text-color: rgb(100, 100, 100);
+-fx-light-text-color: rgb(220, 220, 220);
+-fx-accent: rgb(0, 80, 100);
 -fx-focus-color: #0093ff;
--fx-color: -fx-base;
+-fx-color: rgb(40, 40, 40);
 -fx-disabled-opacity: 0.4;
 -fx-hover-base: ladder( -fx-base, derive(-fx-base,20%) 20%, derive(-fx-base,30%) 35%, derive(-fx-base,40%) 50% );
 -fx-pressed-base: derive(-fx-base,-20%);
@@ -26,7 +26,7 @@
 -fx-text-base-color: ladder( -fx-color, -fx-light-text-color 45%, -fx-dark-text-color 46%, -fx-dark-text-color 59%, -fx-mid-text-color 60% );
 -fx-text-inner-color: ladder( -fx-control-inner-background, -fx-light-text-color 45%, -fx-dark-text-color 46%, -fx-dark-text-color 59%, -fx-mid-text-color 60% );
 -fx-mark-color: ladder( -fx-color, white 30%, derive(-fx-color,-63%) 31% );
--fx-mark-highlight-color: ladder( -fx-color, derive(-fx-color,80%) 60%, white 70% );
+-fx-mark-highlight-color: derive(-fx-base, 40%);
 -fx-selection-bar: linear-gradient( to bottom, derive(-fx-background,-7%) 0%, derive(-fx-background,-34%) 100% );
 -fx-selection-bar-text: ladder( -fx-background, -fx-light-text-color 50%, -fx-mid-text-color 51% );
 -fx-tab-border-color: -fx-box-border;
@@ -38,6 +38,8 @@
 -fx-cell-focus-inner-border: #85b9de;
 -fx-page-bullet-border: #acacac;
 -fx-page-indicator-hover-border: #accee5;
+-fx-control-inner-background-alt: derive(-fx-control-inner-background, 5%);
+-fx-selection-bar-non-focused: derive(-fx-base, 20%);
 }
 .mnemonic-underline {
 -fx-stroke: transparent;
@@ -337,7 +339,7 @@
 .menu-item > .graphic-container {
 -fx-padding: 0em 0.333em 0em 0em;
 }
-.menu-item >.label {
+.menu-item > .label {
 -fx-padding: 0em 0.5em 0em 0em;
 -fx-text-fill: -fx-text-base-color;
 }
@@ -1496,7 +1498,7 @@
 -fx-background-insets: 0 1 1 0, 1 2 1 1, 2 3 1 2;
 -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
 }
-.tab-pane.floating  > .tab-header-area > .headers-region > .tab:selected {
+.tab-pane.floating > .tab-header-area > .headers-region > .tab:selected {
 -fx-background-color: -fx-tab-border-color, -fx-control-inner-background;
 -fx-background-insets: 0 1 -1 0, 1 2 -1 1;
 -fx-background-radius: 5 5 0 0, 4 4 0 0;
@@ -1957,12 +1959,12 @@
 -fx-padding: 4 0 4 5;
 -fx-background-color: -fx-control-inner-background;
 }
-.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
 -fx-background: -fx-accent;
 -fx-background-color: -fx-selection-bar;
 -fx-text-fill: -fx-selection-bar-text;
 }
-.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
 -fx-background-color: -fx-cell-hover-color;
 -fx-text-fill: -fx-text-inner-color;
 }
