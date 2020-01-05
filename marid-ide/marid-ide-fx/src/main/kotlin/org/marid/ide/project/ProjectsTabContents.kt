@@ -10,6 +10,7 @@ import javafx.scene.layout.Region
 import javafx.util.Callback
 import org.marid.fx.action.Fx
 import org.marid.fx.action.configure
+import org.marid.fx.control.ToolButton
 import org.marid.fx.i18n.localized
 import org.springframework.stereotype.Component
 
@@ -26,7 +27,7 @@ class ProjectsTabContents(
           contextMenu = ContextMenu()
           addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
             contextMenu.items.clear()
-            contextMenu.items += MenuItem("xx")
+            item?.apply { contextMenu.items += menuItems }
           }
         }
       }
@@ -50,7 +51,7 @@ class ProjectsTabContents(
         maxWidth = 400.0
         cellValueFactory = Callback {
           val buttons = it.value.actions
-            .map { a -> Button().configure(a) }
+            .map { a -> ToolButton().configure(a) }
             .apply { isFocusTraversable = false }
             .toTypedArray()
           SimpleObjectProperty(FlowPane(3.0, 0.0, *buttons).apply {
@@ -63,13 +64,17 @@ class ProjectsTabContents(
     )
   }
 
+  private val Project.menuItems
+    get() = listOf(
+      MenuItem().configure(Fx(icon = "icons/delete.png", text = "Delete", handler = { delete() }))
+    ) + listOf(SeparatorMenuItem()) + actions.map { MenuItem().configure(it) }
+
   private val Project.actions
-    get() = arrayOf(
-      Fx(icon = "icons/delete.png", description = "Delete project", handler = { delete() }),
-      Fx(icon = "icons/open.png", description = "Open project", handler = { projectTabsManager.addProject(this) }),
-      Fx(icon = "icons/edit.png", description = "Edit project"),
-      Fx(icon = "icons/build.png", description = "Build project", handler = { }),
-      Fx(icon = "icons/run.png", description = "Run project", handler = { }),
-      Fx(icon = "icons/monitor.png", description = "Monitor project", handler = { })
+    get() = listOf(
+      Fx(icon = "icons/open.png", text = "Open", handler = { projectTabsManager.addProject(this) }),
+      Fx(icon = "icons/edit.png", text = "Edit..."),
+      Fx(icon = "icons/build.png", text = "Build", handler = { }),
+      Fx(icon = "icons/run.png", text = "Run", handler = { }),
+      Fx(icon = "icons/monitor.png", text = "Monitor...", handler = { })
     )
 }

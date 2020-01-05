@@ -10,7 +10,6 @@ import javafx.event.EventHandler
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyCombination.keyCombination
 import org.marid.fx.i18n.localized
-import java.util.*
 
 typealias Handler = EventHandler<ActionEvent>
 
@@ -38,22 +37,12 @@ class Fx private constructor(
     selected?.also { this.selected.bindBidirectional(it) }
   }
 
-  operator fun component1(): String? = text.get()
-  operator fun component2(): String? = icon.get()
-  operator fun component3(): String? = description.get()
-  operator fun component4(): KeyCombination? = accelerator.get()
-  operator fun component5(): EventHandler<ActionEvent>? = handler.get()
+  private val components get() = sequenceOf(text, icon, description, accelerator, handler, selected).map { it.value }
 
-  override fun hashCode(): Int = Objects.hash(component1(), component2(), component3(), component4(), component5())
-  override fun equals(other: Any?): Boolean = when (other) {
+  override fun hashCode() = components.toList().hashCode()
+  override fun equals(other: Any?) = when {
     other === this -> true
-    is Fx -> {
-      this.component1() == other.component1()
-        && this.component2() == other.component2()
-        && this.component3() == other.component3()
-        && this.component4() == other.component4()
-        && this.component5() == other.component5()
-    }
+    other is Fx -> components.zip(other.components).all { (a, b) -> a == b }
     else -> false
   }
 
@@ -73,4 +62,5 @@ class Fx private constructor(
   fun handler(handler: ObservableValue<EventHandler<ActionEvent>>) = also { this.handler.bind(handler) }
   fun selected(selected: Property<Boolean?>) = also { this.selected.bindBidirectional(selected) }
 
+  val isEmpty get() = sequenceOf(text, icon).all { it.value == null }
 }
