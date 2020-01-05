@@ -8,7 +8,7 @@ import java.nio.file.Files
 import java.util.*
 
 @Component
-class Projects(internal val directories: Directories) {
+class Projects(private val directories: Directories) {
 
   private val _items = FXCollections.observableArrayList(Project::observables)
   val items: ObservableList<Project> = FXCollections.unmodifiableObservableList(_items)
@@ -25,5 +25,10 @@ class Projects(internal val directories: Directories) {
     val project = Project(this, UUID.randomUUID().toString())
     _items.add(project)
     return project
+  }
+
+  companion object {
+    val Project.directories get() = projects.directories
+    val Project.writableItems: ObservableList<Project> get() = projects._items
   }
 }

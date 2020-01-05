@@ -2,13 +2,13 @@ package org.marid.ide.child.project
 
 import javafx.scene.layout.BorderPane
 import org.marid.ide.project.Project
-import org.marid.spring.beans.InternalBean
+import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
 @Component
 class ProjectContent(
-  project: InternalBean<Project>,
+  project: ObjectFactory<Project>,
   tabs: ProjectTabTabs
 ) : BorderPane(tabs) {
-  private val project = project.bean
+  private val project = project.`object`
 }

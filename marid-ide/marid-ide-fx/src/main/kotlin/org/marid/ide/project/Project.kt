@@ -2,21 +2,26 @@ package org.marid.ide.project
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import org.marid.fx.extensions.lif
+import org.marid.fx.extensions.logger
+import org.marid.fx.extensions.lwn
 import org.marid.fx.i18n.localized
+import org.marid.ide.project.Projects.Companion.directories
+import org.marid.ide.project.Projects.Companion.writableItems
 import org.marid.ide.project.model.CellarWrapper
 import org.marid.io.Xmls
 import org.marid.runtime.model.Winery
+import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
 import javax.xml.transform.stream.StreamResult
 
-class Project(projects: Projects, val id: String) {
+class Project(val projects: Projects, val id: String) {
 
   val name = SimpleStringProperty(this, "name")
   val cellars = FXCollections.observableArrayList(CellarWrapper::observables)
-
   val observables = arrayOf(name, cellars)
 
-  private val directory = projects.directories.projectsHome.resolve(id)
+  private val directory = directories.projectsHome.resolve(id)
   private val resourcesDirectory = directory.resolve("resources")
   private val classesDirectory = directory.resolve("classes")
   private val depsDirectory = directory.resolve("deps")
@@ -49,6 +54,15 @@ class Project(projects: Projects, val id: String) {
 
   fun save() {
     Xmls.writeFormatted("winery", winery::writeTo, StreamResult(directory.resolve("winery.xml").toFile()))
+  }
+
+  fun delete() {
+    writableItems -= this
+    if (FileSystemUtils.deleteRecursively(directory)) {
+      logger.lif("Project {0} deleted", id)
+    } else {
+      logger.lwn("Project {0} does not exist", id)
+    }
   }
 
   override fun hashCode(): Int {

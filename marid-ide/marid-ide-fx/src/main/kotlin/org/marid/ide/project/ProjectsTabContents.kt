@@ -2,10 +2,8 @@ package org.marid.ide.project
 
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
-import javafx.scene.control.Button
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableRow
-import javafx.scene.control.TableView
+import javafx.scene.control.*
+import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Region
@@ -13,21 +11,24 @@ import javafx.util.Callback
 import org.marid.fx.action.FxAction
 import org.marid.fx.action.configure
 import org.marid.fx.i18n.localized
-import org.marid.ide.extensions.invoke
-import org.marid.ide.main.IdeTabs
-import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
 @Component
 class ProjectsTabContents(
   projects: Projects,
-  tabs: ObjectFactory<IdeTabs>
+  projectTabsManager: ProjectTabsManager
 ) : BorderPane() {
 
   private val projectList = TableView(projects.items)
     .apply {
       rowFactory = Callback {
-        TableRow<Project>()
+        TableRow<Project>().apply {
+          contextMenu = ContextMenu()
+          addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
+            contextMenu.items.clear()
+            contextMenu.items += MenuItem("xx")
+          }
+        }
       }
       center = this
     }
@@ -53,33 +54,33 @@ class ProjectsTabContents(
             val buttons = arrayOf(
               Button().configure(FxAction(
                 icon = "icons/delete.png",
-                description = "Delete project"
-              ), 20),
+                description = "Delete project",
+                handler = { params.value.delete() }
+              )),
               Button().configure(FxAction(
                 icon = "icons/open.png",
                 description = "Open project",
-                handler = { tabs().addProject(params.value) }
-              ), 20),
+                handler = { projectTabsManager.addProject(params.value) }
+              )),
               Button().configure(FxAction(
                 icon = "icons/edit.png",
-                description = "Edit project",
-                handler = { }
-              ), 20),
+                description = "Edit project"
+              )),
               Button().configure(FxAction(
                 icon = "icons/build.png",
                 description = "Build project",
                 handler = { }
-              ), 20),
+              )),
               Button().configure(FxAction(
                 icon = "icons/run.png",
                 description = "Run project",
                 handler = { }
-              ), 20),
+              )),
               Button().configure(FxAction(
                 icon = "icons/monitor.png",
                 description = "Monitor project",
                 handler = { }
-              ), 20)
+              ))
             )
             buttons.forEach { it.isFocusTraversable = false }
             SimpleObjectProperty(

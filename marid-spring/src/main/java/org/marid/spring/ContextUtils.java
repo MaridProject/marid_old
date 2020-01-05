@@ -21,7 +21,6 @@
 
 package org.marid.spring;
 
-import org.marid.spring.beans.InternalBean;
 import org.marid.spring.events.BroadcastEvent;
 import org.marid.spring.events.ForwardingEvent;
 import org.marid.spring.events.PropagatedEvent;
@@ -39,8 +38,6 @@ public interface ContextUtils {
   static GenericApplicationContext context(AbstractApplicationContext parent, BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> configurer) {
     final var context = new GenericApplicationContext();
     final var beanDefinitionReader = new AnnotatedBeanDefinitionReader(context);
-
-    beanDefinitionReader.register(InternalBean.class);
 
     final var beanFactory = context.getDefaultListableBeanFactory();
     beanFactory.setAllowBeanDefinitionOverriding(false);
