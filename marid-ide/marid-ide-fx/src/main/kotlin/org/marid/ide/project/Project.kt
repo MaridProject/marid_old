@@ -27,29 +27,32 @@ class Project(val projects: Projects, val id: String) {
   private val depsDirectory = directory.resolve("deps")
 
   init {
+    val existing = Files.isDirectory(directory)
+
     Files.createDirectories(directory)
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
     Files.createDirectories(depsDirectory)
 
-    if (!load()) {
-      name.set("New project".localized.get())
+    if (!existing) {
+      name.set("New project %d".localized(projects.items.size + 1).get())
+      save()
     }
+    load()
   }
 
   val winery
     get() = Winery(name.get())
       .also { it.cellars.addAll(cellars.map(CellarWrapper::cellar)) }
 
-  private fun load(): Boolean {
+  private fun load() {
     val file = directory.resolve("winery.xml")
     if (!Files.isRegularFile(file)) {
-      return false
+      return
     }
-    val winery = Xmls.read(file) { Winery(it) }
+    val winery = Xmls.read(file, ::Winery)
     name.set(winery.name)
     cellars.setAll(winery.cellars.map(::CellarWrapper))
-    return true
   }
 
   fun save() {
