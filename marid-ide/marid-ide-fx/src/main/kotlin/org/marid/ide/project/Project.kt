@@ -2,9 +2,9 @@ package org.marid.ide.project
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import org.marid.fx.extensions.lif
+import org.marid.fx.extensions.inf
 import org.marid.fx.extensions.logger
-import org.marid.fx.extensions.lwn
+import org.marid.fx.extensions.wrn
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
@@ -59,21 +59,12 @@ class Project(val projects: Projects, val id: String) {
   fun delete() {
     writableItems -= this
     if (FileSystemUtils.deleteRecursively(directory)) {
-      logger.lif("Project {0} deleted", id)
+      logger.inf("Project {0} deleted", id)
     } else {
-      logger.lwn("Project {0} does not exist", id)
+      logger.wrn("Project {0} does not exist", id)
     }
   }
 
-  override fun hashCode(): Int {
-    return id.hashCode()
-  }
-
-  override fun equals(other: Any?): Boolean {
-    return when (other) {
-      other === this -> true
-      is Project -> other.id == id
-      else -> false
-    }
-  }
+  override fun hashCode(): Int = id.hashCode()
+  override fun equals(other: Any?): Boolean = if (other === this) true else other is Project && other.id == id
 }

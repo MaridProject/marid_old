@@ -14,7 +14,7 @@ import java.util.*
 
 typealias Handler = EventHandler<ActionEvent>
 
-class FxAction private constructor(
+class Fx private constructor(
   val text: SimpleStringProperty = SimpleStringProperty(),
   val icon: SimpleStringProperty = SimpleStringProperty(),
   val description: SimpleStringProperty = SimpleStringProperty(),
@@ -47,7 +47,7 @@ class FxAction private constructor(
   override fun hashCode(): Int = Objects.hash(component1(), component2(), component3(), component4(), component5())
   override fun equals(other: Any?): Boolean = when (other) {
     other === this -> true
-    is FxAction -> {
+    is Fx -> {
       this.component1() == other.component1()
         && this.component2() == other.component2()
         && this.component3() == other.component3()
@@ -57,13 +57,13 @@ class FxAction private constructor(
     else -> false
   }
 
-  fun text(text: String): FxAction = also { this.text.bind(text.localized) }
-  fun exactText(text: String): FxAction = also { this.text.bind(SimpleStringProperty(text)) }
-  fun text(text: ObservableValue<String>): FxAction = also { this.text.bind(text) }
-  fun icon(resource: String): FxAction = also { this.icon.bind(SimpleStringProperty(resource)) }
+  fun text(text: String): Fx = also { this.text.bind(text.localized) }
+  fun exactText(text: String): Fx = also { this.text.bind(SimpleStringProperty(text)) }
+  fun text(text: ObservableValue<String>): Fx = also { this.text.bind(text) }
+  fun icon(resource: String): Fx = also { this.icon.bind(SimpleStringProperty(resource)) }
   fun icon(resource: ObservableValue<String>) = also { this.icon.bind(resource) }
-  fun description(text: String): FxAction = also { this.description.bind(text.localized) }
-  fun descriptionText(text: String): FxAction = also { this.description.bind(SimpleStringProperty(text)) }
+  fun description(text: String): Fx = also { this.description.bind(text.localized) }
+  fun descriptionText(text: String): Fx = also { this.description.bind(SimpleStringProperty(text)) }
   fun description(text: ObservableValue<String>) = also { this.description.bind(text) }
   fun accelerator(keys: String) = also { this.accelerator.bind(SimpleObjectProperty(keyCombination(keys))) }
   fun accelerator(keys: KeyCombination) = also { this.accelerator.bind(SimpleObjectProperty(keys)) }

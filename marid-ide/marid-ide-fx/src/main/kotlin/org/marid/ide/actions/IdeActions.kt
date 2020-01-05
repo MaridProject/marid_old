@@ -1,7 +1,7 @@
 package org.marid.ide.actions
 
 import javafx.application.Platform
-import org.marid.fx.action.FxAction
+import org.marid.fx.action.Fx
 import org.marid.ide.project.ProjectTabsManager
 import org.marid.ide.project.Projects
 import org.springframework.context.annotation.Bean
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class IdeActions {
 
   @Bean
-  fun exitAction(): FxAction = FxAction(
+  fun exitAction(): Fx = Fx(
     text = "Exit",
     icon = "icons/close.png",
     handler = { Platform.exit() },
@@ -19,7 +19,7 @@ class IdeActions {
   )
 
   @Bean
-  fun newProjectAction(projects: Projects, projectTabsManager: ProjectTabsManager): FxAction = FxAction(
+  fun newProjectAction(projects: Projects, projectTabsManager: ProjectTabsManager): Fx = Fx(
     text = "New project",
     icon = "icons/new.png",
     handler = { projectTabsManager.addProject(projects.newProject()) },

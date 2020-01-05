@@ -2,7 +2,7 @@ package org.marid.ide.main
 
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuItem
-import org.marid.fx.action.FxAction
+import org.marid.fx.action.Fx
 import org.marid.fx.extensions.item
 import org.marid.fx.extensions.menu
 import org.marid.spring.init.Init
@@ -23,13 +23,13 @@ class IdeMenuBar : MenuBar() {
 
     lateinit var exit: MenuItem
 
-    @Init fun exit(exitAction: FxAction) = ideMenu.item(exitAction).also { exit = it }
+    @Init fun exit(exitAction: Fx) = ideMenu.item(exitAction).also { exit = it }
   }
 
   inner class ProjectMenuItems {
 
     lateinit var newProject: MenuItem
 
-    @Init fun newProject(newProjectAction: FxAction) = projectMenu.item(newProjectAction).also { newProject = it }
+    @Init fun newProject(newProjectAction: Fx) = projectMenu.item(newProjectAction).also { newProject = it }
   }
 }
