@@ -29,7 +29,6 @@ class Project(val projects: Projects, val id: String) {
   init {
     val existing = Files.isDirectory(directory)
 
-    Files.createDirectories(directory)
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
     Files.createDirectories(depsDirectory)
@@ -69,5 +68,5 @@ class Project(val projects: Projects, val id: String) {
   }
 
   override fun hashCode(): Int = id.hashCode()
-  override fun equals(other: Any?): Boolean = if (other === this) true else other is Project && other.id == id
+  override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id
 }
