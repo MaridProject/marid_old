@@ -41,7 +41,7 @@ class ProjectsTabContents(
         minWidth = 200.0
         prefWidth = 300.0
         maxWidth = 500.0
-        cellValueFactory = Callback { it.value.name }
+        cellValueFactory = Callback { it.value.winery.name }
         style = "-fx-alignment: CENTER-LEFT;"
       },
       TableColumn<Project, FlowPane>().apply {

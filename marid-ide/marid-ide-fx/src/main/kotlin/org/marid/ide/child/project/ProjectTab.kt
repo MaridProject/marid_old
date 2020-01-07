@@ -2,6 +2,7 @@ package org.marid.ide.child.project
 
 import javafx.scene.control.Tab
 import javafx.scene.image.ImageView
+import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeTabs
 import org.marid.ide.project.Project
 import org.springframework.beans.factory.ObjectFactory
@@ -12,13 +13,13 @@ import org.springframework.stereotype.Component
 
 @Component
 @ComponentScan
-class ProjectTab(projectContent: ProjectContent, project: ObjectFactory<Project>) : Tab(null, projectContent) {
+class ProjectTab(tabs: ProjectTabs, project: ObjectFactory<Project>) : Tab(null, tabs) {
 
-  private val project = project.`object`
+  private val project = project.bean
 
   init {
     id = this.project.id
-    textProperty().bind(this.project.name)
+    textProperty().bind(this.project.winery.name)
     graphic = ImageView("icons/project.png")
     isClosable = true
   }

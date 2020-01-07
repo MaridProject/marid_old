@@ -1,27 +1,28 @@
 package org.marid.ide.project
 
-import javafx.beans.property.SimpleStringProperty
-import javafx.collections.FXCollections
 import org.marid.fx.extensions.inf
 import org.marid.fx.extensions.logger
 import org.marid.fx.extensions.wrn
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
-import org.marid.ide.project.model.CellarWrapper
-import org.marid.io.Xmls
-import org.marid.runtime.model.Winery
+import org.marid.ide.project.xml.XmlRepositories
+import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
-import javax.xml.transform.stream.StreamResult
 
 class Project(val projects: Projects, val id: String) {
 
-  val name = SimpleStringProperty(this, "name")
-  val cellars = FXCollections.observableArrayList(CellarWrapper::observables)
-  val observables = arrayOf(name, cellars)
+  val winery = XmlWinery()
+  val repositories = XmlRepositories()
+  val observables = arrayOf(
+    winery.observables,
+    repositories.observables
+  ).flatten().toTypedArray()
 
   private val directory = directories.projectsHome.resolve(id)
+  private val wineryFile = directory.resolve("winery.xml")
+  private val repositoriesFile = directory.resolve("repositories.xml")
   private val resourcesDirectory = directory.resolve("resources")
   private val classesDirectory = directory.resolve("classes")
   private val depsDirectory = directory.resolve("deps")
@@ -34,28 +35,20 @@ class Project(val projects: Projects, val id: String) {
     Files.createDirectories(depsDirectory)
 
     if (!existing) {
-      name.set("New project %d".localized(projects.items.size + 1).get())
+      winery.name.set("New project %d".localized(projects.items.size + 1).get())
       save()
     }
     load()
   }
 
-  val winery
-    get() = Winery(name.get())
-      .also { it.cellars.addAll(cellars.map(CellarWrapper::cellar)) }
-
   private fun load() {
-    val file = directory.resolve("winery.xml")
-    if (!Files.isRegularFile(file)) {
-      return
-    }
-    val winery = Xmls.read(file, ::Winery)
-    name.set(winery.name)
-    cellars.setAll(winery.cellars.map(::CellarWrapper))
+    if (Files.isRegularFile(wineryFile)) winery.load(wineryFile)
+    if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
   }
 
   fun save() {
-    Xmls.writeFormatted("winery", winery::writeTo, StreamResult(directory.resolve("winery.xml").toFile()))
+    winery.save(wineryFile)
+    repositories.save(repositoriesFile)
   }
 
   fun delete() {

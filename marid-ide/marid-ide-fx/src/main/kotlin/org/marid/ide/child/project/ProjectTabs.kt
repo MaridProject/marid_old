@@ -4,5 +4,5 @@ import javafx.scene.control.TabPane
 import org.springframework.stereotype.Component
 
 @Component
-class ProjectTabTabs : TabPane() {
+class ProjectTabs : TabPane() {
 }
