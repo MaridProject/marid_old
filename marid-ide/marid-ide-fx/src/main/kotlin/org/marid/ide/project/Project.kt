@@ -15,10 +15,7 @@ class Project(val projects: Projects, val id: String) {
 
   val winery = XmlWinery()
   val repositories = XmlRepositories()
-  val observables = arrayOf(
-    winery.observables,
-    repositories.observables
-  ).flatten().toTypedArray()
+  val observables = winery.observables + repositories.observables
 
   private val directory = directories.projectsHome.resolve(id)
   private val wineryFile = directory.resolve("winery.xml")
@@ -36,7 +33,6 @@ class Project(val projects: Projects, val id: String) {
 
     if (!existing) {
       winery.name.set("New project %d".localized(projects.items.size + 1).get())
-      save()
     }
     load()
   }

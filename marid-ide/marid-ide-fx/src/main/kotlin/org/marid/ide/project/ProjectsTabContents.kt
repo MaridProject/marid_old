@@ -9,8 +9,8 @@ import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Region
 import javafx.util.Callback
 import org.marid.fx.action.Fx
-import org.marid.fx.action.configure
-import org.marid.fx.control.ToolButton
+import org.marid.fx.action.menuItem
+import org.marid.fx.action.toolButton
 import org.marid.fx.i18n.localized
 import org.springframework.stereotype.Component
 
@@ -51,8 +51,7 @@ class ProjectsTabContents(
         maxWidth = 400.0
         cellValueFactory = Callback {
           val buttons = it.value.actions
-            .map { a -> ToolButton().configure(a) }
-            .apply { isFocusTraversable = false }
+            .map { a -> a.toolButton.apply { isFocusTraversable = false } }
             .toTypedArray()
           SimpleObjectProperty(FlowPane(3.0, 0.0, *buttons).apply {
             prefWrapLength = Double.MAX_VALUE
@@ -66,12 +65,13 @@ class ProjectsTabContents(
 
   private val Project.menuItems
     get() = listOf(
-      MenuItem().configure(Fx(icon = "icons/delete.png", text = "Delete", handler = { delete() }))
-    ) + listOf(SeparatorMenuItem()) + actions.map { MenuItem().configure(it) }
+      Fx(icon = "icons/delete.png", text = "Delete", handler = { delete() }).menuItem
+    ) + listOf(SeparatorMenuItem()) + actions.map { it.menuItem }
 
   private val Project.actions
     get() = listOf(
       Fx(icon = "icons/open.png", text = "Open", handler = { projectTabsManager.addProject(this) }),
+      Fx(icon = "icons/save.png", text = "Save", handler = { save() }),
       Fx(icon = "icons/edit.png", text = "Edit..."),
       Fx(icon = "icons/build.png", text = "Build", handler = { }),
       Fx(icon = "icons/run.png", text = "Run", handler = { }),

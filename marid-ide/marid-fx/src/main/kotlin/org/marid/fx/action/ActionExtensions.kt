@@ -48,3 +48,10 @@ fun <T : Tab> T.configure(action: Fx, size: Int = 20): T = this
   .apply { textProperty().bind(action.text) }
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
   .apply { tooltipProperty().bind(action.description.mapObject { it?.let(::Tooltip) }) }
+
+val Fx.button get() = Button().configure(this)
+val Fx.toolButton get() = ToolButton().configure(this)
+val Fx.label get() = Label().configure(this)
+val Fx.menuItem get() = MenuItem().configure(this)
+val Fx.checkMenuItem get() = CheckMenuItem().configure(this)
+val Fx.toggleButton get() = ToggleButton().configure(this)
