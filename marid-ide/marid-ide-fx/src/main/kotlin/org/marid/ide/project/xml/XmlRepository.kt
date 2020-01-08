@@ -19,7 +19,7 @@ class XmlRepository private constructor(val id: String, name: String, type: Type
   constructor(element: Element) : this(
     id = element["id"],
     name = element["name"],
-    type = Type.valueOf(element["type"]),
+    type = element["type"].runCatching { Type.valueOf(this) }.getOrDefault(Type.UNKNOWN),
     url = element["url"],
     params = XmlStreams.elementsByTag(element, "params")
       .findFirst()
@@ -32,7 +32,7 @@ class XmlRepository private constructor(val id: String, name: String, type: Type
     name,
     type,
     url,
-    XmlEntries(*params.map { XmlEntry(it.key, it.value) }.toTypedArray())
+    XmlEntries(*params.map { (k, v) -> XmlEntry(k, v) }.toTypedArray())
   )
 
   fun writeTo(element: Element) {
@@ -43,6 +43,7 @@ class XmlRepository private constructor(val id: String, name: String, type: Type
   }
 
   enum class Type {
+    UNKNOWN,
     MAVEN
   }
 }
