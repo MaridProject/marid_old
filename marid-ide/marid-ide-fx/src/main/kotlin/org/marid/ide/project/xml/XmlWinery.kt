@@ -6,7 +6,6 @@ import org.marid.ide.project.model.CellarWrapper
 import org.marid.io.Xmls
 import org.marid.runtime.model.Winery
 import java.nio.file.Path
-import javax.xml.transform.stream.StreamResult
 
 class XmlWinery {
 
@@ -25,6 +24,6 @@ class XmlWinery {
   }
 
   fun save(path: Path) {
-    Xmls.writeFormatted("winery", winery::writeTo, StreamResult(path.toFile()))
+    Xmls.writeFormatted("winery", winery::writeTo, path)
   }
 }
