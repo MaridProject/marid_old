@@ -6,14 +6,13 @@ import org.marid.fx.i18n.localized
 import org.springframework.stereotype.Component
 
 @Component
-class DependenciesTab(contents: DependenciesTabContents) : Tab(null, contents) {
+class WineryTab(content: WineryTabContent) : Tab(null, content) {
   init {
+    textProperty().bind("Winery".localized)
     isClosable = false
-    textProperty().bind("Dependencies".localized)
   }
 }
 
 @Component
-class DependenciesTabContents : BorderPane() {
-
+class WineryTabContent : BorderPane() {
 }
