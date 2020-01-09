@@ -18,10 +18,12 @@ class ProjectsTabsCollector(private val tabs: ProjectTabs) {
   @Autowired
   private fun init(
     wineryTab: WineryTab,
+    repositoriesTab: RepositoriesTab,
     dependenciesTab: DependenciesTab
   ) {
     tabs.tabs += listOf(
       wineryTab,
+      repositoriesTab,
       dependenciesTab
     )
   }
