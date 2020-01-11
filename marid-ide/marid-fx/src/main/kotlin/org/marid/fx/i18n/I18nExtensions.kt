@@ -18,7 +18,7 @@ val String.localized: StringBinding
 
 fun String.localized(vararg args: Any): StringBinding {
   val observables = args.flatMap { if (it is Observable) listOf(it) else emptyList() }.toTypedArray()
-  return Bindings.createStringBinding(Callable{
+  return Bindings.createStringBinding(Callable {
     val bundle = I18n.textsBundle()
     val format = try {
       bundle.getString(this)

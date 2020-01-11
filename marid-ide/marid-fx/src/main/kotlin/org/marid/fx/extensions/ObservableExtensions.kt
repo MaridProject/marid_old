@@ -1,8 +1,10 @@
 package org.marid.fx.extensions
 
 import javafx.beans.Observable
-import javafx.beans.binding.*
+import javafx.beans.binding.Bindings
 import javafx.beans.binding.Bindings.*
+import javafx.beans.binding.StringExpression
+import javafx.beans.property.*
 import javafx.beans.value.ObservableIntegerValue
 import javafx.collections.ObservableList
 import java.util.*
@@ -42,3 +44,11 @@ val <E : CharSequence> ObservableList<E>.singleLined: ObservableList<E> get() = 
 
 fun String.bindFormat(vararg args: Any): StringExpression = Bindings.format(this, args)
 fun String.bindFormat(locale: Locale, vararg args: Any): StringExpression = Bindings.format(locale, this, args)
+
+val <T> T?.readOnlyProp get() = ReadOnlyObjectWrapper(this).readOnlyProperty
+val String?.readOnlyProp get() = ReadOnlyStringWrapper(this).readOnlyProperty
+val Long.readOnlyProp get() = ReadOnlyLongWrapper(this).readOnlyProperty
+val Int.readOnlyProp get() = ReadOnlyIntegerWrapper(this).readOnlyProperty
+val Double.readOnlyProp get() = ReadOnlyDoubleWrapper(this).readOnlyProperty
+val Float.readOnlyProp get() = ReadOnlyFloatWrapper(this).readOnlyProperty
+val Boolean.readOnlyProp get() = ReadOnlyBooleanWrapper(this).readOnlyProperty

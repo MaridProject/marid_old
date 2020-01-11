@@ -7,6 +7,8 @@ import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
 import org.marid.ide.project.xml.XmlRepositories
+import org.marid.ide.project.xml.XmlRepository
+import org.marid.ide.project.xml.XmlRepository.Type.MAVEN
 import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
@@ -17,24 +19,31 @@ class Project(val projects: Projects, val id: String) {
   val repositories = XmlRepositories()
   val observables = winery.observables + repositories.observables
 
-  private val directory = directories.projectsHome.resolve(id)
-  private val wineryFile = directory.resolve("winery.xml")
-  private val repositoriesFile = directory.resolve("repositories.xml")
-  private val resourcesDirectory = directory.resolve("resources")
-  private val classesDirectory = directory.resolve("classes")
-  private val depsDirectory = directory.resolve("deps")
+  val directory = directories.projectsHome.resolve(id)
+  val wineryFile = directory.resolve("winery.xml")
+  val repositoriesFile = directory.resolve("repositories.xml")
+  val resourcesDirectory = directory.resolve("resources")
+  val classesDirectory = directory.resolve("classes")
+  val depsDirectory = directory.resolve("deps")
+  val ivyDirectory = directory.resolve("ivy")
 
   init {
     val existing = Files.isDirectory(directory)
 
-    Files.createDirectories(resourcesDirectory)
-    Files.createDirectories(classesDirectory)
-    Files.createDirectories(depsDirectory)
-
     if (!existing) {
       winery.name.set("New project %d".localized(projects.items.size + 1).get())
     }
+
+    Files.createDirectories(resourcesDirectory)
+    Files.createDirectories(classesDirectory)
+    Files.createDirectories(depsDirectory)
+    Files.createDirectories(ivyDirectory)
+
     load()
+
+    if (repositories.items.isEmpty()) {
+      repositories.items += XmlRepository("default", MAVEN, "http://repo2.maven.org/maven2", emptyMap())
+    }
   }
 
   private fun load() {

@@ -7,4 +7,8 @@ open class ToolButton : Button {
   constructor(): super()
   constructor(text: String?): super(text)
   constructor(text: String?, graphic: Node?): super(text, graphic)
+
+  init {
+    isFocusTraversable = false
+  }
 }

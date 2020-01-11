@@ -19,7 +19,7 @@ class XmlRepository private constructor(val id: String, name: String, type: Type
   constructor(element: Element) : this(
     id = element["id"],
     name = element["name"],
-    type = element["type"].runCatching { Type.valueOf(this) }.getOrDefault(Type.UNKNOWN),
+    type = element["type"].runCatching { Type.valueOf(this) }.getOrDefault(Type.MAVEN),
     url = element["url"],
     params = XmlStreams.elementsByTag(element, "params")
       .findFirst()
@@ -43,7 +43,6 @@ class XmlRepository private constructor(val id: String, name: String, type: Type
   }
 
   enum class Type {
-    UNKNOWN,
     MAVEN
   }
 }
