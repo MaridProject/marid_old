@@ -40,12 +40,6 @@ class RepositoriesTabContents(projectFactory: ObjectFactory<Project>) : BorderPa
         textProperty().bind("Name".localized)
         cellValueFactory = Callback { it.value.name }
       },
-      TableColumn<XmlRepository, XmlRepository.Type>().apply {
-        minWidth = 80.0; prefWidth = 80.0; maxWidth = 128.0
-        textProperty().bind("Type".localized)
-        cellValueFactory = Callback { it.value.type }
-        style = "-fx-alignment: CENTER;"
-      },
       TableColumn<XmlRepository, String>("URL").apply {
         minWidth = 200.0; prefWidth = 250.0; maxWidth = 1200.0
         cellValueFactory = Callback { it.value.url }

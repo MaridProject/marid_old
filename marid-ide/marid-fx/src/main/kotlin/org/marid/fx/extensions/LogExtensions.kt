@@ -21,7 +21,7 @@ inline val Level.color: Color
 
 inline val Any.logger: Logger get() = Logger.getLogger(javaClass.name)
 
-fun Logger.log(level: Level, msg: String, exception: Throwable, vararg args: Any) =
+fun Logger.log(level: Level, msg: String?, exception: Throwable, vararg args: Any?) =
   logger.log(LogRecord(level, msg).apply {
     loggerName = logger.name
     thrown = exception
@@ -30,7 +30,7 @@ fun Logger.log(level: Level, msg: String, exception: Throwable, vararg args: Any
     sourceMethodName = null
   })
 
-fun Logger.log(level: Level, msg: String, vararg args: Any) =
+fun Logger.log(level: Level, msg: String?, vararg args: Any?) =
   logger.log(LogRecord(level, msg).apply {
     loggerName = logger.name
     parameters = args
@@ -39,18 +39,18 @@ fun Logger.log(level: Level, msg: String, vararg args: Any) =
   })
 
 
-fun Logger.fnt(msg: String, exception: Throwable, vararg args: Any) = log(Level.FINEST, msg, exception, args)
-fun Logger.fnr(msg: String, exception: Throwable, vararg args: Any) = log(Level.FINER, msg, exception, args)
-fun Logger.fin(msg: String, exception: Throwable, vararg args: Any) = log(Level.FINE, msg, exception, args)
-fun Logger.cfg(msg: String, exception: Throwable, vararg args: Any) = log(Level.CONFIG, msg, exception, args)
-fun Logger.inf(msg: String, exception: Throwable, vararg args: Any) = log(Level.INFO, msg, exception, args)
-fun Logger.wrn(msg: String, exception: Throwable, vararg args: Any) = log(Level.WARNING, msg, exception, args)
-fun Logger.err(msg: String, exception: Throwable, vararg args: Any) = log(Level.SEVERE, msg, exception, args)
+fun Logger.fnt(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.FINEST, msg, exception, args)
+fun Logger.fnr(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.FINER, msg, exception, args)
+fun Logger.fin(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.FINE, msg, exception, args)
+fun Logger.cfg(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.CONFIG, msg, exception, args)
+fun Logger.inf(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.INFO, msg, exception, args)
+fun Logger.wrn(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.WARNING, msg, exception, args)
+fun Logger.err(msg: String?, exception: Throwable, vararg args: Any?) = log(Level.SEVERE, msg, exception, args)
 
-fun Logger.fnt(msg: String, vararg args: Any) = log(Level.FINEST, msg, args)
-fun Logger.fnr(msg: String, vararg args: Any) = log(Level.FINER, msg, args)
-fun Logger.fin(msg: String, vararg args: Any) = log(Level.FINE, msg, args)
-fun Logger.cfg(msg: String, vararg args: Any) = log(Level.CONFIG, msg, args)
-fun Logger.inf(msg: String, vararg args: Any) = log(Level.INFO, msg, args)
-fun Logger.wrn(msg: String, vararg args: Any) = log(Level.WARNING, msg, args)
-fun Logger.err(msg: String, vararg args: Any) = log(Level.SEVERE, msg, args)
+fun Logger.fnt(msg: String?, vararg args: Any?) = log(Level.FINEST, msg, args)
+fun Logger.fnr(msg: String?, vararg args: Any?) = log(Level.FINER, msg, args)
+fun Logger.fin(msg: String?, vararg args: Any?) = log(Level.FINE, msg, args)
+fun Logger.cfg(msg: String?, vararg args: Any?) = log(Level.CONFIG, msg, args)
+fun Logger.inf(msg: String?, vararg args: Any?) = log(Level.INFO, msg, args)
+fun Logger.wrn(msg: String?, vararg args: Any?) = log(Level.WARNING, msg, args)
+fun Logger.err(msg: String?, vararg args: Any?) = log(Level.SEVERE, msg, args)
