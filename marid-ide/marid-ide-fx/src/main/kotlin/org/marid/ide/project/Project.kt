@@ -120,6 +120,10 @@ class Project(val projects: Projects, val id: String) {
     }
   }
 
+  fun clean() {
+    invoke { ivy.resolutionCacheManager.clean() }
+  }
+
   operator fun <R> invoke(callback: (Ivy) -> R): R {
     ivy.pushContext()
     try {
