@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane
 import javafx.util.Callback
 import org.marid.fx.action.Fx
 import org.marid.fx.action.configure
-import org.marid.fx.extensions.readOnlyProp
 import org.marid.fx.i18n.localized
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
@@ -31,12 +30,6 @@ class RepositoriesTabContents(projectFactory: ObjectFactory<Project>) : BorderPa
   private val toolbar = ToolBar()
   private val list = TableView(project.repositories.items).apply {
     columns += listOf(
-      TableColumn<XmlRepository, String>().apply {
-        minWidth = 300.0; prefWidth = 300.0; maxWidth = 360.0
-        textProperty().bind("Id".localized)
-        cellValueFactory = Callback { it.value.id.readOnlyProp }
-        style = "-fx-font-family: monospaced"
-      },
       TableColumn<XmlRepository, String>().apply {
         minWidth = 128.0; prefWidth = 160.0; maxWidth = 200.0
         textProperty().bind("Name".localized)

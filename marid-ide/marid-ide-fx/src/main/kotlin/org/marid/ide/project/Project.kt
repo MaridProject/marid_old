@@ -51,7 +51,7 @@ class Project(val projects: Projects, val id: String) {
     load()
 
     if (repositories.items.isEmpty()) {
-      repositories.items += XmlRepository("default", "http://repo2.maven.org/maven2/", emptyMap())
+      repositories.items += XmlRepository("default", "http://repo2.maven.org/maven2/")
     }
   }
 
