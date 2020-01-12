@@ -56,9 +56,11 @@ class Project(val projects: Projects, val id: String) {
   }
 
   val ivyMessageLogger = IdeMessageLogger(Logger.getLogger(id))
+
   private val dependencyResolver = ChainResolver().apply {
     name = "default"
   }
+
   private val ivySettings = IvySettings().apply {
     baseDir = ivyDirectory.toFile()
     defaultCache = ivyCacheDirectory.toFile()
@@ -66,6 +68,7 @@ class Project(val projects: Projects, val id: String) {
     addResolver(dependencyResolver)
     setDefaultResolver("default")
   }
+
   private val ivy: Ivy = Ivy.newInstance(ivySettings).apply {
     loggerEngine.setDefaultLogger(ivyMessageLogger)
   }

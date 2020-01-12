@@ -44,7 +44,7 @@ fun <M : Menu> M.configure(action: Fx, size: Int = 20): M = this
   .apply { textProperty().bind(action.text) }
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
 
-fun <T : Tab> T.configure(action: Fx, size: Int = 20): T = this
+fun <T : Tab> T.configure(action: Fx, size: Int = 18): T = this
   .apply { textProperty().bind(action.text) }
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
   .apply { tooltipProperty().bind(action.description.mapObject { it?.let(::Tooltip) }) }

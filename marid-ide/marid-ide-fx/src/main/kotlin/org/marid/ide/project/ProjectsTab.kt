@@ -9,6 +9,7 @@ import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Region
 import javafx.util.Callback
 import org.marid.fx.action.Fx
+import org.marid.fx.action.configure
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
 import org.marid.fx.extensions.readOnlyProp
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component
 @Component
 class ProjectsTab(contents: ProjectsTabContents) : Tab(null, contents) {
   init {
-    textProperty().bind("Projects".localized)
+    configure(Fx("Projects", "icons/project.png"))
     isClosable = false
   }
 }

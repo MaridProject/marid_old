@@ -1,7 +1,8 @@
 package org.marid.ide.child.project
 
 import javafx.scene.control.Tab
-import javafx.scene.image.ImageView
+import org.marid.fx.action.Fx
+import org.marid.fx.action.configure
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeTabs
 import org.marid.ide.project.Project
@@ -19,8 +20,7 @@ class ProjectTab(tabs: ProjectTabs, project: ObjectFactory<Project>) : Tab(null,
 
   init {
     id = this.project.id
-    textProperty().bind(this.project.winery.name)
-    graphic = ImageView("icons/project.png")
+    configure(Fx(icon = "icons/project.png").text(this.project.winery.name))
     isClosable = true
   }
 

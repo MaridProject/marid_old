@@ -6,6 +6,8 @@ import javafx.scene.control.TableView
 import javafx.scene.control.ToolBar
 import javafx.scene.layout.BorderPane
 import javafx.util.Callback
+import org.marid.fx.action.Fx
+import org.marid.fx.action.configure
 import org.marid.fx.extensions.readOnlyProp
 import org.marid.fx.i18n.localized
 import org.marid.ide.extensions.bean
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component
 class RepositoriesTab(contents: RepositoriesTabContents) : Tab(null, contents) {
   init {
     isClosable = false
-    textProperty().bind("Repositories".localized)
+    configure(Fx(text = "Repositories", icon = "icons/repository.png"))
   }
 }
 
