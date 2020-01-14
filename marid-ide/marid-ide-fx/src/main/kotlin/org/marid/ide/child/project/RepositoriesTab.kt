@@ -9,7 +9,6 @@ import org.marid.fx.action.configure
 import org.marid.fx.extensions.column
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
-import org.marid.ide.project.xml.XmlRepository
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
@@ -27,8 +26,8 @@ class RepositoriesTabContents(projectFactory: ObjectFactory<Project>) : BorderPa
   private val project = projectFactory.bean
   private val toolbar = ToolBar()
   private val list = TableView(project.repositories.items).apply {
-    column<XmlRepository, String>(160, "Name") { it.value.name }
-    column<XmlRepository, String>(250, "URL") { it.value.url }
+    column(160, "Name") { it.name }
+    column(250, "URL") { it.url }
     columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
   }
 
