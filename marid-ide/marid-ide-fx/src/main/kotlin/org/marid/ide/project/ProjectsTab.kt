@@ -43,9 +43,9 @@ class ProjectsTabContents(
     columns += listOf(
       TableColumn<Project, String>().apply {
         textProperty().bind("Id".localized)
-        minWidth = 300.0; prefWidth = 300.0; maxWidth = 360.0
+        minWidth = 128.0; prefWidth = 160.0; maxWidth = 200.0
         cellValueFactory = Callback { it.value.id.readOnlyProp }
-        style = "-fx-alignment: CENTER-LEFT; -fx-font-family: monospaced"
+        style = "-fx-alignment: CENTER; -fx-font-family: monospaced"
       },
       TableColumn<Project, String>().apply {
         textProperty().bind("Name".localized)

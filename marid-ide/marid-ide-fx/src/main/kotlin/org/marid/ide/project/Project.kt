@@ -13,6 +13,7 @@ import org.marid.fx.i18n.localized
 import org.marid.ide.log.IdeMessageLogger
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
+import org.marid.ide.project.xml.XmlDependencies
 import org.marid.ide.project.xml.XmlRepositories
 import org.marid.ide.project.xml.XmlRepository
 import org.marid.ide.project.xml.XmlWinery
@@ -23,13 +24,17 @@ import java.util.logging.Logger
 
 class Project(val projects: Projects, val id: String) {
 
+  constructor(projects: Projects): this(projects, System.currentTimeMillis().toString(Character.MAX_RADIX))
+
   val winery = XmlWinery()
   val repositories = XmlRepositories()
-  val observables = winery.observables + repositories.observables
+  val dependencies = XmlDependencies()
+  val observables = winery.observables + repositories.observables + dependencies.observables
 
   val directory = directories.projectsHome.resolve(id)
   val wineryFile = directory.resolve("winery.xml")
   val repositoriesFile = directory.resolve("repositories.xml")
+  val dependenciesFile = directory.resolve("dependencies.xml")
   val resourcesDirectory = directory.resolve("resources")
   val classesDirectory = directory.resolve("classes")
   val depsDirectory = directory.resolve("deps")
@@ -52,6 +57,10 @@ class Project(val projects: Projects, val id: String) {
 
     if (repositories.items.isEmpty()) {
       repositories.items += XmlRepository("default", "http://repo2.maven.org/maven2/")
+    }
+
+    if (!existing) {
+      save()
     }
   }
 
@@ -107,11 +116,13 @@ class Project(val projects: Projects, val id: String) {
   private fun load() {
     if (Files.isRegularFile(wineryFile)) winery.load(wineryFile)
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
+    if (Files.isRegularFile(dependenciesFile)) dependencies.load(dependenciesFile)
   }
 
   fun save() {
     winery.save(wineryFile)
     repositories.save(repositoriesFile)
+    dependencies.save(dependenciesFile)
   }
 
   fun delete() {

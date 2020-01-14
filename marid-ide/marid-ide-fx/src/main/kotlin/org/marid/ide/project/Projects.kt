@@ -5,7 +5,6 @@ import javafx.collections.ObservableList
 import org.marid.ide.common.Directories
 import org.springframework.stereotype.Component
 import java.nio.file.Files
-import java.util.*
 
 @Component
 class Projects(private val directories: Directories) {
@@ -22,7 +21,7 @@ class Projects(private val directories: Directories) {
   }
 
   fun newProject(): Project {
-    val project = Project(this, UUID.randomUUID().toString())
+    val project = Project(this)
     _items.add(project)
     return project
   }

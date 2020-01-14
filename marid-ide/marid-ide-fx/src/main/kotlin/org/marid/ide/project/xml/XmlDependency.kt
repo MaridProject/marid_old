@@ -11,7 +11,7 @@ class XmlDependency private constructor(group: String, artifact: String, version
   val artifact = SimpleStringProperty(this, "artifact", artifact)
   val version = SimpleStringProperty(this, "version", version)
 
-  val observables = arrayOf(group, artifact, version)
+  val observables = arrayOf(this.group, this.artifact, this.version)
 
   constructor(element: Element) : this(
     group = element["group"],
