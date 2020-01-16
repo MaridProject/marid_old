@@ -1,5 +1,6 @@
 package org.marid.ide.child.project
 
+import javafx.scene.control.Separator
 import javafx.scene.control.Tab
 import javafx.scene.control.TableView
 import javafx.scene.control.ToolBar
@@ -22,15 +23,17 @@ class DependenciesTab(contents: DependenciesTabContents) : Tab(null, contents) {
 }
 
 @Component
-class DependenciesTabContents(projectFactory: ObjectFactory<Project>) : BorderPane() {
+class DependenciesTabContents(
+  projectFactory: ObjectFactory<Project>,
+  loadDefaultDependencies: Fx,
+  addDependency: Fx
+) : BorderPane() {
 
   private val project = projectFactory.bean
   private val toolbar = ToolBar(
-    Fx(
-      text = "Add standard libraries",
-      icon = "icons/standard.png",
-      handler = { project.dependencies.loadDefault() }
-    ).toolButton
+    loadDefaultDependencies.toolButton,
+    Separator(),
+    addDependency.toolButton
   )
   private val list = TableView(project.dependencies.items).apply {
     column(350, "group") { it.group }
