@@ -117,6 +117,10 @@ class Project(val projects: Projects, val id: String) {
     if (Files.isRegularFile(wineryFile)) winery.load(wineryFile)
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
     if (Files.isRegularFile(dependenciesFile)) dependencies.load(dependenciesFile)
+
+    if (dependencies.items.isEmpty()) {
+      dependencies.loadDefault()
+    }
   }
 
   fun save() {

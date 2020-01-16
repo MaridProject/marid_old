@@ -19,4 +19,17 @@ class XmlDependencies {
   fun save(path: Path) {
     Xmls.writeFormatted("dependencies", { e -> items.forEach { i -> e.child("dependency").also(i::writeTo) } }, path)
   }
+
+  fun loadDefault() {
+    items.removeIf { STANDARD_DEPS.any(it::matches) }
+    items.addAll(0, STANDARD_DEPS)
+  }
+
+  companion object {
+    val STANDARD_DEPS = listOf(
+      XmlDependency("org.marid", "marid-racks", "\${marid.version}"),
+      XmlDependency("org.marid", "marid-db", "\${marid.version}"),
+      XmlDependency("org.marid", "marid-proto", "\${marid.version}")
+    )
+  }
 }

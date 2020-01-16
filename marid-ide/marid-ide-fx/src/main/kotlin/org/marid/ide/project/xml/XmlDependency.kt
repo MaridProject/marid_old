@@ -5,7 +5,7 @@ import org.marid.fx.xml.get
 import org.marid.fx.xml.set
 import org.w3c.dom.Element
 
-class XmlDependency private constructor(group: String, artifact: String, version: String) {
+class XmlDependency(group: String, artifact: String, version: String) {
 
   val group = SimpleStringProperty(this, "group", group)
   val artifact = SimpleStringProperty(this, "artifact", artifact)
@@ -24,4 +24,6 @@ class XmlDependency private constructor(group: String, artifact: String, version
     element["artifact"] = artifact.get()
     element["version"] = version.get()
   }
+
+  fun matches(dep: XmlDependency): Boolean = dep.group.get() == group.get() && dep.artifact.get() == artifact.get()
 }
