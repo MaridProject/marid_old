@@ -42,8 +42,8 @@ val ObservableList<*>.bindNotEmpty: BBinding get() = isNotEmpty(this)
 val ObservableList<*>.bindSize: IBinding get() = size(this)
 val <E : CharSequence> ObservableList<E>.singleLined: ObservableList<E> get() = filtered { it.lines().size == 1 }
 
-fun String.bindFormat(vararg args: Any): StringExpression = Bindings.format(this, args)
-fun String.bindFormat(locale: Locale, vararg args: Any): StringExpression = Bindings.format(locale, this, args)
+fun String.bindFormat(vararg args: Any): StringExpression = Bindings.format(this, *args)
+fun String.bindFormat(locale: Locale, vararg args: Any): StringExpression = Bindings.format(locale, this, *args)
 
 val <T> T?.readOnlyProp get() = ReadOnlyObjectWrapper(this).readOnlyProperty
 val String?.readOnlyProp get() = ReadOnlyStringWrapper(this).readOnlyProperty
