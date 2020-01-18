@@ -27,4 +27,9 @@ class XmlDependency(group: String, artifact: String, version: String) {
 
   fun matches(dep: XmlDependency): Boolean = dep.group.get() == group.get() && dep.artifact.get() == artifact.get()
   val isBlank get() = group.get().isBlank() || artifact.get().isBlank() || version.get().isBlank()
+  fun copyFrom(dep: XmlDependency) {
+    group.set(dep.group.get())
+    artifact.set(dep.artifact.get())
+    version.set(dep.version.get())
+  }
 }
