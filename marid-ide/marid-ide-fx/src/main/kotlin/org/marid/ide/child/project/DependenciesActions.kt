@@ -32,6 +32,20 @@ class DependenciesActions(projectFactory: ObjectFactory<Project>) {
     icon = "icons/add.png",
     handler = { dialog.bean.showAndWait().ifPresent { project.dependencies.items += it } }
   )
+
+  @Bean fun sortDependencies() = Fx(
+    text = "Sort dependencies",
+    icon = "icons/sort.png",
+    handler = {
+      project.dependencies.items.sortWith(
+        compareBy(
+          { it.group.get() },
+          { it.artifact.get() },
+          { it.version.get() }
+        )
+      )
+    }
+  )
 }
 
 @PrototypeScoped

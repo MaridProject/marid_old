@@ -26,9 +26,10 @@ class DependenciesTab(contents: DependenciesTabContents) : Tab(null, contents) {
 @Component
 class DependenciesTabContents(
   projectFactory: ObjectFactory<Project>,
-  dependencyDialogFactory: ObjectFactory<DependencyDialog>,
+  private val dependencyDialogFactory: ObjectFactory<DependencyDialog>,
   loadDefaultDependencies: Fx,
-  addDependency: Fx
+  addDependency: Fx,
+  sortDependencies: Fx
 ) : BorderPane() {
 
   private val project = projectFactory.bean
@@ -43,19 +44,16 @@ class DependenciesTabContents(
         val menu = ContextMenu().also { contextMenu = it }
         addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
           menu.items.clear()
-          menu.items += addDependency.menuItem
+          menu.items += listOf(
+            addDependency.menuItem,
+            SeparatorMenuItem(),
+            sortDependencies.menuItem
+          )
           item?.also { curItem ->
-            menu.items += SeparatorMenuItem()
-            menu.items += Fx(
-              text = "Edit...",
-              icon = "icons/edit.png",
-              handler = {
-                dependencyDialogFactory.bean
-                  .init(curItem)
-                  .showAndWait()
-                  .ifPresent(curItem::copyFrom)
-              }
-            ).menuItem
+            menu.items += listOf(
+              SeparatorMenuItem(),
+              editFx(curItem).menuItem
+            )
           }
         }
       }
@@ -69,4 +67,10 @@ class DependenciesTabContents(
     top = toolbar
     center = list
   }
+
+  private fun editFx(dep: XmlDependency) = Fx(
+    text = "Edit...",
+    icon = "icons/edit.png",
+    handler = { dependencyDialogFactory.bean.init(dep).showAndWait().ifPresent(dep::copyFrom) }
+  )
 }
