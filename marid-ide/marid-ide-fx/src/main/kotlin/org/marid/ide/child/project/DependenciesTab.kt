@@ -66,8 +66,9 @@ class DependenciesTabContents(
 
   private val toolbar = ToolBar(
     loadDefaultDependencies.toolButton,
+    addDependency.toolButton,
     Separator(),
-    addDependency.toolButton
+    sortDependencies.toolButton
   )
 
   private val list = TableView(project.dependencies.items).apply {
