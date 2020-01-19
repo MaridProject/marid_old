@@ -6,6 +6,8 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.concurrent.Service
 import javafx.concurrent.Worker
+import javafx.concurrent.WorkerStateEvent
+import javafx.event.EventHandler
 import javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS
 import org.springframework.stereotype.Component
 import java.util.concurrent.Callable
@@ -40,7 +42,20 @@ class IdeServices {
   }
 
   fun remove(service: Service<*>) = if (service.isRunning) {
-    false
+    val eh = object : EventHandler<WorkerStateEvent> {
+      override fun handle(event: WorkerStateEvent?) {
+        services.remove(service)
+        service.removeEventHandler(WorkerStateEvent.WORKER_STATE_CANCELLED, this)
+        service.removeEventHandler(WorkerStateEvent.WORKER_STATE_FAILED, this)
+        service.removeEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, this)
+      }
+    }
+    service.addEventHandler(WorkerStateEvent.WORKER_STATE_CANCELLED, eh)
+    service.addEventHandler(WorkerStateEvent.WORKER_STATE_FAILED, eh)
+    service.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, eh)
+    service.cancel()
+    Thread.yield()
+    !service.isRunning
   } else {
     services.remove(service)
     true
