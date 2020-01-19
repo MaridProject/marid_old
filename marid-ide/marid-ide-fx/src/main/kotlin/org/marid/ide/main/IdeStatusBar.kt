@@ -23,18 +23,29 @@ class IdeStatusBar(
   }
 
   private val statusText = Label()
-    .also { children += it }
     .also { setHgrow(it, Priority.ALWAYS) }
-    .also { setMargin(it, Insets(5.0)) }
     .apply { maxWidth = Double.MAX_VALUE }
     .apply { textProperty().bind(ideLog.records.singleLined { it.message }.bindLast.mapString { it?.message }) }
     .apply { graphic = Circle(5.0).apply { fillProperty().bind(ideLog.lastLevel.map { it?.color }) } }
     .apply { graphicTextGap = 5.0 }
 
   private val progressBar = ProgressBar(0.0)
-    .also { children += it }
     .also { setHgrow(it, Priority.NEVER) }
-    .also { setMargin(it, Insets(5.0)) }
     .apply { minWidth = 100.0 }
     .apply { progressProperty().bind(ideServices.progress) }
+
+  private val servicesCountLabel = Label()
+    .also { setHgrow(it, Priority.NEVER) }
+    .apply { textProperty().bind("[%d]".bindFormat(ideServices.services.bindSize)) }
+
+  init {
+    children += listOf(
+      statusText,
+      progressBar,
+      servicesCountLabel
+    )
+    children.forEach {
+      setMargin(it, Insets(5.0))
+    }
+  }
 }
