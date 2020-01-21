@@ -2,6 +2,7 @@ package org.marid.ide.main
 
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
 import javafx.scene.layout.HBox
@@ -34,9 +35,10 @@ class IdeStatusBar(
     .apply { minWidth = 100.0 }
     .apply { progressProperty().bind(ideServices.progress) }
 
-  private val servicesCountLabel = Label()
+  private val servicesCountLabel = Button()
     .also { setHgrow(it, Priority.NEVER) }
-    .apply { textProperty().bind("[%d]".bindFormat(ideServices.services.bindSize)) }
+    .apply { textProperty().bind(ideServices.servicesText) }
+    .apply { disableProperty().bind(ideServices.services.bindEmpty) }
 
   init {
     children += listOf(
