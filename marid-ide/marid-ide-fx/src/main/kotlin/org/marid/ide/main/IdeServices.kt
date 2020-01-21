@@ -51,7 +51,7 @@ class IdeServices {
   fun remove(service: Service<*>) = if (service.isRunning) {
     val eh = object : EventHandler<WorkerStateEvent> {
       override fun handle(event: WorkerStateEvent?) {
-        services.remove(service)
+        servicesList.remove(service)
         service.removeEventHandler(WorkerStateEvent.WORKER_STATE_CANCELLED, this)
         service.removeEventHandler(WorkerStateEvent.WORKER_STATE_FAILED, this)
         service.removeEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, this)
@@ -64,8 +64,7 @@ class IdeServices {
     Thread.yield()
     !service.isRunning
   } else {
-    services.remove(service)
-    true
+    servicesList.remove(service)
   }
 
   private fun calcProgress(service: Service<*>): Double {
