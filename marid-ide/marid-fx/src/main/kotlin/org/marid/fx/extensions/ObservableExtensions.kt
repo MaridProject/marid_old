@@ -6,6 +6,7 @@ import javafx.beans.binding.Bindings.*
 import javafx.beans.binding.StringExpression
 import javafx.beans.property.*
 import javafx.beans.value.ObservableIntegerValue
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.util.*
 import javafx.beans.binding.Bindings.createBooleanBinding as bindBool
@@ -32,6 +33,7 @@ fun <O : Observable> O.intBnd(f: (O) -> Int): IBinding = bindInt(C { f(this) }, 
 fun <O : Observable> O.booleanBnd(f: (O) -> Boolean): BBinding = bindBool(C { f(this) }, this)
 fun <O : Observable> O.stringBnd(f: (O) -> String): SBinding = bindString(C { f(this) }, this)
 
+val <E> ObservableList<E>.unmodified: ObservableList<E> get() = FXCollections.unmodifiableObservableList(this)
 fun <E> ObservableList<E>.bindAt(index: Int): OBinding<E> = valueAt(this, index)
 fun <E> ObservableList<E>.bindAt(index: ObservableIntegerValue): OBinding<E> = valueAt(this, index)
 fun <E> ObservableList<E>.singleLined(text: (E) -> String): ObservableList<E> = filtered { text(it).lines().size == 1 }

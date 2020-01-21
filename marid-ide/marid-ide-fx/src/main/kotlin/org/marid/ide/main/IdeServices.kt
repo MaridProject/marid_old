@@ -3,7 +3,6 @@ package org.marid.ide.main
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.DoubleBinding
 import javafx.collections.FXCollections.observableArrayList
-import javafx.collections.FXCollections.unmodifiableObservableList
 import javafx.collections.ObservableList
 import javafx.concurrent.Service
 import javafx.concurrent.Worker
@@ -12,6 +11,7 @@ import javafx.event.EventHandler
 import javafx.scene.control.ProgressIndicator.INDETERMINATE_PROGRESS
 import org.marid.fx.extensions.bindFormat
 import org.marid.fx.extensions.bindSize
+import org.marid.fx.extensions.unmodified
 import org.springframework.stereotype.Component
 import java.util.concurrent.Callable
 
@@ -31,8 +31,8 @@ class IdeServices {
     )
   }
 
-  val services: ServiceList get() = unmodifiableObservableList(servicesList)
-  val runningServices: ServiceList get() = unmodifiableObservableList(servicesList.filtered { it.isRunning })
+  val services: ServiceList get() = servicesList.unmodified
+  val runningServices: ServiceList get() = servicesList.filtered { it.isRunning }.unmodified
   val servicesText = "[%d / %d]".bindFormat(runningServices.bindSize, services.bindSize)
 
   val progress: DoubleBinding = Bindings.createDoubleBinding(Callable {
