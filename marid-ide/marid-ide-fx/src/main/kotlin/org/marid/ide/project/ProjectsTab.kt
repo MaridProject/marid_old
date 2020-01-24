@@ -12,8 +12,9 @@ import org.marid.fx.action.Fx
 import org.marid.fx.action.configure
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
+import org.marid.fx.extensions.column
+import org.marid.fx.extensions.installEdit
 import org.marid.fx.extensions.readOnlyProp
-import org.marid.fx.i18n.localized
 import org.springframework.stereotype.Component
 
 @Component
@@ -30,45 +31,37 @@ class ProjectsTabContents(
   private val projectTabsManager: ProjectTabsManager
 ) : BorderPane() {
 
-  private val projectList = TableView(projects.items).apply {
-    rowFactory = Callback {
-      TableRow<Project>().apply {
-        contextMenu = ContextMenu()
-        addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
-          contextMenu.items.clear()
-          item?.apply { contextMenu.items += menuItems }
+  private val projectList = TableView(projects.items)
+    .apply {
+      rowFactory = Callback {
+        TableRow<Project>().apply {
+          contextMenu = ContextMenu()
+          addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
+            contextMenu.items.clear()
+            item?.apply { contextMenu.items += menuItems }
+          }
         }
       }
     }
-    columns += listOf(
-      TableColumn<Project, String>().apply {
-        textProperty().bind("Id".localized)
-        minWidth = 128.0; prefWidth = 160.0; maxWidth = 200.0
-        cellValueFactory = Callback { it.value.id.readOnlyProp }
-        style = "-fx-alignment: CENTER; -fx-font-family: monospaced"
-      },
-      TableColumn<Project, String>().apply {
-        textProperty().bind("Name".localized)
-        minWidth = 200.0; prefWidth = 300.0; maxWidth = 500.0
-        cellValueFactory = Callback { it.value.winery.name }
-        style = "-fx-alignment: CENTER-LEFT;"
-      },
-      TableColumn<Project, FlowPane>().apply {
-        textProperty().bind("Actions".localized)
-        minWidth = 300.0; prefWidth = 300.0; maxWidth = 400.0
-        cellValueFactory = Callback {
-          val buttons = it.value.actions.map(Fx::toolButton).toTypedArray()
-          SimpleObjectProperty(
-            FlowPane(3.0, 0.0, *buttons).apply {
-              prefWrapLength = Double.MAX_VALUE
-              alignment = Pos.BASELINE_CENTER
-              prefHeight = Region.USE_PREF_SIZE
-            }
-          )
-        }
+    .apply {
+      column(160, "Id") { it.id.readOnlyProp }.also { it.style = "-fx-alignment: CENTER; -fx-font-family: monospaced" }
+      column(300, "Name") { it.winery.name }.also { it.style = "-fx-alignment: CENTER-LEFT;" }
+      column(300, "Actions") {
+        val buttons = it.actions.map(Fx::toolButton).toTypedArray()
+        SimpleObjectProperty(
+          FlowPane(3.0, 0.0, *buttons).apply {
+            prefWrapLength = Double.MAX_VALUE
+            alignment = Pos.BASELINE_CENTER
+            prefHeight = Region.USE_PREF_SIZE
+          }
+        )
       }
-    )
-  }
+    }
+    .apply {
+      installEdit { items ->
+        items.forEach { projectTabsManager.addProject(it) }
+      }
+    }
 
   init {
     center = projectList

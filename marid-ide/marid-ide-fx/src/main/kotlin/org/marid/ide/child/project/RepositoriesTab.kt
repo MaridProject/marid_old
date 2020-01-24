@@ -37,12 +37,8 @@ class RepositoriesTabContents(projectFactory: ObjectFactory<Project>) : BorderPa
     }
     column(250, "URL") { it.url }
     columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
-    rowFactory = Callback { v ->
-      TableRow<XmlRepository>().apply {
-        addEventFilter(EventType.ROOT) { ev ->
-          println(ev)
-        }
-      }
+    rowFactory = Callback {
+      TableRow<XmlRepository>()
     }
   }
 
