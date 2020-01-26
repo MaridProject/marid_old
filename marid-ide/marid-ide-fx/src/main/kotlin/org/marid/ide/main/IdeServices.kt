@@ -37,8 +37,9 @@ class IdeServices {
   val servicesText = "[%d / %d]".bindFormat(runningServices.bindSize, services.bindSize)
 
   val progress: DoubleBinding = Bindings.createDoubleBinding(Callable {
-    val progresses = runningServices.map(this::calcProgress)
-    if (progresses.contains(INDETERMINATE_PROGRESS)) INDETERMINATE_PROGRESS else progresses.average()
+    runningServices.map(this::calcProgress).run {
+      if (contains(INDETERMINATE_PROGRESS)) INDETERMINATE_PROGRESS else average()
+    }
   }, runningServices)
 
   fun add(service: Service<*>) = if (service.state == Worker.State.READY) {
