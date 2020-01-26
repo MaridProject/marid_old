@@ -1,11 +1,10 @@
 package org.marid.ide.child.project
 
 import javafx.application.Platform
-import javafx.beans.WeakInvalidationListener
+import javafx.beans.InvalidationListener
 import javafx.concurrent.Service
 import javafx.concurrent.Task
 import javafx.concurrent.Worker.State.*
-import org.marid.fx.extensions.inf
 import org.marid.fx.extensions.logger
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeServices
@@ -22,7 +21,7 @@ class ProjectBuildService(
 ) : Service<Unit>() {
 
   private val project = projectFactory.bean
-  private val projectInvalidationListener = WeakInvalidationListener { invalidated() }
+  private val projectInvalidationListener = InvalidationListener { invalidated() }
   private var dirty = false
 
   override fun createTask(): Task<Unit> {
@@ -56,7 +55,6 @@ class ProjectBuildService(
   }
 
   private fun invalidated() {
-    project.logger.inf("Changed")
     if (isRunning) {
       dirty = true
     } else {
