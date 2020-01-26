@@ -63,4 +63,8 @@ class Fx private constructor(
   fun selected(selected: Property<Boolean?>) = also { this.selected.bindBidirectional(selected) }
 
   val isEmpty get() = sequenceOf(text, icon).all { it.value == null }
+
+  operator fun invoke() {
+    handler.get()?.handle(ActionEvent())
+  }
 }

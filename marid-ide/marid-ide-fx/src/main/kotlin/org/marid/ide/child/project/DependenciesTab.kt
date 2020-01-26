@@ -9,6 +9,7 @@ import org.marid.fx.action.configure
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
 import org.marid.fx.extensions.column
+import org.marid.fx.extensions.installEdit
 import org.marid.fx.extensions.readOnlyProp
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
@@ -71,30 +72,39 @@ class DependenciesTabContents(
     sortDependencies.toolButton
   )
 
-  private val list = TableView(project.dependencies.items).apply {
-    rowFactory = Callback {
-      TableRow<XmlDependency>().apply {
-        val menu = ContextMenu().also { contextMenu = it }
-        addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
-          menu.items.clear()
-          menu.items += listOf(
-            addDependency.menuItem,
-            SeparatorMenuItem(),
-            sortDependencies.menuItem
-          )
-          item?.also { curItem ->
-            menu.items += listOf(
-              SeparatorMenuItem(),
-              editFx(curItem).menuItem
-            )
+  private val list = TableView(project.dependencies.items)
+    .apply {
+      column(350, "group".readOnlyProp) { it.group }
+      column(300, "artifact".readOnlyProp) { it.artifact }
+      column(200, "version".readOnlyProp) { it.version }
+    }
+    .apply {
+      rowFactory = Callback {
+        TableRow<XmlDependency>()
+          .apply {
+            val menu = ContextMenu().also { contextMenu = it }
+            addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
+              menu.items.clear()
+              menu.items += listOf(
+                addDependency.menuItem,
+                SeparatorMenuItem(),
+                sortDependencies.menuItem
+              )
+              item?.also { curItem ->
+                menu.items += listOf(
+                  SeparatorMenuItem(),
+                  editFx(curItem).menuItem
+                )
+              }
+            }
           }
-        }
       }
     }
-    column(350, "group".readOnlyProp) { it.group }
-    column(300, "artifact".readOnlyProp) { it.artifact }
-    column(200, "version".readOnlyProp) { it.version }
-  }
+    .apply {
+      installEdit {  deps ->
+        deps.forEach { dep -> editFx(dep)() }
+      }
+    }
 
   init {
     top = toolbar

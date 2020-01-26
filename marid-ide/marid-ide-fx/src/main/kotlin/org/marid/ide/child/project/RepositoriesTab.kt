@@ -1,6 +1,5 @@
 package org.marid.ide.child.project
 
-import javafx.event.EventType
 import javafx.scene.control.Tab
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
@@ -29,18 +28,17 @@ class RepositoriesTabContents(projectFactory: ObjectFactory<Project>) : BorderPa
 
   private val project = projectFactory.bean
   private val toolbar = ToolBar()
-  private val list = TableView(project.repositories.items).apply {
-    column(160, "Name") { it.name }.apply {
-      addEventFilter(EventType.ROOT) { ev ->
-        println(ev)
+  private val list = TableView(project.repositories.items)
+    .apply {
+      column(160, "Name") { it.name }
+      column(250, "URL") { it.url }
+    }
+    .apply { columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY }
+    .apply {
+      rowFactory = Callback {
+        TableRow<XmlRepository>()
       }
     }
-    column(250, "URL") { it.url }
-    columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
-    rowFactory = Callback {
-      TableRow<XmlRepository>()
-    }
-  }
 
   init {
     top = toolbar

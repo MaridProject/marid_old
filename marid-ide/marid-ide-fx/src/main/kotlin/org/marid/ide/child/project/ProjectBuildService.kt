@@ -56,6 +56,7 @@ class ProjectBuildService(
   }
 
   private fun invalidated() {
+    project.logger.inf("Changed")
     if (isRunning) {
       dirty = true
     } else {
