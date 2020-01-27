@@ -2,6 +2,9 @@ package org.marid.ide.project
 
 import javafx.beans.InvalidationListener
 import org.apache.ivy.Ivy
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor
+import org.apache.ivy.core.module.id.ModuleRevisionId
+import org.apache.ivy.core.resolve.ResolveOptions
 import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.FileSystemResolver
@@ -20,16 +23,28 @@ import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 class Project(val projects: Projects, val id: String) {
 
-  constructor(projects: Projects): this(projects, System.currentTimeMillis().toString(Character.MAX_RADIX))
+  constructor(projects: Projects) : this(projects, System.currentTimeMillis().toString(Character.MAX_RADIX))
 
   val winery = XmlWinery()
   val repositories = XmlRepositories()
   val dependencies = XmlDependencies()
   val observables = winery.observables + repositories.observables + dependencies.observables
+  val resolveOptions = ResolveOptions()
+  val moduleDescriptor
+    get() = DefaultModuleDescriptor.newDefaultInstance(
+      ModuleRevisionId.newInstance(
+        winery.group.get(),
+        winery.name.get(),
+        winery.version.get()
+      )
+    )
 
   val directory = directories.projectsHome.resolve(id)
   val wineryFile = directory.resolve("winery.xml")
@@ -40,6 +55,8 @@ class Project(val projects: Projects, val id: String) {
   val depsDirectory = directory.resolve("deps")
   val ivyDirectory = directory.resolve("ivy")
   val ivyCacheDirectory = ivyDirectory.resolve("cache")
+
+  private val lock = ReentrantReadWriteLock()
 
   init {
     val existing = Files.isDirectory(directory)
@@ -66,9 +83,8 @@ class Project(val projects: Projects, val id: String) {
 
   val ivyMessageLogger = IdeMessageLogger(Logger.getLogger(id))
 
-  private val dependencyResolver = ChainResolver().apply {
-    name = "default"
-  }
+  private val dependencyResolver = ChainResolver()
+    .apply { name = "default" }
 
   private val ivySettings = IvySettings().apply {
     baseDir = ivyDirectory.toFile()
@@ -139,17 +155,19 @@ class Project(val projects: Projects, val id: String) {
   }
 
   fun clean() {
-    invoke { ivy.resolutionCacheManager.clean() }
+    withIvy { ivy.resolutionCacheManager.clean() }
   }
 
-  operator fun <R> invoke(callback: (Ivy) -> R): R {
+  fun <R> withIvy(callback: Project.(Ivy) -> R): R = lock.write {
     ivy.pushContext()
     try {
-      return callback(ivy)
+      callback(this, ivy)
     } finally {
       ivy.popContext()
     }
   }
+
+  operator fun <R> invoke(callback: Project.() -> R): R = lock.read { callback(this) }
 
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id

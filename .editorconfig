@@ -25,6 +25,9 @@ ij_java_blank_lines_around_field_in_interface = 0
 ij_java_blank_lines_after_anonymous_class_header = 0
 ij_java_blank_lines_around_field = 0
 ij_java_blank_lines_before_method_body = 0
+ij_java_method_annotation_wrap = off
+ij_java_keep_multiple_expressions_in_one_line = true
+ij_java_spaces_within_braces = true
 
 [*.scala]
 indent_size = 2

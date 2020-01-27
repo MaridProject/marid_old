@@ -10,12 +10,12 @@ package org.marid.runtime.model;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -36,16 +36,22 @@ import java.util.stream.Collectors;
 public final class Winery extends AbstractEntity {
 
   private final ArrayList<Cellar> cellars;
+  private String group;
   private String name;
+  private String version;
 
-  public Winery(@NotNull String name) {
+  public Winery(@NotNull String group, @NotNull String name, @NotNull String version) {
+    this.group = group;
     this.name = name;
+    this.version = version;
     this.cellars = new ArrayList<>();
   }
 
   public Winery(@NotNull Element element) {
     super(element);
+    this.group = element.getAttribute("group");
     this.name = element.getAttribute("name");
+    this.version = element.getAttribute("version");
     this.cellars = XmlStreams.children(element, Cellar::new).collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -74,20 +80,18 @@ public final class Winery extends AbstractEntity {
 
   @Override
   public void writeTo(@NotNull Element element) {
+    element.setAttribute("group", group);
     element.setAttribute("name", name);
+    element.setAttribute("version", version);
     cellars.forEach(c -> XmlUtils.appendTo(c, element));
   }
 
-  @NotNull
-  public String getName() {
-    return name;
-  }
-
-  @NotNull
-  public Winery setName(String name) {
-    this.name = name;
-    return this;
-  }
+  @NotNull public String getGroup() { return group; }
+  @NotNull public Winery setGroup(String group) { this.group = group; return this; }
+  @NotNull public String getName() { return name; }
+  @NotNull public Winery setName(String name) { this.name = name; return this; }
+  @NotNull public String getVersion() { return version; }
+  @NotNull public Winery setVersion(String version) { this.version = version; return this; }
 
   @NotNull
   @Override
@@ -97,7 +101,7 @@ public final class Winery extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, cellars);
+    return Objects.hash(group, name, version, cellars);
   }
 
   @Override
@@ -108,7 +112,9 @@ public final class Winery extends AbstractEntity {
     if (obj instanceof Winery) {
       final var that = (Winery) obj;
 
-      return Objects.equals(this.name, that.name)
+      return Objects.equals(this.group, that.group)
+          && Objects.equals(this.name, that.name)
+          && Objects.equals(this.version, that.version)
           && Objects.equals(this.cellars, that.cellars);
     }
     return false;
