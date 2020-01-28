@@ -5,6 +5,7 @@ import org.apache.ivy.Ivy
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor
 import org.apache.ivy.core.module.id.ModuleRevisionId
 import org.apache.ivy.core.resolve.ResolveOptions
+import org.apache.ivy.core.retrieve.RetrieveOptions
 import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.FileSystemResolver
@@ -37,6 +38,9 @@ class Project(val projects: Projects, val id: String) {
   val dependencies = XmlDependencies()
   val observables = winery.observables + repositories.observables + dependencies.observables
   val resolveOptions = ResolveOptions()
+  val retrieveOptions = RetrieveOptions()
+    .apply { confs = arrayOf("default") }
+    .apply { destArtifactPattern = "[artifact](-[classifier]).[ext]" }
   val moduleDescriptor
     get() = DefaultModuleDescriptor.newDefaultInstance(
       ModuleRevisionId.newInstance(
@@ -94,9 +98,10 @@ class Project(val projects: Projects, val id: String) {
     setDefaultResolver("default")
   }
 
-  private val ivy: Ivy = Ivy.newInstance(ivySettings).apply {
-    loggerEngine.setDefaultLogger(ivyMessageLogger)
-  }
+  private val ivy: Ivy = Ivy.newInstance(ivySettings)
+    .apply {
+      loggerEngine.setDefaultLogger(ivyMessageLogger)
+    }
 
   init {
     refreshRepos()

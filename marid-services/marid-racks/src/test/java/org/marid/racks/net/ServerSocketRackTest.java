@@ -10,12 +10,12 @@ package org.marid.racks.net;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -43,29 +43,29 @@ class ServerSocketRackTest {
   @Test
   void constructor() throws Exception {
     final int inputBufferSize = 100_001;
-    final var winery = new Winery("test")
-        .addCellar(
-            new Cellar("cellar1")
-              .addRack(
-                  new Rack("serverSocket1", ServerSocketRack.class.getName())
-                    .addArguments(
-                        new ArgumentLiteral(INT, "0"),
-                        new ArgumentLiteral(INT, "10"),
-                        new ArgumentNull()
-                    )
-                    .addInputs(
-                        new Input("inputBufferSize", new ArgumentLiteral(INT, Integer.toString(inputBufferSize)))
-                    )
+    final var winery = new Winery("g", "test", "1.0")
+      .addCellar(
+        new Cellar("cellar1")
+          .addRack(
+            new Rack("serverSocket1", ServerSocketRack.class.getName())
+              .addArguments(
+                new ArgumentLiteral(INT, "0"),
+                new ArgumentLiteral(INT, "10"),
+                new ArgumentNull()
               )
-            .addRack(
-                new Rack("serverSocket2", ServerSocketRack.class.getName())
-                    .addArguments(
-                        new ArgumentLiteral(INT, "0"),
-                        new ArgumentLiteral(INT, "11"),
-                        new ArgumentNull()
-                    )
-            )
-        );
+              .addInputs(
+                new Input("inputBufferSize", new ArgumentLiteral(INT, Integer.toString(inputBufferSize)))
+              )
+          )
+          .addRack(
+            new Rack("serverSocket2", ServerSocketRack.class.getName())
+              .addArguments(
+                new ArgumentLiteral(INT, "0"),
+                new ArgumentLiteral(INT, "11"),
+                new ArgumentNull()
+              )
+          )
+      );
     try (final var runtime = new WineryRuntime(winery)) {
       runtime.start();
 

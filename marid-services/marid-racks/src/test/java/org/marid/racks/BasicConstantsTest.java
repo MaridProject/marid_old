@@ -40,7 +40,7 @@ class BasicConstantsTest {
 
   @Test
   void simple() throws Exception {
-    final var winery = new Winery("testWinery")
+    final var winery = new Winery("g", "testWinery", "1.0")
         .addCellar(new Cellar("testCellar1")
             .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
                 .addArg(new ArgumentLiteral(BYTE, "12"))
@@ -62,7 +62,7 @@ class BasicConstantsTest {
 
   @Test
   void refs() throws Exception {
-    final var winery = new Winery("testWinery")
+    final var winery = new Winery("g", "testWinery", "1.0")
         .addCellar(new Cellar("testCellar1")
             .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
                 .addArg(new ArgumentLiteral(BYTE, "12"))

@@ -12,7 +12,7 @@ tab_width = 4
 [*.java]
 indent_size = 2
 tab_width = 2
-ij_continuation_indent_size = 4
+ij_continuation_indent_size = 2
 ij_java_keep_simple_blocks_in_one_line = true
 ij_java_keep_simple_lambdas_in_one_line = true
 ij_java_keep_simple_classes_in_one_line = true
