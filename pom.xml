@@ -293,6 +293,18 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.4.13</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.11</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-interpolation</artifactId>
         <version>1.26</version>
@@ -308,14 +320,6 @@
         <groupId>org.apache.maven.resolver</groupId>
         <artifactId>maven-resolver</artifactId>
         <version>1.4.1</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon</artifactId>
-        <version>3.3.4</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

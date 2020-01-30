@@ -1,8 +1,19 @@
 package org.marid.ide.project
 
-import org.marid.fx.extensions.inf
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils.newSession
+import org.eclipse.aether.DefaultRepositorySystemSession
+import org.eclipse.aether.RepositoryEvent
+import org.eclipse.aether.RepositoryEvent.EventType.*
+import org.eclipse.aether.RepositoryListener
+import org.eclipse.aether.RepositorySystem
+import org.eclipse.aether.repository.LocalRepository
+import org.eclipse.aether.transfer.TransferEvent
+import org.eclipse.aether.transfer.TransferEvent.EventType.*
+import org.eclipse.aether.transfer.TransferListener
+import org.marid.fx.extensions.INFO
+import org.marid.fx.extensions.LOG
+import org.marid.fx.extensions.WARN
 import org.marid.fx.extensions.logger
-import org.marid.fx.extensions.wrn
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
@@ -11,8 +22,12 @@ import org.marid.ide.project.xml.XmlRepositories
 import org.marid.ide.project.xml.XmlRepository
 import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
+import java.lang.reflect.Proxy.newProxyInstance
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.logging.Level.*
+import java.util.logging.Logger
 import kotlin.concurrent.read
 
 class Project(val projects: Projects, val id: String) {
@@ -33,6 +48,8 @@ class Project(val projects: Projects, val id: String) {
   val depsDirectory = directory.resolve("deps")
   val ivyDirectory = directory.resolve("ivy")
   val ivyCacheDirectory = ivyDirectory.resolve("cache")
+
+  val logger = Logger.getLogger(id)
 
   private val lock = ReentrantReadWriteLock()
 
@@ -78,11 +95,55 @@ class Project(val projects: Projects, val id: String) {
   fun delete() {
     writableItems -= this
     if (FileSystemUtils.deleteRecursively(directory)) {
-      logger.inf("Project {0} deleted", id)
+      logger.INFO("Project {0} deleted", id)
     } else {
-      logger.wrn("Project {0} does not exist", id)
+      logger.WARN("Project {0} does not exist", id)
     }
   }
+
+  fun <R> withSession(callback: (DefaultRepositorySystemSession, RepositorySystem) -> R): R = newSession()
+    .apply {
+      val local = Path.of(System.getProperty("user.home"), ".m2", "repository")
+      if (Files.isDirectory(local)) {
+        val repo = LocalRepository(local.toFile())
+        localRepositoryManager = projects.repositorySystem.newLocalRepositoryManager(this, repo)
+      }
+    }
+    .apply {
+      val classLoader = Thread.currentThread().contextClassLoader
+      transferListener = newProxyInstance(classLoader, arrayOf(TransferListener::class.java)) { _, _, a ->
+        if (a.size == 1) {
+          when (val arg = a[0]) {
+            is TransferEvent -> {
+              val level = when (arg.type) {
+                CORRUPTED, FAILED -> WARNING
+                PROGRESSED -> OFF
+                else -> INFO
+              }
+              this@Project.logger.LOG(level, "{0}", arg.exception, arg)
+            }
+            else -> {
+            }
+          }
+        }
+      } as TransferListener
+      repositoryListener = newProxyInstance(classLoader, arrayOf(RepositoryListener::class.java)) { _, _, a ->
+        if (a.size == 1) {
+          when (val arg = a[0]) {
+            is RepositoryEvent -> {
+              val level = when (arg.type) {
+                ARTIFACT_DESCRIPTOR_INVALID, ARTIFACT_DESCRIPTOR_MISSING, METADATA_INVALID -> WARNING
+                else -> INFO
+              }
+              this@Project.logger.LOG(level, "{0}", arg.exception, arg)
+            }
+            else -> {
+            }
+          }
+        }
+      } as RepositoryListener
+    }
+    .run { callback(this, projects.repositorySystem) }
 
   fun clean() {
   }
