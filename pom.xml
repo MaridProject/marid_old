@@ -285,6 +285,40 @@
         <artifactId>javafx-graphics</artifactId>
         <version>${javafx.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>3.3.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-interpolation</artifactId>
+        <version>1.26</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>org.eclipse.sisu.inject</artifactId>
+        <version>0.3.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver</artifactId>
+        <version>1.4.1</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon</artifactId>
+        <version>3.3.4</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
