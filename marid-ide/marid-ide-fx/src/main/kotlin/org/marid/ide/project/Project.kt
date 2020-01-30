@@ -13,7 +13,6 @@ import org.eclipse.aether.transfer.TransferListener
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.LOG
 import org.marid.fx.extensions.WARN
-import org.marid.fx.extensions.logger
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
@@ -120,7 +119,7 @@ class Project(val projects: Projects, val id: String) {
                 PROGRESSED -> OFF
                 else -> INFO
               }
-              this@Project.logger.LOG(level, "{0}", arg.exception, arg)
+              logger.LOG(level, "{0}", arg.exception, arg)
             }
             else -> {
             }
@@ -135,7 +134,7 @@ class Project(val projects: Projects, val id: String) {
                 ARTIFACT_DESCRIPTOR_INVALID, ARTIFACT_DESCRIPTOR_MISSING, METADATA_INVALID -> WARNING
                 else -> INFO
               }
-              this@Project.logger.LOG(level, "{0}", arg.exception, arg)
+              logger.LOG(level, "{0}", arg.exception, arg)
             }
             else -> {
             }
