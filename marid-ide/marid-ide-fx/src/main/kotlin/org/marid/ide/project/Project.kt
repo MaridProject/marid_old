@@ -1,20 +1,9 @@
 package org.marid.ide.project
 
-import javafx.beans.InvalidationListener
-import org.apache.ivy.Ivy
-import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor
-import org.apache.ivy.core.module.id.ModuleRevisionId
-import org.apache.ivy.core.resolve.ResolveOptions
-import org.apache.ivy.core.retrieve.RetrieveOptions
-import org.apache.ivy.core.settings.IvySettings
-import org.apache.ivy.plugins.resolver.ChainResolver
-import org.apache.ivy.plugins.resolver.FileSystemResolver
-import org.apache.ivy.plugins.resolver.IBiblioResolver
 import org.marid.fx.extensions.inf
 import org.marid.fx.extensions.logger
 import org.marid.fx.extensions.wrn
 import org.marid.fx.i18n.localized
-import org.marid.ide.log.IdeMessageLogger
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
 import org.marid.ide.project.xml.XmlDependencies
@@ -23,11 +12,8 @@ import org.marid.ide.project.xml.XmlRepository
 import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
-import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.logging.Logger
 import kotlin.concurrent.read
-import kotlin.concurrent.write
 
 class Project(val projects: Projects, val id: String) {
 
@@ -37,18 +23,6 @@ class Project(val projects: Projects, val id: String) {
   val repositories = XmlRepositories()
   val dependencies = XmlDependencies()
   val observables = winery.observables + repositories.observables + dependencies.observables
-  val resolveOptions = ResolveOptions()
-  val retrieveOptions = RetrieveOptions()
-    .apply { confs = arrayOf("default") }
-    .apply { destArtifactPattern = "[artifact](-[classifier]).[ext]" }
-  val moduleDescriptor
-    get() = DefaultModuleDescriptor.newDefaultInstance(
-      ModuleRevisionId.newInstance(
-        winery.group.get(),
-        winery.name.get(),
-        winery.version.get()
-      )
-    )
 
   val directory = directories.projectsHome.resolve(id)
   val wineryFile = directory.resolve("winery.xml")
@@ -85,55 +59,6 @@ class Project(val projects: Projects, val id: String) {
     }
   }
 
-  val ivyMessageLogger = IdeMessageLogger(Logger.getLogger(id))
-
-  private val dependencyResolver = ChainResolver()
-    .apply { name = "default" }
-
-  private val ivySettings = IvySettings().apply {
-    baseDir = ivyDirectory.toFile()
-    defaultCache = ivyCacheDirectory.toFile()
-    defaultIvyUserDir = ivyDirectory.toFile()
-    addResolver(dependencyResolver)
-    setDefaultResolver("default")
-  }
-
-  private val ivy: Ivy = Ivy.newInstance(ivySettings)
-    .apply {
-      loggerEngine.setDefaultLogger(ivyMessageLogger)
-    }
-
-  init {
-    refreshRepos()
-    repositories.items.addListener(InvalidationListener { refreshRepos() })
-  }
-
-  private fun refreshRepos() {
-    dependencyResolver.resolvers.clear()
-    val m2 = Path.of(System.getProperty("user.home")).resolve(".m2").resolve("repository")
-    if (Files.isDirectory(m2)) {
-      dependencyResolver.add(FileSystemResolver().apply {
-        isM2compatible = true
-        val pattern = m2
-          .resolve("[organisation]")
-          .resolve("[module]")
-          .resolve("[revision]")
-          .resolve("[module]-[revision](-[classifier]).[ext]")
-          .toString()
-        addArtifactPattern(pattern)
-        addIvyPattern(pattern)
-      })
-    }
-    repositories.items.forEach { repo ->
-      dependencyResolver.add(IBiblioResolver().apply {
-        isM2compatible = true
-        isUsepoms = true
-        name = repo.name.get()
-        root = repo.url.get()
-      })
-    }
-  }
-
   private fun load() {
     if (Files.isRegularFile(wineryFile)) winery.load(wineryFile)
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
@@ -160,16 +85,6 @@ class Project(val projects: Projects, val id: String) {
   }
 
   fun clean() {
-    withIvy { ivy.resolutionCacheManager.clean() }
-  }
-
-  fun <R> withIvy(callback: Project.(Ivy) -> R): R = lock.write {
-    ivy.pushContext()
-    try {
-      callback(this, ivy)
-    } finally {
-      ivy.popContext()
-    }
   }
 
   operator fun <R> invoke(callback: Project.() -> R): R = lock.read { callback(this) }
