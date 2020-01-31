@@ -30,7 +30,7 @@ import java.util.logging.Level.WARNING
 @Component
 class ProjectDependencyResolver {
 
-  val repositorySystem = MavenRepositorySystemUtils.newServiceLocator()
+  private val repositorySystem: RepositorySystem = MavenRepositorySystemUtils.newServiceLocator()
     .apply { addService(RepositoryConnectorFactory::class.java, BasicRepositoryConnectorFactory::class.java) }
     .apply { addService(TransporterFactory::class.java, HttpTransporterFactory::class.java) }
     .apply { addService(TransporterFactory::class.java, FileTransporterFactory::class.java) }
