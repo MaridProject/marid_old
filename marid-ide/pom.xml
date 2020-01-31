@@ -74,6 +74,7 @@
           </executions>
           <configuration>
             <jvmTarget>12</jvmTarget>
+            <javaParameters>true</javaParameters>
           </configuration>
         </plugin>
 
