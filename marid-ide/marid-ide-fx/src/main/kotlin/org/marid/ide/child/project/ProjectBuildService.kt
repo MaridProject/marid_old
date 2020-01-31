@@ -6,8 +6,11 @@ import javafx.concurrent.Service
 import javafx.concurrent.Task
 import javafx.concurrent.Worker.State.*
 import org.eclipse.aether.artifact.DefaultArtifact
+import org.eclipse.aether.collection.CollectRequest
+import org.eclipse.aether.graph.Dependency
+import org.eclipse.aether.graph.DependencyFilter
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.ArtifactRequest
+import org.eclipse.aether.resolution.DependencyRequest
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeServices
@@ -29,6 +32,7 @@ class ProjectBuildService(
   private val project = projectFactory.bean
   private val projectInvalidationListener = InvalidationListener { invalidated() }
   private var dirty = false
+  private var dependencyFilter = DependencyFilter { _, _ -> true }
 
   override fun createTask(): Task<Unit> {
     return object : Task<Unit>() {
@@ -36,20 +40,15 @@ class ProjectBuildService(
         project.logger.info("Build started")
         dependencyResolver.withSession { session, system ->
           val repos = project.repositories.items
-            .map {
-              RemoteRepository.Builder(it.name.get(), "default", it.url.get())
-                .build()
-            }
-          val artifactRequests = project.dependencies.items
-            .map {
-              val artifact = DefaultArtifact(
-                it.group.get(),
-                it.artifact.get(), "jar",
-                properties.substitute(it.version.get())
-              )
-              ArtifactRequest(artifact, repos, "")
-            }
-          val results = system.resolveArtifacts(session, artifactRequests)
+            .map { RemoteRepository.Builder(it.name.get(), "default", it.url.get()).build() }
+          val dependencies = project.dependencies.items
+            .map { (g, a, v) -> DefaultArtifact(g, a, "jar", properties.substitute(v)) }
+            .map { Dependency(it, "runtime") }
+          val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
+          val result = system.resolveDependencies(session, DependencyRequest(collectRequest, dependencyFilter))
+          result.artifactResults.forEach {
+            println(it.artifact.file)
+          }
         }
         project.logger.info("Build finished")
       }

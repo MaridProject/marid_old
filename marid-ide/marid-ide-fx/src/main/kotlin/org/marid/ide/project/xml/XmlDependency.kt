@@ -32,4 +32,8 @@ class XmlDependency(group: String, artifact: String, version: String) {
     artifact.set(dep.artifact.get())
     version.set(dep.version.get())
   }
+
+  operator fun component1(): String = group.get()
+  operator fun component2(): String = artifact.get()
+  operator fun component3(): String = version.get()
 }
