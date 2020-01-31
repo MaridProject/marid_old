@@ -12,6 +12,7 @@ import org.marid.ide.common.IdeProperties
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeServices
 import org.marid.ide.project.Project
+import org.marid.ide.project.ProjectDependencyResolver
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
@@ -21,6 +22,7 @@ import javax.annotation.PreDestroy
 class ProjectBuildService(
   private val services: IdeServices,
   private val properties: IdeProperties,
+  private val dependencyResolver: ProjectDependencyResolver,
   projectFactory: ObjectFactory<Project>
 ) : Service<Unit>() {
 
@@ -32,7 +34,7 @@ class ProjectBuildService(
     return object : Task<Unit>() {
       override fun call() {
         project.logger.info("Build started")
-        project.withSession { session, system ->
+        dependencyResolver.withSession { session, system ->
           val repos = project.repositories.items
             .map {
               RemoteRepository.Builder(it.name.get(), "default", it.url.get())
