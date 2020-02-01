@@ -11,8 +11,6 @@ class IdeProperties {
 
   val projectVersion = meta.getProperty("implementation.version")
 
-  fun substitute(string: String): String = listOf(meta)
-    .fold(string) { s, p ->
-      p.stringPropertyNames().fold(s) { e, k -> e.replace("\${$k}", p.getProperty(k)) }
-    }
+  fun substitute(string: String): String = string
+    .replace("\${marid.version}", projectVersion)
 }

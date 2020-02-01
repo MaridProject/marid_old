@@ -12,6 +12,7 @@ import org.eclipse.aether.impl.DefaultServiceLocator
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
+import org.eclipse.aether.transfer.MetadataNotFoundException
 import org.eclipse.aether.transfer.TransferEvent
 import org.eclipse.aether.transfer.TransferEvent.EventType.*
 import org.eclipse.aether.transfer.TransferListener
@@ -57,12 +58,17 @@ class ProjectDependencyResolver {
         if (a.size == 1) {
           when (val arg = a[0]) {
             is TransferEvent -> {
-              val level = when (arg.type) {
-                CORRUPTED, FAILED -> WARNING
-                PROGRESSED -> Level.OFF
-                else -> Level.INFO
+              val (level, x) = when (arg.type) {
+                CORRUPTED -> WARNING to arg.exception
+                FAILED ->
+                  if (arg.exception is MetadataNotFoundException)
+                    WARNING to null
+                  else
+                    WARNING to arg.exception
+                PROGRESSED -> Level.OFF to null
+                else -> Level.INFO to null
               }
-              logger.LOG(level, "{0}", arg.exception, arg)
+              logger.LOG(level, "{0}", x, arg)
             }
             else -> {
             }
@@ -73,11 +79,11 @@ class ProjectDependencyResolver {
         if (a.size == 1) {
           when (val arg = a[0]) {
             is RepositoryEvent -> {
-              val level = when (arg.type) {
-                ARTIFACT_DESCRIPTOR_INVALID, ARTIFACT_DESCRIPTOR_MISSING, METADATA_INVALID -> WARNING
-                else -> Level.INFO
+              val (level, x) = when (arg.type) {
+                ARTIFACT_DESCRIPTOR_INVALID, ARTIFACT_DESCRIPTOR_MISSING, METADATA_INVALID -> WARNING to arg.exception
+                else -> Level.INFO to null
               }
-              logger.LOG(level, "{0}", arg.exception, arg)
+              logger.LOG(level, "{0}", x, arg)
             }
             else -> {
             }

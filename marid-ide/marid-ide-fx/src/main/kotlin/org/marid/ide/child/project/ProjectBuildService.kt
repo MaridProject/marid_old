@@ -10,6 +10,9 @@ import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
 import org.eclipse.aether.repository.RemoteRepository
+import org.eclipse.aether.repository.RepositoryPolicy
+import org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL
+import org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS
 import org.eclipse.aether.resolution.DependencyRequest
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.extensions.bean
@@ -40,9 +43,13 @@ class ProjectBuildService(
         project.logger.info("Build started")
         dependencyResolver.withSession { session, system ->
           val repos = project.repositories.items
-            .map { RemoteRepository.Builder(it.name.get(), "default", it.url.get()).build() }
+            .map {
+              RemoteRepository.Builder(it.name.get(), "default", it.url.get())
+                .setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL))
+                .build()
+            }
           val dependencies = project.dependencies.items
-            .map { (g, a, v) -> DefaultArtifact(g, a, "jar", properties.substitute(v)) }
+            .map { (g, a, v) -> DefaultArtifact(g, a, "", "jar", properties.substitute(v)) }
             .map { Dependency(it, "runtime") }
           val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
           val result = system.resolveDependencies(session, DependencyRequest(collectRequest, dependencyFilter))
