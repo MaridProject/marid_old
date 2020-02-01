@@ -11,6 +11,7 @@ import org.marid.ide.project.xml.XmlRepository
 import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 
 class Project(val projects: Projects, val id: String) {
@@ -33,6 +34,7 @@ class Project(val projects: Projects, val id: String) {
   val ivyCacheDirectory = ivyDirectory.resolve("cache")
 
   val logger = Logger.getLogger(id)
+  val lock = ReentrantReadWriteLock()
 
   init {
     val existing = Files.isDirectory(directory)

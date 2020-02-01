@@ -79,9 +79,6 @@ class ProjectsTabContents(
     get() = listOf(
       Fx(icon = "icons/open.png", text = "Open", handler = { projectTabsManager.addProject(this) }),
       Fx(icon = "icons/save.png", text = "Save", handler = { save() }),
-      Fx(icon = "icons/edit.png", text = "Edit..."),
-      Fx(icon = "icons/build.png", text = "Build", handler = { }),
-      Fx(icon = "icons/run.png", text = "Run", handler = { }),
-      Fx(icon = "icons/monitor.png", text = "Monitor...", handler = { })
+      Fx(icon = "icons/edit.png", text = "Edit...")
     )
 }
