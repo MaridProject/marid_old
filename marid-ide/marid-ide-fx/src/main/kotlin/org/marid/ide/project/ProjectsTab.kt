@@ -71,10 +71,6 @@ class ProjectsTabContents(
     get() = listOf(
       listOf(
         Fx(icon = "icons/delete.png", text = "Delete", handler = { delete() }).menuItem
-      ),
-      actions.map { it.menuItem },
-      listOf(
-        Fx(icon = "icons/clear.png", text = "Clean", handler = { clean() }).menuItem
       )
     ).reduce { l1, l2 -> l1 + listOf(SeparatorMenuItem()) + l2 }
 

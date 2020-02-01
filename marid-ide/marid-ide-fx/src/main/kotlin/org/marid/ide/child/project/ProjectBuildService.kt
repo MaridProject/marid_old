@@ -21,6 +21,8 @@ import org.marid.ide.project.Project
 import org.marid.ide.project.ProjectDependencyResolver
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
+import java.net.URL
+import java.net.URLClassLoader
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -36,6 +38,7 @@ class ProjectBuildService(
   private val projectInvalidationListener = InvalidationListener { invalidated() }
   private var dirty = false
   private var dependencyFilter = DependencyFilter { _, _ -> true }
+  private var classLoader: URLClassLoader? = null
 
   override fun createTask(): Task<Unit> {
     return object : Task<Unit>() {
@@ -53,9 +56,10 @@ class ProjectBuildService(
             .map { Dependency(it, "runtime") }
           val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
           val result = system.resolveDependencies(session, DependencyRequest(collectRequest, dependencyFilter))
-          result.artifactResults.forEach {
-            println(it.artifact.file)
-          }
+          val urls = ArrayList<URL>()
+          result.artifactResults.forEach { urls += it.artifact.file.toURI().toURL() }
+          classLoader?.also { it.close() }
+          classLoader = URLClassLoader(urls.toTypedArray(), ClassLoader.getPlatformClassLoader())
         }
         project.logger.info("Build finished")
       }
@@ -81,6 +85,7 @@ class ProjectBuildService(
   fun onDestroy() {
     services.remove(this)
     project.observables.forEach { it.removeListener(projectInvalidationListener) }
+    classLoader?.close()
   }
 
   private fun invalidated() {
