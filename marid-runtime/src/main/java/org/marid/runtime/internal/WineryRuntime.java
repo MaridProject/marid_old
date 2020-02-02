@@ -28,7 +28,6 @@ import org.marid.io.Xmls;
 import org.marid.io.function.IOSupplier;
 import org.marid.runtime.model.Winery;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.net.URL;
@@ -151,9 +150,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
   private static void validate(Path resources, Path deps, Path classes) throws IOException {
     Files.createDirectories(resources);
     Files.createDirectories(deps);
-    if (!Files.isDirectory(classes)) {
-      throw new FileNotFoundException(classes.toString());
-    }
+    Files.createDirectories(classes);
   }
 
   private static void initialize(Path deployment, List<String> args) throws IOException {
@@ -257,13 +254,9 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
       final var rackEntry = i.next();
       try {
         final var cellar = getCellar(rackEntry.getKey());
-        final var rack = cellar.getRack(rackEntry.getValue());
-        try {
-          rack.close();
-        } catch (Throwable e) {
-          exception.addSuppressed(e);
+        try (final var rack = cellar.getRack(rackEntry.getValue())) {
+          cellar.racks.remove(rack.getName());
         } finally {
-          cellar.racks.remove(rackEntry.getValue());
           if (cellar.racks.isEmpty()) {
             cellars.remove(rackEntry.getKey());
           }
