@@ -10,9 +10,6 @@ import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.repository.RepositoryPolicy
-import org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL
-import org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS
 import org.eclipse.aether.resolution.DependencyRequest
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.extensions.bean
@@ -48,7 +45,6 @@ class ProjectBuildService(
           val repos = project.repositories.items
             .map {
               RemoteRepository.Builder(it.name.get(), "default", it.url.get())
-                .setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL))
                 .build()
             }
           val dependencies = project.dependencies.items
