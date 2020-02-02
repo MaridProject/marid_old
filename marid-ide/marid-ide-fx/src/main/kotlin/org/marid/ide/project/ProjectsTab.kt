@@ -46,7 +46,7 @@ class ProjectsTabContents(
     .apply {
       column(160, "Id") { it.id.readOnlyProp }.also { it.style = "-fx-alignment: CENTER; -fx-font-family: monospaced" }
       column(300, "Name") { it.winery.name }.also { it.style = "-fx-alignment: CENTER-LEFT;" }
-      column(300, "Actions") {
+      column(150, "Actions") {
         val buttons = it.actions.map(Fx::toolButton).toTypedArray()
         SimpleObjectProperty(
           FlowPane(3.0, 0.0, *buttons).apply {
