@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipInputStream;
@@ -59,7 +60,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
 
   final URLClassLoader classLoader;
   final Winery winery;
-  final ArrayList<Map.Entry<String, String>> racks;
+  final ConcurrentLinkedDeque<Map.Entry<String, String>> racks;
 
   private volatile State state = State.NEW;
   private volatile Throwable startError;
@@ -70,7 +71,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;
     this.winery = params.winery;
-    this.racks = new ArrayList<>(winery.getCellars().stream().mapToInt(c -> c.getRacks().size()).sum());
+    this.racks = new ConcurrentLinkedDeque<>();
     this.thread = new Thread(null, () -> {
       try {
         while (!Thread.currentThread().isInterrupted()) {
@@ -249,16 +250,28 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
       return;
     }
     state = State.TERMINATING;
+
     final var exception = new IllegalStateException("Unable to close winery " + getId());
 
-    for (int i = racks.size() - 1; i >= 0; i--) {
-      final var rackEntry = racks.get(i);
-      final var cellar = getCellar(rackEntry.getKey());
-      final var rack = cellar.getRack(rackEntry.getValue());
+    for (final var i = racks.descendingIterator(); i.hasNext(); ) {
+      final var rackEntry = i.next();
       try {
-        rack.close();
+        final var cellar = getCellar(rackEntry.getKey());
+        final var rack = cellar.getRack(rackEntry.getValue());
+        try {
+          rack.close();
+        } catch (Throwable e) {
+          exception.addSuppressed(e);
+        } finally {
+          cellar.racks.remove(rackEntry.getValue());
+          if (cellar.racks.isEmpty()) {
+            cellars.remove(rackEntry.getKey());
+          }
+        }
       } catch (Throwable e) {
         exception.addSuppressed(e);
+      } finally {
+        i.remove();
       }
     }
     racks.clear();
