@@ -1,7 +1,9 @@
 package org.marid.ide.project
 
+import javafx.beans.property.SimpleBooleanProperty
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.WARN
+import org.marid.fx.extensions.runFx
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
@@ -13,6 +15,8 @@ import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 class Project(val projects: Projects, val id: String) {
 
@@ -30,11 +34,10 @@ class Project(val projects: Projects, val id: String) {
   val resourcesDirectory = directory.resolve("resources")
   val classesDirectory = directory.resolve("classes")
   val depsDirectory = directory.resolve("deps")
-  val ivyDirectory = directory.resolve("ivy")
-  val ivyCacheDirectory = ivyDirectory.resolve("cache")
-
   val logger = Logger.getLogger(id)
-  val lock = ReentrantReadWriteLock()
+  val locked = SimpleBooleanProperty(this, "locked")
+
+  private val lock = ReentrantReadWriteLock()
 
   init {
     val existing = Files.isDirectory(directory)
@@ -46,7 +49,6 @@ class Project(val projects: Projects, val id: String) {
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
     Files.createDirectories(depsDirectory)
-    Files.createDirectories(ivyCacheDirectory)
 
     load()
 
@@ -81,6 +83,16 @@ class Project(val projects: Projects, val id: String) {
       logger.INFO("Project {0} deleted", id)
     } else {
       logger.WARN("Project {0} does not exist", id)
+    }
+  }
+
+  fun <R> withRead(callback: (Project) -> R): R = lock.read { callback(this) }
+  fun <R> withWrite(callback: (Project) -> R): R {
+    runFx { locked.set(true) }
+    try {
+      return lock.write { callback(this) }
+    } finally {
+      runFx { locked.set(false) }
     }
   }
 

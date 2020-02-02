@@ -11,6 +11,8 @@ import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
 import org.eclipse.aether.repository.RemoteRepository
 import org.eclipse.aether.resolution.DependencyRequest
+import org.marid.fx.extensions.deleteDirectoryContents
+import org.marid.fx.extensions.toImmutableMap
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeServices
@@ -18,8 +20,9 @@ import org.marid.ide.project.Project
 import org.marid.ide.project.ProjectDependencyResolver
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
-import java.net.URL
 import java.net.URLClassLoader
+import java.nio.file.Files
+import java.util.stream.Collectors
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -52,10 +55,24 @@ class ProjectBuildService(
             .map { Dependency(it, "runtime") }
           val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
           val result = system.resolveDependencies(session, DependencyRequest(collectRequest, dependencyFilter))
-          val urls = ArrayList<URL>()
-          result.artifactResults.forEach { urls += it.artifact.file.toURI().toURL() }
-          classLoader?.also { it.close() }
-          classLoader = URLClassLoader(urls.toTypedArray(), ClassLoader.getPlatformClassLoader())
+          if (result.collectExceptions.isNotEmpty()) {
+            throw result.collectExceptions.reduce { e1, e2 -> e1.apply { addSuppressed(e2) } }
+          }
+          val artifactMap = result.artifactResults.stream().toImmutableMap(
+            { r -> r.artifact.groupId to r.artifact.artifactId },
+            { r -> r },
+            { a, b -> if (b.artifact.version > a.artifact.version) b else a }
+          )
+          project.withWrite {
+            project.depsDirectory.deleteDirectoryContents()
+            val urls = artifactMap.values.parallelStream()
+              .map { it.artifact.file.toPath() to project.depsDirectory.resolve(it.artifact.file.name) }
+              .peek { (from, to) -> Files.copy(from, to) }
+              .map { (_, to) -> to.toUri().toURL() }
+              .collect(Collectors.toUnmodifiableList())
+            classLoader?.also { it.close() }
+            classLoader = URLClassLoader(urls.toTypedArray(), ClassLoader.getPlatformClassLoader())
+          }
         }
         project.logger.info("Build finished")
       }
