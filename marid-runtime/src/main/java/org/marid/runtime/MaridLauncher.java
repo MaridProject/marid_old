@@ -43,9 +43,9 @@ public class MaridLauncher {
       return;
     }
     final var reader = new BufferedReader(new InputStreamReader(in, UTF_8));
-    try (final var deployment = new WineryRuntime(new URL(args[0]), List.of(copyOfRange(args, 1, args.length)))) {
-      deployment.start();
-      final var destroyer = new Thread(null, () -> run(reader, deployment), "Marid", 64L << 10, false);
+    try (final var runtime = new WineryRuntime(new URL(args[0]), List.of(copyOfRange(args, 1, args.length)))) {
+      runtime.start();
+      final var destroyer = new Thread(null, () -> run(reader, runtime), "Marid", 64L << 10, false);
       destroyer.setDaemon(true);
       destroyer.start();
     }
