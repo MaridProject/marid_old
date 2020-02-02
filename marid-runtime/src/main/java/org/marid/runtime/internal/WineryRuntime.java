@@ -267,9 +267,14 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
         i.remove();
       }
     }
-    racks.clear();
 
-    cellars.forEach((name, c) -> c.close());
+    cellars.forEach((name, c) -> {
+      try {
+        c.close();
+      } catch (Throwable e) {
+        exception.addSuppressed(e);
+      }
+    });
     cellars.clear();
 
     if (classLoader != null) {
