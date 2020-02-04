@@ -26,7 +26,7 @@ class IdeStatusBar(
   private val statusText = Label()
     .also { setHgrow(it, Priority.ALWAYS) }
     .apply { maxWidth = Double.MAX_VALUE }
-    .apply { textProperty().bind(ideLog.records.singleLined { it.message }.bindLast.mapString { it?.message }) }
+    .apply { textProperty().bind(ideLog.records.bindString { it.last().formatSafe.replace('\n', ' ') }) }
     .apply { graphic = Circle(5.0).apply { fillProperty().bind(ideLog.lastLevel.map { it?.color }) } }
     .apply { graphicTextGap = 5.0 }
 

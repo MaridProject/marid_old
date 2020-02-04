@@ -10,7 +10,7 @@ import java.util.ResourceBundle.getBundle
 object I18n {
 
   private val control = getControl(FORMAT_PROPERTIES)
-  internal fun textsBundle() = getBundle("texts", locale.get(), currentThread().contextClassLoader, control)
+  fun textsBundle(): ResourceBundle = getBundle("texts", locale.get(), currentThread().contextClassLoader, control)
 
   val locale = pref("locale", Locale.getDefault())
 }

@@ -37,7 +37,7 @@ class ProjectBuildService(
   private val project = projectFactory.bean
   private val projectInvalidationListener = InvalidationListener { invalidated() }
   private var dirty = false
-  private var dependencyFilter = DependencyFilter { _, _ -> true }
+  private val dependencyFilter = DependencyFilter { _, _ -> true }
   private var classLoader: URLClassLoader? = null
 
   override fun createTask(): Task<Unit> {
@@ -72,6 +72,7 @@ class ProjectBuildService(
               .toTypedArray()
             classLoader?.also { it.close() }
             classLoader = URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
+            project.save()
           }
         }
         project.logger.info("Build finished")

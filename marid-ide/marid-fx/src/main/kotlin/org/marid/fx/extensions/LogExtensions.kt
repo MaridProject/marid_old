@@ -1,6 +1,9 @@
 package org.marid.fx.extensions
 
 import javafx.scene.paint.Color
+import org.marid.fx.i18n.I18n
+import java.text.MessageFormat
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
@@ -54,3 +57,21 @@ fun Logger.CONFIG(msg: String?, vararg args: Any?) = log(Level.CONFIG, msg, args
 fun Logger.INFO(msg: String?, vararg args: Any?) = log(Level.INFO, msg, args)
 fun Logger.WARN(msg: String?, vararg args: Any?) = log(Level.WARNING, msg, args)
 fun Logger.ERROR(msg: String?, vararg args: Any?) = log(Level.SEVERE, msg, args)
+
+val LogRecord.formatSafe: String get() {
+  try {
+    val bundle = I18n.textsBundle()
+    val msg = try {
+      bundle.getString(message)
+    } catch (e: MissingResourceException) {
+      message
+    }
+    if (parameters.isNullOrEmpty()) {
+      return msg
+    } else {
+      return MessageFormat.format(msg, *parameters)
+    }
+  } catch (e: Throwable) {
+    return message
+  }
+}

@@ -25,13 +25,13 @@ import javafx.beans.binding.ObjectBinding as OBinding
 import javafx.beans.binding.StringBinding as SBinding
 import java.util.concurrent.Callable as C
 
-fun <O : Observable, R> O.objectBnd(f: (O) -> R): OBinding<R> = bind(C { f(this) }, this)
-fun <O : Observable> O.doubleBnd(f: (O) -> Double): DBinding = bindDouble(C { f(this) }, this)
-fun <O : Observable> O.floatBnd(f: (O) -> Float): FBinding = bindFloat(C { f(this) }, this)
-fun <O : Observable> O.longBnd(f: (O) -> Long): LBinding = bindLong(C { f(this) }, this)
-fun <O : Observable> O.intBnd(f: (O) -> Int): IBinding = bindInt(C { f(this) }, this)
-fun <O : Observable> O.booleanBnd(f: (O) -> Boolean): BBinding = bindBool(C { f(this) }, this)
-fun <O : Observable> O.stringBnd(f: (O) -> String): SBinding = bindString(C { f(this) }, this)
+fun <O : Observable, R> O.bindObject(f: (O) -> R): OBinding<R> = bind(C { f(this) }, this)
+fun <O : Observable> O.bindDouble(f: (O) -> Double): DBinding = bindDouble(C { f(this) }, this)
+fun <O : Observable> O.bindFloat(f: (O) -> Float): FBinding = bindFloat(C { f(this) }, this)
+fun <O : Observable> O.bindLong(f: (O) -> Long): LBinding = bindLong(C { f(this) }, this)
+fun <O : Observable> O.bindInt(f: (O) -> Int): IBinding = bindInt(C { f(this) }, this)
+fun <O : Observable> O.bindBoolean(f: (O) -> Boolean): BBinding = bindBool(C { f(this) }, this)
+fun <O : Observable> O.bindString(f: (O) -> String): SBinding = bindString(C { f(this) }, this)
 
 val <E> ObservableList<E>.unmodified: ObservableList<E> get() = FXCollections.unmodifiableObservableList(this)
 fun <E> ObservableList<E>.bindAt(index: Int): OBinding<E> = valueAt(this, index)

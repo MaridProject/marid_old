@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -49,8 +49,8 @@ public interface TypeVariables {
       return Stream.of((TypeVariable<?>) type);
     } else if (type instanceof WildcardType) {
       return Stream.concat(
-          Arrays.stream(((WildcardType) type).getUpperBounds()).flatMap(TypeVariables::extract),
-          Arrays.stream(((WildcardType) type).getLowerBounds()).flatMap(TypeVariables::extract)
+        Arrays.stream(((WildcardType) type).getUpperBounds()).flatMap(TypeVariables::extract),
+        Arrays.stream(((WildcardType) type).getLowerBounds()).flatMap(TypeVariables::extract)
       );
     } else if (type instanceof GenericArrayType) {
       return extract(((GenericArrayType) type).getGenericComponentType());

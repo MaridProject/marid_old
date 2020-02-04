@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -39,6 +39,7 @@ public interface Classes {
 
   /**
    * Checks whether the given type is public.
+   *
    * @param type A type.
    * @return True if the given class is accessible from the public lookup: {@link MethodHandles#publicLookup()}.
    */
@@ -53,6 +54,7 @@ public interface Classes {
 
   /**
    * Constructs a new array instance based on the given component type.
+   *
    * @param componentType A component type.
    * @return Array class instance.
    */
@@ -63,26 +65,28 @@ public interface Classes {
 
   /**
    * Checks whether the given type is a wrapper.
+   *
    * @param type A class.
    * @return {@code true} if the given type is a wrapper class, {@code false} otherwise.
    * @see jdk.dynalink.linker.support.TypeUtilities#isWrapperType(Class)
    */
   static boolean isWrapper(@NotNull Class<?> type) {
     return type == Integer.class
-        || type == Long.class
-        || type == Short.class
-        || type == Byte.class
-        || type == Character.class
-        || type == Double.class
-        || type == Float.class
-        || type == Boolean.class
-        || type == Void.class;
+      || type == Long.class
+      || type == Short.class
+      || type == Byte.class
+      || type == Character.class
+      || type == Double.class
+      || type == Float.class
+      || type == Boolean.class
+      || type == Void.class;
   }
 
   /**
    * Returns a wrapper type for a primitive type or the given type itself. The main difference from
    * the {@link jdk.dynalink.linker.support.TypeUtilities#getWrapperType(Class)} is that if the given
    * type represents a non-primitive class then this class will be returned instead of {@code null}.
+   *
    * @param type A class.
    * @return A wrapper class for any primitive type or the passed type itself.
    * @see jdk.dynalink.linker.support.TypeUtilities#getWrapperType(Class)
@@ -105,6 +109,7 @@ public interface Classes {
 
   /**
    * Returns a primitive class if the given type is a wrapper class.
+   *
    * @param type A class.
    * @return A primitive class if the given class is a wrapper class, {@code null} otherwise.
    * @see jdk.dynalink.linker.support.TypeUtilities#getPrimitiveType(Class)
@@ -125,6 +130,7 @@ public interface Classes {
 
   /**
    * Checks whether the {@code target} is assignable from {@code source}
+   *
    * @param target Target class.
    * @param source Source class.
    * @return {@code true} if the {@code target} is assignable from {@code source}; {@code false} otherwise.
@@ -135,30 +141,30 @@ public interface Classes {
     } else if (target.isPrimitive()) {
       if (target == double.class) {
         return source == Double.class
-            || source == float.class || source == Float.class
-            || source == long.class || source == Long.class
-            || source == int.class || source == Integer.class
-            || source == short.class || source == Short.class
-            || source == byte.class || source == Byte.class
-            || source == char.class || source == Character.class;
+          || source == float.class || source == Float.class
+          || source == long.class || source == Long.class
+          || source == int.class || source == Integer.class
+          || source == short.class || source == Short.class
+          || source == byte.class || source == Byte.class
+          || source == char.class || source == Character.class;
       } else if (target == float.class) {
         return source == Float.class
-            || source == int.class || source == Integer.class
-            || source == long.class || source == Long.class
-            || source == short.class || source == Short.class
-            || source == byte.class || source == Byte.class
-            || source == char.class || source == Character.class;
+          || source == int.class || source == Integer.class
+          || source == long.class || source == Long.class
+          || source == short.class || source == Short.class
+          || source == byte.class || source == Byte.class
+          || source == char.class || source == Character.class;
       } else if (target == int.class) {
         return source == Integer.class
-            || source == short.class || source == Short.class
-            || source == char.class || source == Character.class
-            || source == byte.class || source == Byte.class;
+          || source == short.class || source == Short.class
+          || source == char.class || source == Character.class
+          || source == byte.class || source == Byte.class;
       } else if (target == long.class) {
         return source == Long.class
-            || source == int.class || source == Integer.class
-            || source == short.class || source == Short.class
-            || source == char.class || source == Character.class
-            || source == byte.class || source == Byte.class;
+          || source == int.class || source == Integer.class
+          || source == short.class || source == Short.class
+          || source == char.class || source == Character.class
+          || source == byte.class || source == Byte.class;
       } else if (target == short.class) {
         return source == Short.class || source == byte.class || source == Byte.class;
       } else if (target == boolean.class) {
@@ -190,6 +196,7 @@ public interface Classes {
    *   <li>If the declaring class of {@code c2} is not {@code null} but the declaring class of {@code c1} is null then
    *   {@code c1} is lesser than {@code c2}</li>
    * </ul>
+   *
    * @param c1 The first class.
    * @param c2 The second class.
    * @return Compare result: -1, 0 or 1.

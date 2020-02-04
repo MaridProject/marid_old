@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -43,35 +43,35 @@ final class ParameterizedTypeImpl implements ParameterizedType {
 
     if (actualTypeArguments.length == 0) {
       throw new MalformedParameterizedTypeException("Illegal number of type arguments for " + rawType.getName()
-          + ": should be more than 0 but the actual is " + actualTypeArguments.length
+        + ": should be more than 0 but the actual is " + actualTypeArguments.length
       );
     }
 
     final var vars = rawType.getTypeParameters();
     if (vars.length != actualTypeArguments.length) {
       throw new MalformedParameterizedTypeException("Illegal number of type arguments of " + rawType.getName()
-          + ": should be " + vars.length
-          + " but the actual is " + actualTypeArguments.length);
+        + ": should be " + vars.length
+        + " but the actual is " + actualTypeArguments.length);
     }
 
     if (ownerType != null) {
       if (ownerType instanceof Class<?>) {
         if (!ownerType.equals(rawType.getDeclaringClass())) {
           throw new MalformedParameterizedTypeException("Illegal owner for " + rawType.getName()
-              + ": should be " + rawType.getDeclaringClass()
-              + " but the actual is " + ownerType
+            + ": should be " + rawType.getDeclaringClass()
+            + " but the actual is " + ownerType
           );
         }
       } else {
         if (!(ownerType instanceof ParameterizedType)) {
           throw new MalformedParameterizedTypeException(
-              "Illegal owner type: must be Class<?> or ParameterizedType but the actual is " + ownerType
+            "Illegal owner type: must be Class<?> or ParameterizedType but the actual is " + ownerType
           );
         }
         if (!((ParameterizedType) ownerType).getRawType().equals(rawType.getDeclaringClass())) {
           throw new MalformedParameterizedTypeException("Illegal owner for " + rawType.getName()
-              + ": should be " + rawType.getDeclaringClass()
-              + " but the actual is " + ownerType
+            + ": should be " + rawType.getDeclaringClass()
+            + " but the actual is " + ownerType
           );
         }
       }
@@ -106,8 +106,8 @@ final class ParameterizedTypeImpl implements ParameterizedType {
       final var that = (ParameterizedType) obj;
 
       return Objects.equals(ownerType, that.getOwnerType())
-          && Objects.equals(rawType, that.getRawType())
-          && Arrays.equals(actualTypeArguments, that.getActualTypeArguments());
+        && Objects.equals(rawType, that.getRawType())
+        && Arrays.equals(actualTypeArguments, that.getActualTypeArguments());
     } else {
       return false;
     }

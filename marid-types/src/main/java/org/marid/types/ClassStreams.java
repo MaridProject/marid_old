@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -49,13 +49,13 @@ public interface ClassStreams {
   private static Stream<Class<?>> superclasses0(Class<?> type) {
     if (type.isArray() && !type.getComponentType().isPrimitive()) {
       return Stream.concat(
-          superclasses0(type.getComponentType()).map(Classes::arrayClass),
-          Stream.of(Object.class)
+        superclasses0(type.getComponentType()).map(Classes::arrayClass),
+        Stream.of(Object.class)
       );
     } else {
       return Stream.concat(
-          Stream.of(type),
-          Stream.ofNullable(type.getSuperclass()).flatMap(ClassStreams::superclasses0)
+        Stream.of(type),
+        Stream.ofNullable(type.getSuperclass()).flatMap(ClassStreams::superclasses0)
       );
     }
   }
@@ -63,18 +63,18 @@ public interface ClassStreams {
   @NotNull
   static Stream<@NotNull Class<?>> interfaces(@NotNull Class<?> type) {
     final var stream = type.isInterface()
-        ? Stream.of(type)
-        : superclasses(wrapper(type)).flatMap(t -> Arrays.stream(t.getInterfaces()));
+      ? Stream.of(type)
+      : superclasses(wrapper(type)).flatMap(t -> Arrays.stream(t.getInterfaces()));
     return stream
-        .flatMap(ClassStreams::interfaces0)
-        .distinct()
-        .sorted(Classes::compare);
+      .flatMap(ClassStreams::interfaces0)
+      .distinct()
+      .sorted(Classes::compare);
   }
 
   private static Stream<Class<?>> interfaces0(Class<?> itf) {
     return Stream.concat(
-        Stream.of(itf),
-        Arrays.stream(itf.getInterfaces()).flatMap(ClassStreams::interfaces0)
+      Stream.of(itf),
+      Arrays.stream(itf.getInterfaces()).flatMap(ClassStreams::interfaces0)
     );
   }
 

@@ -10,12 +10,12 @@ package org.marid.types;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -52,6 +52,7 @@ public interface Types {
     return toRaw(type, EMPTY_TYPES);
   }
 
+  @SuppressWarnings("rawtypes")
   private static Class toRaw(Type type, Type[] passed) {
     if (type instanceof Class<?>) {
       return (Class<?>) type;
@@ -62,17 +63,17 @@ public interface Types {
       return Classes.arrayClass(toRaw(componentType, passed));
     } else if (type instanceof WildcardType) {
       return upperBounds((WildcardType) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
-          .map(t -> toRaw(t, passed))
-          .min(Types::compare)
-          .orElse(Object.class);
+        .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
+        .map(t -> toRaw(t, passed))
+        .min(Types::compare)
+        .orElse(Object.class);
     } else if (type instanceof TypeVariable<?>) {
       final var newPassed = TypeUtils.add(passed, type);
       return bounds((TypeVariable<?>) type)
-          .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(newPassed, t))
-          .map(t -> toRaw(t, newPassed))
-          .min(Types::compare)
-          .orElse(Object.class);
+        .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(newPassed, t))
+        .map(t -> toRaw(t, newPassed))
+        .min(Types::compare)
+        .orElse(Object.class);
     } else {
       throw new IllegalArgumentException(type.getTypeName());
     }
@@ -87,7 +88,7 @@ public interface Types {
       return isGround(((GenericArrayType) type).getGenericComponentType());
     } else if (type instanceof WildcardType) {
       return lowerBounds(((WildcardType) type)).allMatch(Types::isGround)
-          && upperBounds(((WildcardType) type)).allMatch(Types::isGround);
+        && upperBounds(((WildcardType) type)).allMatch(Types::isGround);
     } else if (type instanceof TypeVariable<?>) {
       return false;
     } else {
@@ -102,11 +103,11 @@ public interface Types {
 
   private static Type[] ground(Stream<Type> types, Type[] passed, Function<WildcardType, Stream<Type>> bounds) {
     return types
-        .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
-        .map(t -> ground(t, passed))
-        .flatMap(t -> t instanceof WildcardType ? bounds.apply((WildcardType) t) : Stream.of(t))
-        .distinct()
-        .toArray(Type[]::new);
+      .filter(t -> !(t instanceof TypeVariable<?>) || !TypeUtils.contains(passed, t))
+      .map(t -> ground(t, passed))
+      .flatMap(t -> t instanceof WildcardType ? bounds.apply((WildcardType) t) : Stream.of(t))
+      .distinct()
+      .toArray(Type[]::new);
   }
 
   private static Type ground(Type type, Type[] passed) {
@@ -117,8 +118,8 @@ public interface Types {
       return wildcardTypeUpperBounds(ground(bounds((TypeVariable<?>) type), newPassed, WildcardTypes::upperBounds));
     } else if (type instanceof WildcardType) {
       return wildcardType(
-          ground(upperBounds((WildcardType) type), passed, WildcardTypes::upperBounds),
-          ground(lowerBounds((WildcardType) type), passed, WildcardTypes::lowerBounds)
+        ground(upperBounds((WildcardType) type), passed, WildcardTypes::upperBounds),
+        ground(lowerBounds((WildcardType) type), passed, WildcardTypes::lowerBounds)
       );
     } else if (type instanceof ParameterizedType) {
       if (TypeUtils.contains(passed, type)) {
@@ -127,9 +128,9 @@ public interface Types {
         final var newPassed = TypeUtils.add(passed, type);
         final var parameterizedType = (ParameterizedType) type;
         return parameterizedTypeWithOwner(
-            toRaw(type),
-            owner(parameterizedType).map(t -> ground(t, newPassed)).orElse(null),
-            parameters(parameterizedType).map(t -> ground(t, newPassed)).toArray(Type[]::new)
+          toRaw(type),
+          owner(parameterizedType).map(t -> ground(t, newPassed)).orElse(null),
+          parameters(parameterizedType).map(t -> ground(t, newPassed)).toArray(Type[]::new)
         );
       }
     } else if (type instanceof GenericArrayType) {
@@ -207,7 +208,7 @@ public interface Types {
       return ntp.length == tp.length || bounds((TypeVariable<?>) target).allMatch(b -> isAssignableFrom(b, source, ntp, sp));
     } else if (target instanceof WildcardType) {
       return upperBounds((WildcardType) target).allMatch(b -> isAssignableFrom(b, source, tp, sp))
-          && lowerBounds((WildcardType) target).allMatch(b -> isAssignableFrom(source, b, tp, sp));
+        && lowerBounds((WildcardType) target).allMatch(b -> isAssignableFrom(source, b, tp, sp));
     } else if (target instanceof GenericArrayType) {
       return isAssignableFrom((GenericArrayType) target, source, tp, sp);
     } else if (target instanceof ParameterizedType) {
@@ -225,8 +226,8 @@ public interface Types {
     } else if (source instanceof GenericArrayType) {
       final var s = (GenericArrayType) source;
       return t.isArray()
-          ? isAssignableFrom(t.getComponentType(), s.getGenericComponentType(), tp, sp)
-          : t.isAssignableFrom(Object[].class);
+        ? isAssignableFrom(t.getComponentType(), s.getGenericComponentType(), tp, sp)
+        : t.isAssignableFrom(Object[].class);
     } else if (source instanceof WildcardType) {
       return isAssignable(t, (WildcardType) source, tp, sp);
     } else if (source instanceof TypeVariable<?>) {
@@ -272,7 +273,7 @@ public interface Types {
 
   private static boolean isAssignable(Type target, WildcardType source, Type[] tp, Type[] sp) {
     return upperBounds(source).anyMatch(b -> isAssignableFrom(target, b, tp, sp))
-        && lowerBounds(source).allMatch(b -> isAssignableFrom(b, target, tp, sp));
+      && lowerBounds(source).allMatch(b -> isAssignableFrom(b, target, tp, sp));
   }
 
   private static boolean isAssignable(Type target, TypeVariable<?> source, Type[] tp, Type[] sp) {
