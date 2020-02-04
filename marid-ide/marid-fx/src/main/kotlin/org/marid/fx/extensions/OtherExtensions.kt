@@ -1,11 +1,10 @@
 package org.marid.fx.extensions
 
-import com.sun.javafx.application.PlatformImpl
 import javafx.application.Platform
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.CompletableFuture
 
 fun Properties.loadFromResource(resource: String): Properties {
   val loader = Thread.currentThread().contextClassLoader
@@ -18,28 +17,20 @@ fun Properties.loadFromResource(resource: String): Properties {
   return this
 }
 
-fun <T, R> T.callFx(f: (T) -> R?): R? {
+fun <T, R> T.callFx(f: (T) -> R): R =
   if (Platform.isFxApplicationThread()) {
-    return f(this)
+    f(this)
   } else {
-    val resultRef = AtomicReference<Pair<R?, Throwable?>>()
-    PlatformImpl.runAndWait {
+    val future = CompletableFuture<R>()
+    Platform.runLater {
       try {
-        val result = f(this)
-        resultRef.set(Pair(result, null))
+        future.complete(f(this))
       } catch (e: Throwable) {
-        resultRef.set(Pair(null, e))
+        future.completeExceptionally(e)
       }
     }
-    val error = resultRef.get().second
-    val result = resultRef.get().first
-    if (error != null) {
-      throw error
-    } else {
-      return result
-    }
+    future.get()
   }
-}
 
 fun <T> T.runFx(f: (T) -> Unit): Unit {
   if (Platform.isFxApplicationThread()) {

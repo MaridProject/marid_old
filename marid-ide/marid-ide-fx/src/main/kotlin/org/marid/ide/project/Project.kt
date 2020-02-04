@@ -1,6 +1,9 @@
 package org.marid.ide.project
 
-import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.property.ReadOnlyBooleanWrapper
+import javafx.beans.property.ReadOnlyDoubleProperty
+import javafx.beans.property.ReadOnlyDoubleWrapper
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.WARN
 import org.marid.fx.extensions.runFx
@@ -35,8 +38,9 @@ class Project(val projects: Projects, val id: String) {
   val classesDirectory = directory.resolve("classes")
   val depsDirectory = directory.resolve("deps")
   val logger = Logger.getLogger(id)
-  val locked = SimpleBooleanProperty(this, "locked")
 
+  private val lockedProperty = ReadOnlyBooleanWrapper(this, "locked")
+  private val progressProperty = ReadOnlyDoubleWrapper(this, "progress", 0.0)
   private val lock = ReentrantReadWriteLock()
 
   init {
@@ -88,13 +92,24 @@ class Project(val projects: Projects, val id: String) {
 
   fun <R> withRead(callback: (Project) -> R): R = lock.read { callback(this) }
   fun <R> withWrite(callback: (Project) -> R): R {
-    runFx { locked.set(true) }
+    runFx { lockedProperty.set(true) }
     try {
       return lock.write { callback(this) }
     } finally {
-      runFx { locked.set(false) }
+      runFx { lockedProperty.set(false) }
     }
   }
+
+  fun withProgress(code: (setter: (progress: Double) -> Unit) -> Unit) {
+    try {
+      code { progress -> runFx { progressProperty.set(progress) } }
+    } finally {
+      runFx { progressProperty.set(0.0) }
+    }
+  }
+
+  val progress: ReadOnlyDoubleProperty = progressProperty.readOnlyProperty
+  val locked: ReadOnlyBooleanProperty = lockedProperty.readOnlyProperty
 
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id

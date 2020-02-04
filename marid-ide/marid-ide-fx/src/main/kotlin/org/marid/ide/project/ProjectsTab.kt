@@ -56,6 +56,14 @@ class ProjectsTabContents(
           }
         )
       }
+      column(400, "Progress") {
+        SimpleObjectProperty(
+          ProgressBar().apply {
+            progressProperty().bind(it.progress)
+            maxWidth = Double.MAX_VALUE
+          }
+        )
+      }.also { it.style = "-fx-alignment: CENTER-LEFT;" }
     }
     .apply {
       installEdit { items ->
