@@ -58,15 +58,17 @@ class ProjectBuildService(
           if (result.collectExceptions.isNotEmpty()) {
             throw result.collectExceptions.reduce { e1, e2 -> e1.apply { addSuppressed(e2) } }
           }
-          val artifactMap = result.artifactResults.stream().toImmutableMap(
-            { it.artifact.groupId to it.artifact.artifactId },
-            { it },
-            { a, b -> if (b.artifact.version > a.artifact.version) b else a }
-          )
+          val artifacts = result.artifactResults.parallelStream()
+            .map { it.artifact }
+            .toImmutableMap(
+              { it.groupId to it.artifactId },
+              { it },
+              { a, b -> maxOf(a, b, compareBy { it.version }) }
+            ).values
           project.withWrite {
             project.depsDirectory.deleteDirectoryContents()
-            val urls = artifactMap.values.parallelStream()
-              .map { it.artifact.file.toPath() to project.depsDirectory.resolve(it.artifact.file.name) }
+            val urls = artifacts.parallelStream()
+              .map { it.file.toPath() to project.depsDirectory.resolve(it.file.name) }
               .peek { (from, to) -> Files.copy(from, to) }
               .map { (_, to) -> to.toUri().toURL() }
               .toTypedArray()
