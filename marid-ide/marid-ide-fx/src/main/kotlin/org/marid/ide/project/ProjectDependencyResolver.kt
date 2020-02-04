@@ -27,6 +27,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.logging.Level
 import java.util.logging.Level.WARNING
+import java.util.logging.Logger
 
 @Component
 class ProjectDependencyResolver {
@@ -44,7 +45,7 @@ class ProjectDependencyResolver {
     }
     .run { getService(RepositorySystem::class.java) }
 
-  fun <R> withSession(callback: (DefaultRepositorySystemSession, RepositorySystem) -> R): R = newSession()
+  fun <R> withSession(logger: Logger, callback: (DefaultRepositorySystemSession, RepositorySystem) -> R): R = newSession()
     .apply {
       val local = Path.of(System.getProperty("user.home"), ".m2", "repository")
       if (Files.isDirectory(local)) {
