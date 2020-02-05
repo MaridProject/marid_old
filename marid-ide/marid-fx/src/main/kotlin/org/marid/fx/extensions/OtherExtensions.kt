@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+typealias ProgressTracker = (progress: Double) -> Unit
+
 fun Properties.loadFromResource(resource: String): Properties {
   val loader = Thread.currentThread().contextClassLoader
   InputStreamReader(

@@ -21,6 +21,7 @@ import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeServices
 import org.marid.ide.project.Project
 import org.marid.ide.project.ProjectDependencyResolver
+import org.marid.ide.project.ProjectTask
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 import java.net.URLClassLoader
@@ -33,7 +34,7 @@ class ProjectBuildService(
   private val services: IdeServices,
   private val properties: IdeProperties,
   private val dependencyResolver: ProjectDependencyResolver,
-  projectFactory: ObjectFactory<Project>
+  private val projectFactory: ObjectFactory<Project>
 ) : Service<Unit>() {
 
   private val project = projectFactory.bean
@@ -42,53 +43,7 @@ class ProjectBuildService(
   private val dependencyFilter = DependencyFilter { _, _ -> true }
   private var classLoader: URLClassLoader? = null
 
-  override fun createTask(): Task<Unit> {
-    return object : Task<Unit>() {
-      override fun call() {
-        project.logger.info("Build started")
-        project.withProgress { progressTracker ->
-          dependencyResolver.withSession(project.logger) { session, system ->
-            with(progressTracker, session, system)
-          }
-        }
-        project.logger.info("Build finished")
-      }
-    }
-  }
-
-  private fun with(progressTracker: (Double) -> Unit, session: DefaultRepositorySystemSession, system: RepositorySystem) {
-    val repos = project.repositories.items
-      .map {
-        RemoteRepository.Builder(it.name.get(), "default", it.url.get())
-          .build()
-      }
-    val dependencies = project.dependencies.items
-      .map { (g, a, v) -> DefaultArtifact(g, a, "", "jar", properties.substitute(v)) }
-      .map { Dependency(it, "runtime") }
-    val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
-    val result = system.resolveDependencies(session, DependencyRequest(collectRequest, dependencyFilter))
-    if (result.collectExceptions.isNotEmpty()) {
-      throw result.collectExceptions.reduce { e1, e2 -> e1.apply { addSuppressed(e2) } }
-    }
-    val artifacts = result.artifactResults.parallelStream()
-      .map { it.artifact }
-      .toImmutableMap(
-        { it.groupId to it.artifactId },
-        { it },
-        { a, b -> maxOf(a, b, compareBy { it.version }) }
-      ).values
-    project.withWrite {
-      project.depsDirectory.deleteDirectoryContents()
-      val urls = artifacts.parallelStream()
-        .map { it.file.toPath() to project.depsDirectory.resolve(it.file.name) }
-        .peek { (from, to) -> Files.copy(from, to) }
-        .map { (_, to) -> to.toUri().toURL() }
-        .toTypedArray()
-      classLoader?.also { it.close() }
-      classLoader = URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
-      project.save()
-    }
-  }
+  override fun createTask(): Task<Unit> = InnerTask()
 
   @PostConstruct
   fun onInit() {
@@ -117,6 +72,50 @@ class ProjectBuildService(
       dirty = true
     } else {
       Platform.runLater { restart() }
+    }
+  }
+
+  inner class InnerTask : ProjectTask<Unit>(projectFactory.bean) {
+    override fun callTask() {
+      project.logger.info("Build started")
+      dependencyResolver.withSession(project.logger) { session, system ->
+        with(session, system)
+      }
+      project.logger.info("Build finished")
+    }
+
+    private fun with(session: DefaultRepositorySystemSession, system: RepositorySystem) {
+      val repos = project.repositories.items
+        .map {
+          RemoteRepository.Builder(it.name.get(), "default", it.url.get())
+            .build()
+        }
+      val dependencies = project.dependencies.items
+        .map { (g, a, v) -> DefaultArtifact(g, a, "", "jar", properties.substitute(v)) }
+        .map { Dependency(it, "runtime") }
+      val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
+      val result = system.resolveDependencies(session, DependencyRequest(collectRequest, dependencyFilter))
+      if (result.collectExceptions.isNotEmpty()) {
+        throw result.collectExceptions.reduce { e1, e2 -> e1.apply { addSuppressed(e2) } }
+      }
+      val artifacts = result.artifactResults.parallelStream()
+        .map { it.artifact }
+        .toImmutableMap(
+          { it.groupId to it.artifactId },
+          { it },
+          { a, b -> maxOf(a, b, compareBy { it.version }) }
+        ).values
+      project.withWrite {
+        project.depsDirectory.deleteDirectoryContents()
+        val urls = artifacts.parallelStream()
+          .map { it.file.toPath() to project.depsDirectory.resolve(it.file.name) }
+          .peek { (from, to) -> Files.copy(from, to) }
+          .map { (_, to) -> to.toUri().toURL() }
+          .toTypedArray()
+        classLoader?.also { it.close() }
+        classLoader = URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
+        project.save()
+      }
     }
   }
 }

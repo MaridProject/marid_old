@@ -100,27 +100,13 @@ class Project(val projects: Projects, val id: String) {
     }
   }
 
-  fun withProgress(code: (setter: (progress: Double) -> Unit) -> Unit) {
-    try {
-      code { progress -> runFx { progressProperty.set(progress) } }
-    } finally {
-      runFx { progressProperty.set(0.0) }
-    }
-  }
-
-  fun <E : Enum<E>> withEnumProgress(code: (setter: (progress: E) -> Unit) -> Unit) {
-    try {
-      code { progress -> runFx {
-        progressProperty.set((progress.ordinal + 1).toDouble() / progress.declaringClass.enumConstants.size) }
-      }
-    } finally {
-      runFx { progressProperty.set(0.0) }
-    }
-  }
-
   val progress: ReadOnlyDoubleProperty = progressProperty.readOnlyProperty
   val locked: ReadOnlyBooleanProperty = lockedProperty.readOnlyProperty
 
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id
+
+  inner class Friend {
+    val progressWrapper get() = progressProperty
+  }
 }
