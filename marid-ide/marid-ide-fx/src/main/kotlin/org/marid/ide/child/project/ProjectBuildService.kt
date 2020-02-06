@@ -76,15 +76,21 @@ class ProjectBuildService(
   }
 
   inner class InnerTask : ProjectTask<Unit>(projectFactory.bean) {
+
+    private lateinit var session: DefaultRepositorySystemSession
+    private lateinit var system: RepositorySystem
+
     override fun callTask() {
       project.logger.info("Build started")
       dependencyResolver.withSession(project.logger) { session, system ->
-        with(session, system)
+        this.session = session
+        this.system = system
+        invoke()
       }
       project.logger.info("Build finished")
     }
 
-    private fun with(session: DefaultRepositorySystemSession, system: RepositorySystem) {
+    private fun invoke() {
       val repos = project.repositories.items
         .map {
           RemoteRepository.Builder(it.name.get(), "default", it.url.get())
