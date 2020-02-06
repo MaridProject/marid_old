@@ -2,9 +2,9 @@ package org.marid.ide.project
 
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
-import javafx.concurrent.Task
+import org.marid.fx.concurrent.FxTask
 
-abstract class ProjectTask<V>(val project: Project) : Task<V>() {
+abstract class ProjectTask<V>(val project: Project) : FxTask<V>() {
 
   private val progressListener = ChangeListener<Number> { _, _, v -> project.Friend().progressWrapper.set(v.toDouble()) }
 
@@ -13,7 +13,10 @@ abstract class ProjectTask<V>(val project: Project) : Task<V>() {
     try {
       return callTask()
     } finally {
-      Platform.runLater { this.progressProperty().removeListener(progressListener) }
+      Platform.runLater {
+        updateProgress(0L, 100L)
+        this.progressProperty().removeListener(progressListener)
+      }
     }
   }
 
