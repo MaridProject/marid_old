@@ -35,7 +35,10 @@ import java.util.function.BiConsumer;
 
 public interface ContextUtils {
 
-  static GenericApplicationContext context(AbstractApplicationContext parent, BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> configurer) {
+  static GenericApplicationContext context(
+    AbstractApplicationContext parent,
+    BiConsumer<AnnotatedBeanDefinitionReader, GenericApplicationContext> configurer
+  ) {
     final var context = new GenericApplicationContext();
     final var beanDefinitionReader = new AnnotatedBeanDefinitionReader(context);
 

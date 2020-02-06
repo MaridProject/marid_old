@@ -10,20 +10,20 @@ package org.marid.spring.scope;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.lang.NonNull;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,9 +41,9 @@ public class ResettableScope implements Scope {
     this.id = id;
   }
 
-  @NonNull
+  @NotNull
   @Override
-  public Object get(@NonNull String name,@NonNull ObjectFactory<?> objectFactory) {
+  public Object get(@NotNull String name, @NotNull ObjectFactory<?> objectFactory) {
     lock.readLock().lock();
     try {
       var ref = beans.get(name);
@@ -57,7 +57,7 @@ public class ResettableScope implements Scope {
   }
 
   @Override
-  public Object remove(@NonNull String name) {
+  public Object remove(@NotNull String name) {
     lock.readLock().lock();
     try {
       return beans.remove(name);
@@ -67,7 +67,7 @@ public class ResettableScope implements Scope {
   }
 
   @Override
-  public void registerDestructionCallback(@NonNull String name, @NonNull Runnable callback) {
+  public void registerDestructionCallback(@NotNull String name, @NotNull Runnable callback) {
     lock.readLock().lock();
     try {
       this.callbacks.computeIfAbsent(name, n -> new LinkedList<>()).add(callback);
@@ -77,7 +77,7 @@ public class ResettableScope implements Scope {
   }
 
   @Override
-  public Object resolveContextualObject(@NonNull String key) {
+  public Object resolveContextualObject(@NotNull String key) {
     return null;
   }
 
