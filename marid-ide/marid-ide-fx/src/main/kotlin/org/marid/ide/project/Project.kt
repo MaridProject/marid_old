@@ -104,9 +104,9 @@ class Project(val projects: Projects, val id: String) {
   fun dirty() = dirtyProperty.set(true)
   fun clearDirty() = dirtyProperty.set(false)
 
-  val progress: ReadOnlyDoubleProperty = progressProperty.readOnlyProperty
-  val locked: ReadOnlyBooleanProperty = lockedProperty.readOnlyProperty
-  val dirty: ReadOnlyBooleanProperty = dirtyProperty.readOnlyProperty
+  val progress: ReadOnlyDoubleProperty get() = progressProperty.readOnlyProperty
+  val locked: ReadOnlyBooleanProperty get() = lockedProperty.readOnlyProperty
+  val dirty: ReadOnlyBooleanProperty get() = dirtyProperty.readOnlyProperty
 
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id
