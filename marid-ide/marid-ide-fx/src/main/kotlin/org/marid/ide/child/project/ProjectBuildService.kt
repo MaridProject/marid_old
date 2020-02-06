@@ -1,10 +1,9 @@
 package org.marid.ide.child.project
 
-import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.concurrent.Service
 import javafx.concurrent.Task
-import javafx.concurrent.Worker.State.*
+import javafx.concurrent.Worker.State.SUCCEEDED
 import org.eclipse.aether.DefaultRepositorySystemSession
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.artifact.DefaultArtifact
@@ -40,8 +39,7 @@ class ProjectBuildService(
 ) : Service<Unit>() {
 
   private val project = projectFactory.bean
-  private val projectInvalidationListener = InvalidationListener { invalidated() }
-  private var dirty = false
+  private val projectInvalidationListener = InvalidationListener { project.dirty() }
   private val dependencyFilter = DependencyFilter { _, _ -> true }
   private var classLoader: URLClassLoader? = null
 
@@ -52,11 +50,8 @@ class ProjectBuildService(
     services.add(this)
     project.observables.forEach { it.addListener(projectInvalidationListener) }
     stateProperty().addListener { _, _, s ->
-      if (s == SUCCEEDED || s == FAILED || s == CANCELLED) {
-        if (dirty) {
-          dirty = false
-          Platform.runLater { restart() }
-        }
+      if (s == SUCCEEDED) {
+        project.clearDirty()
       }
     }
     start()
@@ -67,14 +62,6 @@ class ProjectBuildService(
     services.remove(this)
     project.observables.forEach { it.removeListener(projectInvalidationListener) }
     classLoader?.close()
-  }
-
-  private fun invalidated() {
-    if (isRunning) {
-      dirty = true
-    } else {
-      Platform.runLater { restart() }
-    }
   }
 
   inner class InnerTask : ProjectTask<Unit>(projectFactory.bean) {

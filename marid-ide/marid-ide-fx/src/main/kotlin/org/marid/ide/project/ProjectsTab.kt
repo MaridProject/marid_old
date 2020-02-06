@@ -3,6 +3,7 @@ package org.marid.ide.project
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
 import javafx.scene.control.*
+import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
@@ -56,14 +57,10 @@ class ProjectsTabContents(
           }
         )
       }
-      column(400, "Progress") {
-        SimpleObjectProperty(
-          ProgressBar().apply {
-            progressProperty().bind(it.progress)
-            maxWidth = Double.MAX_VALUE
-          }
-        )
-      }.also { it.style = "-fx-alignment: CENTER-LEFT;" }
+      column(100, "Dirty") { it.dirty }.also {
+        it.style = "-fx-alignment: CENTER;"
+        it.cellFactory = CheckBoxTableCell.forTableColumn(it)
+      }
     }
     .apply {
       installEdit { items ->

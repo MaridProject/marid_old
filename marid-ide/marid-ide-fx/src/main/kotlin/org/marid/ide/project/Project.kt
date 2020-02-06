@@ -41,6 +41,7 @@ class Project(val projects: Projects, val id: String) {
 
   private val lockedProperty = ReadOnlyBooleanWrapper(this, "locked")
   private val progressProperty = ReadOnlyDoubleWrapper(this, "progress", 0.0)
+  private val dirtyProperty = ReadOnlyBooleanWrapper(this, "dirty", true)
   private val lock = ReentrantReadWriteLock()
 
   init {
@@ -100,8 +101,12 @@ class Project(val projects: Projects, val id: String) {
     }
   }
 
+  fun dirty() = dirtyProperty.set(true)
+  fun clearDirty() = dirtyProperty.set(false)
+
   val progress: ReadOnlyDoubleProperty = progressProperty.readOnlyProperty
   val locked: ReadOnlyBooleanProperty = lockedProperty.readOnlyProperty
+  val dirty: ReadOnlyBooleanProperty = dirtyProperty.readOnlyProperty
 
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id
