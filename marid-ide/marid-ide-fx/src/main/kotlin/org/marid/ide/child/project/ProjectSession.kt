@@ -15,7 +15,6 @@ import org.marid.ide.project.ProjectDependencyResolver
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 import java.lang.reflect.Proxy
-import java.util.logging.Level
 import java.util.logging.Level.*
 import java.util.logging.Logger
 
@@ -48,7 +47,7 @@ class ProjectSession(
                     WARNING to arg.exception
                   }
                 TransferEvent.EventType.PROGRESSED -> OFF to null
-                else -> Level.INFO to null
+                else -> INFO to null
               }
               logger.LOG(level, "{0}", x, arg)
             }
@@ -63,7 +62,7 @@ class ProjectSession(
             is RepositoryEvent -> {
               val (level, x) = when (arg.type) {
                 ARTIFACT_DESCRIPTOR_INVALID, ARTIFACT_DESCRIPTOR_MISSING, METADATA_INVALID -> WARNING to arg.exception
-                else -> Level.INFO to null
+                else -> INFO to null
               }
               logger.LOG(level, "{0}", x, arg)
             }
