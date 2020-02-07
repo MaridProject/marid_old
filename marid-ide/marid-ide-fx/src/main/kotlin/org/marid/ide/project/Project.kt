@@ -63,11 +63,15 @@ class Project(val projects: Projects, val id: String) {
 
     val m2Local = Path.of(System.getProperty("user.home"), ".m2", "repository")
     if (Files.isDirectory(m2Local)) {
-      repositories.items += XmlRepository("m2Local", m2Local.toUri().toASCIIString())
+      val m2 = XmlRepository("m2Local", m2Local.toUri().toASCIIString())
+      if (m2 !in repositories.items) {
+        repositories.items += m2
+      }
     }
 
-    if (repositories.items.isEmpty()) {
-      repositories.items += XmlRepository("default", "https://repo1.maven.org/maven2/")
+    val central = XmlRepository("central", "https://repo1.maven.org/maven2/")
+    if (central !in repositories.items) {
+      repositories.items += central
     }
 
     if (!existing) {

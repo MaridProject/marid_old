@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty
 import org.marid.fx.xml.get
 import org.marid.fx.xml.set
 import org.w3c.dom.Element
+import java.util.*
 
 class XmlRepository(name: String, url: String) {
 
@@ -20,5 +21,12 @@ class XmlRepository(name: String, url: String) {
   fun writeTo(element: Element) {
     element["name"] = name.get()
     element["url"] = url.get()
+  }
+
+  override fun hashCode(): Int = Objects.hash(name.get(), url.get())
+  override fun equals(other: Any?): Boolean = when (other) {
+    other === this -> true
+    is XmlRepository -> arrayOf(name.get(), url.get()).contentEquals(arrayOf(other.name.get(), other.url.get()))
+    else -> false
   }
 }
