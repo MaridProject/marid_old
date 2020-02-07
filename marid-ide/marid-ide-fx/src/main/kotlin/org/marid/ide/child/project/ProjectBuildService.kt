@@ -16,10 +16,7 @@ import org.eclipse.aether.repository.RepositoryPolicy
 import org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE
 import org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS
 import org.eclipse.aether.resolution.DependencyRequest
-import org.marid.fx.extensions.deleteDirectoryContents
-import org.marid.fx.extensions.progress
-import org.marid.fx.extensions.toImmutableMap
-import org.marid.fx.extensions.toTypedArray
+import org.marid.fx.extensions.*
 import org.marid.ide.child.project.Progress.*
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.extensions.bean
