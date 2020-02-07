@@ -16,8 +16,7 @@ import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 import java.lang.reflect.Proxy
 import java.util.logging.Level
-import java.util.logging.Level.OFF
-import java.util.logging.Level.WARNING
+import java.util.logging.Level.*
 import java.util.logging.Logger
 
 @Component
@@ -40,9 +39,14 @@ class ProjectSession(
                 TransferEvent.EventType.CORRUPTED -> WARNING to arg.exception
                 TransferEvent.EventType.FAILED ->
                   if (arg.exception is MetadataNotFoundException)
-                    WARNING to null
-                  else
+                    if (arg.resource.repositoryUrl.startsWith("file://")) {
+                      INFO to null
+                    } else {
+                      WARNING to null
+                    }
+                  else {
                     WARNING to arg.exception
+                  }
                 TransferEvent.EventType.PROGRESSED -> OFF to null
                 else -> Level.INFO to null
               }
