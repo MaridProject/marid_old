@@ -10,7 +10,11 @@ import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
+import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.RemoteRepository
+import org.eclipse.aether.repository.RepositoryPolicy
+import org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE
+import org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS
 import org.eclipse.aether.resolution.DependencyRequest
 import org.marid.fx.extensions.deleteDirectoryContents
 import org.marid.fx.extensions.progress
@@ -51,7 +55,7 @@ class ProjectBuildService(
     project.observables.forEach { it.addListener(projectInvalidationListener) }
     stateProperty().addListener { _, _, s ->
       if (s == SUCCEEDED) {
-       project.clearDirty()
+        project.clearDirty()
       }
     }
     start()
@@ -74,6 +78,8 @@ class ProjectBuildService(
       dependencyResolver.withSession(project.logger) { session, system ->
         this.session = session
         this.system = system
+        val localRepo = LocalRepository(project.cacheDepsDirectory.toFile())
+        this.session.localRepositoryManager = system.newLocalRepositoryManager(session, localRepo)
         invoke()
       }
       project.logger.info("Build finished")
@@ -82,7 +88,13 @@ class ProjectBuildService(
     private fun invoke() {
       updateProgress(REPOSITORIES.progress)
       val repos = project.repositories.items
-        .map { RemoteRepository.Builder(it.name.get(), "default", it.url.get()).build() }
+        .map {
+          val builder = RemoteRepository.Builder(it.name.get(), "default", it.url.get())
+          if (it.url.get().startsWith("file://")) {
+            builder.setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
+          }
+          builder.build()
+        }
 
       updateProgress(DEPENDENCIES.progress)
       val dependencies = project.dependencies.items

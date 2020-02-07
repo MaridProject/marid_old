@@ -9,7 +9,6 @@ import org.eclipse.aether.RepositoryListener
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.impl.DefaultServiceLocator
-import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transfer.MetadataNotFoundException
@@ -23,8 +22,6 @@ import org.marid.fx.extensions.WARN
 import org.marid.fx.extensions.logger
 import org.springframework.stereotype.Component
 import java.lang.reflect.Proxy
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.logging.Level
 import java.util.logging.Level.WARNING
 import java.util.logging.Logger
@@ -46,13 +43,6 @@ class ProjectDependencyResolver {
     .run { getService(RepositorySystem::class.java) }
 
   fun <R> withSession(logger: Logger, callback: (DefaultRepositorySystemSession, RepositorySystem) -> R): R = newSession()
-    .apply {
-      val local = Path.of(System.getProperty("user.home"), ".m2", "repository")
-      if (Files.isDirectory(local)) {
-        val repo = LocalRepository(local.toFile())
-        localRepositoryManager = repositorySystem.newLocalRepositoryManager(this, repo)
-      }
-    }
     .apply {
       val classLoader = Thread.currentThread().contextClassLoader
       transferListener = Proxy.newProxyInstance(classLoader, arrayOf(TransferListener::class.java)) { _, _, a ->

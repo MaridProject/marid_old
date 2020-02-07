@@ -16,6 +16,7 @@ import org.marid.ide.project.xml.XmlRepository
 import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
@@ -37,6 +38,8 @@ class Project(val projects: Projects, val id: String) {
   val resourcesDirectory = directory.resolve("resources")
   val classesDirectory = directory.resolve("classes")
   val depsDirectory = directory.resolve("deps")
+  val cacheDirectory = directory.resolve("cache")
+  val cacheDepsDirectory = cacheDirectory.resolve("deps")
   val logger = Logger.getLogger(id)
 
   private val lockedProperty = ReadOnlyBooleanWrapper(this, "locked")
@@ -54,11 +57,17 @@ class Project(val projects: Projects, val id: String) {
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
     Files.createDirectories(depsDirectory)
+    Files.createDirectories(cacheDepsDirectory)
 
     load()
 
     if (repositories.items.isEmpty()) {
       repositories.items += XmlRepository("default", "https://repo1.maven.org/maven2/")
+    }
+
+    val m2Local = Path.of(System.getProperty("user.home"), ".m2", "repository")
+    if (Files.isDirectory(m2Local)) {
+      repositories.items += XmlRepository("m2Local", m2Local.toUri().toASCIIString())
     }
 
     if (!existing) {
