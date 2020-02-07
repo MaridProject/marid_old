@@ -3,7 +3,6 @@ package org.marid.ide.project
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
 import javafx.scene.control.*
-import javafx.scene.control.cell.CheckBoxTableCell
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
@@ -16,6 +15,7 @@ import org.marid.fx.action.toolButton
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installEdit
 import org.marid.fx.extensions.readOnlyProp
+import org.marid.fx.table.ReadOnlyCheckBoxTableCell
 import org.springframework.stereotype.Component
 
 @Component
@@ -58,8 +58,7 @@ class ProjectsTabContents(
         )
       }
       column(100, "Dirty") { it.dirty }.also {
-        it.style = "-fx-alignment: CENTER;"
-        it.cellFactory = CheckBoxTableCell.forTableColumn(it)
+        it.cellFactory = Callback { ReadOnlyCheckBoxTableCell() }
       }
     }
     .apply {
