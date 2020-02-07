@@ -61,13 +61,13 @@ class Project(val projects: Projects, val id: String) {
 
     load()
 
-    if (repositories.items.isEmpty()) {
-      repositories.items += XmlRepository("default", "https://repo1.maven.org/maven2/")
-    }
-
     val m2Local = Path.of(System.getProperty("user.home"), ".m2", "repository")
     if (Files.isDirectory(m2Local)) {
       repositories.items += XmlRepository("m2Local", m2Local.toUri().toASCIIString())
+    }
+
+    if (repositories.items.isEmpty()) {
+      repositories.items += XmlRepository("default", "https://repo1.maven.org/maven2/")
     }
 
     if (!existing) {
