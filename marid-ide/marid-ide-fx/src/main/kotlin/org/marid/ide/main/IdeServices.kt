@@ -2,6 +2,7 @@ package org.marid.ide.main
 
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.DoubleBinding
+import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections.observableArrayList
 import javafx.collections.ObservableList
 import javafx.concurrent.Service
@@ -37,6 +38,7 @@ class IdeServices {
   val services: ServiceList get() = servicesList.unmodified
   val runningServices: ServiceList get() = servicesList.filtered { it.isRunning }.unmodified
   val servicesText = "[%d / %d]".bindFormat(runningServices.bindSize, services.bindSize)
+  val lastMessage = SimpleStringProperty(this, "lastMessage", "Marid")
 
   val progress: DoubleBinding = Bindings.createDoubleBinding(Callable {
     runningServices.map(this::calcProgress).run {

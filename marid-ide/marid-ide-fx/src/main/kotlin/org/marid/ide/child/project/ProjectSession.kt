@@ -46,7 +46,7 @@ class ProjectSession(
                   else {
                     WARNING to arg.exception
                   }
-                TransferEvent.EventType.PROGRESSED -> OFF to null
+                TransferEvent.EventType.PROGRESSED -> FINEST to null
                 else -> INFO to null
               }
               logger.LOG(level, "{0}", x, arg)
