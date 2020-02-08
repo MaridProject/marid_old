@@ -26,7 +26,7 @@ fun String.i18n(vararg args: Any?): String {
   val format = try {
     bundle.getString(this)
   } catch (e: Throwable) {
-    return this
+    this
   }
   return if (args.isEmpty()) {
     format

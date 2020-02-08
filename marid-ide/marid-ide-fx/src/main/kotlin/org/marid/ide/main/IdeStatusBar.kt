@@ -1,21 +1,28 @@
 package org.marid.ide.main
 
+import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
+import javafx.scene.control.ToggleButton
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.shape.Circle
-import org.marid.fx.extensions.*
+import javafx.stage.Window
+import org.marid.fx.extensions.bindEmpty
+import org.marid.fx.extensions.color
+import org.marid.fx.extensions.map
+import org.marid.ide.extensions.bean
 import org.marid.ide.log.IdeLog
+import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
 @Component
 class IdeStatusBar(
   private val ideLog: IdeLog,
-  private val ideServices: IdeServices
+  private val ideServices: IdeServices,
+  private val ideServicesWindowFactory: ObjectFactory<IdeServicesWindow>
 ) : HBox(4.0) {
 
   init {
@@ -35,10 +42,21 @@ class IdeStatusBar(
     .apply { minWidth = 100.0 }
     .apply { progressProperty().bind(ideServices.progress) }
 
-  private val servicesCountLabel = Button()
+  private val servicesCountLabel = ToggleButton()
     .also { setHgrow(it, Priority.NEVER) }
-    .apply { textProperty().bind(ideServices.servicesText) }
-    .apply { disableProperty().bind(ideServices.services.bindEmpty) }
+    .apply {
+      isFocusTraversable = false
+      textProperty().bind(ideServices.servicesText)
+      disableProperty().bind(ideServices.services.bindEmpty)
+      onAction = EventHandler {
+        when (val w = Window.getWindows().find { it is IdeServicesWindow }) {
+          null -> ideServicesWindowFactory.bean
+          else -> {
+            w.hide()
+          }
+        }
+      }
+    }
 
   init {
     children += listOf(

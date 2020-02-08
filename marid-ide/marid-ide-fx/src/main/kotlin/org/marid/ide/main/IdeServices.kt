@@ -49,7 +49,7 @@ class IdeServices {
     }
   }, runningServices)
 
-  private fun id(service: Worker<*>) = Base64.getMimeEncoder().withoutPadding().encodeToString(BigInteger
+  fun id(service: Worker<*>) = Base64.getMimeEncoder().withoutPadding().encodeToString(BigInteger
     .valueOf(System.identityHashCode(service).toLong())
     .toByteArray()
   )
