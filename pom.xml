@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>marid</artifactId>
-  <version>0.9.8.8-SNAPSHOT</version>
+  <version>0.9.8.7-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>marid</name>
@@ -72,8 +72,8 @@
 
     <license.licenseName>agpl_v3</license.licenseName>
 
-    <tests.opens />
-    <tests.exports />
+    <tests.opens/>
+    <tests.exports/>
   </properties>
 
   <dependencyManagement>
