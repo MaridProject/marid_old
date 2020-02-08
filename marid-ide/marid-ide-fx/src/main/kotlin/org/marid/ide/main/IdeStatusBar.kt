@@ -28,6 +28,7 @@ class IdeStatusBar(
     .apply { maxWidth = Double.MAX_VALUE }
     .apply { graphic = Circle(5.0).apply { fillProperty().bind(ideLog.lastLevel.map { it?.color }) } }
     .apply { graphicTextGap = 5.0 }
+    .apply { textProperty().bind(ideServices.lastMessage) }
 
   private val progressBar = ProgressBar(0.0)
     .also { setHgrow(it, Priority.NEVER) }

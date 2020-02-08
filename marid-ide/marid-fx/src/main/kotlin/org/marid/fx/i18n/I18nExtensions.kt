@@ -16,20 +16,26 @@ val String.localized: StringBinding
     }
   }, I18n.locale)
 
-fun String.localized(vararg args: Any): StringBinding {
+fun String.localized(vararg args: Any?): StringBinding {
   val observables = args.flatMap { if (it is Observable) listOf(it) else emptyList() }.toTypedArray()
-  return Bindings.createStringBinding(Callable {
-    val bundle = I18n.textsBundle()
-    val format = try {
-      bundle.getString(this)
-    } catch (e: Throwable) {
-      this
-    }
+  return Bindings.createStringBinding(Callable { i18n(*args) }, *observables, I18n.locale)
+}
+
+fun String.i18n(vararg args: Any?): String {
+  val bundle = I18n.textsBundle()
+  val format = try {
+    bundle.getString(this)
+  } catch (e: Throwable) {
+    return this
+  }
+  return if (args.isEmpty()) {
+    format
+  } else {
     try {
       val extractedArgs = args.map { if (it is ObservableValue<*>) it.value else it }.toTypedArray()
       String.format(format, *extractedArgs)
     } catch (e: Throwable) {
       format
     }
-  }, *observables, I18n.locale)
+  }
 }
