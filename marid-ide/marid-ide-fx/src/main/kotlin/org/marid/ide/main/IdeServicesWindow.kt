@@ -42,8 +42,8 @@ class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServic
     }
     addEventFilter(WindowEvent.WINDOW_HIDDEN) { context.defaultListableBeanFactory.destroyBean(this) }
     val bounds = statusBar.localToScreen(statusBar.boundsInLocal)
+    show()
     x = bounds.maxX - width
     y = bounds.minY - height
-    show()
   }
 }
