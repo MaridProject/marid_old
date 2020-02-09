@@ -17,6 +17,7 @@ import org.marid.fx.extensions.deleteDirectoryContents
 import org.marid.fx.extensions.progress
 import org.marid.fx.extensions.toImmutableMap
 import org.marid.fx.extensions.toTypedArray
+import org.marid.fx.i18n.i18n
 import org.marid.ide.child.project.Progress.*
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.main.IdeServices
@@ -61,7 +62,15 @@ class ProjectBuildService(
     classLoader?.close()
   }
 
+  override fun toString(): String {
+    return "Project build service: %s".i18n(title)
+  }
+
   inner class InnerTask : ProjectTask<Unit>(session.project) {
+
+    init {
+      updateTitle(project.winery.name.get())
+    }
 
     override fun callTask() {
       project.logger.info("Build started")

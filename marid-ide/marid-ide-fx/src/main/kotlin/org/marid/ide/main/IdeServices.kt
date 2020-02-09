@@ -25,18 +25,7 @@ typealias ServiceList = ObservableList<Service<*>>
 @Component
 class IdeServices {
 
-  private val servicesList: ServiceList = observableArrayList {
-    arrayOf(
-      it.stateProperty(),
-      it.valueProperty(),
-      it.workDoneProperty(),
-      it.totalWorkProperty(),
-      it.progressProperty(),
-      it.titleProperty(),
-      it.runningProperty(),
-      it.messageProperty()
-    )
-  }
+  private val servicesList: ServiceList = observableArrayList { it.observables }
 
   val services: ServiceList get() = servicesList.unmodified
   val runningServices: ServiceList get() = servicesList.filtered { it.isRunning }.unmodified
@@ -49,7 +38,7 @@ class IdeServices {
     }
   }, runningServices)
 
-  fun id(service: Worker<*>) = Base64.getMimeEncoder().withoutPadding().encodeToString(BigInteger
+  fun id(service: Worker<*>): String = Base64.getMimeEncoder().withoutPadding().encodeToString(BigInteger
     .valueOf(System.identityHashCode(service).toLong())
     .toByteArray()
   )

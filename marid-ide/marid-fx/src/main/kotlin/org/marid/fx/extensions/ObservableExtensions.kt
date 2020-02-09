@@ -54,3 +54,8 @@ val Int.readOnlyProp get() = ReadOnlyIntegerWrapper(this).readOnlyProperty
 val Double.readOnlyProp get() = ReadOnlyDoubleWrapper(this).readOnlyProperty
 val Float.readOnlyProp get() = ReadOnlyFloatWrapper(this).readOnlyProperty
 val Boolean.readOnlyProp get() = ReadOnlyBooleanWrapper(this).readOnlyProperty
+
+@Suppress("UNCHECKED_CAST") val DoubleProperty.asDoubleProperty: Property<Double>
+  get() = this as Property<Double>
+@Suppress("UNCHECKED_CAST") val ReadOnlyDoubleProperty.asDoubleProperty: ReadOnlyProperty<Double>
+  get() = this as ReadOnlyProperty<Double>

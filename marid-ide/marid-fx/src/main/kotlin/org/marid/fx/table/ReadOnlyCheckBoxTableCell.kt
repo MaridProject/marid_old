@@ -20,7 +20,6 @@ class ReadOnlyCheckBoxTableCell<S> : TableCell<S, Boolean?>() {
     if (empty || item == null) {
       checkBox.isVisible = false
     } else {
-      graphic = checkBox
       checkBox.isVisible = true
       checkBox.isSelected = item
     }

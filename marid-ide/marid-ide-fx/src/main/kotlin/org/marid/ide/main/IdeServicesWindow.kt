@@ -1,16 +1,19 @@
 package org.marid.ide.main
 
+import javafx.beans.binding.Bindings
 import javafx.concurrent.Service
 import javafx.event.EventHandler
 import javafx.event.WeakEventHandler
 import javafx.scene.Scene
 import javafx.scene.control.TableView
+import javafx.scene.control.cell.ProgressBarTableCell
+import javafx.scene.image.ImageView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.stage.Window
 import javafx.stage.WindowEvent
-import org.marid.fx.extensions.column
-import org.marid.fx.extensions.readOnlyProp
+import javafx.util.Callback
+import org.marid.fx.extensions.*
 import org.marid.spring.annotation.PrototypeScoped
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.support.GenericApplicationContext
@@ -23,7 +26,31 @@ class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServic
   private val table = TableView<Service<*>>(services.services)
     .apply {
       columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
-      column(200, "Name") { services.id(it).readOnlyProp }
+      column(64, "Id") {
+        services.id(it).readOnlyProp
+      }.apply {
+        style = "-fx-alignment: CENTER-LEFT;"
+      }
+      column(200, "Name") {
+        Bindings.createStringBinding({ it.toString() }, it.observables)
+      }.apply {
+        style = "-fx-alignment: CENTER-LEFT;"
+      }
+      column(48, "State") {
+        it.stateProperty().bindObject { serviceProperty ->
+          val service = serviceProperty.get()
+          val icon = service.icon(24, 24)
+          ImageView(icon)
+        }
+      }.apply {
+        style = "-fx-alignment: CENTER;"
+      }
+      column(100, "Progress") {
+        it.progressProperty().asDoubleProperty
+      }.apply {
+        cellFactory = Callback { ProgressBarTableCell<Service<*>>() }
+        style = "-fx-alignment: CENTER;"
+      }
     }
 
   private val parentHiddenHandler = EventHandler<WindowEvent> { close() }

@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.shape.Circle
 import javafx.stage.Window
-import org.marid.fx.extensions.bindEmpty
 import org.marid.fx.extensions.color
 import org.marid.fx.extensions.map
 import org.marid.ide.extensions.bean
@@ -47,7 +46,6 @@ class IdeStatusBar(
     .apply {
       isFocusTraversable = false
       textProperty().bind(ideServices.servicesText)
-      disableProperty().bind(ideServices.services.bindEmpty)
       onAction = EventHandler {
         when (val w = Window.getWindows().find { it is IdeServicesWindow }) {
           null -> ideServicesWindowFactory.bean
