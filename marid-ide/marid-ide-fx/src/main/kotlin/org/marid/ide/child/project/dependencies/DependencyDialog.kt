@@ -1,4 +1,4 @@
-package org.marid.ide.child.project
+package org.marid.ide.child.project.dependencies
 
 import javafx.scene.control.*
 import javafx.scene.layout.ColumnConstraints

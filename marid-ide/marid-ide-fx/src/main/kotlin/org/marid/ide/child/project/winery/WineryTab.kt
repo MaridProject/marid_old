@@ -1,4 +1,4 @@
-package org.marid.ide.child.project
+package org.marid.ide.child.project.winery
 
 import javafx.scene.control.Tab
 import javafx.scene.layout.BorderPane

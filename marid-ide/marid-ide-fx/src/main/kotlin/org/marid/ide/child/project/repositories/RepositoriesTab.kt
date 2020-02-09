@@ -1,4 +1,4 @@
-package org.marid.ide.child.project
+package org.marid.ide.child.project.repositories
 
 import javafx.scene.control.Tab
 import javafx.scene.control.TableRow

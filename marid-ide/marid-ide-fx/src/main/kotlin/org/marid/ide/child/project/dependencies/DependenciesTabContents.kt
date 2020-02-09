@@ -1,11 +1,10 @@
-package org.marid.ide.child.project
+package org.marid.ide.child.project.dependencies
 
 import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.BorderPane
 import javafx.util.Callback
 import org.marid.fx.action.Fx
-import org.marid.fx.action.configure
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
 import org.marid.fx.extensions.column
@@ -18,14 +17,6 @@ import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
 @Component
-class DependenciesTab(contents: DependenciesTabContents) : Tab(null, contents) {
-  init {
-    isClosable = false
-    configure(Fx(text = "Dependencies", icon = "icons/dependency.png"))
-  }
-}
-
-@Component
 class DependenciesTabContents(
   projectFactory: ObjectFactory<Project>,
   private val dependencyDialogFactory: ObjectFactory<DependencyDialog>
@@ -34,42 +25,42 @@ class DependenciesTabContents(
   private val project = projectFactory.bean
 
   private fun editFx(dep: XmlDependency) = Fx(
-    text = "Edit...",
-    icon = "icons/edit.png",
-    handler = { dependencyDialogFactory.bean.init(dep).showAndWait().ifPresent(dep::copyFrom) }
+          text = "Edit...",
+          icon = "icons/edit.png",
+          handler = { dependencyDialogFactory.bean.init(dep).showAndWait().ifPresent(dep::copyFrom) }
   )
 
   private val loadDefaultDependencies = Fx(
-    text = "Add standard libraries",
-    icon = "icons/standard.png",
-    handler = { project.dependencies.loadDefault() }
+          text = "Add standard libraries",
+          icon = "icons/standard.png",
+          handler = { project.dependencies.loadDefault() }
   )
 
   private val addDependency = Fx(
-    text = "Add dependency",
-    icon = "icons/add.png",
-    handler = { dependencyDialogFactory.bean.showAndWait().ifPresent { project.dependencies.items += it } }
+          text = "Add dependency",
+          icon = "icons/add.png",
+          handler = { dependencyDialogFactory.bean.showAndWait().ifPresent { project.dependencies.items += it } }
   )
 
   private val sortDependencies = Fx(
-    text = "Sort dependencies",
-    icon = "icons/sort.png",
-    handler = {
-      project.dependencies.items.sortWith(
-        compareBy(
-          { it.group.get() },
-          { it.artifact.get() },
-          { it.version.get() }
-        )
-      )
-    }
+          text = "Sort dependencies",
+          icon = "icons/sort.png",
+          handler = {
+              project.dependencies.items.sortWith(
+                      compareBy(
+                              { it.group.get() },
+                              { it.artifact.get() },
+                              { it.version.get() }
+                      )
+              )
+          }
   )
 
   private val toolbar = ToolBar(
-    loadDefaultDependencies.toolButton,
-    addDependency.toolButton,
-    Separator(),
-    sortDependencies.toolButton
+          loadDefaultDependencies.toolButton,
+          addDependency.toolButton,
+          Separator(),
+          sortDependencies.toolButton
   )
 
   private val list = TableView(project.dependencies.items)
@@ -87,12 +78,12 @@ class DependenciesTabContents(
               menu.items.clear()
               menu.items += listOf(
                 addDependency.menuItem,
-                SeparatorMenuItem(),
+                      SeparatorMenuItem(),
                 sortDependencies.menuItem
               )
               item?.also { curItem ->
                 menu.items += listOf(
-                  SeparatorMenuItem(),
+                        SeparatorMenuItem(),
                   editFx(curItem).menuItem
                 )
               }
