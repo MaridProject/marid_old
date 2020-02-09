@@ -86,6 +86,9 @@ class ProjectBuildService(
           if (it.url.get().startsWith("file://")) {
             builder.setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
           }
+          if (it.name.get() == "central") {
+            builder.setRepositoryManager(true)
+          }
           builder.build()
         }
 

@@ -24,7 +24,7 @@ class XmlRepository(name: String, url: String) {
   }
 
   override fun hashCode(): Int = Objects.hash(name.get(), url.get())
-  override fun equals(other: Any?): Boolean = when (other) {
+  override fun equals(other: Any?): Boolean = other === this || when (other) {
     is XmlRepository -> arrayOf(name.get(), url.get()).contentEquals(arrayOf(other.name.get(), other.url.get()))
     else -> false
   }

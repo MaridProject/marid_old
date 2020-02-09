@@ -63,7 +63,7 @@ class Project(val projects: Projects, val id: String) {
 
     val m2Local = Path.of(System.getProperty("user.home"), ".m2", "repository")
     if (Files.isDirectory(m2Local)) {
-      val m2 = XmlRepository("m2Local", m2Local.toUri().toASCIIString())
+      val m2 = XmlRepository("m2", m2Local.toUri().toASCIIString())
       if (m2 !in repositories.items) {
         repositories.items += m2
       }
