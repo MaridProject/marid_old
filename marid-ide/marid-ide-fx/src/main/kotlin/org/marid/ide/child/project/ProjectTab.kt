@@ -26,11 +26,7 @@ class ProjectTab(tabs: ProjectTabs, project: ObjectFactory<Project>) : Tab(null,
 
   @Autowired
   private fun initContext(context: GenericApplicationContext) {
-    tabPaneProperty().addListener { _, _, n ->
-      if (n == null) {
-        context.close()
-      }
-    }
+    tabPaneProperty().addListener { _, _, n -> n ?: context.close() }
   }
 
   @Autowired

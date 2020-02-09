@@ -5,6 +5,7 @@ import javafx.concurrent.Service
 import javafx.event.EventHandler
 import javafx.event.WeakEventHandler
 import javafx.scene.Scene
+import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.cell.ProgressBarTableCell
 import javafx.scene.image.ImageView
@@ -13,6 +14,8 @@ import javafx.stage.StageStyle
 import javafx.stage.Window
 import javafx.stage.WindowEvent
 import javafx.util.Callback
+import org.marid.fx.action.Fx
+import org.marid.fx.action.configure
 import org.marid.fx.extensions.*
 import org.marid.spring.annotation.PrototypeScoped
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +29,7 @@ class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServic
   private val table = TableView<Service<*>>(services.services)
     .apply {
       columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
+      placeholder = Label().configure(Fx("No services found"))
       column(64, "Id") {
         services.id(it).readOnlyProp
       }.apply {

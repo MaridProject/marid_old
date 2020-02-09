@@ -2,15 +2,13 @@ package org.marid.ide.project
 
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.SeparatorMenuItem
-import javafx.scene.control.TableRow
-import javafx.scene.control.TableView
+import javafx.scene.control.*
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Region
 import javafx.util.Callback
 import org.marid.fx.action.Fx
+import org.marid.fx.action.configure
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
 import org.marid.fx.extensions.column
@@ -23,6 +21,7 @@ import org.springframework.stereotype.Component
 class ProjectsTabTable(projects: Projects, private val manager: ProjectTabsManager) : TableView<Project>(projects.items) {
 
   init {
+    placeholder = Label().configure(Fx("No projects yet"))
     rowFactory = Callback {
       TableRow<Project>().apply {
         contextMenu = ContextMenu()
