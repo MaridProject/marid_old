@@ -20,6 +20,7 @@ import org.marid.fx.extensions.toTypedArray
 import org.marid.fx.i18n.i18n
 import org.marid.ide.child.project.Progress.*
 import org.marid.ide.common.IdeProperties
+import org.marid.ide.common.LocalRepositoryServer
 import org.marid.ide.main.IdeServices
 import org.marid.ide.project.ProjectDependencyResolver
 import org.marid.ide.project.ProjectTask
@@ -34,7 +35,8 @@ class ProjectBuildService(
   private val services: IdeServices,
   private val properties: IdeProperties,
   private val dependencyResolver: ProjectDependencyResolver,
-  private val session: ProjectSession
+  private val session: ProjectSession,
+  private val localRepositoryServer: LocalRepositoryServer
 ) : Service<Unit>() {
 
   private val projectInvalidationListener = InvalidationListener { session.project.dirty() }
@@ -80,17 +82,22 @@ class ProjectBuildService(
 
     private fun invoke() {
       updateProgress(REPOSITORIES.progress)
+      val localRepos = if (localRepositoryServer.isEnabled)
+        listOf(
+          RemoteRepository.Builder("m2", "default", localRepositoryServer.url.toString())
+            .setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
+            .build()
+        )
+      else
+        emptyList<RemoteRepository>()
       val repos = project.repositories.items
         .map {
-          val builder = RemoteRepository.Builder(it.name.get(), "default", it.url.get())
+          val builder = RemoteRepository.Builder(it.name.get(), "", it.url.get())
           if (it.url.get().startsWith("file://")) {
             builder.setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
           }
-          if (it.name.get() == "central") {
-            builder.setRepositoryManager(true)
-          }
           builder.build()
-        }
+        } + localRepos
 
       updateProgress(DEPENDENCIES.progress)
       val dependencies = project.dependencies.items

@@ -16,7 +16,6 @@ import org.marid.ide.project.xml.XmlRepository
 import org.marid.ide.project.xml.XmlWinery
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
-import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
@@ -60,14 +59,6 @@ class Project(val projects: Projects, val id: String) {
     Files.createDirectories(cacheDepsDirectory)
 
     load()
-
-    val m2Local = Path.of(System.getProperty("user.home"), ".m2", "repository")
-    if (Files.isDirectory(m2Local)) {
-      val m2 = XmlRepository("m2", m2Local.toUri().toASCIIString())
-      if (m2 !in repositories.items) {
-        repositories.items += m2
-      }
-    }
 
     val central = XmlRepository("central", "https://repo1.maven.org/maven2/")
     if (central !in repositories.items) {
