@@ -24,6 +24,7 @@ import org.marid.ide.common.LocalRepositoryServer
 import org.marid.ide.main.IdeServices
 import org.marid.ide.project.ProjectDependencyResolver
 import org.marid.ide.project.ProjectTask
+import org.springframework.beans.factory.ObjectProvider
 import org.springframework.stereotype.Component
 import java.net.URLClassLoader
 import java.nio.file.Files
@@ -36,7 +37,7 @@ class ProjectBuildService(
   private val properties: IdeProperties,
   private val dependencyResolver: ProjectDependencyResolver,
   private val session: ProjectSession,
-  private val localRepositoryServer: LocalRepositoryServer
+  private val localRepositoryServerProvider: ObjectProvider<LocalRepositoryServer>
 ) : Service<Unit>() {
 
   private val projectInvalidationListener = InvalidationListener { session.project.dirty() }
@@ -82,14 +83,15 @@ class ProjectBuildService(
 
     private fun invoke() {
       updateProgress(REPOSITORIES.progress)
-      val localRepos = if (localRepositoryServer.isEnabled)
-        listOf(
-          RemoteRepository.Builder("m2", "default", localRepositoryServer.url.toString())
-            .setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
-            .build()
-        )
-      else
-        emptyList<RemoteRepository>()
+      val localRepos = localRepositoryServerProvider.ifAvailable
+        ?.run {
+          listOf(
+            RemoteRepository.Builder("m2", "default", url.toString())
+              .setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
+              .build()
+          )
+        }
+        ?: emptyList<RemoteRepository>()
       val repos = project.repositories.items
         .map {
           val builder = RemoteRepository.Builder(it.name.get(), "", it.url.get())
