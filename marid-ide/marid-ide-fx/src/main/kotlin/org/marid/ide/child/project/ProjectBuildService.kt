@@ -51,9 +51,7 @@ class ProjectBuildService(
     services.add(this)
     session.project.observables.forEach { it.addListener(projectInvalidationListener) }
     stateProperty().addListener { _, _, s ->
-      if (s == SUCCEEDED) {
-        session.project.clearDirty()
-      }
+      if (s == SUCCEEDED) session.project.clearDirty()
     }
     start()
   }
