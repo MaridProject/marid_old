@@ -60,3 +60,11 @@ inline fun <reified T> T.pref(name: String, default: Locale): ObjectProperty<Loc
   prop.addListener { _, _, n -> node.put(name, n.toLanguageTag()) }
   return prop
 }
+
+inline fun <reified T, reified E : Enum<E>> T.pref(name: String, default: E): ObjectProperty<E> {
+  val node = Preferences.userNodeForPackage(T::class.java).node(T::class.simpleName)
+  val prop = SimpleObjectProperty(this, name, enumValueOf<E>(node.get(name, default.name)))
+  node.addPreferenceChangeListener { e -> Platform.runLater { prop.set(enumValueOf(e.newValue)) } }
+  prop.addListener { _, _, n -> node.put(name, n.name) }
+  return prop
+}
