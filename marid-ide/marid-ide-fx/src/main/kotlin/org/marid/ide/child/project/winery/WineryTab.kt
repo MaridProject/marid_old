@@ -7,7 +7,7 @@ import org.marid.fx.action.configure
 import org.springframework.stereotype.Component
 
 @Component
-class WineryTab(cellarsPane: CellarsPane) : Tab(null, BorderPane(cellarsPane)) {
+class WineryTab(wineryPane: WineryPane) : Tab(null, BorderPane(wineryPane)) {
   init {
     isClosable = false
     configure(Fx(text = "Winery", icon = "icons/winery.png"))
