@@ -19,6 +19,12 @@ fun Menu.menu(text: String): Menu = Menu()
     items += it
   }
 
+fun Menu.menu(action: Fx): Menu = Menu()
+  .also {
+    it.configure(action)
+    items += it
+  }
+
 fun Menu.item(action: Fx): MenuItem = MenuItem()
   .also {
     it.configure(action)

@@ -3,7 +3,10 @@ package org.marid.ide.main
 import javafx.beans.property.Property
 import javafx.geometry.Side
 import javafx.scene.control.*
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import org.marid.fx.action.Fx
+import org.marid.fx.extensions.icon
 import org.marid.fx.extensions.item
 import org.marid.fx.extensions.menu
 import org.marid.fx.i18n.localized
@@ -40,13 +43,13 @@ class IdeMenuBar : MenuBar() {
 
   inner class PreferencesMenuItems(idePreferences: IdePreferences) {
 
-    val tabsMenu = preferencesMenu.menu("Tabs")
-    val primarySideMenu = tabsMenu.menu("Primary side")
-    val alternativeSideMenu = tabsMenu.menu("Alternative side")
+    val tabsMenu = preferencesMenu.menu(Fx("Tabs", "icons/tabs.png"))
+    val primarySideMenu = tabsMenu.menu(Fx("Primary tabs side", "icons/primary-tabs.png"))
+    val secondarySideMenu = tabsMenu.menu(Fx("Secondary tabs side", "icons/secondary-tabs.png"))
 
     init {
       apply(idePreferences.primaryTabsSide, primarySideMenu)
-      apply(idePreferences.alternateTabsSide, alternativeSideMenu)
+      apply(idePreferences.secondaryTabsSide, secondarySideMenu)
     }
 
     private fun apply(property: Property<Side>, menu: Menu) {
@@ -54,6 +57,7 @@ class IdeMenuBar : MenuBar() {
       Side.values().forEach { side ->
         menu.items += RadioMenuItem()
           .also { it.textProperty().bind(side.name.localized) }
+          .also { it.graphic = ImageView(Image(side.icon, 20.0, 20.0, true, true)) }
           .also { it.toggleGroup = group }
           .also { if (side == property.value) it.isSelected = true }
           .also { it.selectedProperty().addListener { _, _, v -> if (v) property.value = side } }

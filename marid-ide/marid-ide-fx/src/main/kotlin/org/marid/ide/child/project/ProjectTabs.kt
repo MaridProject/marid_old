@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class ProjectTabs(idePreferences: IdePreferences) : TabPane() {
 
   init {
-    sideProperty().bind(idePreferences.alternateTabsSide)
+    sideProperty().bind(idePreferences.secondaryTabsSide)
   }
 }
 

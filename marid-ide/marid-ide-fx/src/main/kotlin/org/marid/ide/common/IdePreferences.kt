@@ -8,5 +8,5 @@ import org.springframework.stereotype.Component
 class IdePreferences {
 
   val primaryTabsSide = pref("primaryTabsSide", Side.TOP)
-  val alternateTabsSide = pref("alternateTabsSide", Side.LEFT)
+  val secondaryTabsSide = pref("secondaryTabsSide", Side.LEFT)
 }
