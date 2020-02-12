@@ -28,5 +28,7 @@ class RacksPane(
     TitledPane(null, rackDestroyerList).also {
       it.textProperty().bind("Rack destroyer".localized)
     }
-  )
+  ).also {
+    it.expandedPane = it.panes[0]
+  }
 )

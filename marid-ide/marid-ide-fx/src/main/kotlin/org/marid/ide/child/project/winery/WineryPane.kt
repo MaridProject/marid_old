@@ -21,6 +21,6 @@ class WineryPane(
 ) {
 
   init {
-    setDividerPositions(0.1)
+    setDividerPositions(0.15)
   }
 }
