@@ -10,12 +10,12 @@ package org.marid.runtime.model;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,33 +25,29 @@ import org.jetbrains.annotations.NotNull;
 import org.marid.xml.XmlStreams;
 import org.marid.xml.XmlUtils;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class Method<M extends Method<M>> extends AbstractEntity {
+public abstract class Method<M extends Method<M, A>, A extends Argument> extends AbstractEntity {
 
   private String name;
-  private final ArrayList<Argument> arguments;
+  private final ArrayList<A> arguments;
 
   Method(@NotNull String name) {
     this.name = name;
     this.arguments = new ArrayList<>();
   }
 
-  Method(@NotNull Element element) {
+  Method(@NotNull Element element, @NotNull Function<Element, A> argumentFactory) {
     super(element);
     this.name = element.getAttribute("name");
     this.arguments = XmlStreams.elementsByTag(element, "args")
-        .flatMap(e -> XmlStreams.children(e, Element.class).map(Argument::argument))
-        .collect(Collectors.toCollection(ArrayList::new));
-  }
-
-  Method(@NotNull InputSource inputSource) {
-    this(element(inputSource));
+      .flatMap(e -> XmlStreams.children(e, Element.class).map(argumentFactory))
+      .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public String getName() {
@@ -65,12 +61,13 @@ public abstract class Method<M extends Method<M>> extends AbstractEntity {
   }
 
   @SuppressWarnings("unchecked")
-  public M addArguments(Argument... arguments) {
+  @SafeVarargs
+  public final M addArguments(A... arguments) {
     this.arguments.addAll(Arrays.asList(arguments));
     return (M) this;
   }
 
-  public ArrayList<Argument> getArguments() {
+  public ArrayList<A> getArguments() {
     return arguments;
   }
 
@@ -93,10 +90,10 @@ public abstract class Method<M extends Method<M>> extends AbstractEntity {
       return true;
     }
     if (obj instanceof Method) {
-      final var that = (Method<?>) obj;
+      final var that = (Method<?, ?>) obj;
       return this.getClass() == that.getClass()
-          && Objects.equals(this.name, that.name)
-          && Objects.equals(this.arguments, that.arguments);
+        && Objects.equals(this.name, that.name)
+        && Objects.equals(this.arguments, that.arguments);
     }
     return false;
   }

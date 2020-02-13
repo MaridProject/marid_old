@@ -10,12 +10,12 @@ package org.marid.runtime.model;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,18 +25,18 @@ import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-public final class Destroyer extends Method<Destroyer> {
+public final class Destroyer extends Method<Destroyer, ConstantArgument> {
 
   public Destroyer(@NotNull String name) {
     super(name);
   }
 
   public Destroyer(@NotNull Element element) {
-    super(element);
+    super(element, ConstantArgument::argument);
   }
 
   public Destroyer(@NotNull InputSource inputSource) {
-    super(inputSource);
+    this(element(inputSource));
   }
 
   @Override
