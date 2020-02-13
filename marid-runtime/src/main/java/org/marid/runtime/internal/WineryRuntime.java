@@ -256,10 +256,6 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
         final var cellar = getCellar(rackEntry.getKey());
         try (final var rack = cellar.getRack(rackEntry.getValue())) {
           cellar.racks.remove(rack.getName());
-        } finally {
-          if (cellar.racks.isEmpty()) {
-            cellars.remove(rackEntry.getKey());
-          }
         }
       } catch (Throwable e) {
         exception.addSuppressed(e);
