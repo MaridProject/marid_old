@@ -107,18 +107,15 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
     this(new WineryParams(zipFile, args));
   }
 
-  @TestOnly
-  public WineryRuntime(ClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
+  @TestOnly public WineryRuntime(ClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
     this(new WineryParams(new URLClassLoader(new URL[0], classLoader), winery, destroyAction));
   }
 
-  @TestOnly
-  public WineryRuntime(Winery winery, AutoCloseable destroyAction) {
+  @TestOnly public WineryRuntime(Winery winery, AutoCloseable destroyAction) {
     this(Thread.currentThread().getContextClassLoader(), winery, destroyAction);
   }
 
-  @TestOnly
-  public WineryRuntime(Winery winery) {
+  @TestOnly public WineryRuntime(Winery winery) {
     this(winery, () -> {});
   }
 
