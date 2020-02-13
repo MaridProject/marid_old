@@ -1,8 +1,10 @@
 package org.marid.ide.project.model
 
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import org.marid.runtime.model.Rack
+import java.lang.reflect.Type
 
 class RackWrapper() {
 
@@ -17,6 +19,7 @@ class RackWrapper() {
 
   val name = SimpleStringProperty(this, "name", "rack")
   val factory = SimpleStringProperty(this, "factory", "")
+  val type = SimpleObjectProperty<Type>(this, "type", Any::class.java)
 
   val arguments = FXCollections.observableArrayList(ArgumentWrapper::observables)
   val inputs = FXCollections.observableArrayList(InputWrapper::observables)

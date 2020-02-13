@@ -1,5 +1,6 @@
 package org.marid.fx.extensions
 
+import javafx.scene.control.CheckMenuItem
 import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuItem
@@ -26,6 +27,12 @@ fun Menu.menu(action: Fx): Menu = Menu()
   }
 
 fun Menu.item(action: Fx): MenuItem = MenuItem()
+  .also {
+    it.configure(action)
+    items += it
+  }
+
+fun Menu.checkItem(action: Fx): CheckMenuItem = CheckMenuItem()
   .also {
     it.configure(action)
     items += it

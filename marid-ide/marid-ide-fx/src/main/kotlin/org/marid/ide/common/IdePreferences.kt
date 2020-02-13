@@ -9,4 +9,6 @@ class IdePreferences {
 
   val primaryTabsSide = pref("primaryTabsSide", Side.TOP)
   val secondaryTabsSide = pref("secondaryTabsSide", Side.LEFT)
+
+  val showTypes = pref("showTypes", false)
 }
