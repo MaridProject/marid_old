@@ -2,14 +2,16 @@ package org.marid.ide.project.model
 
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import org.marid.runtime.model.*
-import java.lang.IllegalArgumentException
+import java.lang.reflect.Type
 
 sealed class ArgumentWrapper : Observable {
 
   abstract val observables: Array<Observable>
   abstract val argument: Argument
+  val argumentType = SimpleObjectProperty<Type>(this, "type", Any::class.java)
 
   override fun addListener(listener: InvalidationListener) {
     observables.forEach { it.addListener(listener) }
@@ -35,7 +37,7 @@ class ArgumentConstRefWrapper() : ConstantArgumentWrapper() {
   val ref = SimpleStringProperty(this, "ref", "")
 
   override val observables: Array<Observable> = arrayOf(ref, cellar)
-  override val argument: ConstantArgument = ArgumentConstRef(cellar.get(), ref.get())
+  override val argument: ArgumentConstRef get() = ArgumentConstRef(cellar.get(), ref.get())
 }
 
 class ArgumentLiteralWrapper(val type: ArgumentLiteral.Type) : ConstantArgumentWrapper() {
@@ -47,7 +49,7 @@ class ArgumentLiteralWrapper(val type: ArgumentLiteral.Type) : ConstantArgumentW
   val value = SimpleStringProperty(this, "value", "")
 
   override val observables: Array<Observable> = arrayOf(value)
-  override val argument: ConstantArgument = ArgumentLiteral(type, value.get())
+  override val argument: ArgumentLiteral get() = ArgumentLiteral(type, value.get())
 }
 
 class ArgumentRefWrapper() : ArgumentWrapper() {
@@ -63,13 +65,13 @@ class ArgumentRefWrapper() : ArgumentWrapper() {
   val ref = SimpleStringProperty(this, "ref", "")
 
   override val observables: Array<Observable> = arrayOf(cellar, rack, ref)
-  override val argument: Argument = ArgumentRef(cellar.get(), rack.get(), ref.get())
+  override val argument: ArgumentRef get() = ArgumentRef(cellar.get(), rack.get(), ref.get())
 }
 
 class ArgumentNullWrapper : ArgumentWrapper() {
 
   override val observables: Array<Observable> = arrayOf()
-  override val argument = ArgumentNull()
+  override val argument: ArgumentNull get() = ArgumentNull()
 }
 
 object ArgumentWrapperFactory {
