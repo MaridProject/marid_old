@@ -26,7 +26,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
 import org.marid.io.Xmls;
 import org.marid.io.function.IOSupplier;
-import org.marid.runtime.model.Winery;
+import org.marid.runtime.model.WineryImpl;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
@@ -58,7 +58,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
   private final AutoCloseable destroyAction;
 
   final URLClassLoader classLoader;
-  final Winery winery;
+  final WineryImpl winery;
   final ConcurrentLinkedDeque<Map.Entry<String, String>> racks;
 
   private volatile State state = State.NEW;
@@ -107,15 +107,15 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
     this(new WineryParams(zipFile, args));
   }
 
-  @TestOnly public WineryRuntime(ClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
+  @TestOnly public WineryRuntime(ClassLoader classLoader, WineryImpl winery, AutoCloseable destroyAction) {
     this(new WineryParams(new URLClassLoader(new URL[0], classLoader), winery, destroyAction));
   }
 
-  @TestOnly public WineryRuntime(Winery winery, AutoCloseable destroyAction) {
+  @TestOnly public WineryRuntime(WineryImpl winery, AutoCloseable destroyAction) {
     this(Thread.currentThread().getContextClassLoader(), winery, destroyAction);
   }
 
-  @TestOnly public WineryRuntime(Winery winery) {
+  @TestOnly public WineryRuntime(WineryImpl winery) {
     this(winery, () -> {});
   }
 
@@ -321,7 +321,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
   private static final class WineryParams {
 
     private final URLClassLoader classLoader;
-    private final Winery winery;
+    private final WineryImpl winery;
     private final AutoCloseable destroyAction;
 
     private WineryParams(URL zipFile, List<String> args) {
@@ -348,7 +348,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
         final var deps = deployment.resolve("deps");
         final var winery = deployment.resolve("winery.xml");
 
-        this.winery = Xmls.read(winery, Winery::new);
+        this.winery = Xmls.read(winery, WineryImpl::new);
 
         validate(resources, deps, classes);
         initialize(deployment, args);
@@ -364,7 +364,7 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
       }
     }
 
-    private WineryParams(URLClassLoader classLoader, Winery winery, AutoCloseable destroyAction) {
+    private WineryParams(URLClassLoader classLoader, WineryImpl winery, AutoCloseable destroyAction) {
       this.classLoader = classLoader;
       this.winery = winery;
       this.destroyAction = destroyAction;

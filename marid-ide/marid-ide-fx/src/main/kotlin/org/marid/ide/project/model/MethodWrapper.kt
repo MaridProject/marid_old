@@ -5,9 +5,9 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import org.marid.runtime.model.*
 
-sealed class MethodWrapper<A : ArgumentWrapper, M : Method<M, MA>, MA : Argument>() {
+sealed class MethodWrapper<A : ArgumentWrapper, M : AbstractMethod<M, MA>, MA : ArgumentImpl>() {
 
-  constructor(method: Method<M, MA>, factory: (MA) -> A) : this() {
+  constructor(method: AbstractMethod<M, MA>, factory: (MA) -> A) : this() {
     name.set(method.name)
     arguments.setAll(method.arguments.map(factory))
   }
@@ -18,22 +18,22 @@ sealed class MethodWrapper<A : ArgumentWrapper, M : Method<M, MA>, MA : Argument
   val observables = arrayOf(name, arguments)
 }
 
-class DestroyerWrapper : MethodWrapper<ConstantArgumentWrapper, Destroyer, ConstantArgument> {
+class DestroyerWrapper : MethodWrapper<ConstantArgumentWrapper, DestroyerImpl, AbstractConstant> {
 
   constructor() : super()
-  constructor(destroyer: Destroyer) : super(destroyer, ArgumentWrapperFactory::constantArgumentWrapper)
+  constructor(destroyer: DestroyerImpl) : super(destroyer, ArgumentWrapperFactory::constantArgumentWrapper)
 
   val destroyer
-    get() = Destroyer(name.get())
+    get() = DestroyerImpl(name.get())
       .also { it.arguments.addAll(arguments.map(ConstantArgumentWrapper::argument)) }
 }
 
-class InitializerWrapper : MethodWrapper<ArgumentWrapper, Initializer, Argument> {
+class InitializerWrapper : MethodWrapper<ArgumentWrapper, InitializerImpl, ArgumentImpl> {
 
   constructor() : super()
-  constructor(initializer: Initializer) : super(initializer, ArgumentWrapperFactory::argumentWrapper)
+  constructor(initializer: InitializerImpl) : super(initializer, ArgumentWrapperFactory::argumentWrapper)
 
   val initializer
-    get() = Initializer(name.get())
+    get() = InitializerImpl(name.get())
       .also { it.arguments.addAll(arguments.map(ArgumentWrapper::argument)) }
 }

@@ -28,26 +28,26 @@ import org.xml.sax.InputSource;
 
 import java.util.Objects;
 
-public final class ArgumentRef extends Argument {
+public final class RefImpl extends ArgumentImpl {
 
   private String cellar;
   private String rack;
   private String ref;
 
-  public ArgumentRef(@Nullable String cellar, @NotNull String rack, @NotNull String ref) {
+  public RefImpl(@Nullable String cellar, @NotNull String rack, @NotNull String ref) {
     this.cellar = cellar;
     this.rack = rack;
     this.ref = ref;
   }
 
-  public ArgumentRef(@NotNull Element element) {
+  public RefImpl(@NotNull Element element) {
     super(element);
     this.cellar = element.getAttribute("cellar");
     this.rack = element.getAttribute("rack");
     this.ref = element.getAttribute("ref");
   }
 
-  public ArgumentRef(@NotNull InputSource inputSource) {
+  public RefImpl(@NotNull InputSource inputSource) {
     this(element(inputSource));
   }
 
@@ -60,7 +60,7 @@ public final class ArgumentRef extends Argument {
     return ref;
   }
 
-  public @NotNull ArgumentRef setRef(@NotNull String ref) {
+  public @NotNull RefImpl setRef(@NotNull String ref) {
     this.ref = ref;
     return this;
   }
@@ -69,7 +69,7 @@ public final class ArgumentRef extends Argument {
     return cellar;
   }
 
-  public @NotNull ArgumentRef setCellar(@Nullable String cellar) {
+  public @NotNull RefImpl setCellar(@Nullable String cellar) {
     this.cellar = cellar;
     return this;
   }
@@ -78,7 +78,7 @@ public final class ArgumentRef extends Argument {
     return rack;
   }
 
-  public @NotNull ArgumentRef setRack(@NotNull String rack) {
+  public @NotNull RefImpl setRack(@NotNull String rack) {
     this.rack = rack;
     return this;
   }
@@ -104,8 +104,8 @@ public final class ArgumentRef extends Argument {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ArgumentRef) {
-      final var that = (ArgumentRef) obj;
+    if (obj instanceof RefImpl) {
+      final var that = (RefImpl) obj;
       return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.ref, that.ref);
     }
     return false;

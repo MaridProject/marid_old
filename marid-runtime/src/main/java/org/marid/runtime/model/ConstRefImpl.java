@@ -26,17 +26,17 @@ import org.w3c.dom.Element;
 
 import java.util.Objects;
 
-public final class ArgumentConstRef extends ConstantArgument {
+public final class ConstRefImpl extends AbstractConstant {
 
   private String cellar;
   private String ref;
 
-  public ArgumentConstRef(@NotNull String cellar, @NotNull String ref) {
+  public ConstRefImpl(@NotNull String cellar, @NotNull String ref) {
     this.cellar = cellar;
     this.ref = ref;
   }
 
-  public ArgumentConstRef(@NotNull Element element) {
+  public ConstRefImpl(@NotNull Element element) {
     super(element);
     this.cellar = element.getAttribute("cellar");
     this.ref = element.getAttribute("ref");
@@ -51,7 +51,7 @@ public final class ArgumentConstRef extends ConstantArgument {
     return cellar;
   }
 
-  public @NotNull ArgumentConstRef setCellar(@NotNull String cellar) {
+  public @NotNull ConstRefImpl setCellar(@NotNull String cellar) {
     this.cellar = cellar;
     return this;
   }
@@ -60,7 +60,7 @@ public final class ArgumentConstRef extends ConstantArgument {
     return ref;
   }
 
-  public @NotNull ArgumentConstRef setRef(@NotNull String ref) {
+  public @NotNull ConstRefImpl setRef(@NotNull String ref) {
     this.ref = ref;
     return this;
   }
@@ -81,8 +81,8 @@ public final class ArgumentConstRef extends ConstantArgument {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ArgumentConstRef) {
-      final var that = (ArgumentConstRef) obj;
+    if (obj instanceof ConstRefImpl) {
+      final var that = (ConstRefImpl) obj;
       return Objects.equals(this.cellar, that.cellar) && Objects.equals(this.ref, that.ref);
     }
     return false;

@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import org.marid.ide.project.model.CellarWrapper
 import org.marid.io.Xmls
-import org.marid.runtime.model.Winery
+import org.marid.runtime.model.WineryImpl
 import java.nio.file.Path
 
 class XmlWinery {
@@ -16,11 +16,11 @@ class XmlWinery {
   val observables = arrayOf(name, cellars)
 
   private val winery
-    get() = Winery(group.get(), name.get(), version.get())
+    get() = WineryImpl(group.get(), name.get(), version.get())
       .also { it.cellars.addAll(cellars.map(CellarWrapper::cellar)) }
 
   fun load(path: Path) {
-    val winery = Xmls.read(path, ::Winery)
+    val winery = Xmls.read(path, ::WineryImpl)
     group.set(winery.group)
     name.set(winery.name)
     cellars.setAll(winery.cellars.map(::CellarWrapper))

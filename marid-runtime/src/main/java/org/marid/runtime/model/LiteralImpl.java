@@ -57,23 +57,23 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.function.BiFunction;
 
-public final class ArgumentLiteral extends ConstantArgument {
+public final class LiteralImpl extends AbstractConstant {
 
   private final Type type;
   private String value;
 
-  public ArgumentLiteral(@NotNull Type type, @NotNull String value) {
+  public LiteralImpl(@NotNull Type type, @NotNull String value) {
     this.type = type;
     this.value = value;
   }
 
-  public ArgumentLiteral(@NotNull Element element) {
+  public LiteralImpl(@NotNull Element element) {
     super(element);
     type = Type.valueOf(element.getTagName());
     value = element.getTextContent();
   }
 
-  public ArgumentLiteral(@NotNull InputSource inputSource) {
+  public LiteralImpl(@NotNull InputSource inputSource) {
     this(element(inputSource));
   }
 
@@ -85,7 +85,7 @@ public final class ArgumentLiteral extends ConstantArgument {
     return value;
   }
 
-  public @NotNull ArgumentLiteral setValue(String value) {
+  public @NotNull LiteralImpl setValue(String value) {
     this.value = value;
     return this;
   }
@@ -110,8 +110,8 @@ public final class ArgumentLiteral extends ConstantArgument {
     if (obj == this) {
       return true;
     }
-    if (obj instanceof ArgumentLiteral) {
-      final var that = (ArgumentLiteral) obj;
+    if (obj instanceof LiteralImpl) {
+      final var that = (LiteralImpl) obj;
       return Objects.equals(this.type, that.type)
           && Objects.equals(this.value, that.value);
     }

@@ -22,9 +22,9 @@ package org.marid.runtime.internal;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.runtime.model.Cellar;
-import org.marid.runtime.model.Rack;
-import org.marid.runtime.model.Winery;
+import org.marid.runtime.model.CellarImpl;
+import org.marid.runtime.model.RackImpl;
+import org.marid.runtime.model.WineryImpl;
 
 import java.util.LinkedHashSet;
 import java.util.stream.IntStream;
@@ -32,10 +32,10 @@ import java.util.stream.IntStream;
 public class RackRuntime implements AutoCloseable {
 
   private final CellarRuntime cellar;
-  private final Rack rack;
+  private final RackImpl rack;
   final Object instance;
 
-  RackRuntime(CellarRuntime cellar, Rack rack, Object instance) {
+  RackRuntime(CellarRuntime cellar, RackImpl rack, Object instance) {
     this.cellar = cellar;
     this.rack = rack;
     this.instance = instance;
@@ -45,15 +45,15 @@ public class RackRuntime implements AutoCloseable {
     return rack.getName();
   }
 
-  public @NotNull Winery getWinery() {
+  public @NotNull WineryImpl getWinery() {
     return cellar.winery.winery;
   }
 
-  public @NotNull Cellar getCellar() {
+  public @NotNull CellarImpl getCellar() {
     return cellar.cellar;
   }
 
-  public @NotNull Rack getRack() {
+  public @NotNull RackImpl getRack() {
     return rack;
   }
 

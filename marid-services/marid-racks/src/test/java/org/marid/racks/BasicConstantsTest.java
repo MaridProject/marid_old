@@ -24,29 +24,29 @@ package org.marid.racks;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.marid.runtime.internal.WineryRuntime;
-import org.marid.runtime.model.ArgumentConstRef;
-import org.marid.runtime.model.ArgumentLiteral;
-import org.marid.runtime.model.Cellar;
-import org.marid.runtime.model.CellarConstant;
-import org.marid.runtime.model.Winery;
+import org.marid.runtime.model.ConstRefImpl;
+import org.marid.runtime.model.LiteralImpl;
+import org.marid.runtime.model.CellarImpl;
+import org.marid.runtime.model.CellarConstantImpl;
+import org.marid.runtime.model.WineryImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.marid.runtime.model.ArgumentLiteral.Type.BYTE;
-import static org.marid.runtime.model.ArgumentLiteral.Type.INT;
+import static org.marid.runtime.model.LiteralImpl.Type.BYTE;
+import static org.marid.runtime.model.LiteralImpl.Type.INT;
 
 @Tag("normal")
 class BasicConstantsTest {
 
   @Test
   void simple() throws Exception {
-    final var winery = new Winery("g", "testWinery", "1.0")
-        .addCellar(new Cellar("testCellar1")
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
-                .addArg(new ArgumentLiteral(BYTE, "12"))
+    final var winery = new WineryImpl("g", "testWinery", "1.0")
+        .addCellar(new CellarImpl("testCellar1")
+            .addConstant(new CellarConstantImpl(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
+                .addArg(new LiteralImpl(BYTE, "12"))
             )
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("intConstant", int.class), "c2")
-                .addArg(new ArgumentLiteral(INT, "23"))
+            .addConstant(new CellarConstantImpl(BasicConstants.class.getMethod("intConstant", int.class), "c2")
+                .addArg(new LiteralImpl(INT, "23"))
             )
         );
     try (final var runtime = new WineryRuntime(winery)) {
@@ -62,21 +62,21 @@ class BasicConstantsTest {
 
   @Test
   void refs() throws Exception {
-    final var winery = new Winery("g", "testWinery", "1.0")
-        .addCellar(new Cellar("testCellar1")
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
-                .addArg(new ArgumentLiteral(BYTE, "12"))
+    final var winery = new WineryImpl("g", "testWinery", "1.0")
+        .addCellar(new CellarImpl("testCellar1")
+            .addConstant(new CellarConstantImpl(BasicConstants.class.getMethod("byteConstant", byte.class), "c1")
+                .addArg(new LiteralImpl(BYTE, "12"))
             )
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("intConstant", int.class), "c2")
-                .addArg(new ArgumentLiteral(INT, "23"))
+            .addConstant(new CellarConstantImpl(BasicConstants.class.getMethod("intConstant", int.class), "c2")
+                .addArg(new LiteralImpl(INT, "23"))
             )
         )
-        .addCellar(new Cellar("testCellar2")
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("intConstant", int.class), "c1")
-                .addArg(new ArgumentConstRef("testCellar1", "c2"))
+        .addCellar(new CellarImpl("testCellar2")
+            .addConstant(new CellarConstantImpl(BasicConstants.class.getMethod("intConstant", int.class), "c1")
+                .addArg(new ConstRefImpl("testCellar1", "c2"))
             )
-            .addConstant(new CellarConstant(BasicConstants.class.getMethod("byteConstant", byte.class), "c2")
-                .addArg(new ArgumentConstRef("testCellar1", "c1"))
+            .addConstant(new CellarConstantImpl(BasicConstants.class.getMethod("byteConstant", byte.class), "c2")
+                .addArg(new ConstRefImpl("testCellar1", "c1"))
             )
         );
     try (final var runtime = new WineryRuntime(winery)) {

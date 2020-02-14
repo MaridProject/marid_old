@@ -28,23 +28,25 @@ import org.xml.sax.InputSource;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public abstract class ConstantArgument extends Argument {
+public abstract class ArgumentImpl extends AbstractEntity {
 
-  ConstantArgument() {
+  ArgumentImpl() {
   }
 
-  ConstantArgument(@NotNull Element element) {
+  ArgumentImpl(@NotNull Element element) {
     super(element);
   }
 
-  private static Stream<Function<Element, ConstantArgument>> constructors() {
+  private static Stream<Function<Element, ArgumentImpl>> constructors() {
     return Stream.of(
-        ArgumentConstRef::new,
-        ArgumentLiteral::new
+        RefImpl::new,
+        ConstRefImpl::new,
+        LiteralImpl::new,
+        NullImpl::new
     );
   }
 
-  static ConstantArgument argument(Element element) {
+  static ArgumentImpl argument(Element element) {
     return constructors()
         .flatMap(c -> {
           try {
@@ -57,7 +59,7 @@ public abstract class ConstantArgument extends Argument {
         .orElseThrow(() -> new IllegalArgumentException("Unknown argument: " + element.getTagName()));
   }
 
-  static Argument argument(InputSource inputSource) {
+  static ArgumentImpl argument(InputSource inputSource) {
     return argument(AbstractEntity.element(inputSource));
   }
 }

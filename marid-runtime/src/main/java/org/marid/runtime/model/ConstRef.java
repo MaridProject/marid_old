@@ -1,4 +1,4 @@
 package org.marid.runtime.model;
 
-public interface Argument {
+public interface ConstRef {
 }

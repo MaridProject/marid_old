@@ -3,12 +3,12 @@ package org.marid.ide.project.model
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import org.marid.runtime.model.Rack
+import org.marid.runtime.model.RackImpl
 import java.lang.reflect.Type
 
 class RackWrapper() {
 
-  constructor(rack: Rack) : this() {
+  constructor(rack: RackImpl) : this() {
     name.set(rack.name)
     factory.set(rack.factory)
     arguments.setAll(rack.arguments.map(ArgumentWrapperFactory::argumentWrapper))
@@ -29,7 +29,7 @@ class RackWrapper() {
   val observables = arrayOf(name, factory, arguments, inputs, initializers, destroyers)
 
   val rack
-    get() = Rack(name.get(), factory.get())
+    get() = RackImpl(name.get(), factory.get())
       .also { it.arguments.addAll(arguments.map(ArgumentWrapper::argument)) }
       .also { it.inputs.addAll(inputs.map(InputWrapper::input)) }
       .also { it.initializers.addAll(initializers.map(InitializerWrapper::initializer)) }

@@ -10,7 +10,7 @@ import java.lang.reflect.Type
 sealed class ArgumentWrapper : Observable {
 
   abstract val observables: Array<Observable>
-  abstract val argument: Argument
+  abstract val argument: ArgumentImpl
   val argumentType = SimpleObjectProperty<Type>(this, "type", Any::class.java)
 
   override fun addListener(listener: InvalidationListener) {
@@ -23,12 +23,12 @@ sealed class ArgumentWrapper : Observable {
 }
 
 sealed class ConstantArgumentWrapper : ArgumentWrapper() {
-  abstract override val argument: ConstantArgument
+  abstract override val argument: AbstractConstant
 }
 
 class ArgumentConstRefWrapper() : ConstantArgumentWrapper() {
 
-  constructor(ref: ArgumentConstRef) : this() {
+  constructor(ref: ConstRefImpl) : this() {
     this.cellar.set(ref.cellar)
     this.ref.set(ref.ref)
   }
@@ -37,24 +37,24 @@ class ArgumentConstRefWrapper() : ConstantArgumentWrapper() {
   val ref = SimpleStringProperty(this, "ref", "")
 
   override val observables: Array<Observable> = arrayOf(ref, cellar)
-  override val argument: ArgumentConstRef get() = ArgumentConstRef(cellar.get(), ref.get())
+  override val argument: ConstRefImpl get() = ConstRefImpl(cellar.get(), ref.get())
 }
 
-class ArgumentLiteralWrapper(val type: ArgumentLiteral.Type) : ConstantArgumentWrapper() {
+class ArgumentLiteralWrapper(val type: LiteralImpl.Type) : ConstantArgumentWrapper() {
 
-  constructor(literal: ArgumentLiteral) : this(literal.type) {
+  constructor(literal: LiteralImpl) : this(literal.type) {
     this.value.set(literal.value)
   }
 
   val value = SimpleStringProperty(this, "value", "")
 
   override val observables: Array<Observable> = arrayOf(value)
-  override val argument: ArgumentLiteral get() = ArgumentLiteral(type, value.get())
+  override val argument: LiteralImpl get() = LiteralImpl(type, value.get())
 }
 
 class ArgumentRefWrapper() : ArgumentWrapper() {
 
-  constructor(ref: ArgumentRef) : this() {
+  constructor(ref: RefImpl) : this() {
     this.cellar.set(ref.cellar)
     this.rack.set(ref.rack)
     this.ref.set(ref.ref)
@@ -65,27 +65,27 @@ class ArgumentRefWrapper() : ArgumentWrapper() {
   val ref = SimpleStringProperty(this, "ref", "")
 
   override val observables: Array<Observable> = arrayOf(cellar, rack, ref)
-  override val argument: ArgumentRef get() = ArgumentRef(cellar.get(), rack.get(), ref.get())
+  override val argument: RefImpl get() = RefImpl(cellar.get(), rack.get(), ref.get())
 }
 
 class ArgumentNullWrapper : ArgumentWrapper() {
 
   override val observables: Array<Observable> = arrayOf()
-  override val argument: ArgumentNull get() = ArgumentNull()
+  override val argument: NullImpl get() = NullImpl()
 }
 
 object ArgumentWrapperFactory {
-  fun argumentWrapper(argument: Argument) = when (argument) {
-    is ArgumentLiteral -> ArgumentLiteralWrapper(argument)
-    is ArgumentConstRef -> ArgumentConstRefWrapper(argument)
-    is ArgumentRef -> ArgumentRefWrapper(argument)
-    is ArgumentNull -> ArgumentNullWrapper()
+  fun argumentWrapper(argument: ArgumentImpl) = when (argument) {
+    is LiteralImpl -> ArgumentLiteralWrapper(argument)
+    is ConstRefImpl -> ArgumentConstRefWrapper(argument)
+    is RefImpl -> ArgumentRefWrapper(argument)
+    is NullImpl -> ArgumentNullWrapper()
     else -> throw IllegalArgumentException("Unknown argument: $argument")
   }
 
-  fun constantArgumentWrapper(argument: ConstantArgument) = when (argument) {
-    is ArgumentLiteral -> ArgumentLiteralWrapper(argument)
-    is ArgumentConstRef -> ArgumentConstRefWrapper(argument)
+  fun constantArgumentWrapper(argument: AbstractConstant) = when (argument) {
+    is LiteralImpl -> ArgumentLiteralWrapper(argument)
+    is ConstRefImpl -> ArgumentConstRefWrapper(argument)
     else -> throw IllegalArgumentException("Unknown argument: $argument")
   }
 }

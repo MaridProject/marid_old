@@ -24,18 +24,18 @@ package org.marid.racks.net;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.marid.runtime.internal.WineryRuntime;
-import org.marid.runtime.model.ArgumentLiteral;
-import org.marid.runtime.model.ArgumentNull;
-import org.marid.runtime.model.Cellar;
-import org.marid.runtime.model.Input;
-import org.marid.runtime.model.Rack;
-import org.marid.runtime.model.Winery;
+import org.marid.runtime.model.LiteralImpl;
+import org.marid.runtime.model.NullImpl;
+import org.marid.runtime.model.CellarImpl;
+import org.marid.runtime.model.InputImpl;
+import org.marid.runtime.model.RackImpl;
+import org.marid.runtime.model.WineryImpl;
 
 import java.net.StandardSocketOptions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.marid.runtime.model.ArgumentLiteral.Type.INT;
+import static org.marid.runtime.model.LiteralImpl.Type.INT;
 
 @Tag("normal")
 class ServerSocketRackTest {
@@ -43,26 +43,26 @@ class ServerSocketRackTest {
   @Test
   void constructor() throws Exception {
     final int inputBufferSize = 100_001;
-    final var winery = new Winery("g", "test", "1.0")
+    final var winery = new WineryImpl("g", "test", "1.0")
       .addCellar(
-        new Cellar("cellar1")
+        new CellarImpl("cellar1")
           .addRack(
-            new Rack("serverSocket1", ServerSocketRack.class.getName())
+            new RackImpl("serverSocket1", ServerSocketRack.class.getName())
               .addArguments(
-                new ArgumentLiteral(INT, "0"),
-                new ArgumentLiteral(INT, "10"),
-                new ArgumentNull()
+                new LiteralImpl(INT, "0"),
+                new LiteralImpl(INT, "10"),
+                new NullImpl()
               )
               .addInputs(
-                new Input("inputBufferSize", new ArgumentLiteral(INT, Integer.toString(inputBufferSize)))
+                new InputImpl("inputBufferSize", new LiteralImpl(INT, Integer.toString(inputBufferSize)))
               )
           )
           .addRack(
-            new Rack("serverSocket2", ServerSocketRack.class.getName())
+            new RackImpl("serverSocket2", ServerSocketRack.class.getName())
               .addArguments(
-                new ArgumentLiteral(INT, "0"),
-                new ArgumentLiteral(INT, "11"),
-                new ArgumentNull()
+                new LiteralImpl(INT, "0"),
+                new LiteralImpl(INT, "11"),
+                new NullImpl()
               )
           )
       );

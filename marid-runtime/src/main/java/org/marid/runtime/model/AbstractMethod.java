@@ -32,17 +32,17 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class Method<M extends Method<M, A>, A extends Argument> extends AbstractEntity {
+public abstract class AbstractMethod<M extends AbstractMethod<M, A>, A extends ArgumentImpl> extends AbstractEntity {
 
   private String name;
   private final ArrayList<A> arguments;
 
-  Method(@NotNull String name) {
+  AbstractMethod(@NotNull String name) {
     this.name = name;
     this.arguments = new ArrayList<>();
   }
 
-  Method(@NotNull Element element, @NotNull Function<Element, A> argumentFactory) {
+  AbstractMethod(@NotNull Element element, @NotNull Function<Element, A> argumentFactory) {
     super(element);
     this.name = element.getAttribute("name");
     this.arguments = XmlStreams.elementsByTag(element, "args")
@@ -89,8 +89,8 @@ public abstract class Method<M extends Method<M, A>, A extends Argument> extends
     if (obj == this) {
       return true;
     }
-    if (obj instanceof Method) {
-      final var that = (Method<?, ?>) obj;
+    if (obj instanceof AbstractMethod) {
+      final var that = (AbstractMethod<?, ?>) obj;
       return this.getClass() == that.getClass()
         && Objects.equals(this.name, that.name)
         && Objects.equals(this.arguments, that.arguments);

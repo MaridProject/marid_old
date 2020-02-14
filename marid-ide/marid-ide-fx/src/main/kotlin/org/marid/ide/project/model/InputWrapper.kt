@@ -3,11 +3,11 @@ package org.marid.ide.project.model
 import javafx.beans.Observable
 import javafx.beans.property.SimpleStringProperty
 import org.marid.fx.property.NestedObservableProperty
-import org.marid.runtime.model.Input
+import org.marid.runtime.model.InputImpl
 
 class InputWrapper() {
 
-  constructor(input: Input) : this() {
+  constructor(input: InputImpl) : this() {
     name.set(input.name)
     argument.set(ArgumentWrapperFactory.argumentWrapper(input.argument))
   }
@@ -17,5 +17,5 @@ class InputWrapper() {
 
   val observables: Array<Observable> = arrayOf(name, argument)
 
-  val input get() = Input(name.get(), argument.get().argument)
+  val input get() = InputImpl(name.get(), argument.get().argument)
 }

@@ -22,14 +22,14 @@ package org.marid.runtime.internal;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.runtime.model.Argument;
-import org.marid.runtime.model.ArgumentConstRef;
-import org.marid.runtime.model.ArgumentLiteral;
-import org.marid.runtime.model.ArgumentNull;
-import org.marid.runtime.model.ArgumentRef;
-import org.marid.runtime.model.Cellar;
-import org.marid.runtime.model.CellarConstant;
-import org.marid.runtime.model.Rack;
+import org.marid.runtime.model.ArgumentImpl;
+import org.marid.runtime.model.ConstRefImpl;
+import org.marid.runtime.model.LiteralImpl;
+import org.marid.runtime.model.NullImpl;
+import org.marid.runtime.model.RefImpl;
+import org.marid.runtime.model.CellarImpl;
+import org.marid.runtime.model.CellarConstantImpl;
+import org.marid.runtime.model.RackImpl;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -46,16 +46,16 @@ import static java.util.stream.Stream.of;
 public class CellarRuntime implements AutoCloseable {
 
   final WineryRuntime winery;
-  final Cellar cellar;
+  final CellarImpl cellar;
   final ConcurrentHashMap<String, RackRuntime> racks = new ConcurrentHashMap<>();
   final ConcurrentHashMap<String, Object> constants = new ConcurrentHashMap<>();
 
-  CellarRuntime(WineryRuntime winery, Cellar cellar) {
+  CellarRuntime(WineryRuntime winery, CellarImpl cellar) {
     this.winery = winery;
     this.cellar = cellar;
   }
 
-  Object getOrCreateConst(CellarConstant constant, LinkedHashSet<String> passed) {
+  Object getOrCreateConst(CellarConstantImpl constant, LinkedHashSet<String> passed) {
     final var k = getName() + "/" + constant.getName();
     if (!passed.add(k)) {
       throw new IllegalStateException(concat(passed.stream(), of(k)).collect(joining(",", "Circular const [", "]")));
@@ -67,11 +67,11 @@ public class CellarRuntime implements AutoCloseable {
         final var args = IntStream.range(0, constant.getArguments().size())
             .mapToObj(i -> {
               final var arg = constant.getArguments().get(i);
-              if (arg instanceof ArgumentLiteral) {
-                final var literal = (ArgumentLiteral) arg;
+              if (arg instanceof LiteralImpl) {
+                final var literal = (LiteralImpl) arg;
                 return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
-              } else if (arg instanceof ArgumentConstRef) {
-                final var ref = (ArgumentConstRef) arg;
+              } else if (arg instanceof ConstRefImpl) {
+                final var ref = (ConstRefImpl) arg;
                 final var cellar = winery.getCellar(ref.getCellar());
                 final var cellarConstant = cellar.cellar.getConstant(ref.getRef());
                 return cellar.getOrCreateConst(cellarConstant, passed);
@@ -87,7 +87,7 @@ public class CellarRuntime implements AutoCloseable {
     });
   }
 
-  RackRuntime getOrCreateRack(Rack rack, LinkedHashSet<String> passed) {
+  RackRuntime getOrCreateRack(RackImpl rack, LinkedHashSet<String> passed) {
     final var k = getName() + "/" + rack.getName();
     if (!passed.add(k)) {
       throw new IllegalStateException(concat(passed.stream(), of(k)).collect(joining(",", "Circular rack [", "]")));
@@ -141,18 +141,18 @@ public class CellarRuntime implements AutoCloseable {
     return rackRuntime;
   }
 
-  Object arg(Argument arg, LinkedHashSet<String> passed) {
-    if (arg instanceof ArgumentLiteral) {
-      final var literal = (ArgumentLiteral) arg;
+  Object arg(ArgumentImpl arg, LinkedHashSet<String> passed) {
+    if (arg instanceof LiteralImpl) {
+      final var literal = (LiteralImpl) arg;
       return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
-    } else if (arg instanceof ArgumentConstRef) {
-      final var ref = (ArgumentConstRef) arg;
+    } else if (arg instanceof ConstRefImpl) {
+      final var ref = (ConstRefImpl) arg;
       final var cellar = winery.getCellar(ref.getCellar());
       return cellar.getConstant(ref.getRef());
-    } else if (arg instanceof ArgumentNull) {
+    } else if (arg instanceof NullImpl) {
       return null;
-    } else if (arg instanceof ArgumentRef) {
-      final var ref = (ArgumentRef) arg;
+    } else if (arg instanceof RefImpl) {
+      final var ref = (RefImpl) arg;
       final var cellar = ref.getCellar() == null ? this : winery.getCellar(ref.getCellar());
       final var cellarRack = cellar.cellar.getRack(ref.getRack());
       final var cellarRackRuntime = cellar.getOrCreateRack(cellarRack, passed);
