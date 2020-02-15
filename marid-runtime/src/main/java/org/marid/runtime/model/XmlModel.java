@@ -110,7 +110,11 @@ public class XmlModel {
 
   public static Winery readWinery(ModelObjectFactory factory, Element element) {
     final var winery = factory.newWinery();
+    read(winery, factory, element);
+    return winery;
+  }
 
+  public static void read(Winery winery, ModelObjectFactory factory, Element element) {
     winery.setGroup(element.getAttribute("group"));
     winery.setName(element.getAttribute("name"));
     winery.setVersion(element.getAttribute("version"));
@@ -122,8 +126,6 @@ public class XmlModel {
           break;
       }
     });
-
-    return winery;
   }
 
   public static Cellar readCellar(ModelObjectFactory factory, Element element) {

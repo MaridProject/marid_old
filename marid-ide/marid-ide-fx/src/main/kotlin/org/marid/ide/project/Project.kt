@@ -74,7 +74,7 @@ class Project(val projects: Projects, val id: String) {
   }
 
   private fun load() {
-    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { XmlModel.readWinery(FxModelObjectFactory, it) }
+    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { XmlModel.read(winery, FxModelObjectFactory, it) }
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
     if (Files.isRegularFile(dependenciesFile)) dependencies.load(dependenciesFile)
 
