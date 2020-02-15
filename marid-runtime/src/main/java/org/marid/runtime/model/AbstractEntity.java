@@ -21,23 +21,23 @@ package org.marid.runtime.model;
  * #L%
  */
 
+import org.jetbrains.annotations.Nullable;
+
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public abstract class AbstractEntity implements Entity {
   @Override
   public final int hashCode() {
     try {
       int code = 0;
-      final var beanInfo = Introspector.getBeanInfo(getClass(), Object.class);
+      final var beanInfo = Introspector.getBeanInfo(getInterface(getClass()));
       for (final var property : beanInfo.getPropertyDescriptors()) {
         if (property.getReadMethod() != null) {
           final var getter = property.getReadMethod();
-          if (getter != null && Entity.class.isAssignableFrom(getter.getDeclaringClass())) {
+          if (getter != null) {
             final var object = getter.invoke(this);
             code = code * 31 + Objects.hashCode(object);
           }
@@ -49,7 +49,6 @@ public abstract class AbstractEntity implements Entity {
     }
   }
 
-  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
   @Override
   public final boolean equals(Object obj) {
     if (this == obj) {
@@ -58,25 +57,39 @@ public abstract class AbstractEntity implements Entity {
     if (obj == null) {
       return false;
     }
-    final var thisInterfaces = Arrays.stream(getClass().getInterfaces())
-      .filter(Entity.class::isAssignableFrom)
-      .collect(Collectors.toUnmodifiableSet());
-    final var thatInterfaces = Arrays.stream(getClass().getInterfaces())
-      .filter(Entity.class::isAssignableFrom)
-      .collect(Collectors.toUnmodifiableSet());
-    return thisInterfaces.stream().allMatch(i -> thatInterfaces.stream().anyMatch(i::isAssignableFrom))
-      && thatInterfaces.stream().allMatch(i -> thisInterfaces.stream().anyMatch(i::isAssignableFrom));
+    final var itf = getInterface(getClass());
+    if (itf != getInterface(obj.getClass())) {
+      return false;
+    }
+    try {
+      final var beanInfo = Introspector.getBeanInfo(itf);
+      for (final var property : beanInfo.getPropertyDescriptors()) {
+        if (property.getReadMethod() != null) {
+          final var getter = property.getReadMethod();
+          if (getter != null) {
+            final var o1 = getter.invoke(this);
+            final var o2 = getter.invoke(obj);
+            if (!Objects.equals(o1, o2)) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    } catch (IntrospectionException | ReflectiveOperationException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   @Override
   public final String toString() {
     final var map = new LinkedHashMap<String, String>();
     try {
-      final var beanInfo = Introspector.getBeanInfo(getClass(), Object.class);
+      final var beanInfo = Introspector.getBeanInfo(getInterface(getClass()));
       for (final var property : beanInfo.getPropertyDescriptors()) {
         if (property.getReadMethod() != null) {
           final var getter = property.getReadMethod();
-          if (getter != null && Entity.class.isAssignableFrom(getter.getDeclaringClass())) {
+          if (getter != null) {
             final var object = getter.invoke(this);
             map.put(property.getName(), Objects.toString(object));
           }
@@ -85,11 +98,18 @@ public abstract class AbstractEntity implements Entity {
     } catch (IntrospectionException | ReflectiveOperationException e) {
       throw new IllegalStateException(e);
     }
-    final var entityType = Arrays.stream(getClass().getInterfaces())
-      .filter(Entity.class::isAssignableFrom)
-      .findFirst()
-      .map(Class::getSimpleName)
-      .orElseThrow();
-    return entityType + map;
+    return getInterface(getClass()).getSimpleName() + map;
+  }
+
+  private Class<?> getInterface(@Nullable Class<?> c) {
+    if (c == null || c == Object.class) {
+      throw new IllegalStateException();
+    }
+    for (final var itf : c.getInterfaces()) {
+      if (Entity.class.isAssignableFrom(itf)) {
+        return itf;
+      }
+    }
+    return getInterface(c.getSuperclass());
   }
 }

@@ -1,6 +1,6 @@
 package org.marid.runtime.model;
 
-public interface Input {
+public interface Input extends Entity {
 
   String getName();
 

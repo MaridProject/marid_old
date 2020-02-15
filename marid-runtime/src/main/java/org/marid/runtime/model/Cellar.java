@@ -2,7 +2,7 @@ package org.marid.runtime.model;
 
 import java.util.List;
 
-public interface Cellar {
+public interface Cellar extends Entity {
 
   String getName();
 
