@@ -60,6 +60,7 @@
             <goals>
               <goal>add-source</goal>
             </goals>
+            <phase>none</phase>
             <configuration>
               <sources>
                 <source>src/script/java</source>
@@ -100,27 +101,6 @@
             <dir>target/generated-sources</dir>
           </sourceDirs>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>clear-script-classes</id>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-            <phase>compile</phase>
-            <configuration>
-              <excludeDefaultDirectories>true</excludeDefaultDirectories>
-              <filesets>
-                <fileset>
-                  <directory>${project.build.outputDirectory}/script</directory>
-                </fileset>
-              </filesets>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
