@@ -13,7 +13,6 @@ class RacksTable(idePreferences: IdePreferences) : TableView<FxRack>() {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
 
     column(200, "Name") { it.name }
-    column(200, "Factory") { it.factory }
     column(400, "Type") { it.resolvedType }.also { it.visibleProperty().bind(idePreferences.showTypes) }
   }
 }

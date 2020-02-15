@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 class RacksPane(
   racksTable: RacksTable,
+  rackInfoPane: RackInfoPane,
   rackArgumentList: RackArgumentList,
   rackInputList: RackInputList,
   rackInitializerList: RackInitializerList
@@ -23,6 +24,9 @@ class RacksPane(
     },
     TitledPane(null, rackInitializerList).also {
       it.textProperty().bind("Rack initializers".localized)
+    },
+    TitledPane(null, rackInfoPane).also {
+      it.textProperty().bind("Rack details".localized)
     }
   ).also {
     it.expandedPane = it.panes[0]
