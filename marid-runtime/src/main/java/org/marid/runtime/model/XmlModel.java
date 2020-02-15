@@ -130,7 +130,11 @@ public class XmlModel {
 
   public static Cellar readCellar(ModelObjectFactory factory, Element element) {
     final var cellar = factory.newCellar();
+    read(cellar, factory, element);
+    return cellar;
+  }
 
+  public static void read(Cellar cellar, ModelObjectFactory factory, Element element) {
     cellar.setName(element.getAttribute("name"));
 
     children(element).forEach(e -> {
@@ -143,12 +147,15 @@ public class XmlModel {
           break;
       }
     });
-
-    return cellar;
   }
 
   public static CellarConstant readCellarConstant(ModelObjectFactory factory, Element element) {
     final var constant = factory.newCellarConstant();
+    read(constant, factory, element);
+    return constant;
+  }
+
+  public static void read(CellarConstant constant, ModelObjectFactory factory, Element element) {
     constant.setFactory(element.getAttribute("factory"));
     constant.setSelector(element.getAttribute("selector"));
     constant.setName(element.getAttribute("name"));
@@ -159,39 +166,55 @@ public class XmlModel {
           break;
       }
     });
-    return constant;
   }
 
   public static ConstantArgument readConstantArgument(ModelObjectFactory factory, Element element) {
     if (element.hasAttribute("type")) {
       final var literal = factory.newLiteral();
-      literal.setType(Literal.Type.valueOf(element.getAttribute("type").toUpperCase()));
-      literal.setValue(element.getTextContent());
+      read(literal, element);
       return literal;
     } else if (element.hasAttribute("cellar") && element.hasAttribute("ref")) {
       final var constRef = factory.newConstRef();
-      constRef.setCellar(element.getAttribute("cellar"));
-      constRef.setRef(element.getAttribute("ref"));
+      read(constRef, element);
       return constRef;
     } else {
       return factory.newNull();
     }
   }
 
+  public static void read(Literal literal, Element element) {
+    literal.setType(Literal.Type.valueOf(element.getAttribute("type").toUpperCase()));
+    literal.setValue(element.getTextContent());
+  }
+
+  public static void read(ConstRef constRef, Element element) {
+    constRef.setCellar(element.getAttribute("cellar"));
+    constRef.setRef(element.getAttribute("ref"));
+  }
+
   public static Argument readArgument(ModelObjectFactory factory, Element element) {
     if (element.hasAttribute("rack") && element.hasAttribute("ref")) {
       final var ref = factory.newRef();
-      ref.setCellar(element.getAttribute("cellar"));
-      ref.setRack(element.getAttribute("rack"));
-      ref.setRef(element.getAttribute("ref"));
+      read(ref, element);
       return ref;
     } else {
       return readConstantArgument(factory, element);
     }
   }
 
+  public static void read(Ref ref, Element element) {
+    ref.setCellar(element.getAttribute("cellar"));
+    ref.setRack(element.getAttribute("rack"));
+    ref.setRef(element.getAttribute("ref"));
+  }
+
   public static Rack readRack(ModelObjectFactory factory, Element element) {
     final var rack = factory.newRack();
+    read(rack, factory, element);
+    return rack;
+  }
+
+  public static void read(Rack rack, ModelObjectFactory factory, Element element) {
     rack.setName(element.getAttribute("name"));
     rack.setFactory(element.getAttribute("factory"));
     children(element).forEach(e -> {
@@ -207,11 +230,15 @@ public class XmlModel {
           break;
       }
     });
-    return rack;
   }
 
   public static Initializer readInitializer(ModelObjectFactory factory, Element element) {
     final var initializer = factory.newInitializer();
+    read(initializer, factory, element);
+    return initializer;
+  }
+
+  public static void read(Initializer initializer, ModelObjectFactory factory, Element element) {
     initializer.setName(element.getAttribute("name"));
     children(element).forEach(e -> {
       switch (e.getTagName()) {
@@ -220,14 +247,17 @@ public class XmlModel {
           break;
       }
     });
-    return initializer;
   }
 
   public static Input readInput(ModelObjectFactory factory, Element element) {
     final var input = factory.newInput();
+    read(input, factory, element);
+    return input;
+  }
+
+  public static void read(Input input, ModelObjectFactory factory, Element element) {
     input.setName(element.getAttribute("name"));
     input.setArgument(readArgument(factory, element));
-    return input;
   }
 
   private static Stream<Element> children(Element element) {
