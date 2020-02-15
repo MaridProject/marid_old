@@ -18,7 +18,7 @@ import org.marid.fx.table.ReadOnlyCheckBoxTableCell
 import org.springframework.stereotype.Component
 
 @Component
-class ProjectsTabTable(projects: Projects, private val manager: ProjectTabsManager) : TableView<Project>(projects.items) {
+class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager) : TableView<Project>(projects.items) {
 
   init {
     placeholder = Label().configure(Fx("No projects yet"))

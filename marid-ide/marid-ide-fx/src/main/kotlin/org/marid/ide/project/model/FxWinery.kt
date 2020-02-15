@@ -8,11 +8,11 @@ import org.marid.runtime.model.Winery
 
 class FxWinery : FxEntity(), Winery {
 
-  val group = SimpleStringProperty(this, "group")
-  val name = SimpleStringProperty(this, "name")
-  val version = SimpleStringProperty(this, "version")
+  val group = SimpleStringProperty(this, "group", "")
+  val name = SimpleStringProperty(this, "name", "")
+  val version = SimpleStringProperty(this, "version", "")
   val cellars = FXCollections.observableArrayList(FxCellar::observables)
-  val observables = arrayOf<Observable>(group, name, version, cellars)
+  val observables = arrayOf<Observable>(group, name, version, cellars, resolvedType)
 
   override fun getGroup(): String = this.group.get()
   override fun setName(name: String) = this.name.set(name)

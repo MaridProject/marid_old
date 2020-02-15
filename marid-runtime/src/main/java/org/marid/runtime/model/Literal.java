@@ -45,6 +45,7 @@ public interface Literal extends ConstantArgument {
 
   enum Type {
 
+    VOID(void.class, (s, cl) -> null),
     BYTE(byte.class, (s, cl) -> Byte.parseByte(s)),
     SHORT(short.class, (s, cl) -> Short.parseShort(s)),
     INT(int.class, (s, cl) -> Integer.parseInt(s)),

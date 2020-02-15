@@ -6,7 +6,7 @@ import org.marid.fx.action.configure
 import org.springframework.stereotype.Component
 
 @Component
-class ProjectsTab(table: ProjectsTabTable) : Tab(null, table) {
+class ProjectsTab(table: ProjectsTable) : Tab(null, table) {
   init {
     configure(Fx("Projects", "icons/project.png"))
     isClosable = false

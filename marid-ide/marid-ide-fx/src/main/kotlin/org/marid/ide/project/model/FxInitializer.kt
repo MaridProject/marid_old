@@ -8,9 +8,9 @@ import org.marid.runtime.model.Initializer
 
 class FxInitializer : FxEntity(), Initializer {
 
-  val name = SimpleStringProperty(this, "name")
+  val name = SimpleStringProperty(this, "name", "")
   val arguments = FXCollections.observableArrayList(FxArgument::observables)
-  val observables = arrayOf<Observable>(name, arguments)
+  val observables = arrayOf<Observable>(name, arguments, resolvedType)
 
   override fun getArguments(): MutableList<out Argument> = arguments
   override fun setName(name: String) = this.name.set(name)

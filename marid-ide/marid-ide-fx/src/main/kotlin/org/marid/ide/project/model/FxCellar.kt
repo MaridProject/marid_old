@@ -9,10 +9,10 @@ import org.marid.runtime.model.Rack
 
 class FxCellar : FxEntity(), Cellar {
 
-  val name = SimpleStringProperty(this, "name")
+  val name = SimpleStringProperty(this, "name", "")
   val constants = FXCollections.observableArrayList(FxCellarConstant::observables)
   val racks = FXCollections.observableArrayList(FxRack::observables)
-  val observables = arrayOf<Observable>(name, constants, racks)
+  val observables = arrayOf<Observable>(name, constants, racks, resolvedType)
 
   override fun setName(name: String) = this.name.set(name)
   override fun getName(): String = this.name.get()

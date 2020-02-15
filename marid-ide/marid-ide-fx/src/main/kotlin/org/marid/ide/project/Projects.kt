@@ -2,6 +2,8 @@ package org.marid.ide.project
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import org.marid.fx.extensions.WARN
+import org.marid.fx.extensions.logger
 import org.marid.ide.common.Directories
 import org.springframework.stereotype.Component
 import java.nio.file.Files
@@ -17,7 +19,11 @@ class Projects(
   init {
     Files.newDirectoryStream(directories.projectsHome) { Files.isDirectory(it) }.use { dirs ->
       for (dir in dirs) {
-        _items += Project(this, dir.fileName.toString())
+        try {
+          _items += Project(this, dir.fileName.toString())
+        } catch (e: Throwable) {
+          logger.WARN("Unable to load {0}", e, dir)
+        }
       }
     }
   }

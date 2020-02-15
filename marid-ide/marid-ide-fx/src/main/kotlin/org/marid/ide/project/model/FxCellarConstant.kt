@@ -8,11 +8,11 @@ import org.marid.runtime.model.ConstantArgument
 
 class FxCellarConstant : FxEntity(), CellarConstant {
 
-  val factory = SimpleStringProperty(this, "factory")
-  val selector = SimpleStringProperty(this, "selector")
-  val name = SimpleStringProperty(this, "name")
+  val factory = SimpleStringProperty(this, "factory", "")
+  val selector = SimpleStringProperty(this, "selector", "")
+  val name = SimpleStringProperty(this, "name", "")
   val arguments = FXCollections.observableArrayList(FxConstantArgument::observables)
-  val observables = arrayOf<Observable>(factory, selector, name, arguments)
+  val observables = arrayOf<Observable>(factory, selector, name, arguments, resolvedType)
 
   override fun getArguments(): MutableList<out ConstantArgument> = arguments
   override fun setName(name: String) = this.name.set(name)
