@@ -14,8 +14,9 @@ class FxRack : FxEntity(), Rack {
   val name = SimpleStringProperty(this, "name", "")
   val arguments = FXCollections.observableArrayList(FxArgument::observables)
   val inputs = FXCollections.observableArrayList(FxInput::observables)
+  val outputs = FXCollections.observableArrayList(FxOutput::observables)
   val initializers = FXCollections.observableArrayList(FxInitializer::observables)
-  val observables = arrayOf<Observable>(factory, name, arguments, inputs, initializers, resolvedType)
+  val observables = arrayOf<Observable>(factory, name, arguments, inputs, outputs, initializers, resolvedType)
 
   override fun getArguments(): MutableList<out Argument> = arguments
   override fun getName(): String = this.name.get()
