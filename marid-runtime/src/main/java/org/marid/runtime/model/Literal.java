@@ -1,14 +1,14 @@
 package org.marid.runtime.model;
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.io.function.IOBiFunction;
-import org.marid.misc.ClassLoadingSupplier;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.sql.Date;
@@ -81,11 +81,29 @@ public interface Literal extends ConstantArgument {
     BASE64MIME(byte[].class, (s, cl) -> Base64.getMimeDecoder().decode(s)),
     HEX(byte[].class, (s, cl) -> new BigInteger(s.replaceAll("\\s++", ""), 16).toByteArray()),
     URI(java.net.URI.class, (s, cl) -> java.net.URI.create(s)),
-    URL(java.net.URL.class, IOBiFunction.of((s, cl) -> new URL(s))),
-    INETADDRESS(InetAddress.class, IOBiFunction.of((s, cl) -> InetAddress.getByName(s))),
+    URL(java.net.URL.class, (s, cl) -> {
+      try {
+        return new URL(s);
+      } catch (MalformedURLException e) {
+        throw new IllegalStateException(e);
+      }
+    }),
+    INETADDRESS(InetAddress.class, (s, cl) -> {
+      try {
+        return InetAddress.getByName(s);
+      } catch (IOException e) {
+        throw new IllegalStateException(e);
+      }
+    }),
     PATH(Path.class, (s, cl) -> Path.of(s)),
     FILE(File.class, (s, cl) -> new File(s)),
-    CLASS(Class.class, (s, cl) -> ClassLoadingSupplier.of(() -> cl.loadClass(s))),
+    CLASS(Class.class, (s, cl) -> {
+      try {
+        return cl.loadClass(s);
+      } catch (ClassNotFoundException e) {
+        throw new IllegalStateException(e);
+      }
+    }),
     METHODTYPE(MethodType.class, MethodType::fromMethodDescriptorString);
 
     public final Class<?> type;

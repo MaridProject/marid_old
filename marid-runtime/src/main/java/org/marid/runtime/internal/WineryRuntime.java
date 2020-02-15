@@ -23,8 +23,6 @@ package org.marid.runtime.internal;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.marid.io.MaridFiles;
-import org.marid.io.function.IOSupplier;
 import org.marid.runtime.model.ModelObjectFactoryImpl;
 import org.marid.runtime.model.WineryImpl;
 import org.marid.runtime.model.XmlModel;
@@ -32,10 +30,14 @@ import org.marid.runtime.model.XmlModel;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -327,17 +329,22 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
     private final AutoCloseable destroyAction;
 
     private WineryParams(URL zipFile, List<String> args) {
-      final var deployment = IOSupplier.of(() -> Files.createTempDirectory("marid")).get();
+      final Path deployment;
+      try {
+        deployment = Files.createTempDirectory("marid");
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
+      }
       destroyAction = () -> {
         final var p = this;
         if (p.classLoader != null) {
           try {
             p.classLoader.close();
           } finally {
-            MaridFiles.deleteRecursively(deployment);
+            deleteRecursively(deployment);
           }
         } else {
-          MaridFiles.deleteRecursively(deployment);
+          deleteRecursively(deployment);
         }
       };
       try {
@@ -385,6 +392,22 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
         }
       }
       return new URLClassLoader(urls.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
+    }
+
+    private void deleteRecursively(Path path) throws IOException {
+      Files.walkFileTree(path, new SimpleFileVisitor<>() {
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+          Files.deleteIfExists(file);
+          return super.visitFile(file, attrs);
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+          Files.deleteIfExists(dir);
+          return super.postVisitDirectory(dir, exc);
+        }
+      });
     }
   }
 }

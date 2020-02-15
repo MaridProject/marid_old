@@ -13,12 +13,6 @@
   <dependencies>
     <dependency>
       <groupId>org.marid</groupId>
-      <artifactId>marid-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.marid</groupId>
       <artifactId>marid-processors</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
