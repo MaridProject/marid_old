@@ -10,10 +10,13 @@ import org.marid.fx.extensions.runFx
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
+import org.marid.ide.project.model.FxModelObjectFactory
+import org.marid.ide.project.model.FxWinery
 import org.marid.ide.project.xml.XmlDependencies
 import org.marid.ide.project.xml.XmlRepositories
 import org.marid.ide.project.xml.XmlRepository
-import org.marid.ide.project.xml.XmlWinery
+import org.marid.io.Xmls
+import org.marid.runtime.model.XmlModel
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -25,7 +28,7 @@ class Project(val projects: Projects, val id: String) {
 
   constructor(projects: Projects) : this(projects, System.currentTimeMillis().toString(Character.MAX_RADIX))
 
-  val winery = XmlWinery()
+  val winery = FxWinery()
   val repositories = XmlRepositories()
   val dependencies = XmlDependencies()
   val observables = winery.observables + repositories.observables + dependencies.observables
@@ -71,7 +74,7 @@ class Project(val projects: Projects, val id: String) {
   }
 
   private fun load() {
-    if (Files.isRegularFile(wineryFile)) winery.load(wineryFile)
+    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { XmlModel.readWinery(FxModelObjectFactory, it) }
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
     if (Files.isRegularFile(dependenciesFile)) dependencies.load(dependenciesFile)
 
@@ -81,7 +84,7 @@ class Project(val projects: Projects, val id: String) {
   }
 
   fun save() {
-    winery.save(wineryFile)
+    Xmls.writeFormatted("winery", { XmlModel.write(winery, it) }, wineryFile)
     repositories.save(repositoriesFile)
     dependencies.save(dependenciesFile)
   }

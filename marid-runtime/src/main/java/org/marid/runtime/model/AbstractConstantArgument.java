@@ -21,26 +21,5 @@ package org.marid.runtime.model;
  * #L%
  */
 
-import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
-public final class DestroyerImpl extends AbstractMethod<DestroyerImpl, AbstractConstant> {
-
-  public DestroyerImpl(@NotNull String name) {
-    super(name);
-  }
-
-  public DestroyerImpl(@NotNull Element element) {
-    super(element, AbstractConstant::argument);
-  }
-
-  public DestroyerImpl(@NotNull InputSource inputSource) {
-    this(element(inputSource));
-  }
-
-  @Override
-  public @NotNull String getTag() {
-    return "destroy";
-  }
+public abstract class AbstractConstantArgument extends AbstractArgument implements ConstantArgument {
 }

@@ -21,102 +21,29 @@ package org.marid.runtime.model;
  * #L%
  */
 
-import org.jetbrains.annotations.NotNull;
-import org.marid.xml.XmlStreams;
-import org.marid.xml.XmlUtils;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-public final class WineryImpl extends AbstractEntity {
+public final class WineryImpl extends AbstractEntity implements Winery {
 
-  private final ArrayList<CellarImpl> cellars;
   private String group;
   private String name;
   private String version;
+  private final ArrayList<CellarImpl> cellars = new ArrayList<>();
 
-  public WineryImpl(@NotNull String group, @NotNull String name, @NotNull String version) {
+  WineryImpl() {}
+
+  public WineryImpl(String group, String name, String version) {
     this.group = group;
     this.name = name;
     this.version = version;
-    this.cellars = new ArrayList<>();
   }
 
-  public WineryImpl(@NotNull Element element) {
-    super(element);
-    this.group = element.getAttribute("group");
-    this.name = element.getAttribute("name");
-    this.version = element.getAttribute("version");
-    this.cellars = XmlStreams.children(element, CellarImpl::new).collect(Collectors.toCollection(ArrayList::new));
-  }
-
-  public WineryImpl(@NotNull InputSource inputSource) {
-    this(element(inputSource));
-  }
-
-  @NotNull
-  public WineryImpl addCellar(@NotNull CellarImpl cellar) {
-    cellars.add(cellar);
-    return this;
-  }
-
-  @NotNull
-  public List<CellarImpl> getCellars() {
-    return cellars;
-  }
-
-  @NotNull
-  public CellarImpl getCellar(@NotNull String name) {
-    return cellars.stream()
-        .filter(c -> name.equals(c.getName()))
-        .findFirst()
-        .orElseThrow(() -> new NoSuchElementException(name));
-  }
-
-  @Override
-  public void writeTo(@NotNull Element element) {
-    element.setAttribute("group", group);
-    element.setAttribute("name", name);
-    element.setAttribute("version", version);
-    cellars.forEach(c -> XmlUtils.appendTo(c, element));
-  }
-
-  @NotNull public String getGroup() { return group; }
-  @NotNull public WineryImpl setGroup(String group) { this.group = group; return this; }
-  @NotNull public String getName() { return name; }
-  @NotNull public WineryImpl setName(String name) { this.name = name; return this; }
-  @NotNull public String getVersion() { return version; }
-  @NotNull public WineryImpl setVersion(String version) { this.version = version; return this; }
-
-  @NotNull
-  @Override
-  public String getTag() {
-    return "winery";
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(group, name, version, cellars);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj instanceof WineryImpl) {
-      final var that = (WineryImpl) obj;
-
-      return Objects.equals(this.group, that.group)
-          && Objects.equals(this.name, that.name)
-          && Objects.equals(this.version, that.version)
-          && Objects.equals(this.cellars, that.cellars);
-    }
-    return false;
-  }
+  @Override public String getGroup() { return group; }
+  @Override public void setGroup(String group) { this.group = group; }
+  @Override public String getName() { return name; }
+  @Override public void setName(String name) { this.name = name; }
+  @Override public String getVersion() { return version; }
+  @Override public void setVersion(String version) { this.version = version; }
+  @Override public ArrayList<CellarImpl> getCellars() { return cellars; }
+  @Override public void addCellar(Cellar cellar) { cellars.add((CellarImpl) cellar); }
 }

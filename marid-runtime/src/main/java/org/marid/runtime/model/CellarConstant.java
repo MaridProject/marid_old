@@ -1,4 +1,22 @@
 package org.marid.runtime.model;
 
-public interface CellarConstant {
+import java.util.List;
+
+public interface CellarConstant extends Entity {
+
+  String getFactory();
+
+  void setFactory(String factory);
+
+  String getSelector();
+
+  void setSelector(String selector);
+
+  String getName();
+
+  void setName(String name);
+
+  List<? extends ConstantArgument> getArguments();
+
+  void addArgument(ConstantArgument argument);
 }

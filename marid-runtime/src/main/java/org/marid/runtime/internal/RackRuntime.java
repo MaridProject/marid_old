@@ -10,12 +10,12 @@ package org.marid.runtime.internal;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.marid.runtime.model.CellarImpl;
 import org.marid.runtime.model.RackImpl;
 import org.marid.runtime.model.WineryImpl;
-
-import java.util.LinkedHashSet;
-import java.util.stream.IntStream;
 
 public class RackRuntime implements AutoCloseable {
 
@@ -73,24 +70,6 @@ public class RackRuntime implements AutoCloseable {
   @Override
   public void close() {
     final var exception = new IllegalStateException("Unable to close rack " + getId());
-    IntStream.range(0, rack.getDestroyers().size()).forEach(i -> {
-      final var destroyer = rack.getDestroyers().get(i);
-      try {
-        final var callable = cellar.winery.linkMethod(instance.getClass(), destroyer.getName());
-        final var args = IntStream.range(0, destroyer.getArguments().size())
-            .mapToObj(j -> {
-              try {
-                return cellar.arg(destroyer.getArguments().get(j), new LinkedHashSet<>());
-              } catch (Throwable e) {
-                throw new IllegalArgumentException("Illegal argument [" + j + "] of destroyer [" + i + "]", e);
-              }
-            })
-            .toArray();
-        cellar.winery.call(callable, args);
-      } catch (Throwable e) {
-        exception.addSuppressed(new IllegalStateException("Unable to call destroyer [" + i + "]", e));
-      }
-    });
     if (instance instanceof AutoCloseable) {
       try {
         ((AutoCloseable) instance).close();

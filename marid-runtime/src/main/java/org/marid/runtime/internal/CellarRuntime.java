@@ -22,14 +22,14 @@ package org.marid.runtime.internal;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.runtime.model.ArgumentImpl;
+import org.marid.runtime.model.AbstractArgument;
+import org.marid.runtime.model.CellarConstantImpl;
+import org.marid.runtime.model.CellarImpl;
 import org.marid.runtime.model.ConstRefImpl;
 import org.marid.runtime.model.LiteralImpl;
 import org.marid.runtime.model.NullImpl;
-import org.marid.runtime.model.RefImpl;
-import org.marid.runtime.model.CellarImpl;
-import org.marid.runtime.model.CellarConstantImpl;
 import org.marid.runtime.model.RackImpl;
+import org.marid.runtime.model.RefImpl;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -73,7 +73,10 @@ public class CellarRuntime implements AutoCloseable {
               } else if (arg instanceof ConstRefImpl) {
                 final var ref = (ConstRefImpl) arg;
                 final var cellar = winery.getCellar(ref.getCellar());
-                final var cellarConstant = cellar.cellar.getConstant(ref.getRef());
+                final var cellarConstant = cellar.cellar.getConstants().stream()
+                  .filter(c -> c.getName().equals(ref.getRef()))
+                  .findFirst()
+                  .orElseThrow(() -> new IllegalStateException("No such ref " + ref.getRef()));
                 return cellar.getOrCreateConst(cellarConstant, passed);
               } else {
                 throw new IllegalArgumentException("Illegal arg[" + i + "] of constant " + k + ": " + arg.getClass());
@@ -141,7 +144,7 @@ public class CellarRuntime implements AutoCloseable {
     return rackRuntime;
   }
 
-  Object arg(ArgumentImpl arg, LinkedHashSet<String> passed) {
+  Object arg(AbstractArgument arg, LinkedHashSet<String> passed) {
     if (arg instanceof LiteralImpl) {
       final var literal = (LiteralImpl) arg;
       return literal.getType().converter.apply(literal.getValue(), winery.classLoader);
@@ -154,7 +157,10 @@ public class CellarRuntime implements AutoCloseable {
     } else if (arg instanceof RefImpl) {
       final var ref = (RefImpl) arg;
       final var cellar = ref.getCellar() == null ? this : winery.getCellar(ref.getCellar());
-      final var cellarRack = cellar.cellar.getRack(ref.getRack());
+      final var cellarRack = cellar.cellar.getRacks().stream()
+        .filter(r -> r.getName().equals(ref.getRack()))
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException("No such rack " + ref.getRack()));
       final var cellarRackRuntime = cellar.getOrCreateRack(cellarRack, passed);
       try {
         return winery.get(cellarRackRuntime.instance, ref.getRef());

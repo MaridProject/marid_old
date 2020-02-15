@@ -11,8 +11,7 @@ class RacksPane(
   racksTable: RacksTable,
   rackArgumentList: RackArgumentList,
   rackInputList: RackInputList,
-  rackInitializerList: RackInitializerList,
-  rackDestroyerList: RackDestroyerList
+  rackInitializerList: RackInitializerList
 ) : SplitPane(
   racksTable,
   Accordion(
@@ -24,9 +23,6 @@ class RacksPane(
     },
     TitledPane(null, rackInitializerList).also {
       it.textProperty().bind("Rack initializers".localized)
-    },
-    TitledPane(null, rackDestroyerList).also {
-      it.textProperty().bind("Rack destroyers".localized)
     }
   ).also {
     it.expandedPane = it.panes[0]

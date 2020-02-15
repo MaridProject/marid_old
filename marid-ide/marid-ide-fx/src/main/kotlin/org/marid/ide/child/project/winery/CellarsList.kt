@@ -7,17 +7,17 @@ import javafx.scene.image.ImageView
 import javafx.util.Callback
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
-import org.marid.ide.project.model.CellarWrapper
+import org.marid.ide.project.model.FxCellar
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
 @Component
-class CellarsList(projectFactory: ObjectFactory<Project>) : ListView<CellarWrapper>(projectFactory.bean.winery.cellars) {
+class CellarsList(projectFactory: ObjectFactory<Project>) : ListView<FxCellar>(projectFactory.bean.winery.cellars) {
 
   init {
     cellFactory = Callback { _ ->
-      object : ListCell<CellarWrapper>() {
-        override fun updateItem(item: CellarWrapper?, empty: Boolean) {
+      object : ListCell<FxCellar>() {
+        override fun updateItem(item: FxCellar?, empty: Boolean) {
           super.updateItem(item, empty)
           if (empty || item == null) {
             textProperty().unbind()

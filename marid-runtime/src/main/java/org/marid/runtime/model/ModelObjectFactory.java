@@ -16,11 +16,11 @@ public interface ModelObjectFactory {
 
   Input newInput();
 
-  Destroyer newDestroyer();
-
   ConstRef newConstRef();
 
   Cellar newCellar();
+
+  Initializer newInitializer();
 
   CellarConstant newCellarConstant();
 }

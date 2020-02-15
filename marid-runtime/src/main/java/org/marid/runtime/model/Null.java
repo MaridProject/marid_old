@@ -1,4 +1,4 @@
 package org.marid.runtime.model;
 
-public interface Null {
+public interface Null extends ConstantArgument {
 }

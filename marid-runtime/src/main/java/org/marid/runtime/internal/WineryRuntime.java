@@ -24,10 +24,12 @@ package org.marid.runtime.internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.marid.io.MaridFiles;
-import org.marid.io.Xmls;
 import org.marid.io.function.IOSupplier;
+import org.marid.runtime.model.ModelObjectFactoryImpl;
 import org.marid.runtime.model.WineryImpl;
+import org.marid.runtime.model.XmlModel;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.net.URL;
@@ -348,7 +350,10 @@ public final class WineryRuntime extends LinkerSupport implements AutoCloseable 
         final var deps = deployment.resolve("deps");
         final var winery = deployment.resolve("winery.xml");
 
-        this.winery = Xmls.read(winery, WineryImpl::new);
+        final var documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
+        final var document = documentBuilder.parse(winery.toFile());
+
+        this.winery = (WineryImpl) XmlModel.readWinery(new ModelObjectFactoryImpl(), document.getDocumentElement());
 
         validate(resources, deps, classes);
         initialize(deployment, args);
