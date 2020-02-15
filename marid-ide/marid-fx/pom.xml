@@ -70,41 +70,36 @@
       </plugin>
 
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>compile-scripts</id>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <compileSourceRoots>
-                <root>${project.basedir}/src/script/java</root>
-              </compileSourceRoots>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>generateSources</id>
             <goals>
-              <goal>java</goal>
+              <goal>exec</goal>
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <mainClass>script.GenerateSources</mainClass>
+              <executable>${java.home}/bin/java</executable>
               <arguments>
+                <argument>${project.basedir}/src/script/java/script/GenerateSources.java</argument>
                 <argument>${project.build.directory}/generated-sources</argument>
               </arguments>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+        <configuration>
+          <sourceDirs>
+            <dir>src/main/kotlin</dir>
+            <dir>target/generated-sources</dir>
+          </sourceDirs>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -115,7 +110,7 @@
             <goals>
               <goal>clean</goal>
             </goals>
-            <phase>generate-sources</phase>
+            <phase>compile</phase>
             <configuration>
               <excludeDefaultDirectories>true</excludeDefaultDirectories>
               <filesets>
@@ -126,17 +121,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-maven-plugin</artifactId>
-        <configuration>
-          <sourceDirs>
-            <dir>src/main/kotlin</dir>
-            <dir>target/generated-sources</dir>
-          </sourceDirs>
-        </configuration>
       </plugin>
     </plugins>
   </build>
