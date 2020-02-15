@@ -22,6 +22,7 @@ package org.marid.runtime.model;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public final class InitializerImpl extends AbstractEntity implements Initializer {
 
@@ -30,8 +31,9 @@ public final class InitializerImpl extends AbstractEntity implements Initializer
 
   InitializerImpl() {}
 
-  public InitializerImpl(String name) {
+  public InitializerImpl(String name, AbstractArgument... arguments) {
     this.name = name;
+    Collections.addAll(this.arguments, arguments);
   }
 
   @Override public String getName() { return name; }
