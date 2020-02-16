@@ -1,4 +1,4 @@
-package org.marid.ide.project
+package org.marid.ide.project.dependencies
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.eclipse.aether.RepositorySystem
@@ -13,7 +13,7 @@ import org.marid.fx.extensions.logger
 import org.springframework.stereotype.Component
 
 @Component
-class ProjectDependencyResolver {
+class DependencyResolver {
 
   val repositorySystem: RepositorySystem = MavenRepositorySystemUtils.newServiceLocator()
     .apply { addService(RepositoryConnectorFactory::class.java, BasicRepositoryConnectorFactory::class.java) }

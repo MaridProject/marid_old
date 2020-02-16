@@ -11,7 +11,7 @@ import org.eclipse.aether.transfer.TransferListener
 import org.marid.fx.extensions.LOG
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
-import org.marid.ide.project.ProjectDependencyResolver
+import org.marid.ide.project.dependencies.DependencyResolver
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 import java.lang.reflect.Proxy
@@ -21,7 +21,7 @@ import java.util.logging.Logger
 @Component
 class ProjectSession(
   projectFactory: ObjectFactory<Project>,
-  dependencyResolver: ProjectDependencyResolver
+  dependencyResolver: DependencyResolver
 ) {
 
   val project = projectFactory.bean

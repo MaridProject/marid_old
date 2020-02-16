@@ -22,7 +22,7 @@ import org.marid.ide.child.project.Progress.*
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.common.LocalRepositoryServer
 import org.marid.ide.main.IdeServices
-import org.marid.ide.project.ProjectDependencyResolver
+import org.marid.ide.project.dependencies.DependencyResolver
 import org.marid.ide.project.ProjectTask
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.stereotype.Component
@@ -35,7 +35,7 @@ import javax.annotation.PreDestroy
 class ProjectBuildService(
   private val services: IdeServices,
   private val properties: IdeProperties,
-  private val dependencyResolver: ProjectDependencyResolver,
+  private val dependencyResolver: DependencyResolver,
   private val session: ProjectSession,
   private val localRepositoryServerProvider: ObjectProvider<LocalRepositoryServer>
 ) : Service<Unit>() {
