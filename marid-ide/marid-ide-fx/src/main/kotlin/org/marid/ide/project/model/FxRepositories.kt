@@ -1,4 +1,4 @@
-package org.marid.ide.project.xml
+package org.marid.ide.project.model
 
 import javafx.collections.FXCollections
 import org.marid.fx.xml.child
@@ -7,13 +7,13 @@ import org.marid.xml.XmlStreams
 import java.nio.file.Path
 import kotlin.streams.toList
 
-class XmlRepositories {
+class FxRepositories {
 
-  val items = FXCollections.observableArrayList(XmlRepository::observables)
+  val items = FXCollections.observableArrayList(FxRepository::observables)
   val observables = arrayOf(items)
 
   fun load(path: Path) {
-    Xmls.read(path) { items.setAll(XmlStreams.elementsByTag(it, "repository").map(::XmlRepository).toList()) }
+    Xmls.read(path) { items.setAll(XmlStreams.elementsByTag(it, "repository").map(::FxRepository).toList()) }
   }
 
   fun save(path: Path) {

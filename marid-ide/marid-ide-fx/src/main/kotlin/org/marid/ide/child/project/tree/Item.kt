@@ -4,10 +4,10 @@ import com.sun.javafx.binding.StringConstant
 import javafx.beans.value.ObservableValue
 import org.marid.ide.project.model.FxCellar
 import org.marid.ide.project.model.FxRack
-import org.marid.ide.project.model.ResolvedTyped
+import org.marid.ide.project.model.ResolvedTypeProvider
 import java.lang.reflect.Type
 
-sealed class Item : ResolvedTyped {
+sealed class Item : ResolvedTypeProvider {
   abstract val name: ObservableValue<String>
   abstract val factory: ObservableValue<String>
   abstract val value: ObservableValue<String>

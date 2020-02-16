@@ -12,7 +12,7 @@ import org.marid.fx.action.menuItem
 import org.marid.fx.extensions.column
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.ProjectsTable
-import org.marid.ide.project.xml.XmlDependency
+import org.marid.ide.project.model.FxDependency
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 class DependencyTable(
   projectsTable: ProjectsTable,
   private val dependencyDialogFactory: ObjectFactory<DependencyDialog>
-) : TableView<XmlDependency>() {
+) : TableView<FxDependency>() {
 
   val addDependency = Fx(
     text = "Add dependency",
@@ -54,7 +54,7 @@ class DependencyTable(
     column(200, "Version") { it.version }
 
     rowFactory = Callback {
-      TableRow<XmlDependency>()
+      TableRow<FxDependency>()
         .apply {
           val menu = ContextMenu().also { contextMenu = it }
           addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
@@ -75,7 +75,7 @@ class DependencyTable(
     }
   }
 
-  private fun editFx(dep: XmlDependency) = Fx(
+  private fun editFx(dep: FxDependency) = Fx(
     text = "Edit...",
     icon = "icons/edit.png",
     handler = { dependencyDialogFactory.bean.init(dep).showAndWait().ifPresent(dep::copyFrom) }

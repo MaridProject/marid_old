@@ -13,9 +13,9 @@ import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
 import org.marid.ide.project.model.FxModelObjectFactory
 import org.marid.ide.project.model.FxWinery
-import org.marid.ide.project.xml.XmlDependencies
-import org.marid.ide.project.xml.XmlRepositories
-import org.marid.ide.project.xml.XmlRepository
+import org.marid.ide.project.model.FxDependencies
+import org.marid.ide.project.model.FxRepositories
+import org.marid.ide.project.model.FxRepository
 import org.marid.io.Xmls
 import org.marid.runtime.model.XmlModel
 import org.springframework.util.FileSystemUtils
@@ -30,8 +30,8 @@ class Project(val projects: Projects, val id: String) {
   constructor(projects: Projects) : this(projects, System.currentTimeMillis().toString(Character.MAX_RADIX))
 
   val winery = FxWinery()
-  val repositories = XmlRepositories()
-  val dependencies = XmlDependencies()
+  val repositories = FxRepositories()
+  val dependencies = FxDependencies()
   val observables = winery.observables + repositories.observables + dependencies.observables
 
   val directory = directories.projectsHome.resolve(id)
@@ -68,7 +68,7 @@ class Project(val projects: Projects, val id: String) {
 
     load()
 
-    val central = XmlRepository("central", "https://repo1.maven.org/maven2/")
+    val central = FxRepository("central", "https://repo1.maven.org/maven2/")
     if (central !in repositories.items) {
       repositories.items += central
     }

@@ -4,13 +4,13 @@ import javafx.collections.FXCollections
 import javafx.scene.control.TableView
 import org.marid.fx.extensions.column
 import org.marid.ide.project.ProjectsTable
-import org.marid.ide.project.xml.XmlRepository
+import org.marid.ide.project.model.FxRepository
 import org.springframework.stereotype.Component
 
 @Component
 class ProjectRepositoriesTable(
   projectsTable: ProjectsTable
-) : TableView<XmlRepository>() {
+) : TableView<FxRepository>() {
 
   init {
     projectsTable.selectionModel.selectedItemProperty().addListener { _, _, n ->
