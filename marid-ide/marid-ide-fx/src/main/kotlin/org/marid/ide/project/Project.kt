@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.WARN
+import org.marid.fx.extensions.bindObject
 import org.marid.fx.extensions.runFx
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
@@ -48,6 +49,10 @@ class Project(val projects: Projects, val id: String) {
   private val progressProperty = ReadOnlyDoubleWrapper(this, "progress", 0.0)
   private val dirtyProperty = ReadOnlyBooleanWrapper(this, "dirty", true)
   private val lock = ReentrantReadWriteLock()
+
+  val icon = dirtyProperty.bindObject {
+    if (it.get()) "icons/modified-project.png" else "icons/unmodified-project.png"
+  }
 
   init {
     val existing = Files.isDirectory(directory)

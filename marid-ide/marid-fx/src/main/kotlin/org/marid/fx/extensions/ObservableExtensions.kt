@@ -55,6 +55,14 @@ val Double.readOnlyProp get() = ReadOnlyDoubleWrapper(this).readOnlyProperty
 val Float.readOnlyProp get() = ReadOnlyFloatWrapper(this).readOnlyProperty
 val Boolean.readOnlyProp get() = ReadOnlyBooleanWrapper(this).readOnlyProperty
 
+fun <R> List<Observable>.bound(func: () -> R): OBinding<R> = bind(C { func() }, *toTypedArray())
+fun List<Observable>.doubleBound(func: () -> Double): DBinding = bindDouble(C { func() }, *toTypedArray())
+fun List<Observable>.floatBound(func: () -> Float): FBinding = bindFloat(C { func() }, *toTypedArray())
+fun List<Observable>.longBound(func: () -> Long): LBinding = bindLong(C { func() }, *toTypedArray())
+fun List<Observable>.intBound(func: () -> Int): IBinding = bindInt(C { func() }, *toTypedArray())
+fun List<Observable>.booleanBound(func: () -> Boolean): BBinding = bindBool(C { func() }, *toTypedArray())
+fun List<Observable>.stringBound(func: () -> String): SBinding = bindString(C { func() }, *toTypedArray())
+
 @Suppress("UNCHECKED_CAST") val DoubleProperty.asDoubleProperty: Property<Double>
   get() = this as Property<Double>
 @Suppress("UNCHECKED_CAST") val ReadOnlyDoubleProperty.asDoubleProperty: ReadOnlyProperty<Double>

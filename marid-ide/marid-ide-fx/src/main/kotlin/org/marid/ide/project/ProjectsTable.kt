@@ -3,6 +3,8 @@ package org.marid.ide.project
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
 import javafx.scene.control.*
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Region
@@ -11,16 +13,17 @@ import org.marid.fx.action.Fx
 import org.marid.fx.action.configure
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
+import org.marid.fx.extensions.bound
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installEdit
 import org.marid.fx.extensions.readOnlyProp
-import org.marid.fx.table.ReadOnlyCheckBoxTableCell
 import org.springframework.stereotype.Component
 
 @Component
 class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager) : TableView<Project>(projects.items) {
 
   init {
+    columnResizePolicy = CONSTRAINED_RESIZE_POLICY
     placeholder = Label().configure(Fx("No projects yet"))
     rowFactory = Callback {
       TableRow<Project>().apply {
@@ -31,8 +34,26 @@ class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager)
         }
       }
     }
-    column(160, "Id") { it.id.readOnlyProp }.also { it.style = "-fx-alignment: CENTER; -fx-font-family: monospaced" }
-    column(300, "Name") { it.winery.name }.also { it.style = "-fx-alignment: CENTER-LEFT;" }
+    column(100, "Id") { it.id.readOnlyProp }.also {
+      it.style = "-fx-alignment: CENTER; -fx-font-family: monospaced"
+    }
+    column(300, "Name") { listOf(it.winery.name, it.dirty).bound { it.winery.getName() to it.icon.get() } }.also {
+      it.style = "-fx-alignment: CENTER-LEFT;"
+      it.cellFactory = Callback {
+        object : TableCell<Project, Pair<String, String>>() {
+          override fun updateItem(item: Pair<String, String>?, empty: Boolean) {
+            super.updateItem(item, empty)
+            if (empty || item == null) {
+              graphic = null
+              text = null
+            } else {
+              graphic = ImageView(Image(item.second, 20.0, 20.0, true, true))
+              text = item.first
+            }
+          }
+        }
+      }
+    }
     column(150, "Actions") {
       val buttons = it.actions.map(Fx::toolButton).toTypedArray()
       SimpleObjectProperty(
@@ -42,9 +63,6 @@ class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager)
           prefHeight = Region.USE_PREF_SIZE
         }
       )
-    }
-    column(100, "Changed") { it.dirty }.also {
-      it.cellFactory = Callback { ReadOnlyCheckBoxTableCell() }
     }
     installEdit { items ->
       items.forEach { manager.addProject(it) }
