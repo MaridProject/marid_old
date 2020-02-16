@@ -19,6 +19,8 @@ class Fx private constructor(
   val description: SimpleStringProperty = SimpleStringProperty(),
   val accelerator: SimpleObjectProperty<KeyCombination> = SimpleObjectProperty(),
   val handler: SimpleObjectProperty<Handler> = SimpleObjectProperty(),
+  val disabled: SimpleBooleanProperty = SimpleBooleanProperty(),
+  val visible: SimpleBooleanProperty = SimpleBooleanProperty(true),
   val selected: SimpleBooleanProperty = SimpleBooleanProperty()
 ) {
   constructor(
@@ -27,6 +29,8 @@ class Fx private constructor(
     description: String? = null,
     key: String? = null,
     handler: ((ActionEvent) -> Unit)? = null,
+    disabled: ObservableValue<Boolean>? = null,
+    visible: ObservableValue<Boolean>? = null,
     selected: Property<Boolean?>? = null
   ) : this(text = SimpleStringProperty()) {
     text?.also { this.text.bind(it.localized) }
@@ -34,6 +38,8 @@ class Fx private constructor(
     description?.also { this.description.bind(SimpleStringProperty(it)) }
     key?.also { this.accelerator.bind(SimpleObjectProperty(keyCombination(it))) }
     handler?.also { this.handler.bind(SimpleObjectProperty(EventHandler(it))) }
+    disabled?.also { this.disabled.bind(it) }
+    visible?.also { this.visible.bind(it) }
     selected?.also { this.selected.bindBidirectional(it) }
   }
 

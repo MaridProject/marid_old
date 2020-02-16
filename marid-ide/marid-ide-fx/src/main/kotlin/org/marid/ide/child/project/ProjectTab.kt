@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ComponentScan
-class ProjectTab(tabs: ProjectTabs, project: ObjectFactory<Project>) : Tab(null, tabs) {
+class ProjectTab(wineryTreeTable: WineryTreeTable, project: ObjectFactory<Project>) : Tab(null, wineryTreeTable) {
 
   private val project = project.bean
 

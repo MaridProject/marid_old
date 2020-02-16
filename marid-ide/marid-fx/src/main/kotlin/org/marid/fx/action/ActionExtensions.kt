@@ -11,6 +11,8 @@ fun String?.icon(size: Int): Image? = this?.let { Image(it, size.toDouble(), siz
 
 fun <C : Control> C.configure(action: Fx): C = this
   .apply { tooltipProperty().bind(action.description.mapObject { it?.let(::Tooltip) }) }
+  .apply { disableProperty().bind(action.disabled) }
+  .apply { visibleProperty().bind(action.visible) }
 
 fun <L : Labeled> L.configure(action: Fx, size: Int = 24): L = this
   .apply { (this as Control).configure(action) }
@@ -35,6 +37,8 @@ fun <M : MenuItem> M.configure(action: Fx, size: Int = 20): M = this
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
   .apply { onActionProperty().bind(action.handler) }
   .apply { acceleratorProperty().bind(action.accelerator) }
+  .apply { disableProperty().bind(action.disabled) }
+  .apply { visibleProperty().bind(action.visible) }
 
 fun <M : CheckMenuItem> M.configure(action: Fx, size: Int = 20): M = this
   .apply { (this as MenuItem).configure(action, size) }
@@ -43,11 +47,14 @@ fun <M : CheckMenuItem> M.configure(action: Fx, size: Int = 20): M = this
 fun <M : Menu> M.configure(action: Fx, size: Int = 20): M = this
   .apply { textProperty().bind(action.text) }
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
+  .apply { disableProperty().bind(action.disabled) }
+  .apply { visibleProperty().bind(action.visible) }
 
 fun <T : Tab> T.configure(action: Fx, size: Int = 18): T = this
   .apply { textProperty().bind(action.text) }
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
   .apply { tooltipProperty().bind(action.description.mapObject { it?.let(::Tooltip) }) }
+  .apply { disableProperty().bind(action.disabled) }
 
 val Fx.button get() = Button().configure(this)
 val Fx.toolButton get() = ToolButton().configure(this)
