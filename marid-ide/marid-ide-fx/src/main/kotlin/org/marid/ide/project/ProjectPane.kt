@@ -4,6 +4,7 @@ import javafx.scene.control.Accordion
 import javafx.scene.control.TitledPane
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.dependencies.DependencyTable
+import org.marid.ide.project.repositories.ProjectRepositoriesTable
 import org.springframework.stereotype.Component
 
 @Component

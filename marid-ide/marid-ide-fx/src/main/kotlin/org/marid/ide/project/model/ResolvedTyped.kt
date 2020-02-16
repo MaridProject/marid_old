@@ -1,8 +1,8 @@
 package org.marid.ide.project.model
 
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableValue
 import java.lang.reflect.Type
 
 interface ResolvedTyped {
-  val resolvedType: SimpleObjectProperty<Type>
+  val resolvedType: ObservableValue<Type>
 }
