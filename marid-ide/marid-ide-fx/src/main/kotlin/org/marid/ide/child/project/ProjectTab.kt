@@ -3,6 +3,7 @@ package org.marid.ide.child.project
 import javafx.scene.control.Tab
 import org.marid.fx.action.Fx
 import org.marid.fx.action.configure
+import org.marid.ide.child.project.tree.WineryTreeTable
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeTabs
 import org.marid.ide.project.Project

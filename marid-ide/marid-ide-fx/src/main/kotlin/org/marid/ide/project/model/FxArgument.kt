@@ -6,13 +6,13 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import org.marid.runtime.model.*
 
-abstract class FxArgument : FxEntity(), Argument, Observable {
+sealed class FxArgument : FxEntity(), Argument, Observable {
   abstract val observables: Array<Observable>
   override fun addListener(listener: InvalidationListener?) = observables.forEach { it.addListener(listener) }
   override fun removeListener(listener: InvalidationListener?) = observables.forEach { it.removeListener(listener) }
 }
 
-abstract class FxConstantArgument : FxArgument(), ConstantArgument
+sealed class FxConstantArgument : FxArgument(), ConstantArgument
 
 object FxNull : FxConstantArgument(), Null {
   override val observables = emptyArray<Observable>()
