@@ -10,11 +10,13 @@ import org.marid.ide.project.model.*
 import java.lang.reflect.Type
 import java.util.concurrent.Callable
 
-sealed class Item<E : FxEntity> : ResolvedTypeProvider {
+sealed class Item<E : FxEntity> : ResolvedTypeProvider, Comparable<Item<*>> {
   abstract val name: ObservableValue<String>
   abstract val factory: ObservableValue<String>
   abstract val value: ObservableValue<String>
   abstract val entity: E
+  protected abstract val order: Int
+  override fun compareTo(other: Item<*>) = compareBy(Item<*>::order, { it.name.value }).compare(this, other)
 }
 
 class WineryItem(override val entity: FxWinery) : Item<FxWinery>() {
@@ -22,6 +24,7 @@ class WineryItem(override val entity: FxWinery) : Item<FxWinery>() {
   override val factory: ObservableValue<String> get() = entity.group
   override val value: ObservableValue<String> get() = entity.version
   override val resolvedType: ObservableValue<Type> get() = entity.resolvedType
+  override val order: Int get() = 0
 }
 
 class CellarItem(override val entity: FxCellar) : Item<FxCellar>() {
@@ -29,6 +32,7 @@ class CellarItem(override val entity: FxCellar) : Item<FxCellar>() {
   override val factory: ObservableValue<String> = StringConstant.valueOf("")
   override val value: ObservableValue<String> = StringConstant.valueOf("")
   override val resolvedType: ObservableValue<Type> get() = entity.resolvedType
+  override val order: Int get() = 0
 }
 
 class RackItem(override val entity: FxRack) : Item<FxRack>() {
@@ -36,6 +40,7 @@ class RackItem(override val entity: FxRack) : Item<FxRack>() {
   override val factory: ObservableValue<String> get() = entity.factory
   override val value: ObservableValue<String> = StringConstant.valueOf("")
   override val resolvedType: ObservableValue<Type> get() = entity.resolvedType
+  override val order: Int get() = 0
 }
 
 class CellarConstantItem(override val entity: FxCellarConstant) : Item<FxCellarConstant>() {
@@ -43,11 +48,13 @@ class CellarConstantItem(override val entity: FxCellarConstant) : Item<FxCellarC
   override val factory: ObservableValue<String> = "%s.%s".bindFormat(entity.factory, entity.selector)
   override val value: ObservableValue<String> = StringConstant.valueOf("")
   override val resolvedType: ObservableValue<Type> get() = entity.resolvedType
+  override val order: Int get() = 1
 }
 
 class InputItem(override val entity: FxInput) : Item<FxInput>() {
 
   override val name: ObservableValue<String> get() = entity.name
+  override val order: Int get() = 1
 
   override val factory: ObservableValue<String> = Bindings.createStringBinding(
     Callable { factory(entity.argument.get()) },
@@ -70,16 +77,19 @@ class InitializerItem(override val entity: FxInitializer) : Item<FxInitializer>(
   override val factory: ObservableValue<String> = StringConstant.valueOf("")
   override val value: ObservableValue<String> = StringConstant.valueOf("")
   override val resolvedType: ObservableValue<Type> get() = entity.resolvedType
+  override val order: Int get() = 2
 }
 
-class OutputItem(override val entity: FxOutput): Item<FxOutput>() {
+class OutputItem(override val entity: FxOutput) : Item<FxOutput>() {
   override val name: ObservableValue<String> get() = entity.name
   override val factory: ObservableValue<String> = StringConstant.valueOf("")
   override val value: ObservableValue<String> = StringConstant.valueOf("")
   override val resolvedType: ObservableValue<Type> get() = entity.resolvedType
+  override val order: Int get() = 3
 }
 
 sealed class ArgumentItem<E : FxArgument>(argName: String) : Item<E>() {
+  override val order: Int get() = 0
   override val name: SimpleStringProperty = SimpleStringProperty(this, "name", argName)
 }
 
