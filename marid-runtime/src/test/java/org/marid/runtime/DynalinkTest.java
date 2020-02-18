@@ -42,6 +42,7 @@ import static jdk.dynalink.StandardOperation.CALL;
 import static jdk.dynalink.StandardOperation.GET;
 import static jdk.dynalink.StandardOperation.NEW;
 import static jdk.dynalink.StandardOperation.SET;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -103,6 +104,19 @@ class DynalinkTest {
   }
 
   @Test
+  void setterVararg() throws Throwable {
+    final var testBean = new TestBean();
+
+    linker.link(new SimpleRelinkableCallSite(new CallSiteDescriptor(
+      MethodHandles.publicLookup(),
+      SET.withNamespace(PROPERTY).named("values"),
+      methodType(void.class, Object.class, Object.class)))
+    ).dynamicInvoker().bindTo(testBean).invoke((Object) new String[] {"a", "b"});
+
+    assertArrayEquals(new String[] {"a", "b"}, testBean.getValues());
+  }
+
+  @Test
   void call() throws Throwable {
     final var builder = new StringBuilder("abcde");
 
@@ -138,3 +152,5 @@ class DynalinkTest {
     assertEquals(Locale.forLanguageTag("es"), actual);
   }
 }
+
+

@@ -25,7 +25,17 @@ import org.marid.runtime.test.TestBeanInterface;
 
 public class TestBean implements TestBeanInterface {
 
+  private String[] values;
+
   public String getX() {
     return "x";
+  }
+
+  public void setValues(String... values) {
+    this.values = values;
+  }
+
+  public String[] getValues() {
+    return values;
   }
 }

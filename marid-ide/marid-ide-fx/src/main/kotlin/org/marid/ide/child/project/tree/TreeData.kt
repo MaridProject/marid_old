@@ -1,7 +1,6 @@
 package org.marid.ide.child.project.tree
 
 import javafx.collections.ListChangeListener
-import javafx.event.Event
 import javafx.event.Event.fireEvent
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeItem.TreeModificationEvent
