@@ -6,6 +6,5 @@ class WineryWrapperTest {
 
   @Test
   fun testBeanProperty() {
-
   }
 }
