@@ -23,8 +23,6 @@ package org.marid.racks.net;
 
 import org.marid.io.function.IOSupplier;
 import org.marid.runtime.annotation.Description;
-import org.marid.runtime.annotation.In;
-import org.marid.runtime.annotation.Out;
 import org.marid.runtime.annotation.Rack;
 
 import java.io.Closeable;
@@ -48,32 +46,26 @@ public class ServerSocketRack implements Closeable {
     }
   }
 
-  @In
   public void setInputBufferSize(int size) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_RCVBUF, size);
   }
 
-  @In
   public void setOutputBufferSize(int size) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_SNDBUF, size);
   }
 
-  @In
   public void setSoBroadcast(boolean broadcast) throws IOException {
     serverSocket.setOption(StandardSocketOptions.SO_BROADCAST, broadcast);
   }
 
-  @Out
   public int getPort() {
     return serverSocket.getLocalPort();
   }
 
-  @Out
   public ServerSocket getServerSocket() {
     return serverSocket;
   }
 
-  @Out
   public IOSupplier<Socket> getSocketSupplier() {
     return serverSocket::accept;
   }
