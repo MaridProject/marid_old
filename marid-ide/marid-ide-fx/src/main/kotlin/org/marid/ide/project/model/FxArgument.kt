@@ -8,8 +8,11 @@ import org.marid.runtime.model.*
 
 sealed class FxArgument : FxEntity(), Argument, Observable {
   abstract val observables: Array<Observable>
+  val name = SimpleStringProperty(this, "name", "")
   override fun addListener(listener: InvalidationListener?) = observables.forEach { it.addListener(listener) }
   override fun removeListener(listener: InvalidationListener?) = observables.forEach { it.removeListener(listener) }
+  override fun getName(): String = name.get()
+  override fun setName(name: String) = this.name.set(name)
 }
 
 sealed class FxConstantArgument : FxArgument(), ConstantArgument

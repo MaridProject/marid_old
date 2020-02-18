@@ -7,7 +7,6 @@ import org.marid.runtime.model.ModelObjectFactory
 object FxModelObjectFactory : ModelObjectFactory {
   override fun newConstRef() = FxConstRef()
   override fun newCellarConstant() = FxCellarConstant()
-  override fun newInput() = FxInput()
   override fun newNull() = FxNull
   override fun newRack() = FxRack()
   override fun newWinery() = FxWinery()

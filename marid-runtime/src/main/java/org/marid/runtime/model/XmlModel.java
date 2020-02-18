@@ -48,12 +48,6 @@ public class XmlModel {
       element.appendChild(argumentElement);
     }
 
-    for (final var input : rack.getInputs()) {
-      final var inputElement = element.getOwnerDocument().createElement("input");
-      write(input, inputElement);
-      element.appendChild(inputElement);
-    }
-
     for (final var initializer : rack.getInitializers()) {
       final var initializerElement = element.getOwnerDocument().createElement("init");
       write(initializer, initializerElement);
@@ -75,27 +69,27 @@ public class XmlModel {
 
   public static void write(ConstantArgument argument, Element element) {
     if (argument instanceof ConstRef) {
+      element.setAttribute("name", argument.getName());
       element.setAttribute("cellar", ((ConstRef) argument).getCellar());
       element.setAttribute("ref", ((ConstRef) argument).getRef());
     } else if (argument instanceof Literal) {
+      element.setAttribute("name", argument.getName());
       element.setAttribute("type", ((Literal) argument).getType().name());
       element.setTextContent(((Literal) argument).getValue());
+    } else {
+      element.setAttribute("name", argument.getName());
     }
   }
 
   public static void write(Argument argument, Element element) {
     if (argument instanceof Ref) {
+      element.setAttribute("name", argument.getName());
       element.setAttribute("cellar", ((Ref) argument).getCellar());
       element.setAttribute("rack", ((Ref) argument).getRack());
       element.setAttribute("ref", ((Ref) argument).getRef());
     } else if (argument instanceof ConstantArgument) {
       write((ConstantArgument) argument, element);
     }
-  }
-
-  public static void write(Input input, Element element) {
-    element.setAttribute("name", input.getName());
-    write(input.getArgument(), element);
   }
 
   public static void write(Initializer initializer, Element element) {
@@ -225,9 +219,6 @@ public class XmlModel {
         case "init":
           rack.addInitializer(readInitializer(factory, e));
           break;
-        case "input":
-          rack.addInput(readInput(factory, e));
-          break;
       }
     });
   }
@@ -247,17 +238,6 @@ public class XmlModel {
           break;
       }
     });
-  }
-
-  public static Input readInput(ModelObjectFactory factory, Element element) {
-    final var input = factory.newInput();
-    read(input, factory, element);
-    return input;
-  }
-
-  public static void read(Input input, ModelObjectFactory factory, Element element) {
-    input.setName(element.getAttribute("name"));
-    input.setArgument(readArgument(factory, element));
   }
 
   private static Stream<Element> children(Element element) {

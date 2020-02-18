@@ -29,7 +29,6 @@ public final class RackImpl extends AbstractEntity implements Rack {
   private String factory;
 
   private final ArrayList<AbstractArgument> arguments = new ArrayList<>();
-  private final ArrayList<InputImpl> inputs = new ArrayList<>();
   private final ArrayList<InitializerImpl> initializers = new ArrayList<>();
 
   RackImpl() {}
@@ -44,9 +43,7 @@ public final class RackImpl extends AbstractEntity implements Rack {
   @Override public String getFactory() { return factory; }
   @Override public void setFactory(String factory) { this.factory = factory; }
   @Override public ArrayList<AbstractArgument> getArguments() { return arguments; }
-  @Override public ArrayList<InputImpl> getInputs() { return inputs; }
   @Override public ArrayList<InitializerImpl> getInitializers() { return initializers; }
   @Override public void addArgument(Argument argument) { arguments.add((AbstractArgument) argument); }
-  @Override public void addInput(Input input) { inputs.add((InputImpl) input); }
   @Override public void addInitializer(Initializer initializer) { initializers.add((InitializerImpl) initializer); }
 }

@@ -114,14 +114,6 @@ public class CellarRuntime implements AutoCloseable {
         throw new IllegalStateException("Unable to create rack " + getId() + "/" + rack.getName(), e);
       }
     });
-    for (final var input : rack.getInputs()) {
-      try {
-        final var inputArg = arg(input.getArgument(), passed);
-        winery.set(rackRuntime.instance, input.getName(), inputArg);
-      } catch (Throwable e) {
-        throw new IllegalArgumentException("Illegal input " + input.getName() + " of " + k, e);
-      }
-    }
     for (int i = 0; i < rack.getInitializers().size(); i++) {
       final var initializer = rack.getInitializers().get(i);
       try {

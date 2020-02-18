@@ -14,8 +14,6 @@ public interface ModelObjectFactory {
 
   Literal newLiteral();
 
-  Input newInput();
-
   ConstRef newConstRef();
 
   Cellar newCellar();

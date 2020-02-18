@@ -14,13 +14,9 @@ public interface Rack extends Entity {
 
   List<? extends Argument> getArguments();
 
-  List<? extends Input> getInputs();
-
   List<? extends Initializer> getInitializers();
 
   void addArgument(Argument argument);
-
-  void addInput(Input input);
 
   void addInitializer(Initializer initializer);
 }

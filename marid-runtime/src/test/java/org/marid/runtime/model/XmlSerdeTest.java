@@ -28,7 +28,6 @@ class XmlSerdeTest {
     final var expected = new RackImpl("r1", "f1");
     expected.addArgument(new LiteralImpl(Literal.Type.METHODTYPE, "x"));
     expected.addInitializer(new InitializerImpl("x", NullImpl.INSTANCE, new LiteralImpl(Literal.Type.BYTE, "1")));
-    expected.addInput(new InputImpl("c", new RefImpl("z", "q", "p")));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
     final var element = document.createElement("test");
     XmlModel.write(expected, element);
@@ -46,7 +45,6 @@ class XmlSerdeTest {
     expected.addRack(Builder.build(new RackImpl("r1", "f1"), r -> {
       r.addArgument(new LiteralImpl(Literal.Type.METHODTYPE, "x"));
       r.addInitializer(new InitializerImpl("x", NullImpl.INSTANCE, new LiteralImpl(Literal.Type.BYTE, "1")));
-      r.addInput(new InputImpl("c", new RefImpl("z", "q", "p")));
     }));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
     final var element = document.createElement("test");
@@ -66,7 +64,6 @@ class XmlSerdeTest {
       ce.addRack(Builder.build(new RackImpl("r1", "f1"), r -> {
         r.addArgument(new LiteralImpl(Literal.Type.METHODTYPE, "x"));
         r.addInitializer(new InitializerImpl("x", NullImpl.INSTANCE, new LiteralImpl(Literal.Type.BYTE, "1")));
-        r.addInput(new InputImpl("c", new RefImpl("z", "q", "p")));
       }));
     }));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();

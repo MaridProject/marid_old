@@ -48,8 +48,7 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
 
   private fun rackItem(rack: FxRack): TreeItem<Item<*>> {
     val rackItem = TreeItem<Item<*>>(RackItem(rack))
-    rack.arguments.forEachIndexed { i, arg -> rackItem.children += argumentItem("arg$i", arg) }
-    rack.inputs.forEach { input -> rackItem.children += inputItem(input) }
+    rack.arguments.forEach { arg -> rackItem.children += argumentItem(arg) }
     rack.initializers.forEach { initializer -> rackItem.children += initializerItem(initializer) }
     rack.outputs.forEach { output -> rackItem.children += outputItem(output) }
     return rackItem
@@ -57,23 +56,22 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
 
   private fun constantItem(constant: FxCellarConstant): TreeItem<Item<*>> {
     val constantItem = TreeItem<Item<*>>(CellarConstantItem(constant))
-    constant.arguments.forEachIndexed { i, arg -> constantItem.children += argumentItem("arg$i", arg) }
+    constant.arguments.forEach { arg -> constantItem.children += argumentItem(arg) }
     return constantItem
   }
 
-  private fun inputItem(input: FxInput): TreeItem<Item<*>> = TreeItem(InputItem(input))
   private fun outputItem(output: FxOutput): TreeItem<Item<*>> = TreeItem(OutputItem(output))
 
   private fun initializerItem(initializer: FxInitializer): TreeItem<Item<*>> {
     val initializerItem = TreeItem<Item<*>>(InitializerItem(initializer))
-    initializer.arguments.forEachIndexed { i, arg -> initializerItem.children += argumentItem("arg$i", arg) }
+    initializer.arguments.forEach { arg -> initializerItem.children += argumentItem(arg) }
     return initializerItem
   }
 
-  private fun argumentItem(arg: String, argument: FxArgument): TreeItem<Item<*>> = TreeItem(when (argument) {
-    is FxNull -> NullItem(arg, argument)
-    is FxConstRef -> ConstRefItem(arg, argument)
-    is FxLiteral -> LiteralItem(arg, argument)
-    is FxRef -> RefItem(arg, argument)
+  private fun argumentItem(argument: FxArgument): TreeItem<Item<*>> = TreeItem(when (argument) {
+    is FxNull -> NullItem(argument)
+    is FxConstRef -> ConstRefItem(argument)
+    is FxLiteral -> LiteralItem(argument)
+    is FxRef -> RefItem(argument)
   })
 }
