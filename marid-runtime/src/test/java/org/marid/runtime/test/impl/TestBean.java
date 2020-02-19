@@ -38,4 +38,9 @@ public class TestBean implements TestBeanInterface {
   public String[] getValues() {
     return values;
   }
+
+  @SafeVarargs
+  public static <E extends CharSequence> E[] array(int x, E... elems) {
+    return elems;
+  }
 }

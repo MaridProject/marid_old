@@ -12,7 +12,8 @@ class FxCellarConstant : FxEntity(), CellarConstant {
   val selector = SimpleStringProperty(this, "selector", "")
   val name = SimpleStringProperty(this, "name", "")
   val arguments = FXCollections.observableArrayList(FxConstantArgument::observables)
-  val observables = arrayOf<Observable>(factory, selector, name, arguments, resolvedType)
+  val varargType = SimpleStringProperty(this, "varargType", "")
+  val observables = arrayOf<Observable>(factory, selector, name, arguments, varargType, resolvedType)
 
   override fun getArguments(): MutableList<out ConstantArgument> = arguments
   override fun setName(name: String) = this.name.set(name)
@@ -21,6 +22,8 @@ class FxCellarConstant : FxEntity(), CellarConstant {
   override fun getName(): String = this.name.get()
   override fun getFactory(): String = this.factory.get()
   override fun getSelector(): String = this.selector.get()
+  override fun getVarargType(): String = this.varargType.get()
+  override fun setVarargType(type: String) = this.varargType.set(type)
 
   override fun addArgument(argument: ConstantArgument) {
     arguments.add(argument as FxConstantArgument)

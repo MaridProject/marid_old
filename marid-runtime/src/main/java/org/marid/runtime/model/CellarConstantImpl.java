@@ -28,6 +28,7 @@ public final class CellarConstantImpl extends AbstractEntity implements CellarCo
   private String factory;
   private String selector;
   private String name;
+  private String varargType;
   private final ArrayList<AbstractConstantArgument> arguments = new ArrayList<>();
 
   CellarConstantImpl() {}
@@ -46,4 +47,6 @@ public final class CellarConstantImpl extends AbstractEntity implements CellarCo
   @Override public void setName(String name) { this.name = name; }
   @Override public ArrayList<AbstractConstantArgument> getArguments() { return arguments; }
   @Override public void addArgument(ConstantArgument argument) { arguments.add((AbstractConstantArgument) argument); }
+  @Override public String getVarargType() { return varargType; }
+  @Override public void setVarargType(String varargType) { this.varargType = varargType; }
 }

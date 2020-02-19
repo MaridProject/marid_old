@@ -2,7 +2,7 @@ package org.marid.runtime.model;
 
 import java.util.List;
 
-public interface Initializer extends Entity {
+public interface Initializer extends Entity, HasVarargs {
 
   String getName();
 

@@ -2,7 +2,7 @@ package org.marid.runtime.model;
 
 import java.util.List;
 
-public interface Rack extends Entity {
+public interface Rack extends Entity, HasVarargs {
 
   String getName();
 

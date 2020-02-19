@@ -27,6 +27,8 @@ import java.util.Collections;
 public final class InitializerImpl extends AbstractEntity implements Initializer {
 
   private String name;
+  private String varargType;
+
   private final ArrayList<AbstractArgument> arguments = new ArrayList<>();
 
   InitializerImpl() {}
@@ -38,6 +40,8 @@ public final class InitializerImpl extends AbstractEntity implements Initializer
 
   @Override public String getName() { return name; }
   @Override public void setName(String name) { this.name = name; }
+  @Override public String getVarargType() { return varargType; }
+  @Override public void setVarargType(String varargType) { this.varargType = varargType; }
   @Override public ArrayList<AbstractArgument> getArguments() { return arguments; }
   @Override public void addArgument(Argument argument) { this.arguments.add((AbstractArgument) argument); }
 }

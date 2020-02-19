@@ -2,7 +2,7 @@ package org.marid.runtime.model;
 
 import java.util.List;
 
-public interface CellarConstant extends Entity {
+public interface CellarConstant extends Entity, HasVarargs {
 
   String getFactory();
 
