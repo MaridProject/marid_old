@@ -173,7 +173,8 @@ public class CellarRuntime implements AutoCloseable {
         .orElseThrow(() -> new IllegalStateException("No such rack " + ref.getRack()));
       final var cellarRackRuntime = cellar.getOrCreateRack(cellarRack, passed);
       try {
-        return winery.get(cellarRackRuntime.instance, ref.getRef());
+        final var method = cellarRackRuntime.instance.getClass().getMethod(ref.getRef());
+        return method.invoke(cellarRackRuntime.instance);
       } catch (RuntimeException | Error e) {
         throw e;
       } catch (Throwable e) {

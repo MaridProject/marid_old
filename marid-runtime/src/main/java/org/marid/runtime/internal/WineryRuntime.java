@@ -54,7 +54,7 @@ import java.util.zip.ZipInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public final class WineryRuntime extends LinkerSupport implements AutoCloseable {
+public final class WineryRuntime implements AutoCloseable {
 
   private final Thread thread;
   private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
