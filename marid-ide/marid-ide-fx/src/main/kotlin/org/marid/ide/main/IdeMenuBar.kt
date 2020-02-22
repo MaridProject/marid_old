@@ -54,4 +54,6 @@ class IdeMenuBar : MenuBar() {
     apply(idePreferences.primaryTabsSide, primarySideMenu)
     apply(idePreferences.secondaryTabsSide, secondarySideMenu)
   }
+
+  val servicesMenu = menu("Services")
 }
