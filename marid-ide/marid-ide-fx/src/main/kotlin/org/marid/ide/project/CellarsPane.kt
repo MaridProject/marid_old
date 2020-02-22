@@ -9,6 +9,6 @@ class CellarsPane(cellarsTable: CellarsTable, cellarPane: CellarPane) : SplitPan
 
   init {
     orientation = Orientation.VERTICAL
-    setDividerPositions(0.4)
+    setDividerPositions(0.2)
   }
 }

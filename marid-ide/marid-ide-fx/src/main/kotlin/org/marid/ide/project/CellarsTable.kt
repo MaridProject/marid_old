@@ -11,6 +11,7 @@ class CellarsTable : TableView<FxCellar>() {
 
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
+    maxHeight = 300.0
 
     column(300, "Name") { it.name }
     column(100, "Racks") { it.racks.bindSize }
