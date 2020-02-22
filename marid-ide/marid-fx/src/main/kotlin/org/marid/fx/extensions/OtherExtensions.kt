@@ -2,11 +2,10 @@ package org.marid.fx.extensions
 
 import javafx.application.Platform
 import java.io.InputStreamReader
+import java.lang.ref.Cleaner
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
-
-typealias ProgressTracker = (progress: Double) -> Unit
 
 fun Properties.loadFromResource(resource: String): Properties {
   val loader = Thread.currentThread().contextClassLoader
@@ -41,3 +40,5 @@ fun <T> T.runFx(f: (T) -> Unit): Unit {
     Platform.runLater { f(this) }
   }
 }
+
+val FX_CLEANER = Cleaner.create()
