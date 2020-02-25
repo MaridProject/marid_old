@@ -40,9 +40,10 @@ class FxDialog<T : FxDialogData>(private val instance: T) : Dialog<T>() {
         .forEachIndexed { i, (prop, annotation) -> addRow(i, annotation.fx.label, prop.get(instance) as Node) }
 
       resultConverter = Callback {
-        when (it.buttonData) {
-          ButtonBar.ButtonData.APPLY -> instance
-          else -> null
+        if (it.buttonData == ButtonBar.ButtonData.APPLY && !instance.validationSupport.isInvalid) {
+          instance
+        } else {
+          null
         }
       }
     }
