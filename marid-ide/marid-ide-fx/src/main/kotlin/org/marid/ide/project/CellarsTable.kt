@@ -7,7 +7,7 @@ import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
 
 @Component
-class CellarsTable : TableView<FxCellar>() {
+class CellarsTable(projectsTable: ProjectsTable) : TableView<FxCellar>() {
 
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
@@ -17,5 +17,4 @@ class CellarsTable : TableView<FxCellar>() {
     column(100, "Racks") { it.racks.bindSize }
     column(100, "Constants") { it.constants.bindSize }
   }
-
 }

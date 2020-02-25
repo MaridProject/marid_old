@@ -121,7 +121,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>3.2.4</version>
+        <version>3.3.0</version>
       </dependency>
 
       <dependency>
@@ -167,19 +167,19 @@
       <dependency>
         <groupId>org.jetbrains</groupId>
         <artifactId>annotations</artifactId>
-        <version>18.0.0</version>
+        <version>19.0.0</version>
       </dependency>
 
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.10.7</version>
+        <version>1.10.8</version>
       </dependency>
 
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy-agent</artifactId>
-        <version>1.10.7</version>
+        <version>1.10.8</version>
       </dependency>
 
       <dependency>
@@ -317,6 +317,16 @@
             </systemProperties>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-maven-plugin</artifactId>
+          <version>${kotlin.version}</version>
+          <configuration>
+            <jvmTarget>12</jvmTarget>
+            <javaParameters>true</javaParameters>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -355,7 +365,6 @@
           <plugin>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
-            <version>${kotlin.version}</version>
             <executions>
               <execution>
                 <id>kotlin-compile</id>
@@ -364,10 +373,6 @@
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <jvmTarget>12</jvmTarget>
-              <javaParameters>true</javaParameters>
-            </configuration>
           </plugin>
 
           <plugin>
@@ -432,7 +437,6 @@
           <plugin>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
-            <version>${kotlin.version}</version>
             <executions>
               <execution>
                 <id>kotlin-testCompile</id>
@@ -441,10 +445,6 @@
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <jvmTarget>12</jvmTarget>
-              <javaParameters>true</javaParameters>
-            </configuration>
           </plugin>
 
           <plugin>
