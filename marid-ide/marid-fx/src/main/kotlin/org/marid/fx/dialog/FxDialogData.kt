@@ -2,9 +2,9 @@ package org.marid.fx.dialog
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
-import org.controlsfx.validation.ValidationSupport
 import org.marid.fx.action.Fx
 import org.marid.fx.i18n.localized
+import org.marid.fx.validation.Validation
 
 @Target(AnnotationTarget.PROPERTY)
 @Retention
@@ -21,12 +21,11 @@ annotation class FxDialogProp(val label: String, val icon: String = "") {
 abstract class FxDialogData(title: ObservableValue<String>) {
 
   val title = SimpleStringProperty()
+  val validation = Validation()
 
   init {
     this.title.bind(title)
   }
 
-  constructor(title: String): this(title.localized)
-
-  val validationSupport = ValidationSupport()
+  constructor(title: String) : this(title.localized)
 }

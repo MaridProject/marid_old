@@ -37,10 +37,15 @@ class FxDialog<T : FxDialogData>(private val instance: T) : Dialog<T>() {
       @Suppress("UNCHECKED_CAST") val type: KClass<T> = instance::class as KClass<T>
       type.memberProperties
         .flatMap { p -> p.annotations.filterIsInstance<FxDialogProp>().map { p to it } }
-        .forEachIndexed { i, (prop, annotation) -> addRow(i, annotation.fx.label, prop.get(instance) as Node) }
+        .forEachIndexed { i, (prop, annotation) ->
+          val node = prop.get(instance) as Node
+          addRow(i, annotation.fx.label.also { it.labelFor = node }, node)
+        }
+
+      dialogPane.lookupButton(ButtonType.APPLY).disableProperty().bind(instance.validation.invalid)
 
       resultConverter = Callback {
-        if (it.buttonData == ButtonBar.ButtonData.APPLY && !instance.validationSupport.isInvalid) {
+        if (it.buttonData == ButtonBar.ButtonData.APPLY) {
           instance
         } else {
           null

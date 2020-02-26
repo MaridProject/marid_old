@@ -6,6 +6,7 @@ import javafx.beans.binding.Bindings.*
 import javafx.beans.binding.StringExpression
 import javafx.beans.property.*
 import javafx.beans.value.ObservableIntegerValue
+import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.util.*

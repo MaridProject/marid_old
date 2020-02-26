@@ -37,12 +37,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.controlsfx</groupId>
-      <artifactId>controlsfx</artifactId>
-      <version>11.0.1</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.marid</groupId>
       <artifactId>marid-util</artifactId>
       <version>${project.version}</version>
