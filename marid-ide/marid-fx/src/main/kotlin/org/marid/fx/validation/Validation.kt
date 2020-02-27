@@ -26,7 +26,7 @@ class Validation {
   private val validators = IdentityHashMap<Node, LinkedList<ObservableValue<ValidationResult>>>()
   private val worstLevelProperty = ReadOnlyObjectWrapper(Level.ALL)
 
-  fun add(node: Node, result: ObservableValue<ValidationResult>) {
+  private fun add0(node: Node, result: ObservableValue<ValidationResult>) {
     worstLevelProperty.set(listOf(worstLevelProperty.get(), result.value.level).maxBy { it.intValue() })
     validators.computeIfAbsent(node) { LinkedList() }.add(result)
     val tooltip = Tooltip()
@@ -35,7 +35,18 @@ class Validation {
       worstLevelProperty.set(validators.values.flatten().map { it.value.level }.maxBy { it.intValue() } ?: Level.ALL)
       if (v.level.intValue() != Level.ALL.intValue()) {
         when (node) {
-          is Control -> node.border = Border(BorderStroke(v.level.color, SOLID, null, BorderWidths(2.0), Insets(3.0)))
+          is Control -> node.border = Border(BorderStroke(
+            null,
+            null,
+            v.level.color,
+            null,
+            null,
+            null,
+            SOLID,
+            null,
+            null,
+            BorderWidths(3.0),
+            Insets(1.0)))
           else -> node.effect = Shadow(3.0, v.level.color)
         }
         Tooltip.install(node, tooltip)
@@ -53,12 +64,12 @@ class Validation {
     result.addListener(weakListener)
   }
 
-  fun addToLabel(node: Node, result: ObservableValue<ValidationResult>) {
+  fun add(node: Node, result: ObservableValue<ValidationResult>) {
     node.sceneProperty().addListener { _, _, scene ->
       if (scene != null) {
         val labeledBy = node.queryAccessibleAttribute(AccessibleAttribute.LABELED_BY) as Node?
         val target = labeledBy ?: node
-        add(target, result)
+        add0(target, result)
       }
     }
   }
