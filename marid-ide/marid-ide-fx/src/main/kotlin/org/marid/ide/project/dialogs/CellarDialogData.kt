@@ -17,5 +17,6 @@ class CellarDialogData(winery: FxWinery, cellar: FxCellar?) : FxDialogData("Cell
   val nameControl = TextField(cellar?.name?.get() ?: "cellar").also {
     name.bindBidirectional(it.textProperty())
     validation.add(it, name.bindBoolean { v -> v.get().isBlank() }.validate("Value is blank"))
+    validation.add(it, name.bindBoolean { v -> winery.cellars.any { c -> c.getName() == v.get() } }.validate("Already exists"))
   }
 }

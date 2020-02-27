@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component
 @Component
 class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCellar>() {
 
+  private val project = projectsTable.selectionModel.selectedItemProperty()
+
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
     maxHeight = 300.0
@@ -21,16 +23,15 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
     column(100, "Racks") { it.racks.bindSize }
     column(100, "Constants") { it.constants.bindSize }
 
-    placeholder = Fx(text = "Add cellar", icon = "icons/add.png", handler = { createCellar() }).button.also {
-      it.disableProperty().bind(projectsTable.selectionModel.selectedItemProperty().isNull)
-    }
+    placeholder = Fx(text = "Add cellar", icon = "icons/add.png", handler = { createCellar(0) }).button
+      .also { it.disableProperty().bind(project.isNull) }
   }
 
-  private fun createCellar() {
+  private fun createCellar(index: Int) {
     FxDialog(CellarDialogData(projectsTable.selectionModel.selectedItem.winery, null))
       .also { it.dialogPane.setPrefSize(400.0, 300.0) }
       .also {
-        it.showAndWait().ifPresent { data -> items.add(FxCellar().apply { name.set(data.name.get()) }) }
+        it.showAndWait().ifPresent { data -> items.add(index, FxCellar().apply { name.set(data.name.get()) }) }
       }
   }
 }
