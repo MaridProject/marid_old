@@ -72,14 +72,14 @@ class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager)
   private val Project.menuItems
     get() = listOf(
       listOf(
-        Fx(icon = "icons/delete.png", text = "Delete", handler = { delete() }).menuItem
+        Fx(icon = "icons/delete.png", text = "Delete", h = { delete() }).menuItem
       ),
       actions.map { it.menuItem }
     ).reduce { l1, l2 -> l1 + listOf(SeparatorMenuItem()) + l2 }
 
   private val Project.actions
     get() = listOf(
-      Fx(icon = "icons/open.png", text = "Open", handler = { manager.addProject(this) }),
-      Fx(icon = "icons/save.png", text = "Save", handler = { save() })
+      Fx(icon = "icons/open.png", text = "Open", h = { manager.addProject(this) }),
+      Fx(icon = "icons/save.png", text = "Save", h = { save() })
     )
 }

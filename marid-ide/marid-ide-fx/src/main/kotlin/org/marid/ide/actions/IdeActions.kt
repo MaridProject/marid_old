@@ -14,7 +14,7 @@ class IdeActions {
   fun exitAction(): Fx = Fx(
     text = "Exit",
     icon = "icons/close.png",
-    handler = { Platform.exit() },
+    h = { Platform.exit() },
     key = "Ctrl+Q"
   )
 
@@ -22,7 +22,7 @@ class IdeActions {
   fun newProjectAction(projects: Projects, projectTabsManager: ProjectTabsManager): Fx = Fx(
     text = "New project",
     icon = "icons/new.png",
-    handler = { projectTabsManager.addProject(projects.newProject()) },
+    h = { projectTabsManager.addProject(projects.newProject()) },
     key = "Ctrl+N"
   )
 }

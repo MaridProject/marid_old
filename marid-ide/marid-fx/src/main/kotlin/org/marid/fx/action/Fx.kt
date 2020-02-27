@@ -28,7 +28,7 @@ class Fx private constructor(
     icon: String? = null,
     description: String? = null,
     key: String? = null,
-    handler: ((ActionEvent) -> Unit)? = null,
+    h: ((ActionEvent) -> Unit)? = null,
     disabled: ObservableValue<Boolean>? = null,
     visible: ObservableValue<Boolean>? = null,
     selected: Property<Boolean?>? = null
@@ -37,7 +37,7 @@ class Fx private constructor(
     icon?.also { this.icon.bind(SimpleStringProperty(it)) }
     description?.also { this.description.bind(SimpleStringProperty(it)) }
     key?.also { this.accelerator.bind(SimpleObjectProperty(keyCombination(it))) }
-    handler?.also { this.handler.bind(SimpleObjectProperty(EventHandler(it))) }
+    h?.also { this.handler.bind(SimpleObjectProperty(EventHandler(it))) }
     disabled?.also { this.disabled.bind(it) }
     visible?.also { this.visible.bind(it) }
     selected?.also { this.selected.bindBidirectional(it) }

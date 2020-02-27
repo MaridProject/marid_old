@@ -2,10 +2,8 @@ package org.marid.fx.extensions
 
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
-import javafx.scene.control.TreeTableColumn
-import javafx.scene.control.TreeTableView
+import javafx.scene.control.*
+import javafx.scene.input.ContextMenuEvent
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
@@ -54,5 +52,12 @@ fun <T> TableView<T>.installEdit(handler: (ObservableList<T>) -> Unit) {
         handler(selectionModel.selectedItems)
       }
     }
+  }
+}
+
+fun <T> TableRow<T>.installContextMenu(callback: (Int, T?) -> List<MenuItem>) {
+  contextMenu = ContextMenu()
+  addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
+    contextMenu.items.setAll(callback(if (item == null) tableView.items.size else index, item))
   }
 }

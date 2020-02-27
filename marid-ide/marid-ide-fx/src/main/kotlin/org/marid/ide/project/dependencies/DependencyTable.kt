@@ -25,21 +25,13 @@ class DependencyTable(
   val addDependency = Fx(
     text = "Add dependency",
     icon = "icons/add.png",
-    handler = { dependencyDialogFactory.bean.showAndWait().ifPresent { items.add(it) } }
+    h = { dependencyDialogFactory.bean.showAndWait().ifPresent { items.add(it) } }
   )
 
   val sortDependencies = Fx(
     text = "Sort dependencies",
     icon = "icons/sort.png",
-    handler = {
-      items.sortWith(
-        compareBy(
-          { it.group.get() },
-          { it.artifact.get() },
-          { it.version.get() }
-        )
-      )
-    }
+    h = { items.sortWith(compareBy({ it.group.get() }, { it.artifact.get() }, { it.version.get() })) }
   )
 
   init {
@@ -78,6 +70,6 @@ class DependencyTable(
   private fun editFx(dep: FxDependency) = Fx(
     text = "Edit...",
     icon = "icons/edit.png",
-    handler = { dependencyDialogFactory.bean.init(dep).showAndWait().ifPresent(dep::copyFrom) }
+    h = { dependencyDialogFactory.bean.init(dep).showAndWait().ifPresent(dep::copyFrom) }
   )
 }
