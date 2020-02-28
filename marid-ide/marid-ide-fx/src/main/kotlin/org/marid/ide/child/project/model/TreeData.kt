@@ -51,7 +51,7 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
     })
 
     private fun <E : FxEntity> link(item: TreeItem<Item<*>>, list: ObservableList<E>, func: (E) -> TreeItem<Item<*>>) {
-      item.children += list.sorted().map(func)
+      item.children += list.map(func)
       val weakItem = WeakReference(item)
       val listener = ListChangeListener<E> { c ->
         val ti = weakItem.get() ?: return@ListChangeListener
