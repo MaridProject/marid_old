@@ -12,6 +12,7 @@ import org.marid.ide.project.Project
 import org.marid.ide.project.model.*
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
+import java.lang.ref.WeakReference
 import java.util.*
 
 @Component
@@ -51,22 +52,24 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
 
     private fun <E : FxEntity> link(item: TreeItem<Item<*>>, list: ObservableList<E>, func: (E) -> TreeItem<Item<*>>) {
       item.children += list.sorted().map(func)
+      val weakItem = WeakReference(item)
       val listener = ListChangeListener<E> { c ->
+        val ti = weakItem.get() ?: return@ListChangeListener
         while (c.next()) {
           if (c.wasRemoved()) {
-            item.children.remove(c.from, c.to)
+            ti.children.remove(c.from, c.to)
           }
           if (c.wasAdded()) {
-            item.children.addAll(c.from, c.addedSubList.map(func))
+            ti.children.addAll(c.from, c.addedSubList.map(func))
           }
           if (c.wasUpdated()) {
-            item.children.subList(c.from, c.to).forEach {
+            ti.children.subList(c.from, c.to).forEach {
               fireEvent(it, TreeModificationEvent(TreeItem.treeNotificationEvent<Item<*>>(), it, it.value))
             }
           }
           if (c.wasPermutated()) {
             for (i in c.from until c.to) {
-              Collections.swap(item.children, i, c.getPermutation(i))
+              Collections.swap(ti.children, i, c.getPermutation(i))
             }
           }
         }
