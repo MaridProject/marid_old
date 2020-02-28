@@ -11,6 +11,7 @@ import org.marid.fx.dialog.FxDialog
 import org.marid.fx.extensions.bindSize
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installContextMenu
+import org.marid.fx.extensions.readOnlyProp
 import org.marid.ide.project.dialogs.CellarDialogData
 import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
@@ -35,7 +36,17 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
       TableRow<FxCellar>().apply {
         installContextMenu { index, item ->
           listOf(
-            Fx(text = "Add", icon = "icons/add.png", h = { createCellar(index) }).menuItem
+            Fx(
+              text = "Add",
+              icon = "icons/add.png",
+              h = { createCellar(index) }
+            ).menuItem,
+            Fx(
+              text = "Remove",
+              icon = "icons/delete.png",
+              h = { items.removeAt(index) },
+              disabled = (item == null).readOnlyProp
+            ).menuItem
           )
         }
       }
