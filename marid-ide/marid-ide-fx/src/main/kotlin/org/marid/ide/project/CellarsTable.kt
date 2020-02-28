@@ -1,5 +1,6 @@
 package org.marid.ide.project
 
+import javafx.collections.FXCollections
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
 import javafx.util.Callback
@@ -39,6 +40,8 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
         }
       }
     }
+
+    project.addListener { _, _, v -> items = v?.winery?.cellars ?: FXCollections.emptyObservableList() }
   }
 
   private fun createCellar(index: Int) {

@@ -7,9 +7,7 @@ import javafx.scene.control.Dialog
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Priority
-import javafx.stage.Modality
-import javafx.stage.StageStyle
-import javafx.stage.Window
+import javafx.stage.*
 import javafx.util.Callback
 import org.marid.fx.action.label
 import org.marid.fx.dialog.FxDialogProp.Companion.fx
@@ -19,7 +17,7 @@ import kotlin.reflect.full.memberProperties
 class FxDialog<T : FxDialogData>(private val instance: T) : Dialog<T>() {
 
   init {
-    initOwner(Window.getWindows().asReversed().let { ws -> ws.firstOrNull { it.isShowing } ?: ws.first() })
+    initOwner(Window.getWindows().filterIsInstance<Stage>().find { StageFriend.isPrimary(it) })
     initModality(Modality.WINDOW_MODAL)
     initStyle(StageStyle.UTILITY)
 

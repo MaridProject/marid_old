@@ -1,5 +1,6 @@
 package org.marid.fx.validation
 
+import javafx.beans.binding.ObjectBinding
 import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.beans.property.ReadOnlyProperty
 import javafx.beans.value.ChangeListener
@@ -16,6 +17,7 @@ import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle.SOLID
 import javafx.scene.layout.BorderWidths
 import org.marid.fx.extensions.bindBoolean
+import org.marid.fx.extensions.bindObject
 import org.marid.fx.extensions.bindString
 import org.marid.fx.extensions.color
 import java.util.*
@@ -62,6 +64,7 @@ class Validation {
     node.properties[listenerKey] = listener
     node.properties[weakListenerKey] = weakListener
     result.addListener(weakListener)
+    listener.changed(result, null, result.value)
   }
 
   fun add(node: Node, result: ObservableValue<ValidationResult>) {
@@ -83,3 +86,6 @@ class Validation {
     private val weakListenerKey = Object()
   }
 }
+
+fun <T> ObservableValue<T>.validate(predicate: (T) -> Boolean, error: (T) -> String): ObjectBinding<ValidationResult> =
+  bindObject { if (predicate(value)) ValidationResult(error(value)) else ValidationResult() }
