@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component
 @Component
 class ProjectsPane(projectsTable: ProjectsTable, projectPane: ProjectPane) : SplitPane(projectsTable, projectPane) {
   init {
-    setDividerPositions(0.33)
+    setDividerPositions(0.5)
   }
 }

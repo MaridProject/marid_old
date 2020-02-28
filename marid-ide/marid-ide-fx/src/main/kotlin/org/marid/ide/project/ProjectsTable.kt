@@ -54,6 +54,8 @@ class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager)
         }
       }
     }
+    column(150, "Group") { it.winery.group }
+    column(80, "Version") { it.winery.version }
     column(150, "Actions") {
       val buttons = it.actions.map(Fx::toolButton).toTypedArray()
       SimpleObjectProperty(
