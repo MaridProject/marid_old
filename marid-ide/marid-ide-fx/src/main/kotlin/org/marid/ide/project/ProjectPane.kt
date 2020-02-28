@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class ProjectPane(
-  cellarsPane: CellarsPane,
+  cellarsTable: CellarsTable,
   dependencyTable: DependencyTable,
   projectRepositoriesTable: ProjectRepositoriesTable,
   projectManagementPane: ProjectManagementPane
 ) : Accordion(
-  TitledPane(null, cellarsPane).also {
+  TitledPane(null, cellarsTable).also {
     it.textProperty().bind("Cellars".localized)
   },
   TitledPane(null, dependencyTable).also {
