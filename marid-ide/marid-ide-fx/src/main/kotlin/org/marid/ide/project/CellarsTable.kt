@@ -1,25 +1,22 @@
 package org.marid.ide.project
 
 import javafx.collections.FXCollections
+import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
 import javafx.util.Callback
+import org.marid.collections.MaridCollections
 import org.marid.fx.action.Fx
 import org.marid.fx.action.button
 import org.marid.fx.action.menuItem
 import org.marid.fx.dialog.FxDialog
-import org.marid.fx.extensions.bindSize
-import org.marid.fx.extensions.column
-import org.marid.fx.extensions.installContextMenu
-import org.marid.fx.extensions.readOnlyProp
+import org.marid.fx.extensions.*
 import org.marid.ide.project.dialogs.CellarDialogData
 import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
 
 @Component
-class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCellar>() {
-
-  private val project = projectsTable.selectionModel.selectedItemProperty()
+class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCellar>(projectsTable.cellars) {
 
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
@@ -29,7 +26,7 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
     column(100, "Constants") { it.constants.bindSize }
 
     placeholder = Fx(text = "Add cellar", icon = "icons/add.png", h = { createCellar(0) }).button
-      .also { it.disableProperty().bind(project.isNull) }
+      .also { it.disableProperty().bind(projectsTable.project.isNull) }
 
     rowFactory = Callback {
       TableRow<FxCellar>().apply {
@@ -45,13 +42,20 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
               icon = "icons/delete.png",
               h = { items.removeAt(index) },
               disabled = (item == null).readOnlyProp
+            ).menuItem,
+            SeparatorMenuItem(),
+            Fx(
+              text = "Sort",
+              icon = "icons/sort.png",
+              h = { MaridCollections.sort(items, compareBy { it.getName() }) },
+              disabled = items.bindEmpty.or(projectsTable.project.isNull)
             ).menuItem
           )
         }
       }
     }
 
-    project.addListener { _, _, v -> items = v?.winery?.cellars ?: FXCollections.emptyObservableList() }
+    projectsTable.project.addListener { _, _, v -> items = v?.winery?.cellars ?: FXCollections.emptyObservableList() }
   }
 
   private fun createCellar(index: Int) {

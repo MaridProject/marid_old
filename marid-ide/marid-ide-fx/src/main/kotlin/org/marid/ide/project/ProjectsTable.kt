@@ -1,6 +1,9 @@
 package org.marid.ide.project
 
+import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.control.*
 import javafx.scene.image.Image
@@ -17,6 +20,7 @@ import org.marid.fx.extensions.bound
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installEdit
 import org.marid.fx.extensions.readOnlyProp
+import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
 
 @Component
@@ -70,6 +74,9 @@ class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager)
       items.forEach { manager.addProject(it) }
     }
   }
+
+  val project: ReadOnlyObjectProperty<Project?> get() = selectionModel.selectedItemProperty()
+  val cellars: ObservableList<FxCellar> get() = project.get()?.winery?.cellars ?: FXCollections.emptyObservableList()
 
   private val Project.menuItems
     get() = listOf(
