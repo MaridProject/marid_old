@@ -57,7 +57,7 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
         val ti = weakItem.get() ?: return@ListChangeListener
         while (c.next()) {
           if (c.wasRemoved()) {
-            ti.children.remove(c.from, c.to)
+            ti.children.remove(c.from, c.to + 1)
           }
           if (c.wasAdded()) {
             ti.children.addAll(c.from, c.addedSubList.map(func))
