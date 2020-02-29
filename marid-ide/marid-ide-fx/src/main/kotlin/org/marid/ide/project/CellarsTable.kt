@@ -1,6 +1,5 @@
 package org.marid.ide.project
 
-import javafx.collections.FXCollections
 import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
@@ -16,7 +15,7 @@ import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
 
 @Component
-class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCellar>(projectsTable.cellars) {
+class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCellar>() {
 
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
@@ -55,7 +54,7 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
       }
     }
 
-    projectsTable.project.addListener { _, _, v -> items = v?.winery?.cellars ?: FXCollections.emptyObservableList() }
+    itemsProperty().bind(projectsTable.cellars)
   }
 
   private fun createCellar(index: Int) {
