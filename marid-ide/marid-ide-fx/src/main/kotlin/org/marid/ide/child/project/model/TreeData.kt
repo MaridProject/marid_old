@@ -70,10 +70,11 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
             }
           }
           if (c.wasPermutated()) {
-            for (i in (c.from until c.to)) {
-              logger.INFO("Swap {0} with {1}", i, c.getPermutation(i))
-              Collections.swap(ti.children, i, c.getPermutation(i))
-            }
+            val range = c.from until c.to
+            val orders = item.children
+              .mapIndexed {i, e -> if (range.contains(i)) (e to c.getPermutation(i)) else (e to i) }
+              .toMap(IdentityHashMap())
+            item.children.sortWith(compareBy { orders[it] })
           }
         }
       }
