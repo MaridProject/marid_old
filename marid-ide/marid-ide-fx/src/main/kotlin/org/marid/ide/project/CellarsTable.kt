@@ -4,7 +4,6 @@ import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
 import javafx.util.Callback
-import org.marid.collections.MaridCollections
 import org.marid.fx.action.Fx
 import org.marid.fx.action.button
 import org.marid.fx.action.menuItem
