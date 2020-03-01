@@ -46,7 +46,7 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
             Fx(
               text = "Sort",
               icon = "icons/sort.png",
-              h = { MaridCollections.sort(items, compareBy { it.getName() }) },
+              h = { items.sortWith(compareBy { it.getName() }) },
               disabled = items.bindEmpty.or(projectsTable.project.isNull)
             ).menuItem
           )

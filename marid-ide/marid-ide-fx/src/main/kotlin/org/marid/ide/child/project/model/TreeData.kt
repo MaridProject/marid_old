@@ -7,6 +7,8 @@ import javafx.event.Event.fireEvent
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeItem.TreeModificationEvent
 import org.marid.fx.extensions.FX_CLEANER
+import org.marid.fx.extensions.INFO
+import org.marid.fx.extensions.logger
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
 import org.marid.ide.project.model.*
@@ -68,7 +70,8 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
             }
           }
           if (c.wasPermutated()) {
-            for (i in c.from until c.to) {
+            for (i in (c.from until c.to)) {
+              logger.INFO("Swap {0} with {1}", i, c.getPermutation(i))
               Collections.swap(ti.children, i, c.getPermutation(i))
             }
           }
