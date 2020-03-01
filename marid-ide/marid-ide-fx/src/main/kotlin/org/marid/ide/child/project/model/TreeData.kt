@@ -7,8 +7,6 @@ import javafx.event.Event.fireEvent
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeItem.TreeModificationEvent
 import org.marid.fx.extensions.FX_CLEANER
-import org.marid.fx.extensions.INFO
-import org.marid.fx.extensions.logger
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
 import org.marid.ide.project.model.*
@@ -72,7 +70,7 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
           if (c.wasPermutated()) {
             val range = c.from until c.to
             val orders = item.children
-              .mapIndexed {i, e -> if (range.contains(i)) (e to c.getPermutation(i)) else (e to i) }
+              .mapIndexed { i, e -> if (range.contains(i)) (e to c.getPermutation(i)) else (e to i) }
               .toMap(IdentityHashMap())
             item.children.sortWith(compareBy { orders[it] })
           }
