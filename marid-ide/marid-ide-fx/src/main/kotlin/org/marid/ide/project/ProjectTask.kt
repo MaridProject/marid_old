@@ -6,7 +6,9 @@ import org.marid.fx.concurrent.FxTask
 
 abstract class ProjectTask<V>(val project: Project) : FxTask<V>() {
 
-  private val progressListener = ChangeListener<Number> { _, _, v -> project.Friend().progressWrapper.set(v.toDouble()) }
+  private val progressListener = ChangeListener<Number> { _, _, v ->
+    project.Friend().progressWrapper.set(v.toDouble())
+  }
 
   final override fun call(): V {
     Platform.runLater { this.progressProperty().addListener(progressListener) }

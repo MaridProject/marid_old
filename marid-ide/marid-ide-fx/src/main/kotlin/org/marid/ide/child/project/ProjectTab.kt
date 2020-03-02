@@ -1,8 +1,9 @@
 package org.marid.ide.child.project
 
 import javafx.scene.control.Tab
-import org.marid.fx.action.Fx
-import org.marid.fx.action.configure
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
+import org.marid.fx.extensions.bindObject
 import org.marid.ide.child.project.tree.WineryTreeTable
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeTabs
@@ -15,13 +16,21 @@ import org.springframework.stereotype.Component
 
 @Component
 @ComponentScan
-class ProjectTab(wineryTreeTable: WineryTreeTable, project: ObjectFactory<Project>) : Tab(null, wineryTreeTable) {
+class ProjectTab(
+  wineryTreeTable: WineryTreeTable,
+  project: ObjectFactory<Project>,
+  buildService: ProjectBuildService
+) : Tab(null, wineryTreeTable) {
 
   private val project = project.bean
 
   init {
     id = this.project.id
-    configure(Fx(icon = "icons/project.png").text(this.project.winery.name))
+    textProperty().bind(this.project.winery.name)
+    graphicProperty().bind(buildService.dirty.bindObject {
+      val icon = if (it.get()) "icons/modified-project.png" else "icons/unmodified-project.png"
+      ImageView(Image(icon, 18.0, 18.0, true, true))
+    })
     isClosable = true
   }
 

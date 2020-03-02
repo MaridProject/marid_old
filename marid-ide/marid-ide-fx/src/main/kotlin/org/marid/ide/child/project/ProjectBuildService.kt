@@ -1,9 +1,11 @@
 package org.marid.ide.child.project
 
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
+import javafx.beans.property.ReadOnlyBooleanProperty
+import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.concurrent.Service
 import javafx.concurrent.Task
-import javafx.concurrent.Worker.State.SUCCEEDED
 import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.Dependency
@@ -22,8 +24,8 @@ import org.marid.ide.child.project.Progress.*
 import org.marid.ide.common.IdeProperties
 import org.marid.ide.common.LocalRepositoryServer
 import org.marid.ide.main.IdeServices
-import org.marid.ide.project.dependencies.DependencyResolver
 import org.marid.ide.project.ProjectTask
+import org.marid.ide.project.dependencies.DependencyResolver
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.stereotype.Component
 import java.net.URLClassLoader
@@ -40,28 +42,30 @@ class ProjectBuildService(
   private val localRepositoryServerProvider: ObjectProvider<LocalRepositoryServer>
 ) : Service<Unit>() {
 
-  private val projectInvalidationListener = InvalidationListener { session.project.dirty() }
+  private val dirtyProperty = ReadOnlyBooleanWrapper(this, "dirty", true)
+  private val projectInvalidationListener = InvalidationListener { dirtyProperty.set(true) }
   private val dependencyFilter = DependencyFilter { _, _ -> true }
-  private var classLoader: URLClassLoader? = null
+  private var classLoader: URLClassLoader = URLClassLoader(emptyArray(), ClassLoader.getPlatformClassLoader())
 
   override fun createTask(): Task<Unit> = InnerTask()
 
   @PostConstruct
   fun onInit() {
     services.add(this)
-    session.project.observables.forEach { it.addListener(projectInvalidationListener) }
-    stateProperty().addListener { _, _, s ->
-      if (s == SUCCEEDED) session.project.clearDirty()
-    }
+    session.project.repositories.observables.forEach { it.addListener(projectInvalidationListener) }
+    session.project.dependencies.observables.forEach { it.addListener(projectInvalidationListener) }
     start()
   }
 
   @PreDestroy
   fun onDestroy() {
     services.remove(this)
-    session.project.observables.forEach { it.removeListener(projectInvalidationListener) }
-    classLoader?.close()
+    session.project.repositories.observables.forEach { it.removeListener(projectInvalidationListener) }
+    session.project.dependencies.observables.forEach { it.removeListener(projectInvalidationListener) }
+    classLoader.close()
   }
+
+  val dirty: ReadOnlyBooleanProperty get() = dirtyProperty.readOnlyProperty
 
   override fun toString(): String {
     return "Project build service: %s".i18n(title)
@@ -76,6 +80,7 @@ class ProjectBuildService(
     override fun callTask() {
       project.logger.info("Build started")
       invoke()
+      Platform.runLater { dirtyProperty.set(false) }
       project.logger.info("Build finished")
     }
 
@@ -135,7 +140,7 @@ class ProjectBuildService(
           .toTypedArray()
 
         updateProgress(CLASS_LOADER.progress)
-        classLoader?.also { it.close() }
+        classLoader.also { it.close() }
         classLoader = URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
 
         updateProgress(SAVE.progress)

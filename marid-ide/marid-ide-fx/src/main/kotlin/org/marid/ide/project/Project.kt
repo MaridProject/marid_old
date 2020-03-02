@@ -6,16 +6,11 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.WARN
-import org.marid.fx.extensions.bindObject
 import org.marid.fx.extensions.runFx
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
-import org.marid.ide.project.model.FxModelObjectFactory
-import org.marid.ide.project.model.FxWinery
-import org.marid.ide.project.model.FxDependencies
-import org.marid.ide.project.model.FxRepositories
-import org.marid.ide.project.model.FxRepository
+import org.marid.ide.project.model.*
 import org.marid.io.Xmls
 import org.marid.runtime.model.XmlModel
 import org.springframework.util.FileSystemUtils
@@ -47,12 +42,7 @@ class Project(val projects: Projects, val id: String) {
 
   private val lockedProperty = ReadOnlyBooleanWrapper(this, "locked")
   private val progressProperty = ReadOnlyDoubleWrapper(this, "progress", 0.0)
-  private val dirtyProperty = ReadOnlyBooleanWrapper(this, "dirty", true)
   private val lock = ReentrantReadWriteLock()
-
-  val icon = dirtyProperty.bindObject {
-    if (it.get()) "icons/modified-project.png" else "icons/unmodified-project.png"
-  }
 
   init {
     val existing = Files.isDirectory(directory)
@@ -113,12 +103,8 @@ class Project(val projects: Projects, val id: String) {
     }
   }
 
-  fun dirty() = dirtyProperty.set(true)
-  fun clearDirty() = dirtyProperty.set(false)
-
   val progress: ReadOnlyDoubleProperty get() = progressProperty.readOnlyProperty
   val locked: ReadOnlyBooleanProperty get() = lockedProperty.readOnlyProperty
-  val dirty: ReadOnlyBooleanProperty get() = dirtyProperty.readOnlyProperty
 
   override fun hashCode(): Int = id.hashCode()
   override fun equals(other: Any?): Boolean = (other === this) || other is Project && other.id == id
