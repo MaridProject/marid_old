@@ -61,3 +61,10 @@ fun <T> TableRow<T>.installContextMenu(callback: (Int, T?) -> List<MenuItem>) {
     contextMenu.items.setAll(callback(if (item == null) tableView.items.size else index, item))
   }
 }
+
+fun <T> TreeTableRow<T>.installContextMenu(callback: (TreeItem<T>?) -> List<MenuItem>) {
+  contextMenu = ContextMenu()
+  addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
+    contextMenu.items.setAll(callback(treeItem))
+  }
+}

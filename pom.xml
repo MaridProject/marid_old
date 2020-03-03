@@ -56,7 +56,7 @@
   <properties>
     <java.version>13</java.version>
     <javafx.version>13.0.2</javafx.version>
-    <kotlin.version>1.3.61</kotlin.version>
+    <kotlin.version>1.3.70</kotlin.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <maven.compiler.testRelease>${java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -323,8 +323,9 @@
           <artifactId>kotlin-maven-plugin</artifactId>
           <version>${kotlin.version}</version>
           <configuration>
-            <jvmTarget>12</jvmTarget>
+            <jvmTarget>13</jvmTarget>
             <javaParameters>true</javaParameters>
+            <multiPlatform>false</multiPlatform>
           </configuration>
         </plugin>
       </plugins>

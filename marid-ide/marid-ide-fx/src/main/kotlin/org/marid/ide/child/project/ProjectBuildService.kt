@@ -45,6 +45,8 @@ class ProjectBuildService(
   private val dirtyProperty = ReadOnlyBooleanWrapper(this, "dirty", true)
   private val projectInvalidationListener = InvalidationListener { dirtyProperty.set(true) }
   private val dependencyFilter = DependencyFilter { _, _ -> true }
+
+  @Volatile
   private var classLoader: URLClassLoader = URLClassLoader(emptyArray(), ClassLoader.getPlatformClassLoader())
 
   override fun createTask(): Task<Unit> = InnerTask()
@@ -64,6 +66,8 @@ class ProjectBuildService(
     session.project.dependencies.observables.forEach { it.removeListener(projectInvalidationListener) }
     classLoader.close()
   }
+
+  fun <R> withClassLoader(callback: (URLClassLoader) -> R): R = callback(classLoader)
 
   val dirty: ReadOnlyBooleanProperty get() = dirtyProperty.readOnlyProperty
 
