@@ -3,15 +3,18 @@ package org.marid.ide.child.project.tree
 import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
 import javafx.util.Callback
+import org.marid.fx.action.Fx
+import org.marid.fx.action.menuItem
 import org.marid.fx.extensions.bindString
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installContextMenu
+import org.marid.ide.child.project.ProjectScanner
 import org.marid.ide.child.project.model.Item
 import org.marid.ide.child.project.model.TreeData
 import org.springframework.stereotype.Component
 
 @Component
-class WineryTreeTable(data: TreeData) : TreeTableView<Item<*>>(data.root) {
+class WineryTreeTable(data: TreeData, projectScanner: ProjectScanner) : TreeTableView<Item<*>>(data.root) {
 
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
@@ -26,6 +29,12 @@ class WineryTreeTable(data: TreeData) : TreeTableView<Item<*>>(data.root) {
       TreeTableRow<Item<*>>().apply {
         installContextMenu {
           listOf(
+            Fx(
+              text = "X",
+              h = {
+                println(projectScanner.allConstants())
+              }
+            ).menuItem
           )
         }
       }

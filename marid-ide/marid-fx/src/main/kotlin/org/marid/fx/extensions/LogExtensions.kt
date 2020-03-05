@@ -42,21 +42,21 @@ fun Logger.LOG(level: Level, msg: String?, vararg args: Any?) =
   })
 
 
-fun Logger.FINEST(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.FINEST, msg, exception, args)
-fun Logger.FINER(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.FINER, msg, exception, args)
-fun Logger.FINE(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.FINE, msg, exception, args)
-fun Logger.CONFIG(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.CONFIG, msg, exception, args)
-fun Logger.INFO(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.INFO, msg, exception, args)
-fun Logger.WARN(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.WARNING, msg, exception, args)
-fun Logger.ERROR(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.SEVERE, msg, exception, args)
+fun Logger.FINEST(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.FINEST, msg, exception, *args)
+fun Logger.FINER(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.FINER, msg, exception, *args)
+fun Logger.FINE(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.FINE, msg, exception, *args)
+fun Logger.CONFIG(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.CONFIG, msg, exception, *args)
+fun Logger.INFO(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.INFO, msg, exception, *args)
+fun Logger.WARN(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.WARNING, msg, exception, *args)
+fun Logger.ERROR(msg: String?, exception: Throwable?, vararg args: Any?) = LOG(Level.SEVERE, msg, exception, *args)
 
-fun Logger.FINEST(msg: String?, vararg args: Any?) = log(Level.FINEST, msg, args)
-fun Logger.FINER(msg: String?, vararg args: Any?) = log(Level.FINER, msg, args)
-fun Logger.FINE(msg: String?, vararg args: Any?) = log(Level.FINE, msg, args)
-fun Logger.CONFIG(msg: String?, vararg args: Any?) = log(Level.CONFIG, msg, args)
-fun Logger.INFO(msg: String?, vararg args: Any?) = log(Level.INFO, msg, args)
-fun Logger.WARN(msg: String?, vararg args: Any?) = log(Level.WARNING, msg, args)
-fun Logger.ERROR(msg: String?, vararg args: Any?) = log(Level.SEVERE, msg, args)
+fun Logger.FINEST(msg: String?, vararg args: Any?) = LOG(Level.FINEST, msg, *args)
+fun Logger.FINER(msg: String?, vararg args: Any?) = LOG(Level.FINER, msg, *args)
+fun Logger.FINE(msg: String?, vararg args: Any?) = LOG(Level.FINE, msg, *args)
+fun Logger.CONFIG(msg: String?, vararg args: Any?) = LOG(Level.CONFIG, msg, *args)
+fun Logger.INFO(msg: String?, vararg args: Any?) = LOG(Level.INFO, msg, *args)
+fun Logger.WARN(msg: String?, vararg args: Any?) = LOG(Level.WARNING, msg, *args)
+fun Logger.ERROR(msg: String?, vararg args: Any?) = LOG(Level.SEVERE, msg, *args)
 
 val LogRecord.formatSafe: String get() {
   try {
