@@ -3,6 +3,8 @@ package org.marid.ide.child.project
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.WARN
 import org.marid.fx.extensions.logger
+import org.marid.runtime.annotation.Constant
+import org.marid.runtime.annotation.Constants
 import org.springframework.stereotype.Component
 import java.io.File
 import java.lang.reflect.Method
@@ -23,6 +25,8 @@ class ProjectScanner(private val buildService: ProjectBuildService) {
 
   fun allConstants(): List<Method> =
     buildService.withClassLoader { classLoader ->
+      val constantsAnnotation = classLoader.loadClass(Constants::class.java.name).asSubclass(Annotation::class.java)
+      val constantAnnotation = classLoader.loadClass(Constant::class.java.name).asSubclass(Annotation::class.java)
       try {
         classLoader.urLs.flatMap { url ->
           logger.INFO("Loading from {0}", url)
@@ -39,15 +43,8 @@ class ProjectScanner(private val buildService: ProjectBuildService) {
                   Stream.empty<Class<*>>()
                 }
               }
-              .filter {
-                it.annotations.any { a -> a.annotationClass.simpleName == "Constants" }
-              }
-              .flatMap {
-                Arrays.stream(it.methods)
-                  .filter { m ->
-                    m.annotations.any { a -> a.annotationClass.simpleName == "Constant" }
-                  }
-              }
+              .filter { it.isAnnotationPresent(constantsAnnotation) }
+              .flatMap { Arrays.stream(it.methods).filter { m -> m.isAnnotationPresent(constantAnnotation) } }
               .collect(Collectors.toUnmodifiableList())
           }
         }

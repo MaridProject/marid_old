@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.concurrent.Service
 import javafx.concurrent.Task
+import org.eclipse.aether.artifact.Artifact
 import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.graph.Dependency
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.ObjectProvider
 import org.springframework.stereotype.Component
 import java.net.URLClassLoader
 import java.nio.file.Files
+import java.nio.file.Path
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -88,76 +90,103 @@ class ProjectBuildService(
       project.logger.info("Build finished")
     }
 
-    private fun invoke() {
-      updateProgress(REPOSITORIES.progress)
-      val localRepos = localRepositoryServerProvider.ifAvailable
-        ?.run {
+    private val allRepos: List<RemoteRepository>
+      get() {
+        val localRepos = localRepositoryServerProvider.ifAvailable?.run {
           listOf(
             RemoteRepository.Builder("m2", "default", url.toString())
               .setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
               .build()
           )
-        }
-        ?: emptyList<RemoteRepository>()
-      val repos = project.repositories.items
-        .map {
+        } ?: emptyList<RemoteRepository>()
+        return project.repositories.items.map {
           val builder = RemoteRepository.Builder(it.name.get(), "", it.url.get())
           if (it.url.get().startsWith("file://")) {
             builder.setPolicy(RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_IGNORE))
           }
           builder.build()
         } + localRepos
+      }
 
-      updateProgress(DEPENDENCIES.progress)
-      val dependencies = project.dependencies.items
+    private val allProjectDependencies
+      get() = project.dependencies.items
         .map { (g, a, v) -> DefaultArtifact(g, a, "", "jar", properties.substitute(v)) }
         .map { Dependency(it, "runtime") }
-      val collectRequest = CollectRequest(null as Dependency?, dependencies, repos)
 
-      updateProgress(RESOLVE.progress)
+    private val allRuntimeDependencies
+      get() = allProjectDependencies
+        .find { it.artifact.groupId == "org.marid" && it.artifact.artifactId in KNOWN_MARID_ARTIFACTS }
+        ?.let { DefaultArtifact("org.marid", "marid-runtime", "", "jar", properties.substitute(it.artifact.version)) }
+        ?.let { listOf(Dependency(it, "runtime")) }
+        ?: emptyList()
+
+    private fun artifacts(dependencies: List<Dependency>, repos: List<RemoteRepository>): Collection<Artifact> {
+      val request = CollectRequest(null as Dependency?, dependencies, repos)
       val result = dependencyResolver.repositorySystem.resolveDependencies(
         session.session,
-        DependencyRequest(collectRequest, dependencyFilter)
+        DependencyRequest(request, dependencyFilter)
       )
       if (result.collectExceptions.isNotEmpty()) {
         throw result.collectExceptions.reduce { e1, e2 -> e1.apply { addSuppressed(e2) } }
       }
-
-      updateProgress(ARTIFACTS.progress)
-      val artifacts = result.artifactResults.parallelStream()
+      return result.artifactResults.parallelStream()
         .map { it.artifact }
         .toImmutableMap(
           { it.groupId to it.artifactId },
           { it },
           { a, b -> maxOf(a, b, compareBy { it.version }) }
         ).values
+    }
+
+    private fun copyArtifacts(artifacts: Collection<Artifact>, target: Path) = artifacts.parallelStream()
+      .map { it.file.toPath() to target.resolve(it.file.name) }
+      .peek { (from, to) -> Files.copy(from, to) }
+      .map { (_, to) -> to.toUri().toURL() }
+      .toTypedArray()
+
+    private fun invoke() {
+      updateProgress(REPOSITORIES.progress)
+      val repos = allRepos
+
+      updateProgress(DEPENDENCIES.progress)
+      val artifacts = artifacts(allProjectDependencies, repos)
+      val runtimeArtifacts = artifacts(allRuntimeDependencies, repos)
 
       project.withWrite {
         updateProgress(DELETE_DIRECTORY.progress)
         project.depsDirectory.deleteDirectoryContents()
+        project.runtimeDirectory.deleteDirectoryContents()
 
         updateProgress(COPYING.progress)
-        val urls = artifacts.parallelStream()
-          .map { it.file.toPath() to project.depsDirectory.resolve(it.file.name) }
-          .peek { (from, to) -> Files.copy(from, to) }
-          .map { (_, to) -> to.toUri().toURL() }
-          .toTypedArray()
+        val urls = copyArtifacts(artifacts, project.depsDirectory)
+        val runtimeUrls = copyArtifacts(runtimeArtifacts, project.runtimeDirectory)
 
         updateProgress(CLASS_LOADER.progress)
         classLoader.also { it.close() }
-        classLoader = URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
+
+        val runtimeClassLoader = URLClassLoader(runtimeUrls, ClassLoader.getPlatformClassLoader())
+        classLoader = object : URLClassLoader(urls, runtimeClassLoader) {
+          override fun close() {
+            runtimeClassLoader.use {
+              super.close()
+            }
+          }
+        }
 
         updateProgress(SAVE.progress)
         project.save()
       }
     }
   }
+
+  companion object {
+    val KNOWN_MARID_ARTIFACTS = setOf("marid-racks", "marid-db", "marid-util", "marid-proto")
+  }
 }
 
 private enum class Progress {
   REPOSITORIES,
   DEPENDENCIES,
-  RESOLVE,
   ARTIFACTS,
   DELETE_DIRECTORY,
   COPYING,

@@ -36,6 +36,7 @@ class Project(val projects: Projects, val id: String) {
   val resourcesDirectory = directory.resolve("resources")
   val classesDirectory = directory.resolve("classes")
   val depsDirectory = directory.resolve("deps")
+  val runtimeDirectory = directory.resolve("runtime")
   val cacheDirectory = directory.resolve("cache")
   val cacheDepsDirectory = cacheDirectory.resolve("deps")
   val logger = Logger.getLogger(id)
@@ -54,6 +55,7 @@ class Project(val projects: Projects, val id: String) {
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
     Files.createDirectories(depsDirectory)
+    Files.createDirectories(runtimeDirectory)
     Files.createDirectories(cacheDepsDirectory)
 
     load()
