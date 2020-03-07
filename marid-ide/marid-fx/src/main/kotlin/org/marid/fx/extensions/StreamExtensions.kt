@@ -37,4 +37,13 @@ fun <T> Stream<T>.toImmutableList(): List<T> = collect(Collectors.toUnmodifiable
 fun <T> Stream<T>.toList(): MutableList<T> = collect(Collectors.toList())
 fun <T, C : Collection<T>> Stream<T>.toCollection(factory: () -> C): C = collect(Collectors.toCollection(factory))
 
+fun <T, R> Stream<T>.tryMap(func: (T) -> R, errorHandler: (T, Throwable) -> Unit): Stream<R> = flatMap { v : T ->
+  try {
+    Stream.of(func(v))
+  } catch (e: Throwable) {
+    errorHandler(v, e)
+    Stream.empty<R>()
+  }
+}
+
 inline fun <reified T> Stream<T>.toTypedArray(): Array<T> = toArray { n -> arrayOfNulls<T>(n) }

@@ -1,8 +1,6 @@
 package org.marid.ide.child.project
 
-import org.marid.fx.extensions.INFO
-import org.marid.fx.extensions.WARN
-import org.marid.fx.extensions.logger
+import org.marid.fx.extensions.*
 import org.marid.runtime.annotation.Constant
 import org.marid.runtime.annotation.Constants
 import org.springframework.stereotype.Component
@@ -15,7 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.jar.JarFile
 import java.util.stream.Collectors
-import java.util.stream.Stream
 import javax.annotation.PreDestroy
 
 @Component
@@ -32,25 +29,17 @@ class ProjectScanner(private val buildService: ProjectBuildService) {
           logger.INFO("Loading from {0}", url)
           JarFile(File(url.toURI()), false).use { f ->
             f.stream()
-              .filter { it.name.endsWith(".class") }
-              .filter { !it.name.contains('$') && !it.name.contains('-') }
+              .filter { it.name.endsWith(".class") && !it.name.contains('$') && !it.name.contains('-') }
               .map { it.name.substring(0, it.name.length - 6).replace('/', '.') }
-              .flatMap {
-                try {
-                  Stream.of(classLoader.loadClass(it))
-                } catch (_: Throwable) {
-                  logger.WARN("Unable to load {0} from {1}", it, url)
-                  Stream.empty<Class<*>>()
-                }
-              }
+              .tryMap({ classLoader.loadClass(it) }) { v, _ -> logger.WARN("Unable to load {0} from {1}", v, url) }
               .filter { it.isAnnotationPresent(constantsAnnotation) }
               .flatMap { Arrays.stream(it.methods).filter { m -> m.isAnnotationPresent(constantAnnotation) } }
               .collect(Collectors.toUnmodifiableList())
           }
         }
       } catch (e: Throwable) {
-        e.printStackTrace()
-        throw e
+        logger.ERROR("Unable to load constants", e)
+        emptyList()
       }
     }
 

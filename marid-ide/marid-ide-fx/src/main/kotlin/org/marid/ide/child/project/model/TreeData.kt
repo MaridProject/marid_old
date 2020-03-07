@@ -27,23 +27,23 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
   private companion object {
 
     private fun item(cellar: FxCellar) = TreeItem<Item<*>>(CellarItem(cellar))
-      .apply { children += TreeItem<Item<*>>(SubItem("Racks")).also { link(it, cellar.racks, ::item) } }
-      .apply { children += TreeItem<Item<*>>(SubItem("Constants")).also { link(it, cellar.constants, ::item) } }
+      .apply { children += TreeItem<Item<*>>(SubItem("Racks")).also { link(it, cellar.racks, ::rack) } }
+      .apply { children += TreeItem<Item<*>>(SubItem("Constants")).also { link(it, cellar.constants, ::const) } }
 
-    private fun item(rack: FxRack) = TreeItem<Item<*>>(RackItem(rack))
-      .apply { children += TreeItem<Item<*>>(SubItem("Arguments")).also { link(it, rack.arguments, ::item) } }
-      .apply { children += TreeItem<Item<*>>(SubItem("Initializers")).also { link(it, rack.initializers, ::item) } }
-      .apply { children += TreeItem<Item<*>>(SubItem("Outputs")).also { link(it, rack.outputs, ::item) } }
+    private fun rack(rack: FxRack) = TreeItem<Item<*>>(RackItem(rack))
+      .apply { children += TreeItem<Item<*>>(SubItem("Arguments")).also { link(it, rack.arguments, ::arg) } }
+      .apply { children += TreeItem<Item<*>>(SubItem("Initializers")).also { link(it, rack.initializers, ::init) } }
+      .apply { children += TreeItem<Item<*>>(SubItem("Outputs")).also { link(it, rack.outputs, ::output) } }
 
-    private fun item(constant: FxCellarConstant) = TreeItem<Item<*>>(CellarConstantItem(constant))
-      .apply { link(this, constant.arguments, ::item) }
+    private fun const(constant: FxCellarConstant) = TreeItem<Item<*>>(CellarConstantItem(constant))
+      .apply { link(this, constant.arguments, ::arg) }
 
-    private fun item(output: FxOutput): TreeItem<Item<*>> = TreeItem(OutputItem(output))
+    private fun output(output: FxOutput): TreeItem<Item<*>> = TreeItem(OutputItem(output))
 
-    private fun item(initializer: FxInitializer) = TreeItem<Item<*>>(InitializerItem(initializer))
-      .apply { link(this, initializer.arguments, ::item) }
+    private fun init(initializer: FxInitializer) = TreeItem<Item<*>>(InitializerItem(initializer))
+      .apply { link(this, initializer.arguments, ::arg) }
 
-    private fun item(argument: FxArgument): TreeItem<Item<*>> = TreeItem(when (argument) {
+    private fun arg(argument: FxArgument): TreeItem<Item<*>> = TreeItem(when (argument) {
       is FxNull -> NullItem(argument)
       is FxConstRef -> ConstRefItem(argument)
       is FxLiteral -> LiteralItem(argument)
