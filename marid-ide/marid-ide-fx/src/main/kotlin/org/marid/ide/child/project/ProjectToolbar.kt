@@ -1,10 +1,10 @@
 package org.marid.ide.child.project
 
-import com.google.common.io.MoreFiles
 import javafx.scene.control.Separator
 import javafx.scene.control.ToolBar
 import org.marid.fx.action.Fx
 import org.marid.fx.action.toolButton
+import org.marid.fx.extensions.deleteDirectoryContents
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
 import org.marid.spring.init.Init
@@ -24,7 +24,6 @@ class ProjectToolbar : ToolBar() {
     ).toolButton
   }
 
-  @Suppress("UnstableApiUsage")
   @Init
   fun initClearCache(project: ObjectFactory<Project>, buildService: ProjectBuildService) {
     items += Separator()
@@ -32,7 +31,7 @@ class ProjectToolbar : ToolBar() {
       text = "Clear cache",
       icon = "icons/clean.png",
       h = {
-        MoreFiles.deleteDirectoryContents(project.bean.cacheDepsDirectory)
+        project.bean.cacheDepsDirectory.deleteDirectoryContents()
         buildService.restart()
       },
       disabled = buildService.runningProperty()
