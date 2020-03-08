@@ -60,7 +60,6 @@ class ProjectBuildService(
     services.add(this)
     session.project.repositories.observables.forEach { it.addListener(projectInvalidationListener) }
     session.project.dependencies.observables.forEach { it.addListener(projectInvalidationListener) }
-    start()
   }
 
   @PreDestroy

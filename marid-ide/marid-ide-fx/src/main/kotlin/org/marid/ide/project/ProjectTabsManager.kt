@@ -5,6 +5,7 @@ import org.marid.ide.child.project.ProjectTab
 import org.marid.ide.main.IdeTabs
 import org.marid.spring.ContextUtils
 import org.marid.spring.LoggingPostProcessor
+import org.marid.spring.init.InitBeanPostProcessor
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
@@ -26,6 +27,7 @@ class ProjectTabsManager(
     ContextUtils.context(parentContext) { reader, ctx ->
       ctx.defaultListableBeanFactory.registerSingleton("project", project)
       ctx.defaultListableBeanFactory.addBeanPostProcessor(LoggingPostProcessor())
+      ctx.defaultListableBeanFactory.addBeanPostProcessor(InitBeanPostProcessor(ctx))
       reader.register(ProjectTab::class.java)
     }.let {
       it.refresh()
