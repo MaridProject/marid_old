@@ -17,12 +17,20 @@ sealed class Item<E : FxEntity> : ResolvedTypeProvider, Comparable<Item<*>> {
   override fun compareTo(other: Item<*>) = name.value.compareTo(other.name.value)
 }
 
-class SubItem(name: String) : Item<FxNull>() {
-  override val name: ObservableValue<String> = name.localized
+class SubItem(val kind: Kind) : Item<FxNull>() {
+  override val name: ObservableValue<String> = kind.label.localized
   override val factory: ObservableValue<String> = StringConstant.valueOf("")
   override val value: ObservableValue<String> = StringConstant.valueOf("")
   override val entity: FxNull get() = FxNull
   override val resolvedType: ObservableValue<Type> = ObjectConstant.valueOf(Void.TYPE)
+
+  enum class Kind(val label: String) {
+    CONSTANTS("Constants"),
+    RACKS("Racks"),
+    ARGUMENTS("Arguments"),
+    INITIALIZERS("Initializers"),
+    OUTPUTS("Outputs")
+  }
 }
 
 class WineryItem(override val entity: FxWinery) : Item<FxWinery>() {

@@ -23,11 +23,13 @@ package org.marid.racks.net;
 
 import org.marid.runtime.annotation.Constant;
 import org.marid.runtime.annotation.Constants;
+import org.marid.runtime.annotation.Description;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+@Description("Network constants")
 @Constants
 public interface NetConstants {
 

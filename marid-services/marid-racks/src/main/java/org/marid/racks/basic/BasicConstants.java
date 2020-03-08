@@ -1,4 +1,4 @@
-package org.marid.racks;
+package org.marid.racks.basic;
 
 /*-
  * #%L
@@ -23,8 +23,10 @@ package org.marid.racks;
 
 import org.marid.runtime.annotation.Constant;
 import org.marid.runtime.annotation.Constants;
+import org.marid.runtime.annotation.Description;
 
 @Constants
+@Description("Basic constants")
 public interface BasicConstants {
 
   @Constant

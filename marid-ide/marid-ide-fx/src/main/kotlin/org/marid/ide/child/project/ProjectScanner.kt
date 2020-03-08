@@ -12,7 +12,6 @@ import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.jar.JarFile
-import java.util.stream.Collectors
 import javax.annotation.PreDestroy
 
 @Component
@@ -25,18 +24,18 @@ class ProjectScanner(private val buildService: ProjectBuildService) {
       val constantsAnnotation = classLoader.loadClass(Constants::class.java.name).asSubclass(Annotation::class.java)
       val constantAnnotation = classLoader.loadClass(Constant::class.java.name).asSubclass(Annotation::class.java)
       try {
-        classLoader.urLs.flatMap { url ->
-          logger.INFO("Loading from {0}", url)
-          JarFile(File(url.toURI()), false).use { f ->
-            f.stream()
+        Arrays.stream(classLoader.urLs).parallel()
+          .flatMap { url ->
+            logger.INFO("Loading from {0}", url)
+            val f = JarFile(File(url.toURI()), false)
+            f.stream().onClose(f::close)
               .filter { it.name.endsWith(".class") && !it.name.contains('$') && !it.name.contains('-') }
               .map { it.name.substring(0, it.name.length - 6).replace('/', '.') }
               .tryMap({ classLoader.loadClass(it) }) { v, _ -> logger.WARN("Unable to load {0} from {1}", v, url) }
               .filter { it.isAnnotationPresent(constantsAnnotation) }
               .flatMap { Arrays.stream(it.methods).filter { m -> m.isAnnotationPresent(constantAnnotation) } }
-              .collect(Collectors.toUnmodifiableList())
           }
-        }
+          .toImmutableList()
       } catch (e: Throwable) {
         logger.ERROR("Unable to load constants", e)
         emptyList()

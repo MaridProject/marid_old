@@ -7,6 +7,7 @@ import javafx.event.Event.fireEvent
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeItem.TreeModificationEvent
 import org.marid.fx.extensions.FX_CLEANER
+import org.marid.ide.child.project.model.SubItem.Kind.*
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
 import org.marid.ide.project.model.*
@@ -27,13 +28,13 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
   private companion object {
 
     private fun item(cellar: FxCellar) = TreeItem<Item<*>>(CellarItem(cellar))
-      .apply { children += TreeItem<Item<*>>(SubItem("Racks")).also { link(it, cellar.racks, ::rack) } }
-      .apply { children += TreeItem<Item<*>>(SubItem("Constants")).also { link(it, cellar.constants, ::const) } }
+      .apply { children += TreeItem<Item<*>>(SubItem(RACKS)).also { link(it, cellar.racks, ::rack) } }
+      .apply { children += TreeItem<Item<*>>(SubItem(CONSTANTS)).also { link(it, cellar.constants, ::const) } }
 
     private fun rack(rack: FxRack) = TreeItem<Item<*>>(RackItem(rack))
-      .apply { children += TreeItem<Item<*>>(SubItem("Arguments")).also { link(it, rack.arguments, ::arg) } }
-      .apply { children += TreeItem<Item<*>>(SubItem("Initializers")).also { link(it, rack.initializers, ::init) } }
-      .apply { children += TreeItem<Item<*>>(SubItem("Outputs")).also { link(it, rack.outputs, ::output) } }
+      .apply { children += TreeItem<Item<*>>(SubItem(ARGUMENTS)).also { link(it, rack.arguments, ::arg) } }
+      .apply { children += TreeItem<Item<*>>(SubItem(INITIALIZERS)).also { link(it, rack.initializers, ::init) } }
+      .apply { children += TreeItem<Item<*>>(SubItem(OUTPUTS)).also { link(it, rack.outputs, ::output) } }
 
     private fun const(constant: FxCellarConstant) = TreeItem<Item<*>>(CellarConstantItem(constant))
       .apply { link(this, constant.arguments, ::arg) }
