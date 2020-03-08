@@ -2,6 +2,7 @@ package org.marid.fx.extensions
 
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import kotlin.reflect.KClass
 
 fun <T, K, V> Stream<T>.toImmutableMap(key: (T) -> K, value: (T) -> V): Map<K, V> =
   collect(Collectors.toUnmodifiableMap(key, value))
@@ -37,7 +38,7 @@ fun <T> Stream<T>.toImmutableList(): List<T> = collect(Collectors.toUnmodifiable
 fun <T> Stream<T>.toList(): MutableList<T> = collect(Collectors.toList())
 fun <T, C : Collection<T>> Stream<T>.toCollection(factory: () -> C): C = collect(Collectors.toCollection(factory))
 
-fun <T, R> Stream<T>.tryMap(func: (T) -> R, errorHandler: (T, Throwable) -> Unit): Stream<R> = flatMap { v : T ->
+fun <T, R> Stream<T>.tryMap(func: (T) -> R, errorHandler: (T, Throwable) -> Unit): Stream<R> = flatMap { v: T ->
   try {
     Stream.of(func(v))
   } catch (e: Throwable) {
@@ -47,3 +48,5 @@ fun <T, R> Stream<T>.tryMap(func: (T) -> R, errorHandler: (T, Throwable) -> Unit
 }
 
 inline fun <reified T> Stream<T>.toTypedArray(): Array<T> = toArray { n -> arrayOfNulls<T>(n) }
+
+fun <T : Any> Stream<*>.typeFilter(c: KClass<T>): Stream<T> = filter { c.isInstance(it) }.map { c.java.cast(it) }

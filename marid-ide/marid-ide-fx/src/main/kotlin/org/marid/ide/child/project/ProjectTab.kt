@@ -4,7 +4,6 @@ import javafx.scene.control.Tab
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import org.marid.fx.extensions.bindObject
-import org.marid.ide.child.project.tree.WineryTreeTable
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeTabs
 import org.marid.ide.project.Project
@@ -17,10 +16,10 @@ import org.springframework.stereotype.Component
 @Component
 @ComponentScan
 class ProjectTab(
-  wineryTreeTable: WineryTreeTable,
+  pane: ProjectChildPane,
   project: ObjectFactory<Project>,
   buildService: ProjectBuildService
-) : Tab(null, wineryTreeTable) {
+) : Tab(null, pane) {
 
   private val project = project.bean
 

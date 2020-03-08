@@ -15,8 +15,8 @@ import org.marid.ide.child.project.model.SubItem
 import org.marid.ide.child.project.model.SubItem.Kind.CONSTANTS
 import org.marid.ide.child.project.model.SubItem.Kind.RACKS
 import org.marid.ide.child.project.model.TreeData
+import org.marid.misc.Annotations.fetchOne
 import org.marid.runtime.annotation.Title
-import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.stereotype.Component
 
 @Component
@@ -43,13 +43,13 @@ class WineryTreeTable(data: TreeData, projectScanner: ProjectScanner) : TreeTabl
                     .groupBy { it.declaringClass.`package` }
                     .mapValues { (_, v) -> v.groupBy { it.declaringClass } }
                   grouped.forEach { (p, pels) ->
-                    val pt = AnnotationUtils.findAnnotation(p, Title::class.java)?.value ?: p.name
+                    val pt = fetchOne(p, Title::class.java).map { it.value }.orElseGet { p.name }
                     val pi = Menu(pt.i18n()).also { list += it }
                     pels.forEach { (c, cels) ->
-                      val ct = AnnotationUtils.findAnnotation(c, Title::class.java)?.value ?: c.simpleName
+                      val ct = fetchOne(c, Title::class.java).map { it.value }.orElseGet { c.simpleName }
                       val ci = Menu(ct.i18n()).also { pi.items += it }
-                      cels.forEach { co ->
-                        val cot = AnnotationUtils.findAnnotation(co, Title::class.java)?.value ?: co.name
+                      cels.forEach { m ->
+                        val cot = fetchOne(m, Title::class.java).map { it.value }.orElseGet { m.name }
                         val coi = MenuItem(cot).also { ci.items += it }
                       }
                     }

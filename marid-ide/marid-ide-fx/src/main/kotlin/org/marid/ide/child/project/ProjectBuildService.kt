@@ -16,10 +16,7 @@ import org.eclipse.aether.repository.RepositoryPolicy
 import org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_IGNORE
 import org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS
 import org.eclipse.aether.resolution.DependencyRequest
-import org.marid.fx.extensions.deleteDirectoryContents
-import org.marid.fx.extensions.progress
-import org.marid.fx.extensions.toImmutableMap
-import org.marid.fx.extensions.toTypedArray
+import org.marid.fx.extensions.*
 import org.marid.fx.i18n.i18n
 import org.marid.ide.child.project.Progress.*
 import org.marid.ide.common.IdeProperties
@@ -29,8 +26,10 @@ import org.marid.ide.project.ProjectTask
 import org.marid.ide.project.dependencies.DependencyResolver
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.stereotype.Component
+import java.net.URL
 import java.net.URLClassLoader
 import java.nio.file.Files
+import java.nio.file.Files.newDirectoryStream
 import java.nio.file.Path
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -49,7 +48,10 @@ class ProjectBuildService(
   private val dependencyFilter = DependencyFilter { _, _ -> true }
 
   @Volatile
-  private var classLoader: URLClassLoader = URLClassLoader(emptyArray(), ClassLoader.getPlatformClassLoader())
+  private var classLoader = buildLoader(
+    newDirectoryStream(session.project.runtimeDirectory, "*.jar").use { s -> s.map { it.url }.toTypedArray() },
+    newDirectoryStream(session.project.depsDirectory, "*.jar").use { s -> s.map { it.url }.toTypedArray() }
+  )
 
   override fun createTask(): Task<Unit> = InnerTask()
 
@@ -144,7 +146,11 @@ class ProjectBuildService(
       .map { (_, to) -> to.toUri().toURL() }
       .toTypedArray()
 
-    private fun invoke() {
+    private fun invoke() = project.withWrite {
+      updateProgress(DELETE_DIRECTORY.progress)
+      project.depsDirectory.deleteDirectoryContents()
+      project.runtimeDirectory.deleteDirectoryContents()
+
       updateProgress(REPOSITORIES.progress)
       val repos = allRepos
 
@@ -152,32 +158,29 @@ class ProjectBuildService(
       val artifacts = artifacts(allProjectDependencies, repos)
       val runtimeArtifacts = artifacts(allRuntimeDependencies, repos)
 
-      project.withWrite {
-        updateProgress(DELETE_DIRECTORY.progress)
-        project.depsDirectory.deleteDirectoryContents()
-        project.runtimeDirectory.deleteDirectoryContents()
+      updateProgress(COPYING.progress)
+      val urls = copyArtifacts(artifacts, project.depsDirectory)
+      val runtimeUrls = copyArtifacts(runtimeArtifacts, project.runtimeDirectory)
 
-        updateProgress(COPYING.progress)
-        val urls = copyArtifacts(artifacts, project.depsDirectory)
-        val runtimeUrls = copyArtifacts(runtimeArtifacts, project.runtimeDirectory)
+      updateProgress(CLASS_LOADER.progress)
+      classLoader.also { it.close() }
+      classLoader = buildLoader(runtimeUrls, urls)
 
-        updateProgress(CLASS_LOADER.progress)
-        classLoader.also { it.close() }
-
-        val runtimeClassLoader = URLClassLoader(runtimeUrls, ClassLoader.getPlatformClassLoader())
-        classLoader = object : URLClassLoader(urls, runtimeClassLoader) {
-          override fun close() {
-            runtimeClassLoader.use {
-              super.close()
-            }
-          }
-        }
-
-        updateProgress(SAVE.progress)
-        project.save()
-      }
+      updateProgress(SAVE.progress)
+      project.save()
     }
   }
+
+  fun buildLoader(rt: Array<URL>, deps: Array<URL>) = URLClassLoader(rt, ClassLoader.getPlatformClassLoader())
+    .let { rc ->
+      object : URLClassLoader(deps, rc) {
+        override fun close() {
+          rc.use {
+            super.close()
+          }
+        }
+      }
+    }
 
   companion object {
     val KNOWN_MARID_ARTIFACTS = setOf("marid-racks", "marid-db", "marid-util", "marid-proto")
@@ -185,10 +188,9 @@ class ProjectBuildService(
 }
 
 private enum class Progress {
+  DELETE_DIRECTORY,
   REPOSITORIES,
   DEPENDENCIES,
-  ARTIFACTS,
-  DELETE_DIRECTORY,
   COPYING,
   CLASS_LOADER,
   SAVE
