@@ -28,8 +28,8 @@ class ProjectToolbar : ToolBar() {
   fun initClearCache(project: ObjectFactory<Project>, buildService: ProjectBuildService) {
     items += Separator()
     items += Fx(
-      text = "Clear cache",
-      icon = "icons/clean.png",
+      text = "Rebuild",
+      icon = "icons/rebuild.png",
       h = {
         project.bean.cacheDepsDirectory.deleteDirectoryContents()
         buildService.restart()
