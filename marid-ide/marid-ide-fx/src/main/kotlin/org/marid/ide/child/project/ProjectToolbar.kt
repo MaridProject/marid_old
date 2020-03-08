@@ -31,7 +31,10 @@ class ProjectToolbar : ToolBar() {
     items += Fx(
       text = "Clear cache",
       icon = "icons/clean.png",
-      h = { MoreFiles.deleteDirectoryContents(project.bean.cacheDepsDirectory) },
+      h = {
+        MoreFiles.deleteDirectoryContents(project.bean.cacheDepsDirectory)
+        buildService.restart()
+      },
       disabled = buildService.runningProperty()
     ).toolButton
   }
