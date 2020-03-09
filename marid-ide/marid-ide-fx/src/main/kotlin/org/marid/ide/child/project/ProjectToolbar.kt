@@ -1,6 +1,5 @@
 package org.marid.ide.child.project
 
-import javafx.scene.control.Separator
 import javafx.scene.control.ToolBar
 import org.marid.fx.action.Fx
 import org.marid.fx.action.toolButton
@@ -25,8 +24,7 @@ class ProjectToolbar : ToolBar() {
   }
 
   @Init
-  fun initClearCache(project: ObjectFactory<Project>, buildService: ProjectBuildService) {
-    items += Separator()
+  fun initRebuild(project: ObjectFactory<Project>, buildService: ProjectBuildService) {
     items += Fx(
       text = "Rebuild",
       icon = "icons/rebuild.png",
