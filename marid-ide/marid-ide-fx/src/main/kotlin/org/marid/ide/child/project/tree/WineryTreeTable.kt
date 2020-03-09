@@ -39,7 +39,7 @@ class WineryTreeTable(data: TreeData, projectScanner: ProjectScanner) : TreeTabl
             is SubItem -> {
               when (v.kind) {
                 CONSTANTS -> {
-                  val grouped = projectScanner.allConstants()
+                  val grouped = projectScanner.constants()
                     .groupBy { it.declaringClass.`package` }
                     .mapValues { (_, v) -> v.groupBy { it.declaringClass } }
                   grouped.forEach { (p, pels) ->

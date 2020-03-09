@@ -24,7 +24,7 @@ class ProjectToolbar : ToolBar() {
   }
 
   @Init
-  fun initRebuild(project: ObjectFactory<Project>, buildService: ProjectBuildService) {
+  fun initRebuildButton(project: ObjectFactory<Project>, buildService: ProjectBuildService) {
     items += Fx(
       text = "Rebuild",
       icon = "icons/rebuild.png",
