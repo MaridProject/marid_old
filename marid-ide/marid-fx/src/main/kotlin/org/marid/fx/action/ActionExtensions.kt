@@ -59,6 +59,7 @@ fun <T : Tab> T.configure(action: Fx, size: Int = 18): T = this
 val Fx.button get() = Button().configure(this)
 val Fx.toolButton get() = ToolButton().configure(this)
 val Fx.label get() = Label().configure(this)
+val Fx.menu get() = Menu().configure(this)
 val Fx.menuItem get() = MenuItem().configure(this)
 val Fx.checkMenuItem get() = CheckMenuItem().configure(this)
 val Fx.toggleButton get() = ToggleButton().configure(this)
