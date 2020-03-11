@@ -46,9 +46,11 @@ class WineryTreeTable(data: TreeData, projectScanner: ProjectScanner) : TreeTabl
                       pels.forEach { (c, cels) ->
                         val ci = Tid.from(c, c.simpleName, "icons/class.png").fx.menu.also { pi.items += it }
                         cels.forEach { m ->
-                          Tid.from(m, m.name, "icons/const.png").fx {
+                          Tid.from(m, m.name, "icons/const.png")
+                            .fx {
 
-                          }.menuItem.also { ci.items += it }
+                            }
+                            .menuItem.also { ci.items += it }
                         }
                       }
                     }
@@ -59,9 +61,11 @@ class WineryTreeTable(data: TreeData, projectScanner: ProjectScanner) : TreeTabl
                     .forEach { (p, pels) ->
                       val pi = Tid.from(p, p.name, "icons/pkg.png").fx.menu.also { list += it }
                       pels.forEach { c ->
-                        Tid.from(c, c.declaringClass.simpleName, "icons/const.png").fx {
+                        Tid.from(c, c.declaringClass.simpleName, "icons/const.png")
+                          .fx {
 
-                        }.menuItem.also { pi.items += it }
+                          }
+                          .menuItem.also { pi.items += it }
                       }
                     }
                 }
