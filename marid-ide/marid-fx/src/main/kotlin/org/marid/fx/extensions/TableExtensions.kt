@@ -1,5 +1,6 @@
 package org.marid.fx.extensions
 
+import com.sun.javafx.binding.StringConstant
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.scene.control.*
@@ -10,10 +11,10 @@ import javafx.scene.input.MouseEvent
 import javafx.util.Callback
 import org.marid.fx.i18n.localized
 
-fun <T, R> TableView<T>.column(width: Int, text: String, value: (T) -> ObservableValue<R>) =
-  column(width, text.localized, value)
+fun <T, R> TableView<T>.column(width: Int, text: String?, value: (T) -> ObservableValue<R>) =
+  column(width, text?.localized ?: StringConstant.valueOf(null), value)
 
-fun <T, R> TableView<T>.column(width: Int, text: ObservableValue<String>, value: (T) -> ObservableValue<R>) =
+fun <T, R> TableView<T>.column(width: Int, text: ObservableValue<String?>, value: (T) -> ObservableValue<R>) =
   TableColumn<T, R>()
     .apply {
       minWidth = width.toDouble() * 0.9
@@ -24,10 +25,10 @@ fun <T, R> TableView<T>.column(width: Int, text: ObservableValue<String>, value:
     }
     .also { columns += it }
 
-fun <T, R> TreeTableView<T>.column(width: Int, text: String, value: (T) -> ObservableValue<R>) =
-  column(width, text.localized, value)
+fun <T, R> TreeTableView<T>.column(width: Int, text: String?, value: (T) -> ObservableValue<R>) =
+  column(width, text?.localized ?: StringConstant.valueOf(null), value)
 
-fun <T, R> TreeTableView<T>.column(width: Int, text: ObservableValue<String>, value: (T) -> ObservableValue<R>) =
+fun <T, R> TreeTableView<T>.column(width: Int, text: ObservableValue<String?>, value: (T) -> ObservableValue<R>) =
   TreeTableColumn<T, R>()
     .apply {
       minWidth = width.toDouble() * 0.9

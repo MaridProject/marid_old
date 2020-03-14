@@ -162,7 +162,7 @@ class ProjectBuildService(
       val runtimeUrls = copyArtifacts(runtimeArtifacts, project.runtimeDirectory)
 
       updateProgress(CLASS_LOADER.progress)
-      classLoader.also { it.close() }
+      classLoader.close()
       classLoader = buildLoader(runtimeUrls, urls)
 
       updateProgress(SAVE.progress)

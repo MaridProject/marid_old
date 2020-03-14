@@ -56,4 +56,8 @@ class IdeMenuBar : MenuBar() {
   }
 
   val servicesMenu = menu("Services")
+
+  val logMenu = menu("Logs")
+
+  @Init fun showLogsMenuItem(showLogsAction: Fx) = logMenu.item(showLogsAction)
 }

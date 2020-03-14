@@ -1,15 +1,18 @@
 package org.marid.ide.main
 
+import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.ProgressBar
 import javafx.scene.control.ToggleButton
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.shape.Circle
 import javafx.stage.Window
+import org.marid.fx.action.Fx
 import org.marid.fx.extensions.color
 import org.marid.fx.extensions.map
 import org.marid.ide.extensions.bean
@@ -21,7 +24,8 @@ import org.springframework.stereotype.Component
 class IdeStatusBar(
   private val ideLog: IdeLog,
   private val ideServices: IdeServices,
-  private val ideServicesWindowFactory: ObjectFactory<IdeServicesWindow>
+  private val ideServicesWindowFactory: ObjectFactory<IdeServicesWindow>,
+  private val showLogsAction: Fx
 ) : HBox(4.0) {
 
   init {
@@ -35,6 +39,11 @@ class IdeStatusBar(
     .apply { graphic = Circle(5.0).apply { fillProperty().bind(ideLog.lastLevel.map { it?.color }) } }
     .apply { graphicTextGap = 5.0 }
     .apply { textProperty().bind(ideServices.lastMessage) }
+    .apply {
+      addEventHandler(MouseEvent.MOUSE_CLICKED) {
+        showLogsAction.handler.get().handle(ActionEvent())
+      }
+    }
 
   private val progressBar = ProgressBar(0.0)
     .also { setHgrow(it, Priority.NEVER) }
