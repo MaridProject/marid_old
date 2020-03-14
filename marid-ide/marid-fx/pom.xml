@@ -88,10 +88,8 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
-        <version>${kotlin.version}</version>
         <configuration>
           <sourceDirs>
-            <dir>src/main/kotlin</dir>
             <dir>target/generated-sources</dir>
           </sourceDirs>
         </configuration>
