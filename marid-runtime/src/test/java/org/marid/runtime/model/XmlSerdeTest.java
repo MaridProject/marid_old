@@ -18,8 +18,9 @@ class XmlSerdeTest {
     expected.addArgument(new LiteralImpl(Literal.Type.BASE64, "x"));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
     final var element = document.createElement("test");
-    XmlModel.write(expected, element);
-    final var actual = XmlModel.readCellarConstant(new ModelObjectFactoryImpl(), element);
+    expected.writeTo(element);
+    final var actual = ModelObjectFactory.FACTORY.newCellarConstant();
+    actual.readFrom(element);
     assertEquals(expected, actual);
   }
 
@@ -30,8 +31,9 @@ class XmlSerdeTest {
     expected.addInitializer(new InitializerImpl("x", NullImpl.INSTANCE, new LiteralImpl(Literal.Type.BYTE, "1")));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
     final var element = document.createElement("test");
-    XmlModel.write(expected, element);
-    final var actual = XmlModel.readRack(new ModelObjectFactoryImpl(), element);
+    expected.writeTo(element);
+    final var actual = ModelObjectFactory.FACTORY.newRack();
+    actual.readFrom(element);
     assertEquals(expected, actual);
   }
 
@@ -48,8 +50,9 @@ class XmlSerdeTest {
     }));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
     final var element = document.createElement("test");
-    XmlModel.write(expected, element);
-    final var actual = XmlModel.readCellar(new ModelObjectFactoryImpl(), element);
+    expected.writeTo(element);
+    final var actual = ModelObjectFactory.FACTORY.newCellar();
+    actual.readFrom(element);
     assertEquals(expected, actual);
   }
 
@@ -68,8 +71,9 @@ class XmlSerdeTest {
     }));
     final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
     final var element = document.createElement("test");
-    XmlModel.write(expected, element);
-    final var actual = XmlModel.readWinery(new ModelObjectFactoryImpl(), element);
+    expected.writeTo(element);
+    final var actual = ModelObjectFactory.FACTORY.newWinery();
+    actual.readFrom(element);
     assertEquals(expected, actual);
   }
 }

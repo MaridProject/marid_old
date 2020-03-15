@@ -1,6 +1,7 @@
 package org.marid.runtime.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +44,22 @@ public interface Literal extends ConstantArgument {
 
   void setValue(String value);
 
-  @Override default String tag() {return "literal";}
+  @Override
+  default String tag() {
+    return "literal";
+  }
+
+  @Override
+  default void readFrom(Element element) {
+    setType(Literal.Type.valueOf(element.getAttribute("type").toUpperCase()));
+    setValue(element.getTextContent());
+  }
+
+  @Override
+  default void writeTo(Element element) {
+    element.setAttribute("type", getType().name().toLowerCase());
+    element.setTextContent(getValue());
+  }
 
   enum Type {
 

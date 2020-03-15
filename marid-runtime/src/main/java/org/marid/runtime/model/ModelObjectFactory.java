@@ -2,6 +2,8 @@ package org.marid.runtime.model;
 
 public interface ModelObjectFactory {
 
+  ModelObjectFactoryImpl FACTORY = new ModelObjectFactoryImpl();
+
   Winery newWinery();
 
   Ref newRef();

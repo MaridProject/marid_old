@@ -23,9 +23,8 @@ package org.marid.runtime.internal;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.marid.runtime.model.ModelObjectFactoryImpl;
+import org.marid.runtime.model.ModelObjectFactory;
 import org.marid.runtime.model.WineryImpl;
-import org.marid.runtime.model.XmlModel;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
@@ -360,7 +359,8 @@ public final class WineryRuntime implements AutoCloseable {
         final var documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
         final var document = documentBuilder.parse(winery.toFile());
 
-        this.winery = (WineryImpl) XmlModel.readWinery(new ModelObjectFactoryImpl(), document.getDocumentElement());
+        this.winery = (WineryImpl) ModelObjectFactory.FACTORY.newWinery();
+        this.winery.readFrom(document.getDocumentElement());
 
         validate(resources, deps, classes);
         initialize(deployment, args);

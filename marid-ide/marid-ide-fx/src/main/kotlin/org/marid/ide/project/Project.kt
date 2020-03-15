@@ -15,7 +15,6 @@ import org.marid.ide.project.model.FxRepositories
 import org.marid.ide.project.model.FxRepository
 import org.marid.ide.project.model.FxWinery
 import org.marid.io.Xmls
-import org.marid.runtime.model.XmlModel
 import org.springframework.util.FileSystemUtils
 import java.nio.file.Files
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -74,7 +73,7 @@ class Project(val projects: Projects, val id: String) {
   }
 
   private fun load() {
-    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { XmlModel.read(winery, it) }
+    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { winery.readFrom(it) }
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
     if (Files.isRegularFile(dependenciesFile)) dependencies.load(dependenciesFile)
 
@@ -84,7 +83,7 @@ class Project(val projects: Projects, val id: String) {
   }
 
   fun save() {
-    Xmls.writeFormatted("winery", { XmlModel.write(winery, it) }, wineryFile)
+    Xmls.writeFormatted("winery", { winery.writeTo(it) }, wineryFile)
     repositories.save(repositoriesFile)
     dependencies.save(dependenciesFile)
   }

@@ -1,11 +1,14 @@
 package org.marid.runtime.model;
 
+import org.w3c.dom.Element;
+
 import java.lang.invoke.MethodHandleProxies;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class ModelObjectFactoryFriend {
 
@@ -13,7 +16,7 @@ class ModelObjectFactoryFriend {
 
   static Entity newEntity(ModelObjectFactory factory, String tag) {
     synchronized (MAP) {
-      return (Entity) Objects.requireNonNull(MAP.computeIfAbsent(
+      return (Entity) MAP.computeIfAbsent(
         factory,
         f -> {
           final var map = new HashMap<String, Supplier<?>>();
@@ -31,7 +34,15 @@ class ModelObjectFactoryFriend {
             throw new IllegalStateException(e);
           }
         }
-      ).get(tag).get(), () -> "No such entity for tag: " + tag);
+      ).get(tag).get();
     }
+  }
+
+  static Stream<Element> children(Element element) {
+    final var list = element.getChildNodes();
+    return IntStream.range(0, list.getLength())
+      .mapToObj(list::item)
+      .filter(Element.class::isInstance)
+      .map(Element.class::cast);
   }
 }

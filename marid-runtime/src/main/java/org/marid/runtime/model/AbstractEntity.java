@@ -103,7 +103,7 @@ public abstract class AbstractEntity implements Entity {
 
   @Override
   public ModelObjectFactory modelObjectFactory() {
-    return new ModelObjectFactoryImpl();
+    return ModelObjectFactory.FACTORY;
   }
 
   private Class<?> getInterface(@Nullable Class<?> c) {

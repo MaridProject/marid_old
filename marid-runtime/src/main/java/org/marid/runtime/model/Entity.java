@@ -1,5 +1,6 @@
 package org.marid.runtime.model;
 
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -31,13 +32,17 @@ public interface Entity extends Externalizable {
 
   String tag();
 
+  void writeTo(Element element);
+
+  void readFrom(Element element);
+
   @Override
   default void writeExternal(ObjectOutput out) throws IOException {
     try {
       final var document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
       final var element = document.createElement(tag());
       document.appendChild(element);
-      XmlModel.writeGeneric(this, element);
+      writeTo(element);
       final var transformerFactory = TransformerFactory.newDefaultInstance();
       final var transformer = transformerFactory.newTransformer();
       final var stringWriter = new StringWriter();
@@ -57,7 +62,7 @@ public interface Entity extends Externalizable {
       if (!element.getTagName().equals(tag())) {
         throw new IllegalArgumentException("Tag mismatch: " + element.getTagName() + " != " + tag());
       }
-      XmlModel.readGeneric(this, element);
+      readFrom(element);
     } catch (ParserConfigurationException | SAXException e) {
       throw new IOException(e);
     }
