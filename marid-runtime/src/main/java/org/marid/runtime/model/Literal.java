@@ -43,6 +43,8 @@ public interface Literal extends ConstantArgument {
 
   void setValue(String value);
 
+  @Override default String tag() {return "literal";}
+
   enum Type {
 
     VOID(void.class, (s, cl) -> null),

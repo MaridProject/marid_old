@@ -1,12 +1,22 @@
 package org.marid.runtime.model;
 
+import jdk.dynalink.CallSiteDescriptor;
+import jdk.dynalink.DynamicLinker;
+import jdk.dynalink.DynamicLinkerFactory;
+import jdk.dynalink.StandardNamespace;
+import jdk.dynalink.StandardOperation;
+import jdk.dynalink.beans.StaticClass;
+import jdk.dynalink.support.SimpleRelinkableCallSite;
 import org.w3c.dom.Element;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-@SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class XmlModel {
+
+  private static final DynamicLinker LINKER = new DynamicLinkerFactory().createLinker();
 
   private XmlModel() {}
 
@@ -16,7 +26,7 @@ public class XmlModel {
     element.setAttribute("version", winery.getVersion());
 
     for (final var cellar : winery.getCellars()) {
-      final var cellarElement = element.getOwnerDocument().createElement("cellar");
+      final var cellarElement = element.getOwnerDocument().createElement(cellar.tag());
       write(cellar, cellarElement);
       element.appendChild(cellarElement);
     }
@@ -26,13 +36,13 @@ public class XmlModel {
     element.setAttribute("name", cellar.getName());
 
     for (final var cellarConstant : cellar.getConstants()) {
-      final var cellarConstantElement = element.getOwnerDocument().createElement("const");
+      final var cellarConstantElement = element.getOwnerDocument().createElement(cellarConstant.tag());
       write(cellarConstant, cellarConstantElement);
       element.appendChild(cellarConstantElement);
     }
 
     for (final var rack : cellar.getRacks()) {
-      final var rackElement = element.getOwnerDocument().createElement("rack");
+      final var rackElement = element.getOwnerDocument().createElement(rack.tag());
       write(rack, rackElement);
       element.appendChild(rackElement);
     }
@@ -43,13 +53,13 @@ public class XmlModel {
     element.setAttribute("name", rack.getName());
 
     for (final var argument : rack.getArguments()) {
-      final var argumentElement = element.getOwnerDocument().createElement("arg");
+      final var argumentElement = element.getOwnerDocument().createElement(argument.tag());
       write(argument, argumentElement);
       element.appendChild(argumentElement);
     }
 
     for (final var initializer : rack.getInitializers()) {
-      final var initializerElement = element.getOwnerDocument().createElement("init");
+      final var initializerElement = element.getOwnerDocument().createElement(initializer.tag());
       write(initializer, initializerElement);
       element.appendChild(initializerElement);
     }
@@ -61,7 +71,7 @@ public class XmlModel {
     element.setAttribute("name", cellarConstant.getName());
 
     for (final var argument : cellarConstant.getArguments()) {
-      final var argumentElement = element.getOwnerDocument().createElement("arg");
+      final var argumentElement = element.getOwnerDocument().createElement(argument.tag());
       write(argument, argumentElement);
       element.appendChild(argumentElement);
     }
@@ -96,7 +106,7 @@ public class XmlModel {
     element.setAttribute("name", initializer.getName());
 
     for (final var argument : initializer.getArguments()) {
-      final var argumentElement = element.getOwnerDocument().createElement("arg");
+      final var argumentElement = element.getOwnerDocument().createElement(argument.tag());
       write(argument, argumentElement);
       element.appendChild(argumentElement);
     }
@@ -104,76 +114,39 @@ public class XmlModel {
 
   public static Winery readWinery(ModelObjectFactory factory, Element element) {
     final var winery = factory.newWinery();
-    read(winery, factory, element);
+    read(winery, element);
     return winery;
   }
 
-  public static void read(Winery winery, ModelObjectFactory factory, Element element) {
+  public static void read(Winery winery, Element element) {
     winery.setGroup(element.getAttribute("group"));
     winery.setName(element.getAttribute("name"));
     winery.setVersion(element.getAttribute("version"));
-
-    children(element).forEach(e -> {
-      switch (e.getTagName()) {
-        case "cellar":
-          winery.addCellar(readCellar(factory, e));
-          break;
-      }
-    });
+    addElements(winery, element);
   }
 
   public static Cellar readCellar(ModelObjectFactory factory, Element element) {
     final var cellar = factory.newCellar();
-    read(cellar, factory, element);
+    read(cellar, element);
     return cellar;
   }
 
-  public static void read(Cellar cellar, ModelObjectFactory factory, Element element) {
+  public static void read(Cellar cellar, Element element) {
     cellar.setName(element.getAttribute("name"));
-
-    children(element).forEach(e -> {
-      switch (e.getTagName()) {
-        case "const":
-          cellar.addConstant(readCellarConstant(factory, e));
-          break;
-        case "rack":
-          cellar.addRack(readRack(factory, e));
-          break;
-      }
-    });
+    addElements(cellar, element);
   }
 
   public static CellarConstant readCellarConstant(ModelObjectFactory factory, Element element) {
     final var constant = factory.newCellarConstant();
-    read(constant, factory, element);
+    read(constant, element);
     return constant;
   }
 
-  public static void read(CellarConstant constant, ModelObjectFactory factory, Element element) {
+  public static void read(CellarConstant constant, Element element) {
     constant.setFactory(element.getAttribute("factory"));
     constant.setSelector(element.getAttribute("selector"));
     constant.setName(element.getAttribute("name"));
-    children(element).forEach(e -> {
-      switch (e.getTagName()) {
-        case "arg":
-          constant.addArgument(readConstantArgument(factory, e));
-          break;
-      }
-    });
-  }
-
-  public static ConstantArgument readConstantArgument(ModelObjectFactory factory, Element element) {
-    if (element.hasAttribute("type")) {
-      final var literal = factory.newLiteral();
-      read(literal, element);
-      return literal;
-    } else if (element.hasAttribute("cellar") && element.hasAttribute("ref")) {
-      final var constRef = factory.newConstRef();
-      read(constRef, element);
-      return constRef;
-    } else {
-      return factory.newNull();
-    }
+    addElements(constant, element);
   }
 
   public static void read(Literal literal, Element element) {
@@ -186,14 +159,7 @@ public class XmlModel {
     constRef.setRef(element.getAttribute("ref"));
   }
 
-  public static Argument readArgument(ModelObjectFactory factory, Element element) {
-    if (element.hasAttribute("rack") && element.hasAttribute("ref")) {
-      final var ref = factory.newRef();
-      read(ref, element);
-      return ref;
-    } else {
-      return readConstantArgument(factory, element);
-    }
+  public static void read(Null nullConst, Element element) {
   }
 
   public static void read(Ref ref, Element element) {
@@ -204,40 +170,75 @@ public class XmlModel {
 
   public static Rack readRack(ModelObjectFactory factory, Element element) {
     final var rack = factory.newRack();
-    read(rack, factory, element);
+    read(rack, element);
     return rack;
   }
 
-  public static void read(Rack rack, ModelObjectFactory factory, Element element) {
+  public static void read(Rack rack, Element element) {
     rack.setName(element.getAttribute("name"));
     rack.setFactory(element.getAttribute("factory"));
-    children(element).forEach(e -> {
-      switch (e.getTagName()) {
-        case "arg":
-          rack.addArgument(readArgument(factory, e));
-          break;
-        case "init":
-          rack.addInitializer(readInitializer(factory, e));
-          break;
-      }
-    });
+    addElements(rack, element);
   }
 
-  public static Initializer readInitializer(ModelObjectFactory factory, Element element) {
-    final var initializer = factory.newInitializer();
-    read(initializer, factory, element);
-    return initializer;
-  }
-
-  public static void read(Initializer initializer, ModelObjectFactory factory, Element element) {
+  public static void read(Initializer initializer, Element element) {
     initializer.setName(element.getAttribute("name"));
-    children(element).forEach(e -> {
-      switch (e.getTagName()) {
-        case "arg":
-          initializer.addArgument(readArgument(factory, e));
-          break;
-      }
-    });
+    addElements(initializer, element);
+  }
+
+  public static void readGeneric(Entity entity, Element element) {
+    try {
+      final var bh = LINKER.link(
+        new SimpleRelinkableCallSite(
+          new CallSiteDescriptor(
+            MethodHandles.publicLookup(),
+            StandardOperation.GET.withNamespace(StandardNamespace.METHOD).named("read"),
+            MethodType.methodType(Object.class, StaticClass.class)
+          )
+        )
+      ).dynamicInvoker().invoke(StaticClass.forClass(XmlModel.class));
+
+      final var h = LINKER.link(
+        new SimpleRelinkableCallSite(
+          new CallSiteDescriptor(
+            MethodHandles.publicLookup(),
+            StandardOperation.CALL,
+            MethodType.methodType(Object.class, Object.class, Object.class, Object.class, Object.class)
+          )
+        )
+      );
+
+      h.dynamicInvoker().invoke(bh, null, entity, element);
+    } catch (Throwable e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public static void writeGeneric(Entity entity, Element element) {
+    try {
+      final var bh = LINKER.link(
+        new SimpleRelinkableCallSite(
+          new CallSiteDescriptor(
+            MethodHandles.publicLookup(),
+            StandardOperation.GET.withNamespace(StandardNamespace.METHOD).named("write"),
+            MethodType.methodType(Object.class, StaticClass.class)
+          )
+        )
+      ).dynamicInvoker().invoke(StaticClass.forClass(XmlModel.class));
+
+      final var h = LINKER.link(
+        new SimpleRelinkableCallSite(
+          new CallSiteDescriptor(
+            MethodHandles.publicLookup(),
+            StandardOperation.CALL,
+            MethodType.methodType(Object.class, Object.class, Object.class, Object.class, Object.class)
+          )
+        )
+      );
+
+      h.dynamicInvoker().invoke(bh, null, entity, element);
+    } catch (Throwable e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   private static Stream<Element> children(Element element) {
@@ -246,5 +247,27 @@ public class XmlModel {
       .mapToObj(list::item)
       .filter(Element.class::isInstance)
       .map(Element.class::cast);
+  }
+
+  private static void addElements(Entity entity, Element element) {
+    try {
+      final var list = element.getChildNodes();
+      for (int i = 0; i < list.getLength(); i++) {
+        final var node = list.item(i);
+        if (node instanceof Element) {
+          final var e = (Element) node;
+          final var c = entity.modelObjectFactory().newEntity(e.getTagName());
+          for (final var m : entity.getClass().getMethods()) {
+            if (m.getName().startsWith("add") && m.getParameterCount() == 1 && m.getParameterTypes()[0].isAssignableFrom(c.getClass())) {
+              m.invoke(entity, c);
+              break;
+            }
+          }
+          readGeneric(c, e);
+        }
+      }
+    } catch (ReflectiveOperationException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }

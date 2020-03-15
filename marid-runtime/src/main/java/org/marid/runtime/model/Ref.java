@@ -13,4 +13,6 @@ public interface Ref extends Argument {
   String getRef();
 
   void setRef(String ref);
+
+  @Override default String tag() {return "ref";}
 }

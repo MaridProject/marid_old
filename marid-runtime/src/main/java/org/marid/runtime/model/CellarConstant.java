@@ -19,4 +19,6 @@ public interface CellarConstant extends Entity, HasVarargs {
   List<? extends ConstantArgument> getArguments();
 
   void addArgument(ConstantArgument argument);
+
+  @Override default String tag() {return "const";}
 }

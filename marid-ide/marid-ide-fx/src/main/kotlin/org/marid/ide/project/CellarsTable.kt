@@ -1,8 +1,11 @@
 package org.marid.ide.project
 
+import javafx.event.EventHandler
 import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
+import javafx.scene.input.ClipboardContent
+import javafx.scene.input.TransferMode
 import javafx.util.Callback
 import org.marid.fx.action.Fx
 import org.marid.fx.action.button
@@ -49,6 +52,15 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
               disabled = items.bindEmpty.or(projectsTable.project.isNull)
             ).menuItem
           )
+        }
+
+        onDragDetected = EventHandler { e ->
+          if (isEmpty) {
+            return@EventHandler
+          }
+          val dragboard = startDragAndDrop(*TransferMode.ANY)
+          dragboard.dragView = snapshot(null, null)
+          val content = ClipboardContent()
         }
       }
     }

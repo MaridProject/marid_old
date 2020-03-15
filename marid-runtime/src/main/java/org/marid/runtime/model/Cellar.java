@@ -15,4 +15,6 @@ public interface Cellar extends Entity {
   void addRack(Rack rack);
 
   void addConstant(CellarConstant constant);
+
+  @Override default String tag() {return "cellar";}
 }

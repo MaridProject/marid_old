@@ -101,6 +101,11 @@ public abstract class AbstractEntity implements Entity {
     return getInterface(getClass()).getSimpleName() + map;
   }
 
+  @Override
+  public ModelObjectFactory modelObjectFactory() {
+    return new ModelObjectFactoryImpl();
+  }
+
   private Class<?> getInterface(@Nullable Class<?> c) {
     if (c == null || c == Object.class) {
       throw new IllegalStateException();

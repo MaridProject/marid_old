@@ -10,7 +10,10 @@ import org.marid.fx.extensions.runFx
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
 import org.marid.ide.project.Projects.Companion.writableItems
-import org.marid.ide.project.model.*
+import org.marid.ide.project.model.FxDependencies
+import org.marid.ide.project.model.FxRepositories
+import org.marid.ide.project.model.FxRepository
+import org.marid.ide.project.model.FxWinery
 import org.marid.io.Xmls
 import org.marid.runtime.model.XmlModel
 import org.springframework.util.FileSystemUtils
@@ -71,7 +74,7 @@ class Project(val projects: Projects, val id: String) {
   }
 
   private fun load() {
-    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { XmlModel.read(winery, FxModelObjectFactory, it) }
+    if (Files.isRegularFile(wineryFile)) Xmls.read(wineryFile) { XmlModel.read(winery, it) }
     if (Files.isRegularFile(repositoriesFile)) repositories.load(repositoriesFile)
     if (Files.isRegularFile(dependenciesFile)) dependencies.load(dependenciesFile)
 

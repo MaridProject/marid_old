@@ -11,4 +11,6 @@ public interface Initializer extends Entity, HasVarargs {
   List<? extends Argument> getArguments();
 
   void addArgument(Argument argument);
+
+  @Override default String tag() {return "init";}
 }

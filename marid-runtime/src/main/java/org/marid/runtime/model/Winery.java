@@ -19,4 +19,6 @@ public interface Winery extends Entity {
   List<? extends Cellar> getCellars();
 
   void addCellar(Cellar cellar);
+
+  @Override default String tag() {return "winery";}
 }

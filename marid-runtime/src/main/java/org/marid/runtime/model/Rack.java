@@ -19,4 +19,6 @@ public interface Rack extends Entity, HasVarargs {
   void addArgument(Argument argument);
 
   void addInitializer(Initializer initializer);
+
+  @Override default String tag() {return "rack";}
 }
