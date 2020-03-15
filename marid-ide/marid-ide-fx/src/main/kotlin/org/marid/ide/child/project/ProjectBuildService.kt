@@ -74,9 +74,7 @@ class ProjectBuildService(
 
   val dirty: ReadOnlyBooleanProperty get() = dirtyProperty.readOnlyProperty
 
-  override fun toString(): String {
-    return "Project build service: %s".i18n(title)
-  }
+  override fun toString() = "Project build service: %s".i18n(title)
 
   inner class InnerTask : ProjectTask<Unit>(session.project) {
 
