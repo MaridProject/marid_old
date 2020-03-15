@@ -23,18 +23,6 @@ public interface ModelObjectFactory {
   CellarConstant newCellarConstant();
 
   default Entity newEntity(String tag) {
-    try {
-      for (final var m : ModelObjectFactory.class.getMethods()) {
-        if (m.getParameterCount() == 0 && Entity.class.isAssignableFrom(m.getReturnType())) {
-          final var instance = (Entity) m.invoke(this);
-          if (instance.tag().equals(tag)) {
-            return instance;
-          }
-        }
-      }
-      throw new IllegalArgumentException("Unable to find entity by tag: " + tag);
-    } catch (ReflectiveOperationException e) {
-      throw new IllegalStateException(e);
-    }
+    return ModelObjectFactoryFriend.newEntity(this, tag);
   }
 }
