@@ -56,10 +56,10 @@ fun <T : Tab> T.configure(action: Fx, size: Int = 18): T = this
   .apply { tooltipProperty().bind(action.description.mapObject { it?.let(::Tooltip) }) }
   .apply { disableProperty().bind(action.disabled) }
 
-val Fx.button get() = Button().configure(this)
+val Fx.button get() = if (selectedBound) toggleButton else Button().configure(this)
+val Fx.toggleButton get() = ToggleButton().configure(this)
 val Fx.toolButton get() = ToolButton().configure(this)
 val Fx.label get() = Label().configure(this)
 val Fx.menu get() = Menu().configure(this)
-val Fx.menuItem get() = MenuItem().configure(this)
+val Fx.menuItem get() = if (selectedBound) checkMenuItem else MenuItem().configure(this)
 val Fx.checkMenuItem get() = CheckMenuItem().configure(this)
-val Fx.toggleButton get() = ToggleButton().configure(this)

@@ -21,7 +21,8 @@ class Fx private constructor(
   val handler: SimpleObjectProperty<Handler> = SimpleObjectProperty(),
   val disabled: SimpleBooleanProperty = SimpleBooleanProperty(),
   val visible: SimpleBooleanProperty = SimpleBooleanProperty(true),
-  val selected: SimpleBooleanProperty = SimpleBooleanProperty()
+  val selected: SimpleBooleanProperty = SimpleBooleanProperty(),
+  var selectedBound: Boolean
 ) {
   constructor(
     text: String? = null,
@@ -32,12 +33,12 @@ class Fx private constructor(
     disabled: ObservableValue<Boolean>? = null,
     visible: ObservableValue<Boolean>? = null,
     selected: Property<Boolean?>? = null
-  ) : this(text = SimpleStringProperty()) {
+  ) : this(selectedBound = selected != null) {
     text?.also { this.text.bind(it.localized) }
     icon?.also { this.icon.bind(SimpleStringProperty(it)) }
     description?.also { this.description.bind(SimpleStringProperty(it)) }
     key?.also { this.accelerator.bind(SimpleObjectProperty(keyCombination(it))) }
-    h?.also { this.handler.bind(SimpleObjectProperty(EventHandler(it))) }
+    h?.also { hdl -> this.handler.bind(SimpleObjectProperty(EventHandler { hdl(it); it.consume() })) }
     disabled?.also { this.disabled.bind(it) }
     visible?.also { this.visible.bind(it) }
     selected?.also { this.selected.bindBidirectional(it) }
@@ -52,13 +53,13 @@ class Fx private constructor(
     else -> false
   }
 
-  fun text(text: String): Fx = also { this.text.bind(text.localized) }
-  fun exactText(text: String): Fx = also { this.text.bind(SimpleStringProperty(text)) }
-  fun text(text: ObservableValue<String>): Fx = also { this.text.bind(text) }
-  fun icon(resource: String): Fx = also { this.icon.bind(SimpleStringProperty(resource)) }
+  fun text(text: String) = also { this.text.bind(text.localized) }
+  fun exactText(text: String) = also { this.text.bind(SimpleStringProperty(text)) }
+  fun text(text: ObservableValue<String>) = also { this.text.bind(text) }
+  fun icon(resource: String) = also { this.icon.bind(SimpleStringProperty(resource)) }
   fun icon(resource: ObservableValue<String>) = also { this.icon.bind(resource) }
-  fun description(text: String): Fx = also { this.description.bind(text.localized) }
-  fun descriptionText(text: String): Fx = also { this.description.bind(SimpleStringProperty(text)) }
+  fun description(text: String) = also { this.description.bind(text.localized) }
+  fun descriptionText(text: String) = also { this.description.bind(SimpleStringProperty(text)) }
   fun description(text: ObservableValue<String>) = also { this.description.bind(text) }
   fun accelerator(keys: String) = also { this.accelerator.bind(SimpleObjectProperty(keyCombination(keys))) }
   fun accelerator(keys: KeyCombination) = also { this.accelerator.bind(SimpleObjectProperty(keys)) }
@@ -66,7 +67,7 @@ class Fx private constructor(
   fun handler(handler: EventHandler<ActionEvent>) = also { this.handler.bind(SimpleObjectProperty(handler)) }
   fun handler(handler: (ActionEvent) -> Unit) = also { this.handler.bind(SimpleObjectProperty(EventHandler(handler))) }
   fun handler(handler: ObservableValue<EventHandler<ActionEvent>>) = also { this.handler.bind(handler) }
-  fun selected(selected: Property<Boolean?>) = also { this.selected.bindBidirectional(selected) }
+  fun selected(selected: Property<Boolean?>) = also { this.selected.bindBidirectional(selected); selectedBound = true }
 
   val isEmpty get() = sequenceOf(text, icon).all { it.value == null }
 
