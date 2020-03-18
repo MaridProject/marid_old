@@ -8,6 +8,9 @@ import javafx.scene.control.TableRow
 import javafx.scene.input.ContextMenuEvent
 import org.marid.fx.action.Fx
 import org.marid.fx.action.menuItem
+import org.marid.fx.extensions.toBottom
+import org.marid.fx.extensions.toTop
+import org.marid.fx.extensions.up
 import java.util.*
 
 class TableRowContextMenu<T>(val row: TableRow<T>) : ContextMenu() {
@@ -38,6 +41,36 @@ class TableRowContextMenu<T>(val row: TableRow<T>) : ContextMenu() {
           text = "Sort",
           icon = "icons/sort.png",
           h = { row.tableView.items.sortBy(selector) }
+        )
+      }
+    }
+  }
+
+  fun installReorder() {
+    install("order") {
+      row.takeIf { it.index > 0 }?.let {
+        Fx(
+          text = "To top",
+          icon = "icons/top.png",
+          h = { row.tableView.items.toTop(row.index) }
+        )
+      }
+    }
+    install("order") {
+      row.takeIf { it.index < it.tableView.items.size - 1 }?.let {
+        Fx(
+          text = "To bottom",
+          icon = "icons/bottom.png",
+          h = { row.tableView.items.toBottom(row.index) }
+        )
+      }
+    }
+    install("order") {
+      row.takeIf { it.index < it.tableView.items.size - 1 }?.let {
+        Fx(
+          text = "Up",
+          icon = "icons/up.png",
+          h = { row.tableView.items.up(row.index) }
         )
       }
     }

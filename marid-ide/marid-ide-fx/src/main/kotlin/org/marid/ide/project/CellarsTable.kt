@@ -36,6 +36,7 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
           menu.installSort { it.getName() }
           menu.installAdd(true) { createCellar() }
           menu.installDelete()
+          menu.installReorder()
         }
       }
     }
