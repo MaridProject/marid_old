@@ -47,6 +47,6 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
   private fun createCellar() = FxDialog(CellarDialogData(projectsTable.selectionModel.selectedItem.winery, null))
     .also { it.dialogPane.setPrefSize(400.0, 300.0) }
     .showAndWait()
-    .map { data -> FxCellar().also { it.setName(data.name.get()) } }
+    .map(CellarDialogData::invoke)
     .orElse(null)
 }

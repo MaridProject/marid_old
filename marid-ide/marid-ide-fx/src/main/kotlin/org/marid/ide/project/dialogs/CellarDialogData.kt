@@ -18,4 +18,6 @@ class CellarDialogData(winery: FxWinery, cellar: FxCellar?) : FxDialogData("Cell
     validation.add(it, name.validate(String::isBlank) { "Value is blank" })
     validation.add(it, name.validate({ v -> winery.cellars.any { c -> c.getName() == v } }) { "Already exists" })
   }
+
+  fun invoke(cellar: FxCellar? = null) = (cellar ?: FxCellar()).also { it.setName(name.get()) }
 }
