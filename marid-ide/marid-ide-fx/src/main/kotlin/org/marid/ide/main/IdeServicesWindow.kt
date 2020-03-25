@@ -1,7 +1,6 @@
 package org.marid.ide.main
 
 import javafx.beans.binding.Bindings
-import javafx.concurrent.Service
 import javafx.event.EventHandler
 import javafx.event.WeakEventHandler
 import javafx.scene.Scene
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Component
 @Component
 class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServices) : Stage(StageStyle.UNDECORATED) {
 
-  private val table = TableView<Service<*>>(services.services)
+  private val table = TableView(services.services)
     .apply {
       columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
       placeholder = Label().configure(Fx("No services found"))
@@ -36,7 +35,7 @@ class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServic
         style = "-fx-alignment: CENTER-LEFT;"
       }
       column(200, "Name") {
-        Bindings.createStringBinding({ it.toString() }, it.observables)
+        Bindings.createStringBinding({ it.toString() }, *it.observables)
       }.apply {
         style = "-fx-alignment: CENTER-LEFT;"
       }
@@ -52,7 +51,7 @@ class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServic
       column(100, "Progress") {
         it.progressProperty().asDoubleProperty
       }.apply {
-        cellFactory = Callback { ProgressBarTableCell<Service<*>>() }
+        cellFactory = Callback { ProgressBarTableCell() }
         style = "-fx-alignment: CENTER;"
       }
     }
