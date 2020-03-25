@@ -23,7 +23,7 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
     column(100, "Racks") { it.racks.bindSize }
     column(100, "Constants") { it.constants.bindSize }
 
-    placeholder = placeholder({ createCellar() })
+    placeholder = placeholder({ createCellar() }, projectsTable.project.isNull)
 
     rowFactory = Callback {
       TableRow<FxCellar>().apply {
