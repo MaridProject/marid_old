@@ -8,6 +8,7 @@ import org.marid.fx.action.button
 import org.marid.fx.dialog.FxDialog
 import org.marid.fx.extensions.bindSize
 import org.marid.fx.extensions.column
+import org.marid.fx.extensions.value
 import org.marid.fx.table.TableRowContextMenu
 import org.marid.ide.project.dialogs.CellarDialogData
 import org.marid.ide.project.model.FxCellar
@@ -46,7 +47,5 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
 
   private fun createCellar() = FxDialog(CellarDialogData(projectsTable.selectionModel.selectedItem.winery, null))
     .also { it.dialogPane.setPrefSize(400.0, 300.0) }
-    .showAndWait()
-    .map(CellarDialogData::invoke)
-    .orElse(null)
+    .value(CellarDialogData::invoke)
 }
