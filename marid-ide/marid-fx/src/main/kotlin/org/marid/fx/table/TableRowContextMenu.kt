@@ -1,7 +1,5 @@
 package org.marid.fx.table
 
-import javafx.application.Platform
-import javafx.event.ActionEvent
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.SeparatorMenuItem
 import javafx.scene.control.TableRow
@@ -76,23 +74,21 @@ class TableRowContextMenu<T>(val row: TableRow<T>) : ContextMenu() {
     }
   }
 
-  fun installAdd(dialog: Boolean, itemCreator: () -> T?) {
+  fun installAdd(itemCreator: () -> T?) {
     install("modify") {
       row.takeUnless { it.isEmpty }?.let {
-        val action: (ActionEvent) -> Unit = { itemCreator()?.also { row.tableView.items.add(row.index, it) } }
         Fx(
-          text = if (dialog) "Add..." else "Add",
+          text = "Add...",
           icon = "icons/add.png",
-          h = { ev -> if (dialog) Platform.runLater { action(ev) } else action(ev) }
+          h = { itemCreator()?.also { row.tableView.items.add(row.index, it) } }
         )
       }
     }
     install("modify") {
-      val action: (ActionEvent) -> Unit = { itemCreator()?.also { row.tableView.items.add(it) } }
       Fx(
-        text = if (dialog) "Append..." else "Append",
+        text = "Append...",
         icon = "icons/append.png",
-        h = { ev -> if (dialog) Platform.runLater { action(ev) } else action(ev) }
+        h = { itemCreator()?.also { row.tableView.items.add(it) } }
       )
     }
   }

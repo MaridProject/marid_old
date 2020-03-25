@@ -9,6 +9,8 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.util.Callback
+import org.marid.fx.action.Fx
+import org.marid.fx.action.button
 import org.marid.fx.i18n.localized
 
 fun <T, R> TableView<T>.column(width: Int, text: String?, value: (T) -> ObservableValue<R>) =
@@ -69,3 +71,10 @@ fun <T> TreeTableRow<T>.installContextMenu(callback: (TreeItem<T>?) -> List<Menu
     contextMenu.items.setAll(callback(treeItem))
   }
 }
+
+fun <T> TableView<T>.placeholder(factory: () -> T?, disabled: ObservableValue<Boolean>? = null) = Fx(
+  text = "Add cellar",
+  icon = "icons/add.png",
+  h = { factory()?.also { items.add(it) } },
+  disabled = disabled
+).button

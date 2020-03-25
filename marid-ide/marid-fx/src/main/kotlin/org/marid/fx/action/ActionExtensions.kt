@@ -1,10 +1,13 @@
 package org.marid.fx.action
 
+import javafx.application.Platform.runLater
 import javafx.beans.property.SimpleStringProperty
+import javafx.event.EventHandler
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import org.marid.fx.control.ToolButton
+import org.marid.fx.extensions.map
 import org.marid.fx.extensions.mapObject
 
 fun String?.icon(size: Int): Image? = this?.let { Image(it, size.toDouble(), size.toDouble(), false, true) }
@@ -35,7 +38,7 @@ fun <B : ToolButton> B.configure(action: Fx, size: Int = 24): B = this
 fun <M : MenuItem> M.configure(action: Fx, size: Int = 20): M = this
   .apply { textProperty().bind(action.text) }
   .apply { graphicProperty().bind(action.icon.mapObject { it?.let { ImageView(it.icon(size)) } }) }
-  .apply { onActionProperty().bind(action.handler) }
+  .apply { onActionProperty().bind(action.handler.map { v -> EventHandler { runLater { v?.handle(it) } } }) }
   .apply { acceleratorProperty().bind(action.accelerator) }
   .apply { disableProperty().bind(action.disabled) }
   .apply { visibleProperty().bind(action.visible) }
