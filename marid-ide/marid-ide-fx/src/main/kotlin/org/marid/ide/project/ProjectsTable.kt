@@ -6,13 +6,16 @@ import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Pos
-import javafx.scene.control.*
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.SeparatorMenuItem
+import javafx.scene.control.TableRow
+import javafx.scene.control.TableView
 import javafx.scene.input.ContextMenuEvent
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Region
 import javafx.util.Callback
 import org.marid.fx.action.Fx
-import org.marid.fx.action.configure
+import org.marid.fx.action.button
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
 import org.marid.fx.extensions.bindObject
@@ -23,11 +26,15 @@ import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
 
 @Component
-class ProjectsTable(projects: Projects, private val manager: ProjectTabsManager) : TableView<Project>(projects.items) {
+class ProjectsTable(
+  projects: Projects,
+  newProjectAction: Fx,
+  private val manager: ProjectTabsManager
+) : TableView<Project>(projects.items) {
 
   init {
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
-    placeholder = Label().configure(Fx("No projects yet"))
+    placeholder = newProjectAction.button
     rowFactory = Callback {
       TableRow<Project>().apply {
         contextMenu = ContextMenu()
