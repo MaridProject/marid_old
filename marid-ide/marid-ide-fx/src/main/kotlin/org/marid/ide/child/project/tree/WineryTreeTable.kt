@@ -66,8 +66,7 @@ class WineryTreeTable(data: TreeData, private val projectScanner: ProjectScanner
                 treeItem.ancestor(CellarItem::class)
                   ?.also { cellarItem ->
                     (0..Short.MAX_VALUE).asSequence()
-                      .map { if (it == 0) "" else it.toString() }
-                      .map { m.name + it }
+                      .map { if (it == 0) m.name else m.name + it }
                       .find { name -> cellarItem.value.entity.constants.none { it.getName() == name } }
                       ?.also { name ->
                         cellarItem.value.entity.constants.addOrAppend(index, FxCellarConstant()
