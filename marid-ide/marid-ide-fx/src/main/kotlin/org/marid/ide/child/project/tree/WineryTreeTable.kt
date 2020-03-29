@@ -38,8 +38,12 @@ class WineryTreeTable(data: TreeData, private val projectScanner: ProjectScanner
           when (val v = ti?.value) {
             is SubItem -> {
               when (v.kind) {
-                CONSTANTS -> constants(ti, list)
-                RACKS -> racks(ti, list)
+                CONSTANTS -> {
+                  constants(ti, list)
+                }
+                RACKS -> {
+                  racks(ti, list)
+                }
               }
             }
             is CellarConstantItem -> {
