@@ -3,11 +3,13 @@ package org.marid.ide.child.project.model
 import com.sun.javafx.binding.ObjectConstant
 import com.sun.javafx.binding.StringConstant
 import javafx.beans.value.ObservableValue
+import javafx.scene.control.TreeItem
 import org.marid.fx.extensions.bindFormat
 import org.marid.fx.extensions.stringBound
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.model.*
 import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 sealed class Item<E : FxEntity> : ResolvedTypeProvider, Comparable<Item<*>> {
   abstract val name: ObservableValue<String>
@@ -110,4 +112,12 @@ private fun factory(arg: FxArgument) = when (arg) {
   is FxConstRef -> arg.getCellar()
   is FxLiteral -> arg.getType().name
   is FxRef -> arg.getCellar() + "." + arg.getRack()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Item<*>> TreeItem<Item<*>>.ancestor(type: KClass<T>): TreeItem<T>? {
+  if (type.isInstance(value)) {
+    return this as TreeItem<T>;
+  }
+  return parent?.ancestor(type)
 }

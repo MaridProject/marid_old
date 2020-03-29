@@ -8,6 +8,5 @@ class SymbolSolverTest {
 
   @Test
   void test() {
-
   }
 }

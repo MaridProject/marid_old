@@ -46,3 +46,15 @@ fun <E> MutableList<E>.up(index: Int) {
     sortWith(compareBy(map::get))
   }
 }
+
+fun <E> MutableList<E>.addOrAppend(index: Int, elem: E): Int = when(index) {
+  -1 -> {
+    val sz = size
+    add(elem)
+    sz
+  }
+  else -> {
+    add(index, elem)
+    index
+  }
+}
