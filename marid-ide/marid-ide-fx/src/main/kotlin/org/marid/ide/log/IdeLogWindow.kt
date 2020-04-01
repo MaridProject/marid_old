@@ -47,13 +47,13 @@ class IdeLogWindow(log: IdeLog, primaryStage: ObjectFactory<Stage>) : Stage(Stag
       val time = LocalTime.ofInstant(Instant.ofEpochMilli(it.millis), ZoneId.systemDefault())
       StringConstant.valueOf(time.toString())
     }.also {
-      it.style = "-fx-alignment: CENTER; -fx-font-family: monospaced;"
+      it.style = """-fx-alignment: CENTER; -fx-font-family: monospaced;"""
     }
 
     table.column(700, "Message") {
       StringConstant.valueOf(it.formatSafe)
     }.also {
-      it.style = "-fx-font-family: monospaced;"
+      it.style = """-fx-font-family: monospaced;"""
     }
   }
 }
