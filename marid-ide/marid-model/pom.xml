@@ -12,5 +12,13 @@
 
   <artifactId>marid-model</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.marid</groupId>
+      <artifactId>marid-util</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

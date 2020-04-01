@@ -23,10 +23,7 @@ package org.marid.runtime.internal;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.marid.model.ModelObjectFactory;
-import org.marid.model.WineryImpl;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.io.UncheckedIOException;
@@ -38,14 +35,9 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
@@ -55,13 +47,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class WineryRuntime implements AutoCloseable {
 
+  private final String id;
   private final Thread thread;
   private final LinkedTransferQueue<Command> queue = new LinkedTransferQueue<>();
-  private final LinkedHashMap<String, CellarRuntime> cellars;
   private final AutoCloseable destroyAction;
 
   final URLClassLoader classLoader;
-  final WineryImpl winery;
   final ConcurrentLinkedDeque<Map.Entry<String, String>> racks;
 
   private volatile State state = State.NEW;
@@ -69,10 +60,9 @@ public final class WineryRuntime implements AutoCloseable {
   private volatile Throwable destroyError;
 
   private WineryRuntime(WineryParams params) {
-    this.cellars = new LinkedHashMap<>(params.winery.getCellars().size());
+    this.id = params.id;
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;
-    this.winery = params.winery;
     this.racks = new ConcurrentLinkedDeque<>();
     this.thread = new Thread(null, () -> {
       try {
@@ -103,23 +93,15 @@ public final class WineryRuntime implements AutoCloseable {
       } finally {
         destroy();
       }
-    }, winery.getName(), 96L << 10);
+    }, getId(), 96L << 10);
   }
 
   public WineryRuntime(URL zipFile, List<String> args) {
     this(new WineryParams(zipFile, args));
   }
 
-  @TestOnly public WineryRuntime(ClassLoader classLoader, WineryImpl winery, AutoCloseable destroyAction) {
-    this(new WineryParams(new URLClassLoader(new URL[0], classLoader), winery, destroyAction));
-  }
-
-  @TestOnly public WineryRuntime(WineryImpl winery, AutoCloseable destroyAction) {
-    this(Thread.currentThread().getContextClassLoader(), winery, destroyAction);
-  }
-
-  @TestOnly public WineryRuntime(WineryImpl winery) {
-    this(winery, () -> {});
+  @TestOnly public WineryRuntime(String id, ClassLoader classLoader, AutoCloseable destroyAction) {
+    this(new WineryParams(id, new URLClassLoader(new URL[0], classLoader), destroyAction));
   }
 
   private static void unpack(Path deployment, ZipInputStream zipInputStream) throws IOException {
@@ -173,15 +155,7 @@ public final class WineryRuntime implements AutoCloseable {
   }
 
   public @NotNull String getId() {
-    return winery.getName();
-  }
-
-  public @NotNull CellarRuntime getCellar(@NotNull String name) {
-    return Objects.requireNonNull(cellars.get(name), () -> "No such cellar in " + winery.getName() + ": " + name);
-  }
-
-  public @NotNull Set<@NotNull String> getCellarNames() {
-    return Collections.unmodifiableSet(cellars.keySet());
+    return id;
   }
 
   public void start() {
@@ -226,10 +200,8 @@ public final class WineryRuntime implements AutoCloseable {
     state = State.STARTING;
     Thread.currentThread().setContextClassLoader(classLoader);
 
-    winery.getCellars().forEach(c -> cellars.put(c.getName(), new CellarRuntime(this, c)));
     try {
-      cellars.forEach((name, c) -> c.cellar.getConstants().forEach(e -> c.getOrCreateConst(e, new LinkedHashSet<>())));
-      cellars.forEach((name, c) -> c.cellar.getRacks().forEach(e -> c.getOrCreateRack(e, new LinkedHashSet<>())));
+      // TODO: run deployment
 
       state = State.RUNNING;
     } catch (Throwable e) {
@@ -250,28 +222,7 @@ public final class WineryRuntime implements AutoCloseable {
 
     final var exception = new IllegalStateException("Unable to close winery " + getId());
 
-    for (final var i = racks.descendingIterator(); i.hasNext(); ) {
-      final var rackEntry = i.next();
-      try {
-        final var cellar = getCellar(rackEntry.getKey());
-        try (final var rack = cellar.getRack(rackEntry.getValue())) {
-          cellar.racks.remove(rack.getName());
-        }
-      } catch (Throwable e) {
-        exception.addSuppressed(e);
-      } finally {
-        i.remove();
-      }
-    }
-
-    cellars.forEach((name, c) -> {
-      try {
-        c.close();
-      } catch (Throwable e) {
-        exception.addSuppressed(e);
-      }
-    });
-    cellars.clear();
+    // run destroy
 
     if (classLoader != null) {
       try {
@@ -323,11 +274,12 @@ public final class WineryRuntime implements AutoCloseable {
 
   private static final class WineryParams {
 
+    private final String id;
     private final URLClassLoader classLoader;
-    private final WineryImpl winery;
     private final AutoCloseable destroyAction;
 
     private WineryParams(URL zipFile, List<String> args) {
+      this.id = zipFile.getPath();
       final Path deployment;
       try {
         deployment = Files.createTempDirectory("marid");
@@ -354,13 +306,6 @@ public final class WineryRuntime implements AutoCloseable {
         final var classes = deployment.resolve("classes");
         final var resources = deployment.resolve("resources");
         final var deps = deployment.resolve("deps");
-        final var winery = deployment.resolve("winery.xml");
-
-        final var documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
-        final var document = documentBuilder.parse(winery.toFile());
-
-        this.winery = (WineryImpl) ModelObjectFactory.FACTORY.newWinery();
-        this.winery.readFrom(document.getDocumentElement());
 
         validate(resources, deps, classes);
         initialize(deployment, args);
@@ -376,9 +321,9 @@ public final class WineryRuntime implements AutoCloseable {
       }
     }
 
-    private WineryParams(URLClassLoader classLoader, WineryImpl winery, AutoCloseable destroyAction) {
+    private WineryParams(String id, URLClassLoader classLoader, AutoCloseable destroyAction) {
+      this.id = id;
       this.classLoader = classLoader;
-      this.winery = winery;
       this.destroyAction = destroyAction;
     }
 
