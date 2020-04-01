@@ -16,6 +16,7 @@ import org.marid.ide.child.project.model.*
 import org.marid.ide.child.project.model.SubItem.Kind.CONSTANTS
 import org.marid.ide.child.project.model.SubItem.Kind.RACKS
 import org.marid.ide.project.model.FxCellarConstant
+import org.marid.ide.project.model.FxRack
 import org.marid.idelib.Tid
 import org.springframework.stereotype.Component
 
@@ -94,9 +95,21 @@ class WineryTreeTable(data: TreeData, private val projectScanner: ProjectScanner
       .forEach { (p, pels) ->
         val pi = Tid.from(p, p.name, "icons/pkg.png").fx.menu.also { list += it }
         pels.forEach { c ->
-          Tid.from(c, c.declaringClass.simpleName, "icons/const.png")
+          Tid.from(c, c.declaringClass.simpleName, "icons/rack.png")
             .fx {
-
+              treeItem.ancestor(CellarItem::class)
+                ?.also { cellarItem ->
+                  (0..Short.MAX_VALUE).asSequence()
+                    .map { if (it == 0) c.declaringClass.simpleName else c.declaringClass.simpleName + it }
+                    .find { name -> cellarItem.value.entity.racks.none { it.getName() == name } }
+                    ?.also { name ->
+                      cellarItem.value.entity.racks.addOrAppend(index, FxRack()
+                        .apply { setName(name) }
+                        .apply { setFactory(c.declaringClass.name) }
+                      )
+                      treeItem.isExpanded = true
+                    }
+                }
             }
             .menuItem.also { pi.items += it }
         }
