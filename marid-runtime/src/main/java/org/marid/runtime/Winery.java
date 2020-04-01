@@ -1,4 +1,4 @@
-package org.marid.runtime.internal;
+package org.marid.runtime;
 
 /*-
  * #%L
@@ -45,7 +45,7 @@ import java.util.zip.ZipInputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public final class WineryRuntime implements AutoCloseable {
+final class Winery implements AutoCloseable {
 
   private final String id;
   private final Thread thread;
@@ -59,7 +59,7 @@ public final class WineryRuntime implements AutoCloseable {
   private volatile Throwable startError;
   private volatile Throwable destroyError;
 
-  private WineryRuntime(WineryParams params) {
+  private Winery(WineryParams params) {
     this.id = params.id;
     this.classLoader = params.classLoader;
     this.destroyAction = params.destroyAction;
@@ -96,11 +96,11 @@ public final class WineryRuntime implements AutoCloseable {
     }, getId(), 96L << 10);
   }
 
-  public WineryRuntime(URL zipFile, List<String> args) {
+  public Winery(URL zipFile, List<String> args) {
     this(new WineryParams(zipFile, args));
   }
 
-  @TestOnly public WineryRuntime(String id, ClassLoader classLoader, AutoCloseable destroyAction) {
+  @TestOnly public Winery(String id, ClassLoader classLoader, AutoCloseable destroyAction) {
     this(new WineryParams(id, new URLClassLoader(new URL[0], classLoader), destroyAction));
   }
 

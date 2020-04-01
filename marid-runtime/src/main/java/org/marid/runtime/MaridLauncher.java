@@ -21,8 +21,6 @@
 
 package org.marid.runtime;
 
-import org.marid.runtime.internal.WineryRuntime;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -43,7 +41,7 @@ public class MaridLauncher {
       return;
     }
     final var reader = new BufferedReader(new InputStreamReader(in, UTF_8));
-    try (final var runtime = new WineryRuntime(new URL(args[0]), List.of(copyOfRange(args, 1, args.length)))) {
+    try (final var runtime = new Winery(new URL(args[0]), List.of(copyOfRange(args, 1, args.length)))) {
       runtime.start();
       final var destroyer = new Thread(null, () -> run(reader, runtime), "Marid", 64L << 10, false);
       destroyer.setDaemon(true);
@@ -51,7 +49,7 @@ public class MaridLauncher {
     }
   }
 
-  private static void run(BufferedReader reader, WineryRuntime runtime) {
+  private static void run(BufferedReader reader, Winery runtime) {
     while (true) {
       final String line;
       try {
