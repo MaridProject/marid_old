@@ -2,7 +2,7 @@ package org.marid.ide.project.model
 
 import javafx.beans.Observable
 import javafx.beans.property.SimpleStringProperty
-import org.marid.runtime.model.Output
+import org.marid.model.Output
 
 class FxOutput : FxEntity(), Output {
 

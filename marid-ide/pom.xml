@@ -14,6 +14,7 @@
   <modules>
     <module>marid-fx</module>
     <module>marid-ide-fx</module>
+    <module>marid-model</module>
   </modules>
 
   <dependencies>

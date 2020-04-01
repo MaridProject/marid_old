@@ -3,8 +3,8 @@ package org.marid.ide.project.model
 import javafx.beans.Observable
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import org.marid.runtime.model.Argument
-import org.marid.runtime.model.Initializer
+import org.marid.model.Argument
+import org.marid.model.Initializer
 
 class FxInitializer : FxEntity(), Initializer {
 

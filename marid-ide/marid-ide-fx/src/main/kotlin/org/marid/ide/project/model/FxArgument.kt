@@ -4,7 +4,7 @@ import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
-import org.marid.runtime.model.*
+import org.marid.model.*
 
 sealed class FxArgument : FxEntity(), Argument, Observable {
   abstract val observables: Array<Observable>

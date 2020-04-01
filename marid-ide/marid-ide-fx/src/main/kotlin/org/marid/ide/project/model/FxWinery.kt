@@ -3,8 +3,8 @@ package org.marid.ide.project.model
 import javafx.beans.Observable
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import org.marid.runtime.model.Cellar
-import org.marid.runtime.model.Winery
+import org.marid.model.Cellar
+import org.marid.model.Winery
 
 class FxWinery : FxEntity(), Winery {
 

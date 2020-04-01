@@ -22,9 +22,9 @@ package org.marid.runtime.internal;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.runtime.model.CellarImpl;
-import org.marid.runtime.model.RackImpl;
-import org.marid.runtime.model.WineryImpl;
+import org.marid.model.CellarImpl;
+import org.marid.model.RackImpl;
+import org.marid.model.WineryImpl;
 
 public class RackRuntime implements AutoCloseable {
 

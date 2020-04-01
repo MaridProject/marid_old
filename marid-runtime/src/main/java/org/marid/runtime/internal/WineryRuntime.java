@@ -23,8 +23,8 @@ package org.marid.runtime.internal;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.marid.runtime.model.ModelObjectFactory;
-import org.marid.runtime.model.WineryImpl;
+import org.marid.model.ModelObjectFactory;
+import org.marid.model.WineryImpl;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;

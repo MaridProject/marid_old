@@ -1,8 +1,8 @@
 package org.marid.ide.project.model
 
-import org.marid.runtime.model.Initializer
-import org.marid.runtime.model.Literal
-import org.marid.runtime.model.ModelObjectFactory
+import org.marid.model.Initializer
+import org.marid.model.Literal
+import org.marid.model.ModelObjectFactory
 
 object FxModelObjectFactory : ModelObjectFactory {
   override fun newConstRef() = FxConstRef()

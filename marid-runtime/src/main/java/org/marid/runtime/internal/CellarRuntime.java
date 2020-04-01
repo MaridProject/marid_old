@@ -22,16 +22,16 @@ package org.marid.runtime.internal;
  */
 
 import org.jetbrains.annotations.NotNull;
-import org.marid.runtime.model.AbstractArgument;
-import org.marid.runtime.model.CellarConstantImpl;
-import org.marid.runtime.model.CellarImpl;
-import org.marid.runtime.model.ConstRefImpl;
-import org.marid.runtime.model.ConstantArgument;
-import org.marid.runtime.model.HasVarargs;
-import org.marid.runtime.model.LiteralImpl;
-import org.marid.runtime.model.NullImpl;
-import org.marid.runtime.model.RackImpl;
-import org.marid.runtime.model.Ref;
+import org.marid.model.AbstractArgument;
+import org.marid.model.CellarConstantImpl;
+import org.marid.model.CellarImpl;
+import org.marid.model.ConstRefImpl;
+import org.marid.model.ConstantArgument;
+import org.marid.model.HasVarargs;
+import org.marid.model.LiteralImpl;
+import org.marid.model.NullImpl;
+import org.marid.model.RackImpl;
+import org.marid.model.Ref;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
