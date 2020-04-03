@@ -21,11 +21,9 @@
 
 package org.marid.ide.child.project.tree
 
-import javafx.scene.control.MenuItem
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeTableRow
-import javafx.scene.control.TreeTableView
+import javafx.scene.control.*
 import javafx.util.Callback
+import org.marid.fx.action.Fx
 import org.marid.fx.action.menu
 import org.marid.fx.action.menuItem
 import org.marid.fx.extensions.addOrAppend
@@ -69,7 +67,10 @@ class WineryTreeTable(data: TreeData, private val projectScanner: ProjectScanner
               }
             }
             is CellarConstantItem -> {
-              constants(ti, list, ti.parent.children.indexOf(ti))
+              Fx("Insert", "icons/insert.png").menu.also {
+                list += it
+                constants(ti, it.items, ti.parent.children.indexOf(ti))
+              }
             }
           }
           list
