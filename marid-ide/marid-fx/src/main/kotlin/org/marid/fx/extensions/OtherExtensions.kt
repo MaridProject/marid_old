@@ -39,9 +39,9 @@ fun Properties.loadFromResource(resource: String): Properties {
   return this
 }
 
-fun <T, R> T.callFx(f: (T) -> R): R =
+fun <T, R> T.callFx(f: (T) -> R): CompletableFuture<R> =
   if (Platform.isFxApplicationThread()) {
-    f(this)
+    CompletableFuture.completedFuture(f(this))
   } else {
     val future = CompletableFuture<R>()
     Platform.runLater {
@@ -51,7 +51,7 @@ fun <T, R> T.callFx(f: (T) -> R): R =
         future.completeExceptionally(e)
       }
     }
-    future.get()
+    future
   }
 
 fun <T> T.runFx(f: (T) -> Unit): Unit {

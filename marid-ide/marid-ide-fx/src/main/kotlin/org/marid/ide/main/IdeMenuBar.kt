@@ -62,7 +62,7 @@ class IdeMenuBar : MenuBar() {
 
     fun apply(property: Property<Side>, menu: Menu) {
       val group = ToggleGroup()
-      Side.values().forEach { side ->
+      enumValues<Side>().forEach { side ->
         menu.items += RadioMenuItem()
           .also { it.textProperty().bind(side.name.localized) }
           .also { it.graphic = ImageView(Image(side.icon, 20.0, 20.0, true, true)) }

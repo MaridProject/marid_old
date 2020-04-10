@@ -1,44 +1,3 @@
-package org.marid.fx.action
-
-import javafx.beans.property.Property
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ObservableValue
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
-import javafx.scene.input.KeyCombination
-import javafx.scene.input.KeyCombination.keyCombination
-import org.marid.fx.i18n.localized
-
-typealias Handler = EventHandler<ActionEvent>
-
-class Fx private constructor(
-  val text: SimpleStringProperty = SimpleStringProperty(),
-  val icon: SimpleStringProperty = SimpleStringProperty(),
-  val description: SimpleStringProperty = SimpleStringProperty(),
-  val accelerator: SimpleObjectProperty<KeyCombination> = SimpleObjectProperty(),
-  val handler: SimpleObjectProperty<Handler> = SimpleObjectProperty(),
-  val disabled: SimpleBooleanProperty = SimpleBooleanProperty(),
-  val visible: SimpleBooleanProperty = SimpleBooleanProperty(true),
-  val selected: SimpleBooleanProperty = SimpleBooleanProperty(),
-  var selectedBound: Boolean
-) {
-  constructor(
-    text: String? = null,
-    icon: String? = null,
-    description: String? = null,
-    key: String? = null,
-    h: ((ActionEvent) -> Unit)? = null,
-    disabled: ObservableValue<Boolean>? = null,
-    visible: ObservableValue<Boolean>? = null,
-    selected: Property<Boolean?>? = null
-  ) : this(selectedBound = selected != null) {
-    text?.also { this.text.bind(it.localized) }
-    icon?.also { this.icon.bind(SimpleStringProperty(it)) }
-    description?.also { this.description.bind(SimpleStringProperty(it)) }
-    key?.also { this.accelerator.bind(SimpleObjectProperty(keyCombination(it))) }
-    h?.also { hdl -> this.handler.bind(SimpleObjectProperty(EventHandler { hdl(it);
 /*-
  * #%L
  * marid-fx
@@ -60,40 +19,101 @@ class Fx private constructor(
  * #L%
  */
 
- it.consume() })) }
-    disabled?.also { this.disabled.bind(it) }
-    visible?.also { this.visible.bind(it) }
-    selected?.also { this.selected.bindBidirectional(it) }
+package org.marid.fx.action
+
+import com.sun.javafx.binding.ObjectConstant
+import javafx.beans.property.*
+import javafx.beans.value.ObservableValue
+import javafx.collections.ObservableList
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
+import javafx.scene.input.KeyCombination
+import javafx.scene.input.KeyCombination.keyCombination
+import org.marid.fx.i18n.localized
+import kotlin.reflect.full.declaredMemberProperties
+
+typealias Handler = EventHandler<ActionEvent>
+
+class Fx(
+  text: String? = null,
+  icon: String? = null,
+  description: String? = null,
+  key: String? = null,
+  h: ((ActionEvent) -> Unit)? = null,
+  disabled: ObservableValue<Boolean>? = null,
+  visible: ObservableValue<Boolean>? = null,
+  selected: Property<Boolean?>? = null
+) {
+  private val text0 = ReadOnlyStringWrapper()
+  private val icon0 = ReadOnlyStringWrapper()
+  private val description0 = ReadOnlyStringWrapper()
+  private val accelerator0 = ReadOnlyObjectWrapper<KeyCombination?>()
+  private val handler0 = ReadOnlyObjectWrapper<Handler?>()
+  private val disabled0 = ReadOnlyBooleanWrapper()
+  private val visible0 = ReadOnlyBooleanWrapper(true)
+  private val selected0 = ReadOnlyBooleanWrapper().also { it.bind(ObjectConstant.valueOf(true)) }
+
+  init {
+    text?.also { text0.bind(it.localized) }
+    icon?.also { icon0.bind(SimpleStringProperty(it)) }
+    description?.also { description0.bind(SimpleStringProperty(it)) }
+    key?.also { accelerator0.bind(SimpleObjectProperty(keyCombination(it))) }
+    h?.also { hdl -> handler0.bind(SimpleObjectProperty(EventHandler { hdl(it); it.consume() })) }
+    disabled?.also { disabled0.bind(it) }
+    visible?.also { visible0.bind(it) }
+    selected?.also { selected0.unbind(); selected0.bindBidirectional(it) }
   }
 
-  private val components get() = sequenceOf(text, icon, description, accelerator, handler, selected).map { it.value }
+  val text: ReadOnlyStringProperty get() = text0.readOnlyProperty
+  val icon: ReadOnlyStringProperty get() = icon0.readOnlyProperty
+  val description: ReadOnlyStringProperty get() = description0.readOnlyProperty
+  val accelerator: ReadOnlyObjectProperty<KeyCombination?> = accelerator0.readOnlyProperty
+  val handler: ReadOnlyObjectProperty<Handler?> = handler0.readOnlyProperty
+  val disabled: ReadOnlyBooleanProperty = disabled0.readOnlyProperty
+  val visible: ReadOnlyBooleanProperty = visible0.readOnlyProperty
+  val selected: ReadOnlyBooleanProperty = selected0.readOnlyProperty
 
-  override fun hashCode() = components.toList().hashCode()
+  private val props
+    get() = Fx::class.declaredMemberProperties
+      .flatMap {
+        when {
+          ObservableValue::class.java.isAssignableFrom(it.returnType.javaClass) ->
+            listOf((it.get(this) as ObservableValue<*>).value)
+          ObservableList::class.java.isAssignableFrom(it.returnType.javaClass) ->
+            listOf(it.get(this))
+          else -> emptyList()
+        }
+      }
+
+  override fun hashCode() = props.hashCode()
   override fun equals(other: Any?) = when {
     other === this -> true
-    other is Fx -> components.zip(other.components).all { (a, b) -> a == b }
+    other is Fx -> props == other.props
     else -> false
   }
 
-  fun text(text: String) = also { this.text.bind(text.localized) }
-  fun exactText(text: String) = also { this.text.bind(SimpleStringProperty(text)) }
-  fun text(text: ObservableValue<String>) = also { this.text.bind(text) }
-  fun icon(resource: String) = also { this.icon.bind(SimpleStringProperty(resource)) }
-  fun icon(resource: ObservableValue<String>) = also { this.icon.bind(resource) }
-  fun description(text: String) = also { this.description.bind(text.localized) }
-  fun descriptionText(text: String) = also { this.description.bind(SimpleStringProperty(text)) }
-  fun description(text: ObservableValue<String>) = also { this.description.bind(text) }
-  fun accelerator(keys: String) = also { this.accelerator.bind(SimpleObjectProperty(keyCombination(keys))) }
-  fun accelerator(keys: KeyCombination) = also { this.accelerator.bind(SimpleObjectProperty(keys)) }
-  fun accelerator(keys: ObservableValue<KeyCombination>) = also { this.accelerator.bind(keys) }
-  fun handler(handler: EventHandler<ActionEvent>) = also { this.handler.bind(SimpleObjectProperty(handler)) }
-  fun handler(handler: (ActionEvent) -> Unit) = also { this.handler.bind(SimpleObjectProperty(EventHandler(handler))) }
-  fun handler(handler: ObservableValue<EventHandler<ActionEvent>>) = also { this.handler.bind(handler) }
-  fun selected(selected: Property<Boolean?>) = also { this.selected.bindBidirectional(selected); selectedBound = true }
+  fun text(text: String) = also { text0.bind(text.localized) }
+  fun exactText(text: String) = also { text0.bind(SimpleStringProperty(text)) }
+  fun text(text: ObservableValue<String>) = also { text0.bind(text) }
+  fun icon(resource: String) = also { icon0.bind(SimpleStringProperty(resource)) }
+  fun icon(resource: ObservableValue<String>) = also { icon0.bind(resource) }
+  fun description(text: String) = also { description0.bind(text.localized) }
+  fun descriptionText(text: String) = also { description0.bind(SimpleStringProperty(text)) }
+  fun description(text: ObservableValue<String>) = also { description0.bind(text) }
+  fun accelerator(keys: String) = also { accelerator0.bind(SimpleObjectProperty(keyCombination(keys))) }
+  fun accelerator(keys: KeyCombination) = also { accelerator0.bind(SimpleObjectProperty(keys)) }
+  fun accelerator(keys: ObservableValue<KeyCombination>) = also { accelerator0.bind(keys) }
+  fun handler(handler: EventHandler<ActionEvent>) = also { handler0.bind(SimpleObjectProperty(handler)) }
+  fun handler(handler: (ActionEvent) -> Unit) = also { handler0.bind(SimpleObjectProperty(EventHandler(handler))) }
+  fun handler(handler: ObservableValue<EventHandler<ActionEvent>>) = also { handler0.bind(handler) }
+  fun selected(selected: Property<Boolean?>) = also { selected.unbind(); selected0.bindBidirectional(selected) }
 
-  val isEmpty get() = sequenceOf(text, icon).all { it.value == null }
+  fun linkSelected(selected: Property<Boolean?>) = selected.bindBidirectional(selected0)
+
+  val isEmpty get() = sequenceOf(text0, icon0).all { it.value == null }
+  val selectedBound get() = !selected0.isBound
 
   operator fun invoke() {
-    handler.get()?.handle(ActionEvent())
+    handler0.get()?.handle(ActionEvent())
   }
 }

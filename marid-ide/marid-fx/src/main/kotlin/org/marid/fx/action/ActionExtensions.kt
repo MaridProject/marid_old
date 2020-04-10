@@ -49,7 +49,7 @@ fun <B : ButtonBase> B.configure(action: Fx, size: Int = 24): B = this
 
 fun <B : ToggleButton> B.configure(action: Fx, size: Int = 24): B = this
   .apply { (this as ButtonBase).configure(action, size) }
-  .apply { selectedProperty().bindBidirectional(action.selected) }
+  .apply { action.linkSelected(selectedProperty()) }
 
 fun <B : ToolButton> B.configure(action: Fx, size: Int = 24): B = this
   .apply { (this as Button).configure(action, size) }
@@ -66,7 +66,7 @@ fun <M : MenuItem> M.configure(action: Fx, size: Int = 20): M = this
 
 fun <M : CheckMenuItem> M.configure(action: Fx, size: Int = 20): M = this
   .apply { (this as MenuItem).configure(action, size) }
-  .apply { selectedProperty().bindBidirectional(action.selected) }
+  .apply { action.linkSelected(selectedProperty()) }
 
 fun <M : Menu> M.configure(action: Fx, size: Int = 20): M = this
   .apply { textProperty().bind(action.text) }

@@ -21,7 +21,6 @@
 
 package org.marid.ide.main
 
-import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -62,7 +61,7 @@ class IdeStatusBar(
     .apply { textProperty().bind(ideServices.lastMessage) }
     .apply {
       addEventHandler(MouseEvent.MOUSE_CLICKED) {
-        showLogsAction.handler.get().handle(ActionEvent())
+        showLogsAction()
       }
     }
 

@@ -28,6 +28,7 @@ import javafx.beans.property.ReadOnlyDoubleProperty
 import javafx.beans.property.ReadOnlyDoubleWrapper
 import org.marid.fx.extensions.INFO
 import org.marid.fx.extensions.WARN
+import org.marid.fx.extensions.callFx
 import org.marid.fx.extensions.runFx
 import org.marid.fx.i18n.localized
 import org.marid.ide.project.Projects.Companion.directories
@@ -125,7 +126,7 @@ class Project(val projects: Projects, val id: String) {
 
   fun <R> withRead(callback: (Project) -> R): R = lock.read { callback(this) }
   fun <R> withWrite(callback: (Project) -> R): R {
-    runFx { lockedProperty.set(true) }
+    callFx { lockedProperty.set(true) }.get()
     try {
       return lock.write { callback(this) }
     } finally {

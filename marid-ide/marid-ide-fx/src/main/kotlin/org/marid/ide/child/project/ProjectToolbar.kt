@@ -35,12 +35,12 @@ import org.springframework.stereotype.Component
 class ProjectToolbar : ToolBar() {
 
   @Init
-  fun initBuildButton(buildService: ProjectBuildService) {
+  fun initBuildButton(buildService: ProjectBuildService, project: ObjectFactory<Project>) {
     items += Fx(
       text = "Build",
       icon = "icons/build.png",
       h = { buildService.restart() },
-      disabled = buildService.runningProperty()
+      disabled = buildService.runningProperty().or(project.bean.locked)
     ).toolButton
   }
 
@@ -53,7 +53,7 @@ class ProjectToolbar : ToolBar() {
         project.bean.cacheDepsDirectory.deleteDirectoryContents()
         buildService.restart()
       },
-      disabled = buildService.runningProperty()
+      disabled = buildService.runningProperty().or(project.bean.locked)
     ).toolButton
   }
 }
