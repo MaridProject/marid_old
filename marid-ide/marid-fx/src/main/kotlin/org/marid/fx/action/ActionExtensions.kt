@@ -85,5 +85,10 @@ val Fx.toggleButton get() = ToggleButton().configure(this)
 val Fx.toolButton get() = ToolButton().configure(this)
 val Fx.label get() = Label().configure(this)
 val Fx.menu get() = Menu().configure(this)
-val Fx.menuItem get() = if (selectedBound) checkMenuItem else MenuItem().configure(this)
+val Fx.menuItem
+  get() = when {
+    isEmpty -> SeparatorMenuItem()
+    selectedBound -> checkMenuItem
+    else -> MenuItem().configure(this)
+  }
 val Fx.checkMenuItem get() = CheckMenuItem().configure(this)
