@@ -28,6 +28,7 @@ import javafx.event.Event.fireEvent
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeItem.TreeModificationEvent
 import org.marid.fx.extensions.FX_CLEANER
+import org.marid.fx.extensions.identityMap
 import org.marid.ide.child.project.model.SubItem.Kind.*
 import org.marid.ide.extensions.bean
 import org.marid.ide.project.Project
@@ -35,7 +36,6 @@ import org.marid.ide.project.model.*
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Component
 import java.lang.ref.WeakReference
-import java.util.*
 
 @Component
 class TreeData(projectFactory: ObjectFactory<Project>) {
@@ -90,11 +90,8 @@ class TreeData(projectFactory: ObjectFactory<Project>) {
             }
           }
           if (c.wasPermutated()) {
-            val range = c.from until c.to
-            val orders = item.children
-              .mapIndexed { i, e -> if (range.contains(i)) (e to c.getPermutation(i)) else (e to i) }
-              .toMap(IdentityHashMap())
-            item.children.sortWith(compareBy { orders[it] })
+            val orders = ti.children.identityMap { if (it >= c.from && it < c.to) c.getPermutation(it) else it }
+            ti.children.sortWith(compareBy { orders[it] })
           }
         }
       }

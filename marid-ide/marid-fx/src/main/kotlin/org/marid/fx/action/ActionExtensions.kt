@@ -23,13 +23,18 @@ package org.marid.fx.action
 
 import javafx.application.Platform.runLater
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import org.marid.fx.control.ToolButton
+import org.marid.fx.extensions.FX_CLEANER
+import org.marid.fx.extensions.identityMap
 import org.marid.fx.extensions.map
 import org.marid.fx.extensions.mapObject
+import java.lang.ref.WeakReference
+import java.util.*
 
 fun String?.icon(size: Int): Image? = this?.let { Image(it, size.toDouble(), size.toDouble(), false, true) }
 
@@ -85,9 +90,32 @@ val Fx.toggleButton get() = ToggleButton().configure(this)
 val Fx.toolButton get() = ToolButton().configure(this)
 val Fx.label get() = Label().configure(this)
 val Fx.menu get() = Menu().configure(this)
-val Fx.menuItem
+val Fx.menuItem: MenuItem
   get() = when {
     isEmpty -> SeparatorMenuItem()
+    hasChildren -> menu.also { m ->
+      val wm = WeakReference(m)
+      val listener = ListChangeListener<Fx> { c ->
+        val menu = wm.get() ?: return@ListChangeListener
+        while (c.next()) {
+          if (c.wasRemoved()) {
+            menu.items.remove(c.from, c.from + c.removedSize)
+          }
+          if (c.wasAdded()) {
+            menu.items.addAll(c.from, c.addedSubList.map { it.menuItem })
+          }
+          if (c.wasPermutated()) {
+            val orders = menu.items.identityMap { if (it >= c.from && it < c.to) c.getPermutation(it) else it }
+            menu.items.sortWith(compareBy { orders[it] })
+          }
+        }
+      }
+      val cd = children
+      cd.addListener(listener)
+      FX_CLEANER.register(m) {
+        runLater { cd.removeListener(listener) }
+      }
+    }
     selectedBound -> checkMenuItem
     else -> MenuItem().configure(this)
   }

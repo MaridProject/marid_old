@@ -68,7 +68,7 @@ fun <E> MutableList<E>.up(index: Int) {
   }
 }
 
-fun <E> MutableList<E>.addOrAppend(index: Int, elem: E): Int = when(index) {
+fun <E> MutableList<E>.addOrAppend(index: Int, elem: E): Int = when (index) {
   -1 -> {
     val sz = size
     add(elem)
@@ -79,3 +79,6 @@ fun <E> MutableList<E>.addOrAppend(index: Int, elem: E): Int = when(index) {
     index
   }
 }
+
+fun <E> List<E>.identityMap(f: (Int) -> Int): IdentityHashMap<E, Int> = mapIndexed { i, e -> e to f(i) }
+  .toMap(IdentityHashMap())

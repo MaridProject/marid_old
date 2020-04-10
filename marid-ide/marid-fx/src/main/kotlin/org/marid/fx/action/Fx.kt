@@ -23,14 +23,15 @@ package org.marid.fx.action
 
 import com.sun.javafx.binding.ObjectConstant
 import javafx.beans.property.*
+import javafx.beans.value.ObservableListValue
 import javafx.beans.value.ObservableValue
+import javafx.collections.FXCollections.observableArrayList
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyCombination.keyCombination
 import org.marid.fx.i18n.localized
-import kotlin.reflect.full.declaredMemberProperties
 
 typealias Handler = EventHandler<ActionEvent>
 
@@ -52,6 +53,7 @@ class Fx(
   private val disabled0 = ReadOnlyBooleanWrapper()
   private val visible0 = ReadOnlyBooleanWrapper(true)
   private val selected0 = ReadOnlyBooleanWrapper().also { it.bind(ObjectConstant.valueOf(true)) }
+  private val children0 = ReadOnlyListWrapper<Fx>()
 
   init {
     text?.also { text0.bind(it.localized) }
@@ -72,25 +74,7 @@ class Fx(
   val disabled: ReadOnlyBooleanProperty = disabled0.readOnlyProperty
   val visible: ReadOnlyBooleanProperty = visible0.readOnlyProperty
   val selected: ReadOnlyBooleanProperty = selected0.readOnlyProperty
-
-  private val props
-    get() = Fx::class.declaredMemberProperties
-      .flatMap {
-        when {
-          ObservableValue::class.java.isAssignableFrom(it.returnType.javaClass) ->
-            listOf((it.get(this) as ObservableValue<*>).value)
-          ObservableList::class.java.isAssignableFrom(it.returnType.javaClass) ->
-            listOf(it.get(this))
-          else -> emptyList()
-        }
-      }
-
-  override fun hashCode() = props.hashCode()
-  override fun equals(other: Any?) = when {
-    other === this -> true
-    other is Fx -> props == other.props
-    else -> false
-  }
+  val children: ReadOnlyListProperty<Fx> = children0.readOnlyProperty
 
   fun text(text: String) = also { text0.bind(text.localized) }
   fun exactText(text: String) = also { text0.bind(SimpleStringProperty(text)) }
@@ -106,10 +90,15 @@ class Fx(
   fun handler(handler: EventHandler<ActionEvent>) = also { handler0.bind(SimpleObjectProperty(handler)) }
   fun handler(handler: (ActionEvent) -> Unit) = also { handler0.bind(SimpleObjectProperty(EventHandler(handler))) }
   fun handler(handler: ObservableValue<EventHandler<ActionEvent>>) = also { handler0.bind(handler) }
-  fun selected(selected: Property<Boolean?>) = also { selected.unbind(); selected0.bindBidirectional(selected) }
+  fun selected(selected: Property<Boolean?>) = also { selected0.unbind(); selected0.bindBidirectional(selected) }
+  fun selected(selected: Boolean) = also { selected0.unbind(); selected0.value = selected }
+  fun children(vararg children: Fx) = also { children0.unbind(); children0.set(observableArrayList(*children)) }
+  fun children(children: ObservableListValue<Fx>) = also { children0.bind(children) }
+  fun children(children: ObservableList<Fx>) = also { children0.bindContent(children) }
 
   fun linkSelected(selected: Property<Boolean?>) = selected.bindBidirectional(selected0)
 
+  val hasChildren get() = children0.get() != null
   val isEmpty get() = sequenceOf(text0, icon0).all { it.value == null }
   val selectedBound get() = !selected0.isBound
 
