@@ -64,6 +64,8 @@ class WineryTreeTable(data: TreeData, private val projectScanner: ProjectScanner
                 RACKS -> {
                   racks(ti, list)
                 }
+                else -> {
+                }
               }
             }
             is CellarConstantItem -> {

@@ -21,6 +21,7 @@
 
 package org.marid.ide.project
 
+import com.google.common.primitives.Longs
 import javafx.beans.property.ReadOnlyBooleanProperty
 import javafx.beans.property.ReadOnlyBooleanWrapper
 import javafx.beans.property.ReadOnlyDoubleProperty
@@ -37,7 +38,9 @@ import org.marid.ide.project.model.FxRepository
 import org.marid.ide.project.model.FxWinery
 import org.marid.io.Xmls
 import org.springframework.util.FileSystemUtils
+import java.lang.System.currentTimeMillis
 import java.nio.file.Files
+import java.util.Base64.getEncoder
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
@@ -45,7 +48,7 @@ import kotlin.concurrent.write
 
 class Project(val projects: Projects, val id: String) {
 
-  constructor(projects: Projects) : this(projects, System.currentTimeMillis().toString(Character.MAX_RADIX))
+  constructor(projects: Projects) : this(projects, getEncoder().encodeToString(Longs.toByteArray(currentTimeMillis())))
 
   val winery = FxWinery()
   val repositories = FxRepositories()
@@ -57,6 +60,7 @@ class Project(val projects: Projects, val id: String) {
   val repositoriesFile = directory.resolve("repositories.xml")
   val dependenciesFile = directory.resolve("dependencies.xml")
   val resourcesDirectory = directory.resolve("resources")
+  val sourcesDirectory = directory.resolve("sources")
   val classesDirectory = directory.resolve("classes")
   val depsDirectory = directory.resolve("deps")
   val runtimeDirectory = directory.resolve("runtime")
@@ -77,6 +81,7 @@ class Project(val projects: Projects, val id: String) {
 
     Files.createDirectories(resourcesDirectory)
     Files.createDirectories(classesDirectory)
+    Files.createDirectories(sourcesDirectory)
     Files.createDirectories(depsDirectory)
     Files.createDirectories(runtimeDirectory)
     Files.createDirectories(cacheDepsDirectory)
