@@ -34,7 +34,6 @@ import org.marid.fx.extensions.identityMap
 import org.marid.fx.extensions.map
 import org.marid.fx.extensions.mapObject
 import java.lang.ref.WeakReference
-import java.util.*
 
 fun String?.icon(size: Int): Image? = this?.let { Image(it, size.toDouble(), size.toDouble(), false, true) }
 
