@@ -21,15 +21,18 @@
 
 package org.marid.ide.child.project.tree
 
-import javafx.scene.control.*
+import javafx.scene.control.MenuItem
+import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeTableRow
+import javafx.scene.control.TreeTableView
 import javafx.util.Callback
 import org.marid.fx.action.Fx
 import org.marid.fx.action.menu
 import org.marid.fx.action.menuItem
 import org.marid.fx.extensions.addOrAppend
-import org.marid.fx.extensions.bindString
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installContextMenu
+import org.marid.fx.extensions.mapString
 import org.marid.ide.child.project.ProjectScanner
 import org.marid.ide.child.project.model.*
 import org.marid.ide.child.project.model.SubItem.Kind.CONSTANTS
@@ -49,7 +52,7 @@ class WineryTreeTable(data: TreeData, private val projectScanner: ProjectScanner
     column(200, "Name") { it.name }
     column(200, "Factory") { it.factory }
     column(300, "Value") { it.value }
-    column(300, "Type") { it.resolvedType.bindString { t -> if (t.value == Void.TYPE) "" else t.value.toString() } }
+    column(300, "Type") { it.resolvedType.mapString { t -> if (t == Void.TYPE) "" else t.toString() } }
 
     rowFactory = Callback {
       TreeTableRow<Item<*>>().apply {

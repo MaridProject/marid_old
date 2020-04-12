@@ -37,7 +37,10 @@ import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle.SOLID
 import javafx.scene.layout.BorderWidths
-import org.marid.fx.extensions.*
+import org.marid.fx.extensions.color
+import org.marid.fx.extensions.map
+import org.marid.fx.extensions.mapBoolean
+import org.marid.fx.extensions.mapString
 import java.util.*
 import java.util.logging.Level
 
@@ -50,7 +53,7 @@ class Validation {
     worstLevelProperty.set(listOf(worstLevelProperty.get(), result.value.level).maxBy { it.intValue() })
     validators.computeIfAbsent(node) { LinkedList() }.add(result)
     val tooltip = Tooltip()
-    tooltip.textProperty().bind(result.bindString { it.value.message })
+    tooltip.textProperty().bind(result.mapString { it.message })
     val listener = ChangeListener<ValidationResult> { _, _, v ->
       worstLevelProperty.set(validators.values.flatten().map { it.value.level }.maxBy { it.intValue() } ?: Level.ALL)
       if (v.level.intValue() != Level.ALL.intValue()) {
@@ -96,8 +99,8 @@ class Validation {
   }
 
   fun worstLevelProperty(): ReadOnlyProperty<Level> = worstLevelProperty.readOnlyProperty
-  val valid = worstLevelProperty.bindBoolean { it.get().intValue() < Level.SEVERE.intValue() }
-  val invalid = worstLevelProperty.bindBoolean { it.get().intValue() >= Level.SEVERE.intValue() }
+  val valid = worstLevelProperty.mapBoolean { it.intValue() < Level.SEVERE.intValue() }
+  val invalid = worstLevelProperty.mapBoolean { it.intValue() >= Level.SEVERE.intValue() }
 
   private companion object {
     private val listenerKey = Object()

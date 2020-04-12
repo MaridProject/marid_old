@@ -48,9 +48,9 @@ class IdeServices {
 
   private val servicesList: ServiceList = observableArrayList { it.observables }
 
-  val services: ServiceList get() = servicesList.unmodified
-  val runningServices: ServiceList get() = servicesList.filtered { it.isRunning }.unmodified
-  val servicesText = "[%d / %d]".bindFormat(runningServices.bindSize, services.bindSize)
+  val services: ServiceList get() = servicesList.mapImmutable
+  val runningServices: ServiceList get() = servicesList.filtered { it.isRunning }.mapImmutable
+  val servicesText = "[%d / %d]".bindFormat(runningServices.mapSize, services.mapSize)
   val lastMessage = SimpleStringProperty(this, "lastMessage", "Marid")
 
   val progress: DoubleBinding = Bindings.createDoubleBinding(Callable {

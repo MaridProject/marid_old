@@ -45,19 +45,14 @@ import javafx.beans.binding.LongBinding as LBinding
 import javafx.beans.binding.ObjectBinding as OBinding
 import javafx.beans.binding.StringBinding as SBinding
 
-fun <O : Observable> O.bindBoolean(f: (O) -> Boolean): BBinding = bindBool({ f(this) }, this)
-fun <O : Observable> O.bindString(f: (O) -> String): SBinding = bindString({ f(this) }, this)
-
-val <E> ObservableList<E>.unmodified: ObservableList<E> get() = FXCollections.unmodifiableObservableList(this)
-fun <E> ObservableList<E>.bindAt(index: Int): OBinding<E> = valueAt(this, index)
-fun <E> ObservableList<E>.bindAt(index: ObservableIntegerValue): OBinding<E> = valueAt(this, index)
-fun <E> ObservableList<E>.singleLined(text: (E) -> String): ObservableList<E> = filtered { text(it).lines().size == 1 }
-val <E> ObservableList<E>.bindLast: OBinding<E?> get() = bind({ if (isEmpty()) null else get(lastIndex) }, this)
-val <E> ObservableList<E>.bindFirst: OBinding<E?> get() = valueAt(this, 0)
-val ObservableList<*>.bindEmpty: BBinding get() = isEmpty(this)
-val ObservableList<*>.bindNotEmpty: BBinding get() = isNotEmpty(this)
-val ObservableList<*>.bindSize: IBinding get() = size(this)
-val <E : CharSequence> ObservableList<E>.singleLined: ObservableList<E> get() = filtered { it.lines().size == 1 }
+val <E> ObservableList<E>.mapImmutable: ObservableList<E> get() = FXCollections.unmodifiableObservableList(this)
+fun <E> ObservableList<E>.mapAt(index: Int): OBinding<E> = valueAt(this, index)
+fun <E> ObservableList<E>.mapAt(index: ObservableIntegerValue): OBinding<E> = valueAt(this, index)
+val <E> ObservableList<E>.mapLast: OBinding<E?> get() = bind({ if (isEmpty()) null else get(lastIndex) }, this)
+val <E> ObservableList<E>.mapFirst: OBinding<E?> get() = valueAt(this, 0)
+val ObservableList<*>.mapEmpty: BBinding get() = isEmpty(this)
+val ObservableList<*>.mapNotEmpty: BBinding get() = isNotEmpty(this)
+val ObservableList<*>.mapSize: IBinding get() = size(this)
 
 fun String.bindFormat(vararg args: Any): StringExpression = Bindings.format(this, *args)
 fun String.bindFormat(locale: Locale, vararg args: Any): StringExpression = Bindings.format(locale, this, *args)

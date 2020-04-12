@@ -25,7 +25,7 @@ import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
 import javafx.util.Callback
 import org.marid.fx.dialog.FxDialog
-import org.marid.fx.extensions.bindSize
+import org.marid.fx.extensions.mapSize
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.placeholder
 import org.marid.fx.extensions.value
@@ -41,8 +41,8 @@ class CellarsTable(private val projectsTable: ProjectsTable) : TableView<FxCella
     columnResizePolicy = CONSTRAINED_RESIZE_POLICY
 
     column(300, "Name") { it.name }
-    column(100, "Racks") { it.racks.bindSize }
-    column(100, "Constants") { it.constants.bindSize }
+    column(100, "Racks") { it.racks.mapSize }
+    column(100, "Constants") { it.constants.mapSize }
 
     placeholder = placeholder({ createCellar() }, projectsTable.project.isNull)
 
