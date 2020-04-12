@@ -61,8 +61,7 @@ class IdeServicesWindow(private val statusBar: IdeStatusBar, services: IdeServic
         style = "-fx-alignment: CENTER-LEFT;"
       }
       column(48, "State") {
-        it.stateProperty().bindObject { serviceProperty ->
-          val service = serviceProperty.get()
+        it.stateProperty().map { service ->
           val icon = service.icon(24, 24)
           ImageView(icon)
         }

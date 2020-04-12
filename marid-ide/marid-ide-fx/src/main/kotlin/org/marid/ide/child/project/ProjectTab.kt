@@ -24,7 +24,7 @@ package org.marid.ide.child.project
 import javafx.scene.control.Tab
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import org.marid.fx.extensions.bindObject
+import org.marid.fx.extensions.mapObject
 import org.marid.ide.extensions.bean
 import org.marid.ide.main.IdeTabs
 import org.marid.ide.project.Project
@@ -47,8 +47,8 @@ class ProjectTab(
   init {
     id = this.project.id
     textProperty().bind(this.project.winery.name)
-    graphicProperty().bind(buildService.dirty.bindObject {
-      val icon = if (it.get()) "icons/modified-project.png" else "icons/unmodified-project.png"
+    graphicProperty().bind(buildService.dirty.mapObject {
+      val icon = if (it) "icons/modified-project.png" else "icons/unmodified-project.png"
       ImageView(Image(icon, 18.0, 18.0, true, true))
     })
     isClosable = true

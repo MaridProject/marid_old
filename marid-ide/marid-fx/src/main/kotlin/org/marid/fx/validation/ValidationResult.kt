@@ -22,7 +22,7 @@
 package org.marid.fx.validation
 
 import javafx.beans.value.ObservableBooleanValue
-import org.marid.fx.extensions.bindObject
+import org.marid.fx.extensions.mapObject
 import java.util.logging.Level
 
 data class ValidationResult(val level: Level, val message: String) {
@@ -31,4 +31,4 @@ data class ValidationResult(val level: Level, val message: String) {
 }
 
 fun ObservableBooleanValue.validate(message: String, level: Level = Level.SEVERE) =
-  bindObject { if (get()) ValidationResult(level, message) else ValidationResult() }
+  mapObject { if (it) ValidationResult(level, message) else ValidationResult() }

@@ -37,10 +37,7 @@ import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle.SOLID
 import javafx.scene.layout.BorderWidths
-import org.marid.fx.extensions.bindBoolean
-import org.marid.fx.extensions.bindObject
-import org.marid.fx.extensions.bindString
-import org.marid.fx.extensions.color
+import org.marid.fx.extensions.*
 import java.util.*
 import java.util.logging.Level
 
@@ -109,4 +106,4 @@ class Validation {
 }
 
 fun <T> ObservableValue<T>.validate(predicate: (T) -> Boolean, error: (T) -> String): ObjectBinding<ValidationResult> =
-  bindObject { if (predicate(value)) ValidationResult(error(value)) else ValidationResult() }
+  map { if (predicate(it)) ValidationResult(error(it)) else ValidationResult() }

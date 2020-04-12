@@ -39,9 +39,9 @@ import org.marid.fx.action.Fx
 import org.marid.fx.action.button
 import org.marid.fx.action.menuItem
 import org.marid.fx.action.toolButton
-import org.marid.fx.extensions.bindObject
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installEdit
+import org.marid.fx.extensions.map
 import org.marid.fx.extensions.readOnlyProp
 import org.marid.ide.project.model.FxCellar
 import org.springframework.stereotype.Component
@@ -94,9 +94,7 @@ class ProjectsTable(
 
   val project: ReadOnlyObjectProperty<Project?> get() = selectionModel.selectedItemProperty()
   val cellars: ObservableValue<ObservableList<FxCellar>>
-    get() = project.bindObject {
-      it.get()?.winery?.cellars ?: FXCollections.emptyObservableList()
-    }
+    get() = project.map { it?.winery?.cellars ?: FXCollections.emptyObservableList() }
 
   private val Project.menuItems
     get() = listOf(

@@ -45,11 +45,6 @@ import javafx.beans.binding.LongBinding as LBinding
 import javafx.beans.binding.ObjectBinding as OBinding
 import javafx.beans.binding.StringBinding as SBinding
 
-fun <O : Observable, R> O.bindObject(f: (O) -> R): OBinding<R> = bind({ f(this) }, this)
-fun <O : Observable> O.bindDouble(f: (O) -> Double): DBinding = bindDouble({ f(this) }, this)
-fun <O : Observable> O.bindFloat(f: (O) -> Float): FBinding = bindFloat({ f(this) }, this)
-fun <O : Observable> O.bindLong(f: (O) -> Long): LBinding = bindLong({ f(this) }, this)
-fun <O : Observable> O.bindInt(f: (O) -> Int): IBinding = bindInt({ f(this) }, this)
 fun <O : Observable> O.bindBoolean(f: (O) -> Boolean): BBinding = bindBool({ f(this) }, this)
 fun <O : Observable> O.bindString(f: (O) -> String): SBinding = bindString({ f(this) }, this)
 
