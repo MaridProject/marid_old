@@ -33,13 +33,13 @@ public class GenerateSources {
     gen(genSourcesDir, "BindingExtensions", file -> {
       file.format("fun <T, R> ObservableValue<T>.map(func: (T) -> R): ObjectBinding<R> = createObjectBinding(Callable { func(value)}, this)%n");
       types.forEach(f -> {
-        file.format("fun <T> ObservableValue<T>.map%1$s(func: (T) -> %2$s): %1$sBinding = create%1$sBinding(Callable { func(value) }, this)%n", f, t(f));
+        file.format("fun <T> ObservableValue<T>.map%1$s(func: (T) -> %2$s) = create%1$sBinding(Callable { func(value) }, this)%n", f, t(f));
         file.format("fun <R> Observable%2$sValue.mapObject(func: (%1$s) -> R): ObjectBinding<R> = createObjectBinding(Callable {func(get()) }, this)%n", t(f), f);
         types.forEach(t -> {
           if (t.equals(f)) {
-            file.format("fun Observable%1$sValue.map(func: (%1$s) -> %1$s): %1$sBinding = create%1$sBinding(Callable { func(get()) }, this)%n", f);
+            file.format("fun Observable%1$sValue.map(func: (%1$s) -> %1$s) = create%1$sBinding(Callable { func(get()) }, this)%n", f);
           } else {
-            file.format("fun Observable%1$sValue.map%2$s(func: (%3$s) -> %4$s): %2$sBinding = create%2$sBinding(Callable { func(get()) }, this)%n", f, t, t(f), t(t));
+            file.format("fun Observable%1$sValue.map%2$s(func: (%3$s) -> %4$s) = create%2$sBinding(Callable { func(get()) }, this)%n", f, t, t(f), t(t));
           }
         });
       });
