@@ -49,9 +49,9 @@ public class GenerateSources {
       file.format("// %s --> %s%n", op, method);
       for (final var p : numerics) {
         for (final var pn : numerics) {
-          file.format("fun Observable%sValue.%s(v: %s): %sBinding = %s(this, v) as %sBinding%n", p, op, pn, c(p, pn), method, c(p, pn));
-          file.format("fun %s.%s(v: Observable%sValue): %sBinding = %s(this, v) as %sBinding%n", p, op, pn, c(p, pn), method, c(p, pn));
-          file.format("fun Observable%sValue.%s(v: Observable%sValue): %sBinding = %s(this, v) as %sBinding%n", p, op, pn, c(p, pn), method, c(p, pn));
+          file.format("fun Observable%sValue.%s(v: %s) = %s(this, v) as %sBinding%n", p, op, pn, method, c(p, pn));
+          file.format("fun %s.%s(v: Observable%sValue) = %s(this, v) as %sBinding%n", p, op, pn, method, c(p, pn));
+          file.format("fun Observable%sValue.%s(v: Observable%sValue) = %s(this, v) as %sBinding%n", p, op, pn, method, c(p, pn));
         }
       }
       file.println();
