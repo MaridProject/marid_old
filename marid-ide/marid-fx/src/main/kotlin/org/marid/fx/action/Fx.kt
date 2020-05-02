@@ -93,13 +93,14 @@ class Fx(
   fun selected(selected: Property<Boolean?>) = also { selected0.unbind(); selected0.bindBidirectional(selected) }
   fun selected(selected: Boolean) = also { selected0.unbind(); selected0.value = selected }
   fun children(vararg children: Fx) = also { children0.set(observableList(children.asList()) { it.observables }) }
+  fun children(children: Iterable<Fx>) = also { children0.set(observableList(children.toList()) { it.observables }) }
   fun children(children: ObservableList<Fx>) = also { children0.set(children) }
 
   fun linkSelected(selected: Property<Boolean?>) = selected.bindBidirectional(selected0)
 
   val hasChildren get() = children0.get() != null
   val hasSelected get() = !selected0.isBound
-  val isEmpty get() = sequenceOf(text0, icon0).all { it.value == null }
+  val isEmpty get() = text0.value == null && icon0.value == null
 
   operator fun invoke() {
     handler0.get()?.handle(ActionEvent())

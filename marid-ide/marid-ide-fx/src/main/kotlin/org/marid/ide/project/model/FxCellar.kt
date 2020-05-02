@@ -47,4 +47,10 @@ class FxCellar : FxEntity(), Cellar {
   override fun addRack(rack: Rack) {
     racks.add(rack as FxRack)
   }
+
+  fun constantName(name: String): String = (listOf(name) + (1..10_000).map { name + it })
+    .find { n -> constants.none { it.getName() == n } } ?: name
+
+  fun rackName(name: String): String = (listOf(name) + (1..10_000).map { name + it })
+    .find { n -> racks.none { it.getName() == n } } ?: name
 }

@@ -93,6 +93,7 @@ val Fx.menuItem: MenuItem
   get() = when {
     isEmpty -> SeparatorMenuItem()
     hasChildren -> menu.also { m ->
+      m.items.setAll(children.get().map { it.menuItem })
       val wm = WeakReference(m)
       val listener = ListChangeListener<Fx> { c ->
         val menu = wm.get() ?: return@ListChangeListener
