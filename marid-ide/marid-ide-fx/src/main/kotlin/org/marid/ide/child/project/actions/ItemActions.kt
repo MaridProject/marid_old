@@ -14,9 +14,8 @@ class ItemActions(private val projectScanner: ProjectScanner) {
 
   fun constantActions(cellar: FxCellar, index: Int = -1): List<Fx> = projectScanner.constants()
     .groupBy { it.declaringClass.`package` }
-    .mapValues { (_, v) -> v.groupBy { it.declaringClass } }
     .map { (p, pels) ->
-      Tid.from(p, p.name, "icons/pkg.png").fx.children(pels.map { (c, cels) ->
+      Tid.from(p, p.name, "icons/pkg.png").fx.children(pels.groupBy { it.declaringClass }.map { (c, cels) ->
         Tid.from(c, c.simpleName, "icons/class.png").fx.children(cels.map { m ->
           Tid.from(m, m.name, "icons/const.png").fx {
             cellar.constants.addOrAppend(index, FxCellarConstant()

@@ -64,13 +64,14 @@ class WineryTreeTable(data: TreeData, actions: ItemActions) : TreeTableView<Item
               }
             }
             is CellarConstantItem -> {
-              listOf(Fx("Insert", "icons/insert.png").also {
-                it.children(
-                  actions.constantActions(
-                    ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
+              listOf(
+                Fx("Insert", "icons/insert.png").also {
+                  it.children(
+                    actions.constantActions(
+                      ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
+                    )
                   )
-                )
-              })
+                })
             }
             else -> listOf()
           }.map { it.menuItem }
