@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.marid</groupId>
     <artifactId>marid-parent</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.4</version>
   </parent>
 
   <artifactId>marid</artifactId>
@@ -93,7 +93,7 @@
       <dependency>
         <groupId>org.ow2.asm</groupId>
         <artifactId>asm</artifactId>
-        <version>8.0</version>
+        <version>8.0.1</version>
       </dependency>
 
       <dependency>
