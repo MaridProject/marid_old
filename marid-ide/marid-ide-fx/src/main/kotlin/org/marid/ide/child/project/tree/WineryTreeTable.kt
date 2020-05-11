@@ -49,30 +49,38 @@ class WineryTreeTable(data: TreeData, actions: ItemActions) : TreeTableView<Item
     column(300, "Type") { it.resolvedType.mapString { t -> if (t == Void.TYPE) "" else t.toString() } }
 
     root.addEventHandler(TreeItem.treeNotificationEvent<Item<*>>()) {
-      it.treeItem.isExpanded = true
+      if (it.wasAdded() || it.wasRemoved() || it.wasPermutated()) {
+        it.treeItem.isExpanded = true
+      }
     }
 
     rowFactory = Callback {
       TreeTableRow<Item<*>>().apply {
         installContextMenu { ti ->
           when (val v = ti?.value) {
-            is SubItem -> {
-              when (v.kind) {
-                CONSTANTS -> actions.constantActions(ti.ancestor(CellarItem::class)!!.value.entity, -1)
-                RACKS -> actions.rackActions(ti.ancestor(CellarItem::class)!!.value.entity, -1)
-                else -> listOf()
-              }
+            is SubItem -> when (v.kind) {
+              CONSTANTS -> actions.constantActions(ti.ancestor(CellarItem::class)!!.value.entity, -1)
+              RACKS -> actions.rackActions(ti.ancestor(CellarItem::class)!!.value.entity, -1)
+              else -> listOf()
             }
-            is CellarConstantItem -> {
-              listOf(
-                Fx("Insert", "icons/insert.png").also {
-                  it.children(
-                    actions.constantActions(
-                      ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
-                    )
+            is CellarConstantItem -> listOf(
+              Fx("Insert", "icons/insert.png").also {
+                it.children(
+                  actions.constantActions(
+                    ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
                   )
-                })
-            }
+                )
+              }
+            )
+            is RackItem -> listOf(
+              Fx("Insert", "icons/rack.png").also {
+                it.children(
+                  actions.rackActions(
+                    ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
+                  )
+                )
+              }
+            )
             else -> listOf()
           }.map { it.menuItem }
         }
