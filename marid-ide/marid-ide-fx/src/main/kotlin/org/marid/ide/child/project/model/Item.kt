@@ -136,9 +136,16 @@ private fun factory(arg: FxArgument) = when (arg) {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Item<*>> TreeItem<Item<*>>.ancestor(type: KClass<T>): TreeItem<T>? {
+fun <T : Item<*>> TreeItem<Item<*>>.ancestorItem(type: KClass<T>): TreeItem<T>? {
   if (type.isInstance(value)) {
     return this as TreeItem<T>;
+  }
+  return parent?.ancestorItem(type)
+}
+
+fun <T : Item<*>> TreeItem<Item<*>>.ancestor(type: KClass<T>): T? {
+  if (type.isInstance(value)) {
+    return type.java.cast(value)
   }
   return parent?.ancestor(type)
 }

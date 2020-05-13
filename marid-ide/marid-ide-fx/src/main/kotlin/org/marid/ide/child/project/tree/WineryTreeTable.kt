@@ -26,7 +26,6 @@ import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
 import javafx.util.Callback
 import org.marid.fx.action.Fx
-import org.marid.fx.action.menuItem
 import org.marid.fx.extensions.column
 import org.marid.fx.extensions.installContextMenu
 import org.marid.fx.extensions.mapString
@@ -59,30 +58,28 @@ class WineryTreeTable(data: TreeData, actions: ItemActions) : TreeTableView<Item
         installContextMenu { ti ->
           when (val v = ti?.value) {
             is SubItem -> when (v.kind) {
-              CONSTANTS -> actions.constantActions(ti.ancestor(CellarItem::class)!!.value.entity, -1)
-              RACKS -> actions.rackActions(ti.ancestor(CellarItem::class)!!.value.entity, -1)
+              CONSTANTS -> actions.constantActions(ti.ancestor(CellarItem::class)!!.entity, -1)
+              RACKS -> actions.rackActions(ti.ancestor(CellarItem::class)!!.entity, -1)
               else -> listOf()
             }
             is CellarConstantItem -> listOf(
-              Fx("Insert", "icons/insert.png").also {
-                it.children(
+              Fx("Insert", "icons/insert.png")
+                .children(
                   actions.constantActions(
-                    ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
+                    ti.ancestor(CellarItem::class)!!.entity, ti.parent.children.indexOf(ti)
                   )
                 )
-              }
             )
             is RackItem -> listOf(
-              Fx("Insert", "icons/rack.png").also {
-                it.children(
+              Fx("Insert", "icons/rack.png")
+                .children(
                   actions.rackActions(
-                    ti.ancestor(CellarItem::class)!!.value.entity, ti.parent.children.indexOf(ti)
+                    ti.ancestor(CellarItem::class)!!.entity, ti.parent.children.indexOf(ti)
                   )
                 )
-              }
             )
             else -> listOf()
-          }.map { it.menuItem }
+          }
         }
       }
     }

@@ -32,6 +32,7 @@ import javafx.scene.input.MouseEvent
 import javafx.util.Callback
 import org.marid.fx.action.Fx
 import org.marid.fx.action.button
+import org.marid.fx.action.menuItem
 import org.marid.fx.i18n.localized
 
 fun <T, R> TableView<T>.column(width: Int, text: String?, value: (T) -> ObservableValue<R>) =
@@ -86,10 +87,10 @@ fun <T> TableRow<T>.installContextMenu(callback: (Int, T?) -> List<MenuItem>) {
   }
 }
 
-fun <T> TreeTableRow<T>.installContextMenu(callback: (TreeItem<T>?) -> List<MenuItem>) {
+fun <T> TreeTableRow<T>.installContextMenu(callback: (TreeItem<T>?) -> List<Fx>) {
   contextMenu = ContextMenu()
   addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED) {
-    contextMenu.items.setAll(callback(treeItem))
+    contextMenu.items.setAll(callback(treeItem).map { it.menuItem })
   }
 }
 
