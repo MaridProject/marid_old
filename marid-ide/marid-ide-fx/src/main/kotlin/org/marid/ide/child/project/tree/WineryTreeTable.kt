@@ -60,9 +60,11 @@ class WineryTreeTable(data: TreeData, actions: ItemActions) : TreeTableView<Item
           when (val v = ti?.value) {
             is SubItem -> when (v.kind) {
               CONSTANTS -> listOf(
+                Fx("Clear", "icons/clear.png", h = { ti.of(CellarItem::class)!!.constants.clear() }),
                 Fx("Insert", "icons/add.png").children(actions.constantActions(ti.of(CellarItem::class)!!, -1))
               )
               RACKS -> listOf(
+                Fx("Clear", "icons/clear.png", h = { ti.of(CellarItem::class)!!.racks.clear() }),
                 Fx("Insert", "icons/add.png").children(actions.rackActions(ti.of(CellarItem::class)!!, -1))
               )
               else -> listOf()
