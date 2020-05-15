@@ -149,3 +149,10 @@ fun <T : Item<*>> TreeItem<Item<*>>.ancestor(type: KClass<T>): T? {
   }
   return parent?.ancestor(type)
 }
+
+fun <E, T: Item<E>> TreeItem<Item<*>>.of(type: KClass<T>): E? {
+  if (type.isInstance(value)) {
+    return type.java.cast(value).entity
+  }
+  return parent?.of(type)
+}

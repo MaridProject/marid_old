@@ -56,27 +56,22 @@ class WineryTreeTable(data: TreeData, actions: ItemActions) : TreeTableView<Item
     rowFactory = Callback {
       TreeTableRow<Item<*>>().apply {
         installContextMenu { ti ->
+          val tii = ti?.parent?.children?.indexOf(ti) ?: -1
           when (val v = ti?.value) {
             is SubItem -> when (v.kind) {
-              CONSTANTS -> actions.constantActions(ti.ancestor(CellarItem::class)!!.entity, -1)
-              RACKS -> actions.rackActions(ti.ancestor(CellarItem::class)!!.entity, -1)
+              CONSTANTS -> listOf(
+                Fx("Insert", "icons/add.png").children(actions.constantActions(ti.of(CellarItem::class)!!, -1))
+              )
+              RACKS -> listOf(
+                Fx("Insert", "icons/add.png").children(actions.rackActions(ti.of(CellarItem::class)!!, -1))
+              )
               else -> listOf()
             }
             is CellarConstantItem -> listOf(
-              Fx("Insert", "icons/insert.png")
-                .children(
-                  actions.constantActions(
-                    ti.ancestor(CellarItem::class)!!.entity, ti.parent.children.indexOf(ti)
-                  )
-                )
+              Fx("Insert", "icons/insert.png").children(actions.constantActions(ti.of(CellarItem::class)!!, tii))
             )
             is RackItem -> listOf(
-              Fx("Insert", "icons/rack.png")
-                .children(
-                  actions.rackActions(
-                    ti.ancestor(CellarItem::class)!!.entity, ti.parent.children.indexOf(ti)
-                  )
-                )
+              Fx("Insert", "icons/rack.png").children(actions.rackActions(ti.of(CellarItem::class)!!, tii))
             )
             else -> listOf()
           }
