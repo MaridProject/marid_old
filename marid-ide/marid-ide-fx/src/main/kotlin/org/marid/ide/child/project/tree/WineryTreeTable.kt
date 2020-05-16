@@ -31,8 +31,7 @@ import org.marid.fx.extensions.installContextMenu
 import org.marid.fx.extensions.mapString
 import org.marid.ide.child.project.actions.ItemActions
 import org.marid.ide.child.project.model.*
-import org.marid.ide.child.project.model.SubItem.Kind.CONSTANTS
-import org.marid.ide.child.project.model.SubItem.Kind.RACKS
+import org.marid.ide.child.project.model.SubItem.Kind.*
 import org.springframework.stereotype.Component
 
 @Component
@@ -67,7 +66,15 @@ class WineryTreeTable(data: TreeData, actions: ItemActions) : TreeTableView<Item
                 Fx("Clear", "icons/clear.png", h = { ti.of(CellarItem::class)!!.racks.clear() }),
                 Fx("Insert", "icons/add.png").children(actions.rackActions(ti.of(CellarItem::class)!!, -1))
               )
-              else -> listOf()
+              ARGUMENTS -> listOf(
+                Fx("Clear", "icons/clear.png", h = { ti.of(RackItem::class)!!.arguments.clear() }),
+              )
+              INITIALIZERS -> listOf(
+                Fx("Clear", "icons/clear.png", h = { ti.of(RackItem::class)!!.initializers.clear() }),
+              )
+              OUTPUTS -> listOf(
+                  Fx("Clear", "icons/clear.png", h = { ti.of(RackItem::class)!!.outputs.clear() }),
+              )
             }
             is CellarConstantItem -> listOf(
               Fx("Insert", "icons/insert.png").children(actions.constantActions(ti.of(CellarItem::class)!!, tii))

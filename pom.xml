@@ -56,7 +56,7 @@
   <properties>
     <java.version>13</java.version>
     <javafx.version>14.0.1</javafx.version>
-    <kotlin.version>1.3.72</kotlin.version>
+    <kotlin.version>1.4-M1</kotlin.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <maven.compiler.testRelease>${java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -284,6 +284,22 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>kotlin-eap</id>
+      <name>kotlin-eap</name>
+      <url>https://dl.bintray.com/kotlin/kotlin-eap/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>kotlin-eap-plugins</id>
+      <name>kotlin-eap-plugins</name>
+      <url>https://dl.bintray.com/kotlin/kotlin-eap/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <pluginManagement>
