@@ -54,9 +54,9 @@
   </distributionManagement>
 
   <properties>
-    <java.version>13</java.version>
+    <java.version>14</java.version>
     <javafx.version>14.0.1</javafx.version>
-    <kotlin.version>1.4-M1</kotlin.version>
+    <kotlin.version>1.4-M2</kotlin.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <maven.compiler.testRelease>${java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>

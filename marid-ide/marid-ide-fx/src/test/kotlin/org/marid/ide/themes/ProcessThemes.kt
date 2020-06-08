@@ -29,7 +29,7 @@ import java.nio.file.Path
 import kotlin.text.RegexOption.DOT_MATCHES_ALL
 import kotlin.text.RegexOption.MULTILINE
 
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION")
 object ProcessThemes {
 
   private val cssFiles = listOf(
