@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.marid</groupId>
     <artifactId>marid-parent</artifactId>
-    <version>0.8.4</version>
+    <version>0.8.5</version>
   </parent>
 
   <artifactId>marid</artifactId>
@@ -353,6 +353,10 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>wagon-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-wrapper-plugin</artifactId>
       </plugin>
 
       <plugin>
