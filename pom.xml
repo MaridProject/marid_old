@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.marid</groupId>
     <artifactId>marid-parent</artifactId>
-    <version>0.8.5</version>
+    <version>0.8.6</version>
   </parent>
 
   <artifactId>marid</artifactId>
@@ -55,8 +55,8 @@
 
   <properties>
     <java.version>14</java.version>
-    <javafx.version>14.0.1</javafx.version>
-    <kotlin.version>1.4-M2</kotlin.version>
+    <javafx.version>14.0.2.1</javafx.version>
+    <kotlin.version>1.4.0</kotlin.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <maven.compiler.testRelease>${java.version}</maven.compiler.testRelease>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -121,7 +121,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>3.3.3</version>
+        <version>3.4.6</version>
       </dependency>
 
       <dependency>
@@ -145,13 +145,13 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.10</version>
+        <version>3.11</version>
       </dependency>
 
       <dependency>
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
-        <version>2.11.0</version>
+        <version>2.11.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -159,7 +159,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>5.2.6.RELEASE</version>
+        <version>5.2.8.RELEASE</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -173,13 +173,13 @@
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.10.10</version>
+        <version>1.10.13</version>
       </dependency>
 
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy-agent</artifactId>
-        <version>1.10.10</version>
+        <version>1.10.13</version>
       </dependency>
 
       <dependency>
@@ -284,22 +284,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>kotlin-eap</id>
-      <name>kotlin-eap</name>
-      <url>https://dl.bintray.com/kotlin/kotlin-eap/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>kotlin-eap-plugins</id>
-      <name>kotlin-eap-plugins</name>
-      <url>https://dl.bintray.com/kotlin/kotlin-eap/</url>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <pluginManagement>

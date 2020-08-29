@@ -50,12 +50,12 @@ class Validation {
   private val worstLevelProperty = ReadOnlyObjectWrapper(Level.ALL)
 
   private fun add0(node: Node, result: ObservableValue<ValidationResult>) {
-    worstLevelProperty.set(listOf(worstLevelProperty.get(), result.value.level).maxBy { it.intValue() })
+    worstLevelProperty.set(listOf(worstLevelProperty.get(), result.value.level).maxByOrNull { it.intValue() })
     validators.computeIfAbsent(node) { LinkedList() }.add(result)
     val tooltip = Tooltip()
     tooltip.textProperty().bind(result.mapString { it.message })
     val listener = ChangeListener<ValidationResult> { _, _, v ->
-      worstLevelProperty.set(validators.values.flatten().map { it.value.level }.maxBy { it.intValue() } ?: Level.ALL)
+      worstLevelProperty.set(validators.values.flatten().map { it.value.level }.maxByOrNull { it.intValue() } ?: Level.ALL)
       if (v.level.intValue() != Level.ALL.intValue()) {
         when (node) {
           is Control -> node.border = Border(BorderStroke(
