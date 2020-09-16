@@ -393,6 +393,7 @@
                   <goal>compile</goal>
                 </goals>
                 <configuration>
+                  <jvmTarget>14</jvmTarget>
                   <sourceDirs>
                     <sourceDir>${basedir}/src/main/kotlin</sourceDir>
                   </sourceDirs>
@@ -451,6 +452,7 @@
                   <goal>test-compile</goal>
                 </goals>
                 <configuration>
+                  <jvmTarget>14</jvmTarget>
                   <sourceDirs>
                     <sourceDir>${basedir}/src/test/kotlin</sourceDir>
                   </sourceDirs>
