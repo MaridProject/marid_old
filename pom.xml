@@ -323,12 +323,9 @@
           <artifactId>kotlin-maven-plugin</artifactId>
           <version>${kotlin.version}</version>
           <configuration>
-            <jvmTarget>13</jvmTarget>
+            <jvmTarget>14</jvmTarget>
             <javaParameters>true</javaParameters>
             <multiPlatform>false</multiPlatform>
-            <args>
-              <arg>-Xnew-inference</arg>
-            </args>
           </configuration>
         </plugin>
       </plugins>
@@ -393,7 +390,6 @@
                   <goal>compile</goal>
                 </goals>
                 <configuration>
-                  <jvmTarget>14</jvmTarget>
                   <sourceDirs>
                     <sourceDir>${basedir}/src/main/kotlin</sourceDir>
                   </sourceDirs>
@@ -452,7 +448,6 @@
                   <goal>test-compile</goal>
                 </goals>
                 <configuration>
-                  <jvmTarget>14</jvmTarget>
                   <sourceDirs>
                     <sourceDir>${basedir}/src/test/kotlin</sourceDir>
                   </sourceDirs>
