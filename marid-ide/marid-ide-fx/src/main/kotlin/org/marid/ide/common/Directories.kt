@@ -29,6 +29,6 @@ import java.nio.file.Path
 class Directories {
 
   val userHome = Path.of(System.getProperty("user.home"))
-  val maridHome = userHome.resolve("marid").also { Files.createDirectories(it) }
+  val maridHome = userHome.resolve(".marid").also { Files.createDirectories(it) }
   val projectsHome = maridHome.resolve("projects").also { Files.createDirectories(it) }
 }

@@ -34,6 +34,7 @@ module marid.util {
   exports org.marid.concurrent;
   exports org.marid.image;
   exports org.marid.io;
+  exports org.marid.io.function;
   exports org.marid.l10n;
   exports org.marid.logging;
   exports org.marid.misc;
